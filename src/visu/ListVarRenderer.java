@@ -3,10 +3,7 @@ package visu;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Insets;
-
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -17,18 +14,22 @@ import lab.Variable;
 
 public final class ListVarRenderer extends JLabel implements ListCellRenderer<Variable> {
 	
+	private static final long serialVersionUID = 1L;
+	
+	private static final String SCALAIRE = "/variable/SCALAIRE.gif";
+	private static final String CURVE = "/variable/CURVE.gif";
+	private static final String MAP = "/variable/MAP.gif";
+	private static final String INCONNU = "/variable/INCONNU.gif";
+	
 	public ListVarRenderer() {
-		// TODO Auto-generated constructor stub
 		setHorizontalAlignment(LEFT);
 		setVerticalAlignment(CENTER);
 		setOpaque(true);
-		
 	}
 
 	@Override
 	public Component getListCellRendererComponent(JList<? extends Variable> list, Variable value, int index,
 			boolean isSelected, boolean cellHasFocus) {
-		// TODO Auto-generated method stub
 		
 		setText(value.getNom());
 		setBorder(new EmptyBorder(2, 0, 2, 0));
@@ -37,16 +38,16 @@ public final class ListVarRenderer extends JLabel implements ListCellRenderer<Va
 		switch(value.getType())
 		{
 		case "SCALAIRE":
-			setIcon(new ImageIcon("images/variables/SCALAIRE.gif"));
+			setIcon(new ImageIcon(getClass().getResource(SCALAIRE)));
 			break;
 		case "CURVE" :
-			setIcon(new ImageIcon("images/variables/CURVE.gif"));
+			setIcon(new ImageIcon(getClass().getResource(CURVE)));
 			break;
 		case "MAP" :
-			setIcon(new ImageIcon("images/variables/MAP.gif"));
+			setIcon(new ImageIcon(getClass().getResource(MAP)));
 			break;
 		default :
-			setIcon(new ImageIcon("images/variables/INCONNU.gif"));
+			setIcon(new ImageIcon(getClass().getResource(INCONNU)));
 			break;
 		}
 		

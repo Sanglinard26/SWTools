@@ -1,7 +1,7 @@
 package lab;
 import java.util.*;
 
-public class Variable
+public final class Variable
 {
 	private String nameLab;
 	private String nom;

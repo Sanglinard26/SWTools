@@ -5,7 +5,7 @@ import javax.swing.JOptionPane;
 import java.io.*;
 import java.text.*;
 
-public class Lab
+public final class Lab
 {
 	private String pathLab;
 	private String nameLab;

@@ -1,7 +1,7 @@
 package tools;
 import java.io.File;
 
-public class Utilitaire {
+public final class Utilitaire {
 	
 	public final static String jpeg = "jpeg";
     public final static String jpg = "jpg";
