@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -39,19 +40,19 @@ public final class PanelLab extends JPanel {
 	private static final String BT_ADD_LAB_WK = "Ajout lab(s) de travail";
 
 	//GUI
-	private final static GridBagConstraints gbc = new GridBagConstraints();
-	private final JList<Variable> listRef;
-	private final JList<Variable> listWk;
-	private final JList<Variable> listPlus;
-	private final JList<Variable> listMoins;
+	private static final GridBagConstraints gbc = new GridBagConstraints();
+	private JList<Variable> listRef;
+	private JList<Variable> listWk;
+	private JList<Variable> listPlus;
+	private JList<Variable> listMoins;
 
 	//Variable multi lab
-	private final JTable tabLabRef;
-	private final JTable tabLabWk;
-	private final static DefaultTableModel tabmodelRef = new DefaultTableModel(new Object[]{"Lab réf"}, 0);
-	private final static DefaultTableModel tabmodelWk = new DefaultTableModel(new Object[]{"Lab work"}, 0);
-	private final  ArrayList<Lab> arrayLabRef = new ArrayList<Lab>();
-	private final  ArrayList<Lab> arrayLabWk = new ArrayList<Lab>();
+	private JTable tabLabRef;
+	private JTable tabLabWk;
+	private DefaultTableModel tabmodelRef = new DefaultTableModel(new Object[]{"Lab réf"}, 0);
+	private DefaultTableModel tabmodelWk = new DefaultTableModel(new Object[]{"Lab work"}, 0);
+	private ArrayList<Lab> arrayLabRef = new ArrayList<Lab>();
+	private ArrayList<Lab> arrayLabWk = new ArrayList<Lab>();
 
 	public PanelLab()
 	{
@@ -106,18 +107,15 @@ public final class PanelLab extends JPanel {
 		tabLabRef.setMinimumSize(new Dimension(200, 400));
 		tabLabRef.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tabLabRef.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				if(e.getClickCount()==2 && e.isConsumed())
+				if(e.getClickCount()==2)
 				{
-					e.consume();
 					tabmodelRef.removeRow(tabLabRef.getSelectedRow());
+					//listRef.setListData(new Variable[0]);
+					DefaultListModel<Variable> listModel = (DefaultListModel<Variable>) listRef.getModel();
+					listModel.clear();
 				}else{
 					listRef.setListData(Lab.getTabVar(arrayLabRef.get(tabLabRef.getSelectedRow()).getListVariable()));
 				}
@@ -227,16 +225,22 @@ public final class PanelLab extends JPanel {
 			final int reponse = jFileChooser.showOpenDialog(PanelLab.this);
 			if (reponse == JFileChooser.APPROVE_OPTION)
 			{
-
 				for(File file : jFileChooser.getSelectedFiles())
 				{
+					Lab newLab = new Lab(file.getPath());
 					if(e.getActionCommand().equals(BT_ADD_LAB_REF))
 					{
-						arrayLabRef.add(new Lab(file.getPath()));
-						this.tabmodel.addRow(new Lab[]{new Lab(file.getPath())});
+						if(!(arrayLabRef.contains(newLab)))
+							{
+								arrayLabRef.add(new Lab(file.getPath()));
+								this.tabmodel.addRow(new Lab[]{new Lab(file.getPath())});
+							}
 					}else{
-						arrayLabWk.add(new Lab(file.getPath()));
-						this.tabmodel.addRow(new String[]{file.getName()});
+						if(!(arrayLabWk.contains(newLab)))
+						{
+							arrayLabWk.add(new Lab(file.getPath()));
+							this.tabmodel.addRow(new String[]{file.getName()});
+						}
 					}
 				}
 			}

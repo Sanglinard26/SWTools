@@ -3,10 +3,10 @@ import java.util.*;
 
 public final class Variable
 {
-	private String nameLab;
-	private String nom;
-	private String type = "";
-	private static HashMap<String,String> mapTypeVar = new HashMap<String,String>();
+	private final String nameLab;
+	private final String nom;
+	private final String type;
+	private static final HashMap<String,String> mapTypeVar = new HashMap<String,String>();
 	
 	public Variable(String nameLab, String nom)
 	{

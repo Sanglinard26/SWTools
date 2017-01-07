@@ -11,7 +11,7 @@ public final class Lab
 	private String nameLab;
 	private File fileLab;
 	private Variable var;
-	private ArrayList<Variable> listVariable = new ArrayList<Variable>();
+	private final ArrayList<Variable> listVariable = new ArrayList<Variable>();
 	
 	public Lab(){}
 	
@@ -47,6 +47,11 @@ public final class Lab
 	@Override
 	public String toString() {
 		return this.nameLab;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return this.nameLab.equals(obj.toString());
 	}
 	
 	public String getPathLab() {return pathLab;}
@@ -137,8 +142,8 @@ public final class Lab
 	{
 		try
 		{
-			ArrayList<Variable> labelSup = work.getDiffLab(ref);
-			ArrayList<Variable> labelDisp = ref.getDiffLab(work);
+			final ArrayList<Variable> labelSup = work.getDiffLab(ref);
+			final ArrayList<Variable> labelDisp = ref.getDiffLab(work);
 			
 			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
 			String dateFormatee = df.format(new Date()).replace("/","");
