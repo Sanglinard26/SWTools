@@ -40,6 +40,7 @@ public final class PanelLab extends JPanel {
 	private static final String BT_ADD_LAB_WK = "Ajout lab(s) de travail";
 
 	//GUI
+	private final JButton btCompar, btExport;
 	private static final GridBagConstraints gbc = new GridBagConstraints();
 	private JList<Variable> listRef;
 	private JList<Variable> listWk;
@@ -68,7 +69,8 @@ public final class PanelLab extends JPanel {
 		btLab.addActionListener(new addLab(tabmodelWk));
 		this.add(btLab,gbc);
 
-		JButton btCompar = new JButton(BT_COMPAR_LAB);
+		btCompar = new JButton(BT_COMPAR_LAB);
+		btCompar.setEnabled(false);
 		btCompar.addActionListener(new ActionListener() {
 
 			@Override
@@ -96,6 +98,8 @@ public final class PanelLab extends JPanel {
 
 					listMoins.setListData(Lab.getTabVar(multiLabRef.getDiffLab(multiLabWk)));
 					listPlus.setListData(Lab.getTabVar(multiLabWk.getDiffLab(multiLabRef)));
+					
+					btExport.setEnabled(true);
 				}
 			}
 		});
@@ -176,7 +180,8 @@ public final class PanelLab extends JPanel {
 
 
 
-		JButton btExport = new JButton(BT_EXPORT);
+		btExport = new JButton(BT_EXPORT);
+		btExport.setEnabled(false);
 		btExport.addActionListener(new ActionListener() {
 
 			@Override
@@ -243,8 +248,14 @@ public final class PanelLab extends JPanel {
 						}
 					}
 				}
+				checkFile();
 			}
 		}
+	}
+	
+	private void checkFile()
+	{
+		btCompar.setEnabled(true);
 	}
 
 	private static void setGbc(int fill,int gridx,int gridy,int gridwidth,int gridheight,double weightx,double weighty,Insets insets,int anchor)
