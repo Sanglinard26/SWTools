@@ -50,8 +50,8 @@ public final class PanelLab extends JPanel {
 	//Variable multi lab
 	private JTable tabLabRef;
 	private JTable tabLabWk;
-	private DefaultTableModel tabmodelRef = new DefaultTableModel(new Object[]{"Lab réf"}, 0);
-	private DefaultTableModel tabmodelWk = new DefaultTableModel(new Object[]{"Lab work"}, 0);
+	private DefaultTableModel tabmodelRef = new DefaultTableModel(new Object[]{"Fichier(s) Lab de référence"}, 0);
+	private DefaultTableModel tabmodelWk = new DefaultTableModel(new Object[]{"Fichier(s) Lab de travail"}, 0);
 	private ArrayList<Lab> arrayLabRef = new ArrayList<Lab>();
 	private ArrayList<Lab> arrayLabWk = new ArrayList<Lab>();
 
@@ -98,7 +98,7 @@ public final class PanelLab extends JPanel {
 
 					listMoins.setListData(Lab.getTabVar(multiLabRef.getDiffLab(multiLabWk)));
 					listPlus.setListData(Lab.getTabVar(multiLabWk.getDiffLab(multiLabRef)));
-					
+
 					btExport.setEnabled(true);
 				}
 			}
@@ -111,18 +111,24 @@ public final class PanelLab extends JPanel {
 		tabLabRef.setMinimumSize(new Dimension(200, 400));
 		tabLabRef.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tabLabRef.addMouseListener(new MouseAdapter() {
-			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount()==2)
+				
+				final int selRow = tabLabRef.getSelectedRow();
+				
+				if(tabLabRef.getRowCount()>0)
 				{
-					tabmodelRef.removeRow(tabLabRef.getSelectedRow());
-					//listRef.setListData(new Variable[0]);
-					DefaultListModel<Variable> listModel = (DefaultListModel<Variable>) listRef.getModel();
-					listModel.clear();
-				}else{
-					listRef.setListData(Lab.getTabVar(arrayLabRef.get(tabLabRef.getSelectedRow()).getListVariable()));
+					if(e.getClickCount()==2)
+					{
+						
+						tabmodelRef.removeRow(selRow);
+						arrayLabRef.remove(selRow);
+						listRef.setListData(new Variable[0]);
+					}else{
+						listRef.setListData(Lab.getTabVar(arrayLabRef.get(selRow).getListVariable()));
+					}
 				}
+
 			}
 		});
 		tabLabRef.setModel(tabmodelRef);
@@ -134,8 +140,22 @@ public final class PanelLab extends JPanel {
 		tabLabWk.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tabLabWk.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				listWk.setListData(Lab.getTabVar(arrayLabWk.get(tabLabWk.getSelectedRow()).getListVariable()));
+			public void mouseClicked(MouseEvent e) {
+				
+				final int selRow = tabLabWk.getSelectedRow();
+				
+				if(tabLabWk.getRowCount()>0)
+				{
+					if(e.getClickCount()==2)
+					{
+						tabmodelWk.removeRow(selRow);
+						arrayLabWk.remove(selRow);
+						listWk.setListData(new Variable[0]);
+					}else{
+						listWk.setListData(Lab.getTabVar(arrayLabWk.get(selRow).getListVariable()));
+					}
+				}
+
 			}
 		});
 		tabLabWk.setModel(tabmodelWk);
@@ -236,10 +256,10 @@ public final class PanelLab extends JPanel {
 					if(e.getActionCommand().equals(BT_ADD_LAB_REF))
 					{
 						if(!(arrayLabRef.contains(newLab)))
-							{
-								arrayLabRef.add(new Lab(file.getPath()));
-								this.tabmodel.addRow(new Lab[]{new Lab(file.getPath())});
-							}
+						{
+							arrayLabRef.add(new Lab(file.getPath()));
+							this.tabmodel.addRow(new Lab[]{new Lab(file.getPath())});
+						}
 					}else{
 						if(!(arrayLabWk.contains(newLab)))
 						{
@@ -248,15 +268,11 @@ public final class PanelLab extends JPanel {
 						}
 					}
 				}
-				checkFile();
+				btCompar.setEnabled(true);
 			}
 		}
 	}
-	
-	private void checkFile()
-	{
-		btCompar.setEnabled(true);
-	}
+
 
 	private static void setGbc(int fill,int gridx,int gridy,int gridwidth,int gridheight,double weightx,double weighty,Insets insets,int anchor)
 	{

@@ -7,8 +7,8 @@ import java.text.*;
 
 public final class Lab
 {
-	private String pathLab;
-	private String nameLab;
+	private String pathLab="";
+	private String nameLab="";
 	private File fileLab;
 	private Variable var;
 	private final ArrayList<Variable> listVariable = new ArrayList<Variable>();
@@ -68,6 +68,7 @@ public final class Lab
 		ArrayList<Variable> listVarMultiLab = multiLab.getListVariable();
 		for(Lab lab : arrayLab)
 		{
+			multiLab.nameLab = multiLab.nameLab + " / " + lab.getNameLab();
 			listVarMultiLab.addAll(lab.getListVariable());
 		}
 		return multiLab;
@@ -140,64 +141,61 @@ public final class Lab
 
 	public static void ecrireRapport(Lab ref, Lab work)
 	{
-		System.out.println(ref + " / " + work);
-		if(ref==null | work==null)
+		try
 		{
-			try
+			final ArrayList<Variable> labelSup = work.getDiffLab(ref);
+			final ArrayList<Variable> labelDisp = ref.getDiffLab(work);
+
+			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+			String dateFormatee = df.format(new Date()).replace("/","");
+			File rapport = new File("D:/" + dateFormatee + "_rapport.txt");
+
+			PrintWriter printWriter = new PrintWriter(rapport);
+
+			printWriter.println(" ---------");
+			printWriter.println("| Rapport |");
+			printWriter.println(" ---------");
+
+			printWriter.println("\n" + "Lab de référence : " + ref.getNameLab());
+			printWriter.println("Lab de travail : " + work.getNameLab());
+
+			if (labelDisp.size()<2)
+			{printWriter.println("\n" + "Label disparu (" + labelDisp.size() + ") : ");}
+			else
+			{printWriter.println("\n" + "Labels disparus (" + labelDisp.size() + ") : ");}
+
+			for(Variable label:labelDisp)
 			{
-				final ArrayList<Variable> labelSup = work.getDiffLab(ref);
-				final ArrayList<Variable> labelDisp = ref.getDiffLab(work);
-
-				DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
-				String dateFormatee = df.format(new Date()).replace("/","");
-				File rapport = new File("D:/" + dateFormatee + "_rapport.txt");
-
-				PrintWriter printWriter = new PrintWriter(rapport);
-
-				printWriter.println(" ---------");
-				printWriter.println("| Rapport |");
-				printWriter.println(" ---------");
-
-				printWriter.println("\n" + "Lab de référence : " + ref.getNameLab());
-				printWriter.println("Lab de travail : " + work.getNameLab());
-
-				if (labelDisp.size()<2)
-				{printWriter.println("\n" + "Label disparu (" + labelDisp.size() + ") : ");}
-				else
-				{printWriter.println("\n" + "Labels disparus (" + labelDisp.size() + ") : ");}
-
-				for(Variable label:labelDisp)
-				{
-					printWriter.println("\t -" + label.getNom());
-				}
-
-				printWriter.println("\n----------");
-
-				if (labelSup.size()<2)
-				{printWriter.println("\n" + "Label supplémentaire (" + labelSup.size() + ") : ");}
-				else
-				{printWriter.println("\n" + "Labels supplémentaires (" + labelSup.size() + ") : ");}
-
-				for(Variable label:labelSup)
-				{
-					printWriter.println("\t -" + label.getNom());
-				}
-
-				printWriter.println("\n" + " -----");
-				printWriter.println("| Fin |");
-				printWriter.println(" -----");
-
-				JOptionPane.showMessageDialog(
-						null,
-						"Fichier créé : \n" + rapport.getAbsolutePath());
-
-				printWriter.close();
+				printWriter.println("\t -" + label.getNom());
 			}
-			catch(Exception e)
+
+			printWriter.println("\n----------");
+
+			if (labelSup.size()<2)
+			{printWriter.println("\n" + "Label supplémentaire (" + labelSup.size() + ") : ");}
+			else
+			{printWriter.println("\n" + "Labels supplémentaires (" + labelSup.size() + ") : ");}
+
+			for(Variable label:labelSup)
 			{
-				System.out.println(e);
+				printWriter.println("\t -" + label.getNom());
 			}
+
+			printWriter.println("\n" + " -----");
+			printWriter.println("| Fin |");
+			printWriter.println(" -----");
+
+			JOptionPane.showMessageDialog(
+					null,
+					"Fichier créé : \n" + rapport.getAbsolutePath());
+
+			printWriter.close();
 		}
+		catch(Exception e)
+		{
+			System.out.println(e);
+		}
+
 	}
 }
 
