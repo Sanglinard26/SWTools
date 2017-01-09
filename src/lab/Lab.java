@@ -1,201 +1,162 @@
 package lab;
-import java.util.*;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JOptionPane;
-import java.io.*;
-import java.text.*;
 
-public final class Lab
-{
-	private String pathLab="";
-	private String nameLab="";
-	private File fileLab;
-	private Variable var;
-	private final ArrayList<Variable> listVariable = new ArrayList<Variable>();
+public final class Lab {
+    private String pathLab = "";
+    private String nameLab = "";
+    private File fileLab;
+    private Variable var;
+    private final ArrayList<Variable> listVariable = new ArrayList<Variable>();
 
-	public Lab(){}
+    public Lab() {
+    }
 
-	public Lab(String pathLab)
-	{
-		this.pathLab = pathLab;
-		this.fileLab = new File(pathLab);
-		this.nameLab = fileLab.getName();
+    public Lab(String pathLab) {
+        this.pathLab = pathLab;
+        this.fileLab = new File(pathLab);
+        this.nameLab = fileLab.getName();
 
-		try
-		{
-			String line;
-			BufferedReader buf;
+        try {
+            String line;
+            BufferedReader buf;
 
-			buf = new BufferedReader(new FileReader(fileLab));
-			while((line=buf.readLine()) !=null)
-			{
-				if(!line.equals("[Label]"))
-				{
-					var = new Variable(nameLab, line);
-					listVariable.add(var);
-				}
-			}
-			var = null;
-			buf.close();
-		}
-		catch(Exception e)
-		{
-			System.err.println(e.getMessage());
-		}
-	}
+            buf = new BufferedReader(new FileReader(fileLab));
+            while ((line = buf.readLine()) != null) {
+                if (!line.equals("[Label]")) {
+                    var = new Variable(nameLab, line);
+                    listVariable.add(var);
+                }
+            }
+            var = null;
+            buf.close();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
 
-	@Override
-	public String toString() {
-		return this.nameLab;
-	}
+    @Override
+    public String toString() {
+        return this.nameLab;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return this.nameLab.equals(obj.toString());
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return this.nameLab.equals(obj.toString());
+    }
 
-	public String getPathLab() {return pathLab;}
+    public String getPathLab() {
+        return pathLab;
+    }
 
-	public String getNameLab() {return nameLab;}
+    public String getNameLab() {
+        return nameLab;
+    }
 
-	public ArrayList<Variable> getListVariable() {
-		return listVariable;
-	}
+    public ArrayList<Variable> getListVariable() {
+        return listVariable;
+    }
 
-	public static Lab compilLab(ArrayList<Lab> arrayLab)
-	{
-		Lab multiLab = new Lab();
-		ArrayList<Variable> listVarMultiLab = multiLab.getListVariable();
-		for(Lab lab : arrayLab)
-		{
-			multiLab.nameLab = multiLab.nameLab + " / " + lab.getNameLab();
-			listVarMultiLab.addAll(lab.getListVariable());
-		}
-		return multiLab;
-	}
+    public static Lab compilLab(ArrayList<Lab> arrayLab) {
+        Lab multiLab = new Lab();
+        ArrayList<Variable> listVarMultiLab = multiLab.getListVariable();
+        for (Lab lab : arrayLab) {
+            multiLab.nameLab = multiLab.nameLab + " / " + lab.getNameLab();
+            listVarMultiLab.addAll(lab.getListVariable());
+        }
+        return multiLab;
+    }
 
-	public static String[] getTabVarNom(Lab lab) {
-		ArrayList<String> tabVarNom = new ArrayList<String>();
-		for(Variable v : lab.getListVariable())
-		{
-			tabVarNom.add(v.getNom());
-		}
-		return (String[]) tabVarNom.toArray(new String[lab.getListVariable().size()]);
-	}
+    public static String[] getTabVarNom(Lab lab) {
+        ArrayList<String> tabVarNom = new ArrayList<String>();
+        for (Variable v : lab.getListVariable()) {
+            tabVarNom.add(v.getNom());
+        }
+        return (String[]) tabVarNom.toArray(new String[lab.getListVariable().size()]);
+    }
 
-	public static String[] getTabVarNom(ArrayList<Variable> list) {
-		ArrayList<String> tabVarNom = new ArrayList<String>();
-		for(Variable v : list)
-		{
-			tabVarNom.add(v.getNom());
-		}
-		return (String[]) tabVarNom.toArray(new String[list.size()]);
-	}
+    public static String[] getTabVarNom(ArrayList<Variable> list) {
+        ArrayList<String> tabVarNom = new ArrayList<String>();
+        for (Variable v : list) {
+            tabVarNom.add(v.getNom());
+        }
+        return (String[]) tabVarNom.toArray(new String[list.size()]);
+    }
 
-	public static Variable[] getTabVar(ArrayList<Variable> list) {
-		return (Variable[]) list.toArray(new Variable[list.size()]);
-	}
+    public static Variable[] getTabVar(ArrayList<Variable> list) {
+        return (Variable[]) list.toArray(new Variable[list.size()]);
+    }
 
-	//Donne les labels qu'il y a en plus
-	public ArrayList<Variable> getDiffLab(Lab lab)
-	{
-		ArrayList<Variable> diffLab = new ArrayList<Variable>(this.listVariable);
-		diffLab.removeAll(lab.getListVariable());
-		return diffLab;
-	}
+    // Donne les labels qu'il y a en plus
+    public ArrayList<Variable> getDiffLab(Lab lab) {
+        ArrayList<Variable> diffLab = new ArrayList<Variable>(this.listVariable);
+        diffLab.removeAll(lab.getListVariable());
+        return diffLab;
+    }
 
-	public static HashMap<String,Integer> triType(ArrayList<Variable> list)
-	{
-		Integer nbScalaire = 0, nbCurve = 0, nbMap = 0, nbMatrice = 0, nbInconnu = 0;
-		HashMap<String,Integer> map = new HashMap<String,Integer>();
+    public static void ecrireRapport(Lab ref, Lab work) {
+        try {
+            final ArrayList<Variable> labelSup = work.getDiffLab(ref);
+            final ArrayList<Variable> labelDisp = ref.getDiffLab(work);
 
-		map.put("SCALAIRE",nbScalaire);
-		map.put("CURVE",nbCurve);
-		map.put("MAP",nbMap);
-		map.put("MATRICE",nbMatrice);
-		map.put("INCONNU",nbInconnu);
+            final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+            final String dateFormatee = df.format(new Date()).replace("/", "");
+            File rapport = new File("C:/" + dateFormatee + "_ComparaisonLab_Rapport.txt");
 
-		for(Variable v : list)
-		{
-			switch(v.getType())
-			{
-			case "SCALAIRE":
-				map.put("SCALAIRE",++nbScalaire);
-				break;
-			case "CURVE":
-				map.put("CURVE",++nbCurve);
-				break;
-			case "MAP":
-				map.put("MAP",++nbMap);
-				break;
-			case "MATRICE":
-				map.put("MATRICE",++nbMatrice);
-				break;
-			default :
-				map.put("INCONNU",++nbInconnu);
-				break;
-			}
-		}
-		return map;
-	}
+            PrintWriter printWriter;
 
-	public static void ecrireRapport(Lab ref, Lab work)
-	{
-		try
-		{
-			final ArrayList<Variable> labelSup = work.getDiffLab(ref);
-			final ArrayList<Variable> labelDisp = ref.getDiffLab(work);
+            if (rapport.exists()) {
 
-			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
-			String dateFormatee = df.format(new Date()).replace("/","");
-			File rapport = new File("D:/" + dateFormatee + "_rapport.txt");
+                final int reponse = JOptionPane.showConfirmDialog(null, "Fichier d√©j√† existant, √©craser?", "Question", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (reponse == JOptionPane.OK_OPTION) {
+                    printWriter = new PrintWriter(rapport);
+                } else {
+                    rapport = new File("C:/" + dateFormatee + "_ComparaisonLab_Rapport_1.txt");
+                    printWriter = new PrintWriter(rapport);
+                }
+            } else {
+                printWriter = new PrintWriter(rapport);
+            }
 
-			PrintWriter printWriter = new PrintWriter(rapport);
+            printWriter.println(" -------------------------------");
+            printWriter.println("| RAPPORT DE COMPARAISON DE LAB |");
+            printWriter.println(" -------------------------------");
 
-			printWriter.println(" ---------");
-			printWriter.println("| Rapport |");
-			printWriter.println(" ---------");
+            printWriter.println("\n" + "Lab de r√©f√©rence : " + ref.getNameLab());
+            printWriter.println("Lab de travail : " + work.getNameLab());
+            printWriter.println("\n" + "Label(s) disparu(s) (" + labelDisp.size() + ") : ");
 
-			printWriter.println("\n" + "Lab de rÈfÈrence : " + ref.getNameLab());
-			printWriter.println("Lab de travail : " + work.getNameLab());
+            for (Variable label : labelDisp) {
+                printWriter.println("\t -" + label.getNom());
+            }
 
-			if (labelDisp.size()<2)
-			{printWriter.println("\n" + "Label disparu (" + labelDisp.size() + ") : ");}
-			else
-			{printWriter.println("\n" + "Labels disparus (" + labelDisp.size() + ") : ");}
+            printWriter.println("\n----------");
+            printWriter.println("\n" + "Label(s) suppl√©mentaire(s) (" + labelSup.size() + ") : ");
 
-			for(Variable label:labelDisp)
-			{
-				printWriter.println("\t -" + label.getNom());
-			}
+            for (Variable label : labelSup) {
+                printWriter.println("\t -" + label.getNom());
+            }
 
-			printWriter.println("\n----------");
+            printWriter.println("\n" + " -----");
+            printWriter.println("| FIN |");
+            printWriter.println(" -----");
+            printWriter.println("\n" + "\n" + "Fichier cr√©e par SWTools, " + new Date().toString());
 
-			if (labelSup.size()<2)
-			{printWriter.println("\n" + "Label supplÈmentaire (" + labelSup.size() + ") : ");}
-			else
-			{printWriter.println("\n" + "Labels supplÈmentaires (" + labelSup.size() + ") : ");}
+            JOptionPane.showMessageDialog(null, "Fichier cr√©√© : \n" + rapport.getAbsolutePath());
 
-			for(Variable label:labelSup)
-			{
-				printWriter.println("\t -" + label.getNom());
-			}
+            printWriter.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
-			printWriter.println("\n" + " -----");
-			printWriter.println("| Fin |");
-			printWriter.println(" -----");
-
-			JOptionPane.showMessageDialog(
-					null,
-					"Fichier crÈÈ : \n" + rapport.getAbsolutePath());
-
-			printWriter.close();
-		}
-		catch(Exception e)
-		{
-			System.out.println(e);
-		}
-
-	}
+    }
 }
-
