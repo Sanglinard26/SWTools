@@ -25,6 +25,7 @@ import javax.swing.table.DefaultTableModel;
 
 import lab.Lab;
 import lab.Variable;
+import tools.Preference;
 import tools.Utilitaire;
 
 public final class PanelLab extends JPanel {
@@ -34,6 +35,7 @@ public final class PanelLab extends JPanel {
     private static final String BT_COMPAR_LAB = "Comparer";
     private static final String BT_EXPORT = "Exporter";
     private static final String BT_ADD_LAB_REF = "Ajout lab(s) de référence";
+    private static final String BT_SUP_LAB_REF = "Vider la liste";
     private static final String BT_ADD_LAB_WK = "Ajout lab(s) de travail";
 
     // GUI
@@ -61,9 +63,33 @@ public final class PanelLab extends JPanel {
         this.add(btPaCo, gbc);
 
         setGbc(GridBagConstraints.HORIZONTAL, 1, 0, 1, 1, 0.5, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        JButton btSupRef = new JButton(BT_SUP_LAB_REF);
+        btSupRef.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tabmodelRef.setRowCount(0);
+                arrayLabRef.removeAll(arrayLabRef);
+            }
+        });
+        this.add(btSupRef, gbc);
+
+        setGbc(GridBagConstraints.HORIZONTAL, 2, 0, 1, 1, 0.5, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         JButton btLab = new JButton(BT_ADD_LAB_WK);
         btLab.addActionListener(new addLab(tabmodelWk));
         this.add(btLab, gbc);
+
+        setGbc(GridBagConstraints.HORIZONTAL, 3, 0, 1, 1, 0.5, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        JButton btSupWk = new JButton(BT_SUP_LAB_REF);
+        btSupWk.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tabmodelWk.setNumRows(0);
+                arrayLabWk.removeAll(arrayLabWk);
+            }
+        });
+        this.add(btSupWk, gbc);
 
         btCompar = new JButton(BT_COMPAR_LAB);
         btCompar.setEnabled(false);
@@ -93,7 +119,7 @@ public final class PanelLab extends JPanel {
                 }
             }
         });
-        setGbc(GridBagConstraints.HORIZONTAL, 2, 0, 2, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.HORIZONTAL, 4, 0, 2, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         this.add(btCompar, gbc);
 
         tabLabRef = new JTable();
@@ -120,7 +146,7 @@ public final class PanelLab extends JPanel {
             }
         });
         tabLabRef.setModel(tabmodelRef);
-        setGbc(GridBagConstraints.BOTH, 0, 1, 1, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.BOTH, 0, 1, 2, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         this.add(new JScrollPane(tabLabRef), gbc);
 
         tabLabWk = new JTable();
@@ -145,17 +171,17 @@ public final class PanelLab extends JPanel {
             }
         });
         tabLabWk.setModel(tabmodelWk);
-        setGbc(GridBagConstraints.BOTH, 1, 1, 1, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.BOTH, 2, 1, 2, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         this.add(new JScrollPane(tabLabWk), gbc);
 
-        setGbc(GridBagConstraints.NONE, 2, 1, 1, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.NONE, 4, 1, 1, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         this.add(new JLabel("Label(s) disparu(s)"), gbc);
 
-        setGbc(GridBagConstraints.NONE, 3, 1, 1, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.NONE, 5, 1, 1, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         this.add(new JLabel("Label(s) suppl�mentaire(s)"), gbc);
 
         // Liste du lab r�f
-        setGbc(GridBagConstraints.BOTH, 0, 4, 1, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.BOTH, 0, 4, 2, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         listRef = new JList<Variable>();
         listRef.setCellRenderer(new ListVarRenderer());
         JScrollPane scrollPaneRef = new JScrollPane(listRef);
@@ -163,21 +189,21 @@ public final class PanelLab extends JPanel {
         this.add(scrollPaneRef, gbc);
 
         // Liste du lab de travail
-        setGbc(GridBagConstraints.BOTH, 1, 4, 1, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.BOTH, 2, 4, 2, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         listWk = new JList<Variable>();
         listWk.setCellRenderer(new ListVarRenderer());
         JScrollPane scrollPaneWk = new JScrollPane(listWk);
         scrollPaneWk.setMinimumSize(new Dimension(200, 600));
         this.add(scrollPaneWk, gbc);
 
-        setGbc(GridBagConstraints.BOTH, 2, 2, 1, 4, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.BOTH, 4, 2, 1, 4, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         listMoins = new JList<Variable>();
         listMoins.setCellRenderer(new ListVarRenderer());
         JScrollPane scrollPaneMoins = new JScrollPane(listMoins);
         scrollPaneMoins.setMinimumSize(new Dimension(200, 600));
         this.add(scrollPaneMoins, gbc);
 
-        setGbc(GridBagConstraints.BOTH, 3, 2, 1, 4, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.BOTH, 5, 2, 1, 4, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         listPlus = new JList<Variable>();
         listPlus.setCellRenderer(new ListVarRenderer());
         JScrollPane scrollPanePlus = new JScrollPane(listPlus);
@@ -195,7 +221,7 @@ public final class PanelLab extends JPanel {
                 Lab.ecrireRapport(multiLabRef, multiLabWk);
             }
         });
-        setGbc(GridBagConstraints.HORIZONTAL, 2, 6, 2, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.HORIZONTAL, 4, 6, 2, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         this.add(btExport, gbc);
 
     }
@@ -209,7 +235,7 @@ public final class PanelLab extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final JFileChooser jFileChooser = new JFileChooser("C:/Users/tramp/Desktop/Tmp/Lab");
+            final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference("pathLab"));
             jFileChooser.setMultiSelectionEnabled(true);
             jFileChooser.setFileFilter(new FileFilter() {
 

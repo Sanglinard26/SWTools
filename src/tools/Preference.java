@@ -17,14 +17,10 @@ public final class Preference {
         try {
             InputStream inputStream = new FileInputStream("resources/preferences.properties");
             properties.load(inputStream);
-
-            System.out.println(properties.getProperty(key));
-
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return "";
+        return properties.getProperty(key);
     }
 
 }

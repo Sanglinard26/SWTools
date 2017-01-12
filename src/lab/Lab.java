@@ -10,6 +10,8 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
+import tools.Preference;
+
 public final class Lab {
     private String pathLab = "";
     private String nameLab = "";
@@ -109,7 +111,7 @@ public final class Lab {
 
             final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
             final String dateFormatee = df.format(new Date()).replace("/", "");
-            File rapport = new File("C:/" + dateFormatee + "_ComparaisonLab_Rapport.txt");
+            File rapport = new File(Preference.getPreference("pathExportLabResult") + "/" + dateFormatee + "_ComparaisonLab_Rapport.txt");
 
             PrintWriter printWriter;
 
@@ -120,7 +122,7 @@ public final class Lab {
                 if (reponse == JOptionPane.OK_OPTION) {
                     printWriter = new PrintWriter(rapport);
                 } else {
-                    rapport = new File("C:/" + dateFormatee + "_ComparaisonLab_Rapport_1.txt");
+                    rapport = new File(Preference.getPreference("pathExportLabResult") + "/" + dateFormatee + "_ComparaisonLab_Rapport_1.txt");
                     printWriter = new PrintWriter(rapport);
                 }
             } else {
