@@ -82,7 +82,7 @@ public final class Lab {
         for (Variable v : lab.getListVariable()) {
             tabVarNom.add(v.getNom());
         }
-        return (String[]) tabVarNom.toArray(new String[lab.getListVariable().size()]);
+        return tabVarNom.toArray(new String[lab.getListVariable().size()]);
     }
 
     public static String[] getTabVarNom(ArrayList<Variable> list) {
@@ -90,11 +90,11 @@ public final class Lab {
         for (Variable v : list) {
             tabVarNom.add(v.getNom());
         }
-        return (String[]) tabVarNom.toArray(new String[list.size()]);
+        return tabVarNom.toArray(new String[list.size()]);
     }
 
     public static Variable[] getTabVar(ArrayList<Variable> list) {
-        return (Variable[]) list.toArray(new Variable[list.size()]);
+        return list.toArray(new Variable[list.size()]);
     }
 
     // Donne les labels qu'il y a en plus
