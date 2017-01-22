@@ -25,13 +25,14 @@ public final class Ihm extends JFrame {
 
     public Ihm() {
         setTitle("SW Tools");
-        setExtendedState(MAXIMIZED_BOTH);
+        // setExtendedState(MAXIMIZED_BOTH);
+        setSize(1200, 700);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         onglets = new JTabbedPane(JTabbedPane.TOP);
 
         // Onglet comparaison de Lab
-        JPanel onglet2 = new JPanel(new GridLayout(1, 2));
+        JPanel onglet2 = new JPanel(new GridLayout(1, 1));
         onglet2.add(new PanelLab());
         onglets.addTab("Comparaison lab", onglet2);
 
