@@ -3,13 +3,11 @@ package lab;
 import java.util.HashMap;
 
 public final class Variable {
-    private final String nameLab;
     private final String nom;
     private final String type;
     private static final HashMap<String, String> mapTypeVar = new HashMap<String, String>();
 
-    public Variable(String nameLab, String nom) {
-        this.nameLab = nameLab;
+    public Variable(String nom) {
         this.nom = nom;
         initMapTypeVar();
         this.type = findType();
@@ -20,10 +18,6 @@ public final class Variable {
         mapTypeVar.put("T", "CURVE");
         mapTypeVar.put("M", "MAP");
         mapTypeVar.put("CA", "MATRICE");
-    }
-
-    public String getNameLab() {
-        return this.nameLab;
     }
 
     public String getNom() {

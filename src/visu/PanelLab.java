@@ -13,6 +13,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -36,6 +37,7 @@ import lab.Lab;
 import lab.ListModelLab;
 import lab.ListModelVar;
 import lab.Variable;
+import observer.Observateur;
 import tools.Preference;
 import tools.Utilitaire;
 
@@ -53,7 +55,8 @@ public final class PanelLab extends JPanel {
     private final JButton btCompar, btExport;
     private static final GridBagConstraints gbc = new GridBagConstraints();
     private JList<Lab> listLabRef, listLabWk;
-    private JList<Variable> listVarRef, listVarWk, listVarPlus, listVarMoins;
+    private JList<Variable> listVarRef;
+    private JList<Variable> listVarWk, listVarPlus, listVarMoins;
     private JTextField filterVarRef, filterVarWk;
 
     public PanelLab() {
@@ -84,15 +87,15 @@ public final class PanelLab extends JPanel {
                         Lab multiLabRef = Lab.compilLab(((ListModelLab) listLabRef.getModel()).getList());
                         Lab multiLabWk = Lab.compilLab(((ListModelLab) listLabWk.getModel()).getList());
 
-                        listVarMoins.setListData(Lab.getTabVar(multiLabRef.getDiffLab(multiLabWk)));
-                        listVarPlus.setListData(Lab.getTabVar(multiLabWk.getDiffLab(multiLabRef)));
+                        ((ListModelVar) listVarMoins.getModel()).setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
+                        ((ListModelVar) listVarPlus.getModel()).setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));
                     }
                 } else {
                     Lab multiLabRef = Lab.compilLab(((ListModelLab) listLabRef.getModel()).getList());
                     Lab multiLabWk = Lab.compilLab(((ListModelLab) listLabWk.getModel()).getList());
 
-                    listVarMoins.setListData(Lab.getTabVar(multiLabRef.getDiffLab(multiLabWk)));
-                    listVarPlus.setListData(Lab.getTabVar(multiLabWk.getDiffLab(multiLabRef)));
+                    ((ListModelVar) listVarMoins.getModel()).setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
+                    ((ListModelVar) listVarPlus.getModel()).setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));
 
                     btExport.setEnabled(true);
                 }
@@ -145,6 +148,22 @@ public final class PanelLab extends JPanel {
         listLabRef.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listLabRef.setCellRenderer(new ListLabRenderer());
         listLabRef.setModel(new ListModelLab());
+        ((ListModelLab) listLabRef.getModel()).addObservateur(new Observateur() {
+
+            @Override
+            public void update(ArrayList<Lab> listLab, String typeAction) {
+                System.out.println("Udapte : " + typeAction);
+                if (!listLab.isEmpty()) {
+                    btCompar.setEnabled(true);
+                    filterVarRef.setEditable(true);
+                } else {
+                    btCompar.setEnabled(false);
+                    filterVarRef.setText(TXT_FILTRAGE);
+                    filterVarRef.setEditable(false);
+                }
+
+            }
+        });
         listLabRef.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -289,11 +308,13 @@ public final class PanelLab extends JPanel {
         this.add(new JLabel("Label(s) suppl�mentaire(s)"), gbc);
 
         filterVarRef = new JTextField(TXT_FILTRAGE, 20);
+        filterVarRef.setEditable(false);
         filterVarRef.setFont(new Font(null, Font.ITALIC, 12));
         filterVarRef.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                ((JTextField) e.getSource()).setText("");
+                if (((JTextField) e.getSource()).isEditable())
+                    ((JTextField) e.getSource()).setText("");
             }
         });
         filterVarRef.setBorder(new LineBorder(Color.BLACK, 1, false));
@@ -370,6 +391,7 @@ public final class PanelLab extends JPanel {
 
         setGbc(GridBagConstraints.BOTH, 2, 2, 1, 3, 1, 1, new Insets(0, 20, 0, 0), GridBagConstraints.CENTER);
         listVarMoins = new JList<Variable>();
+        listVarMoins.setModel(new ListModelVar());
         listVarMoins.setCellRenderer(new ListVarRenderer());
         JScrollPane scrollPaneMoins = new JScrollPane(listVarMoins);
         scrollPaneMoins.setMinimumSize(new Dimension(200, 600));
@@ -377,6 +399,7 @@ public final class PanelLab extends JPanel {
 
         setGbc(GridBagConstraints.BOTH, 3, 2, 1, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         listVarPlus = new JList<Variable>();
+        listVarPlus.setModel(new ListModelVar());
         listVarPlus.setCellRenderer(new ListVarRenderer());
         JScrollPane scrollPanePlus = new JScrollPane(listVarPlus);
         scrollPanePlus.setMinimumSize(new Dimension(200, 600));
@@ -394,7 +417,7 @@ public final class PanelLab extends JPanel {
 
                 @Override
                 public String getDescription() {
-                    return null;
+                    return "Fichier *.lab";
                 }
 
                 @Override
@@ -421,7 +444,7 @@ public final class PanelLab extends JPanel {
                         ((ListModelLab) listLabWk.getModel()).addLab(newLab);
                     }
                 }
-                btCompar.setEnabled(true);
+                // btCompar.setEnabled(true);
             }
         }
     }

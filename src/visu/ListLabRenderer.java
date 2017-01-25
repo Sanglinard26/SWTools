@@ -25,7 +25,7 @@ public final class ListLabRenderer extends JLabel implements ListCellRenderer<La
     @Override
     public Component getListCellRendererComponent(JList<? extends Lab> list, Lab value, int index, boolean isSelected, boolean cellHasFocus) {
 
-        setText(value.getNameLab());
+        setText(value.getName());
         setBorder(new EmptyBorder(2, 0, 2, 0));
         setToolTipText("Nombre de label(s) : " + value.getListVariable().size());
 
