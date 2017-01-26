@@ -91,7 +91,7 @@ public final class Lab {
             final ArrayList<Variable> labelSup = work.getDiffLab(ref);
             final ArrayList<Variable> labelDisp = ref.getDiffLab(work);
 
-            JFileChooser fileChooser = new JFileChooser(Preference.getPreference("pathExportLabResult"));
+            JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_RESULT_LAB));
             fileChooser.setDialogTitle("Enregistement du rapport");
             int rep = fileChooser.showSaveDialog(null);
 

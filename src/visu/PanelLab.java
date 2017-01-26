@@ -152,7 +152,7 @@ public final class PanelLab extends JPanel {
 
             @Override
             public void update(ArrayList<Lab> listLab, String typeAction) {
-                System.out.println("Udapte : " + typeAction);
+                System.out.println("Udapte : " + typeAction + " Nb Lab : " + listLab.size());
                 if (!listLab.isEmpty()) {
                     btCompar.setEnabled(true);
                     filterVarRef.setEditable(true);
@@ -189,7 +189,7 @@ public final class PanelLab extends JPanel {
                             public void actionPerformed(ActionEvent e) {
                                 ((ListModelLab) listLabRef.getModel()).removeLab(listLabRef.getSelectedIndex());
                                 listLabRef.clearSelection();
-                                filterVarRef.setText("");
+                                // filterVarRef.setText("");
                                 ((ListModelVar) listVarRef.getModel()).clearList();
                                 listVarRef.clearSelection();
                             }
@@ -202,7 +202,7 @@ public final class PanelLab extends JPanel {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 ((ListModelLab) listLabRef.getModel()).clearList();
-                                filterVarRef.setText("");
+                                // filterVarRef.setText("");
                                 listLabRef.clearSelection();
                                 ((ListModelVar) listVarRef.getModel()).clearList();
                             }
@@ -411,7 +411,7 @@ public final class PanelLab extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference("pathLab"));
+            final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_ADD_LAB));
             jFileChooser.setMultiSelectionEnabled(true);
             jFileChooser.setFileFilter(new FileFilter() {
 

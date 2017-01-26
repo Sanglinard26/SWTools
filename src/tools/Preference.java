@@ -3,24 +3,35 @@
  */
 package tools;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import java.util.prefs.Preferences;
 
 public final class Preference {
 
-    private static final Properties properties = new Properties();
+    public static final String KEY_ADD_LAB = "pathLab";
+    public static final String KEY_RESULT_LAB = "pathExportLabResult";
+    private static final String DEF_PATH_LAB = "C:/User";
+    private static final String DEF_PATH_RESULT_LAB = "C:/TEMP";
+
+    private static final Preferences preferences = Preferences.userRoot().node("swtools/lab");
 
     public static String getPreference(String key) {
-
-        try {
-            InputStream inputStream = new FileInputStream("resources/preferences.properties");
-            properties.load(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
+        String defValue;
+        switch (key) {
+        case KEY_ADD_LAB:
+            defValue = DEF_PATH_LAB;
+            break;
+        case KEY_RESULT_LAB:
+            defValue = DEF_PATH_RESULT_LAB;
+            break;
+        default:
+            defValue = "C:/";
+            break;
         }
-        return properties.getProperty(key);
+        return preferences.get(key, defValue);
+    }
+
+    public static void setPreference(String key, String value) {
+        preferences.put(key, value);
     }
 
 }
