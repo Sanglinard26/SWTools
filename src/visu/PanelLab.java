@@ -1,15 +1,12 @@
 package visu;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -18,14 +15,10 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -36,7 +29,6 @@ import javax.swing.filechooser.FileFilter;
 import lab.Lab;
 import lab.ListModelLab;
 import lab.ListModelVar;
-import lab.Variable;
 import observer.Observateur;
 import tools.Preference;
 import tools.Utilitaire;
@@ -54,9 +46,10 @@ public final class PanelLab extends JPanel {
     // GUI
     private final JButton btCompar, btExport;
     private static final GridBagConstraints gbc = new GridBagConstraints();
-    private JList<Lab> listLabRef, listLabWk;
-    private JList<Variable> listVarRef;
-    private JList<Variable> listVarWk, listVarPlus, listVarMoins;
+    private ListLab listLabRef;
+    private ListLab listLabWk;
+    private ListVar listVarRef;
+    private ListVar listVarWk, listVarPlus, listVarMoins;
     private JTextField filterVarRef, filterVarWk;
 
     public PanelLab() {
@@ -80,24 +73,14 @@ public final class PanelLab extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                if (listLabRef.getModel().getSize() != listLabWk.getModel().getSize()) {
-                    final int reponse = JOptionPane.showConfirmDialog(null, "Nombre de fichier différent, comparer quand même?", "Question",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (reponse == JOptionPane.OK_OPTION) {
-                        Lab multiLabRef = Lab.compilLab(((ListModelLab) listLabRef.getModel()).getList());
-                        Lab multiLabWk = Lab.compilLab(((ListModelLab) listLabWk.getModel()).getList());
+                if (listLabRef.getModel().getSize() == listLabWk.getModel().getSize()) {
+                    Lab multiLabRef = Lab.compilLab(listLabRef.getModel().getList());
+                    Lab multiLabWk = Lab.compilLab(listLabWk.getModel().getList());
 
-                        ((ListModelVar) listVarMoins.getModel()).setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
-                        ((ListModelVar) listVarPlus.getModel()).setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));
-                    }
+                    listVarMoins.getModel().setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
+                    listVarPlus.getModel().setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));
                 } else {
-                    Lab multiLabRef = Lab.compilLab(((ListModelLab) listLabRef.getModel()).getList());
-                    Lab multiLabWk = Lab.compilLab(((ListModelLab) listLabWk.getModel()).getList());
-
-                    ((ListModelVar) listVarMoins.getModel()).setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
-                    ((ListModelVar) listVarPlus.getModel()).setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));
-
-                    btExport.setEnabled(true);
+                    JOptionPane.showMessageDialog(null, "Le nombre de fichier à comparer est différent !");
                 }
             }
         });
@@ -105,14 +88,11 @@ public final class PanelLab extends JPanel {
         this.add(btCompar, gbc);
 
         btExport = new JButton(BT_EXPORT);
-        btExport.setEnabled(true);
+        btExport.setEnabled(false);
         btExport.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                Lab multiLabRef = Lab.compilLab(((ListModelLab) listLabRef.getModel()).getList());
-                Lab multiLabWk = Lab.compilLab(((ListModelLab) listLabWk.getModel()).getList());
-                Lab.ecrireRapport(multiLabRef, multiLabWk);
+                Lab.ecrireRapport(Lab.compilLab(listLabRef.getModel().getList()), Lab.compilLab(listLabWk.getModel().getList()));
             }
         });
         setGbc(GridBagConstraints.HORIZONTAL, 3, 0, 1, 1, 0, 0, new Insets(0, 0, 10, 0), GridBagConstraints.CENTER);
@@ -120,186 +100,35 @@ public final class PanelLab extends JPanel {
 
         // Liste des lab r�f
         setGbc(GridBagConstraints.BOTH, 0, 1, 1, 2, 1, 0.3, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
-        listLabRef = new JList<Lab>();
-        listLabRef.addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-                // non utilisee
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                // non utilisee
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == 127 & listLabRef.getSelectedIndex() > -1) // touche suppr
-                {
-                    ((ListModelLab) listLabRef.getModel()).removeLab(listLabRef.getSelectedIndex());
-                    listLabRef.clearSelection();
-                    ((ListModelVar) listVarRef.getModel()).clearList();
-                    listVarRef.clearSelection();
-                }
-
-            }
-        });
-        listLabRef.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listLabRef.setCellRenderer(new ListLabRenderer());
-        listLabRef.setModel(new ListModelLab());
-        ((ListModelLab) listLabRef.getModel()).addObservateur(new Observateur() {
-
-            @Override
-            public void update(ArrayList<Lab> listLab, String typeAction) {
-                System.out.println("Udapte : " + typeAction + " Nb Lab : " + listLab.size());
-                if (!listLab.isEmpty()) {
-                    btCompar.setEnabled(true);
-                    filterVarRef.setEditable(true);
-                } else {
-                    btCompar.setEnabled(false);
-                    filterVarRef.setText(TXT_FILTRAGE);
-                    filterVarRef.setEditable(false);
-                }
-
-            }
-        });
+        listLabRef = new ListLab(new ListModelLab());
+        listLabRef.getModel().addObservateur(new BtComparObserver());
         listLabRef.addListSelectionListener(new ListSelectionListener() {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() == false & !listLabRef.isSelectionEmpty()) {
                     filterVarRef.setText("");
-                    ((ListModelVar) listVarRef.getModel()).setList(listLabRef.getSelectedValue());
+                    listVarRef.getModel().setList(listLabRef.getSelectedValue());
                 }
             }
         });
-        listLabRef.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (e.isPopupTrigger() & listLabRef.getModel().getSize() > 0) {
-                    JPopupMenu menu = new JPopupMenu();
-                    JMenuItem menuItem;
-                    if (listLabRef.locationToIndex(e.getPoint()) == listLabRef.getSelectedIndex()) {
-
-                        menuItem = new JMenuItem("Supprimer");
-                        menuItem.addActionListener(new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                ((ListModelLab) listLabRef.getModel()).removeLab(listLabRef.getSelectedIndex());
-                                listLabRef.clearSelection();
-                                // filterVarRef.setText("");
-                                ((ListModelVar) listVarRef.getModel()).clearList();
-                                listVarRef.clearSelection();
-                            }
-                        });
-
-                    } else {
-                        menuItem = new JMenuItem("Tout supprimer");
-                        menuItem.addActionListener(new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                ((ListModelLab) listLabRef.getModel()).clearList();
-                                // filterVarRef.setText("");
-                                listLabRef.clearSelection();
-                                ((ListModelVar) listVarRef.getModel()).clearList();
-                            }
-                        });
-
-                    }
-                    menu.add(menuItem);
-                    menu.show(e.getComponent(), e.getX(), e.getY());
-                }
-            }
-        });
-
         this.add(new JScrollPane(listLabRef), gbc);
 
         // Liste des lab travail
         setGbc(GridBagConstraints.BOTH, 1, 1, 1, 2, 1, 0.3, new Insets(0, 5, 0, 20), GridBagConstraints.CENTER);
-        listLabWk = new JList<Lab>();
-        listLabWk.addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-                // non utilisee
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                // non utilisee
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == 127 & listLabWk.getSelectedIndex() > -1) // touche suppr
-                {
-                    ((ListModelLab) listLabWk.getModel()).removeLab(listLabWk.getSelectedIndex());
-                    listLabWk.clearSelection();
-                    ((ListModelVar) listVarWk.getModel()).clearList();
-                    listVarWk.clearSelection();
-                }
-
-            }
-        });
-        listLabWk.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listLabWk.setCellRenderer(new ListLabRenderer());
-        listLabWk.setModel(new ListModelLab());
+        listLabWk = new ListLab(new ListModelLab());
+        listLabWk.getModel().addObservateur(new BtComparObserver());
         listLabWk.addListSelectionListener(new ListSelectionListener() {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() == false & !listLabWk.isSelectionEmpty()) {
                     filterVarWk.setText("");
-                    ((ListModelVar) listVarWk.getModel()).setList(listLabWk.getSelectedValue());
+                    listVarWk.getModel().setList(listLabWk.getSelectedValue());
                 }
             }
         });
-        listLabWk.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (e.isPopupTrigger() & listLabWk.getModel().getSize() > 0) {
-                    JPopupMenu menu = new JPopupMenu();
-                    JMenuItem menuItem;
-                    if (listLabWk.locationToIndex(e.getPoint()) == listLabWk.getSelectedIndex()) {
-
-                        menuItem = new JMenuItem("Supprimer");
-                        menuItem.addActionListener(new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                ((ListModelLab) listLabWk.getModel()).removeLab(listLabWk.getSelectedIndex());
-                                listLabWk.clearSelection();
-                                filterVarWk.setText("");
-                                ((ListModelVar) listVarWk.getModel()).clearList();
-                                listVarWk.clearSelection();
-                            }
-                        });
-
-                    } else {
-                        menuItem = new JMenuItem("Tout supprimer");
-                        menuItem.addActionListener(new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                ((ListModelLab) listLabWk.getModel()).clearList();
-                                filterVarWk.setText("");
-                                listLabWk.clearSelection();
-                                ((ListModelVar) listVarWk.getModel()).clearList();
-                            }
-                        });
-
-                    }
-                    menu.add(menuItem);
-                    menu.show(e.getComponent(), e.getX(), e.getY());
-                }
-            }
-        });
-        JScrollPane scrollListLabWk = new JScrollPane(listLabWk);
-        scrollListLabWk.setBorder(new LineBorder(Color.DARK_GRAY, 1, false));
-        this.add(scrollListLabWk, gbc);
+        this.add(new JScrollPane(listLabWk), gbc);
 
         setGbc(GridBagConstraints.NONE, 2, 1, 1, 1, 0, 0, new Insets(0, 20, 0, 0), GridBagConstraints.CENTER);
         this.add(new JLabel("Label(s) disparu(s)"), gbc);
@@ -322,13 +151,13 @@ public final class PanelLab extends JPanel {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                ((ListModelVar) listVarRef.getModel()).setFilter(filterVarRef.getText().toLowerCase());
+                listVarRef.getModel().setFilter(filterVarRef.getText().toLowerCase());
 
             }
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                ((ListModelVar) listVarRef.getModel()).setFilter(filterVarRef.getText().toLowerCase());
+                listVarRef.getModel().setFilter(filterVarRef.getText().toLowerCase());
 
             }
 
@@ -353,13 +182,13 @@ public final class PanelLab extends JPanel {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                ((ListModelVar) listVarWk.getModel()).setFilter(filterVarWk.getText().toLowerCase());
+                listVarWk.getModel().setFilter(filterVarWk.getText().toLowerCase());
 
             }
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                ((ListModelVar) listVarWk.getModel()).setFilter(filterVarWk.getText().toLowerCase());
+                listVarWk.getModel().setFilter(filterVarWk.getText().toLowerCase());
 
             }
 
@@ -373,37 +202,23 @@ public final class PanelLab extends JPanel {
 
         // Liste du lab r�f
         setGbc(GridBagConstraints.BOTH, 0, 4, 1, 1, 1, 1, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
-        listVarRef = new JList<Variable>();
-        listVarRef.setModel(new ListModelVar());
-        listVarRef.setCellRenderer(new ListVarRenderer());
-        JScrollPane scrollPaneRef = new JScrollPane(listVarRef);
-        scrollPaneRef.setMinimumSize(new Dimension(200, 600));
-        this.add(scrollPaneRef, gbc);
+        listVarRef = new ListVar(new ListModelVar());
+        listLabRef.getModel().addObservateur(listVarRef.getModel()); // le modèle de la liste des variables observe le modèle de la liste des lab
+        this.add(new JScrollPane(listVarRef), gbc);
 
         // Liste du lab de travail
         setGbc(GridBagConstraints.BOTH, 1, 4, 1, 1, 1, 1, new Insets(0, 5, 0, 20), GridBagConstraints.CENTER);
-        listVarWk = new JList<Variable>();
-        listVarWk.setModel(new ListModelVar());
-        listVarWk.setCellRenderer(new ListVarRenderer());
-        JScrollPane scrollPaneWk = new JScrollPane(listVarWk);
-        scrollPaneWk.setMinimumSize(new Dimension(200, 600));
-        this.add(scrollPaneWk, gbc);
+        listVarWk = new ListVar(new ListModelVar());
+        listLabWk.getModel().addObservateur(listVarWk.getModel()); // le modèle de la liste des variables observe le modèle de la liste des lab
+        this.add(new JScrollPane(listVarWk), gbc);
 
         setGbc(GridBagConstraints.BOTH, 2, 2, 1, 3, 1, 1, new Insets(0, 20, 0, 0), GridBagConstraints.CENTER);
-        listVarMoins = new JList<Variable>();
-        listVarMoins.setModel(new ListModelVar());
-        listVarMoins.setCellRenderer(new ListVarRenderer());
-        JScrollPane scrollPaneMoins = new JScrollPane(listVarMoins);
-        scrollPaneMoins.setMinimumSize(new Dimension(200, 600));
-        this.add(scrollPaneMoins, gbc);
+        listVarMoins = new ListVar(new ListModelVar());
+        this.add(new JScrollPane(listVarMoins), gbc);
 
         setGbc(GridBagConstraints.BOTH, 3, 2, 1, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
-        listVarPlus = new JList<Variable>();
-        listVarPlus.setModel(new ListModelVar());
-        listVarPlus.setCellRenderer(new ListVarRenderer());
-        JScrollPane scrollPanePlus = new JScrollPane(listVarPlus);
-        scrollPanePlus.setMinimumSize(new Dimension(200, 600));
-        this.add(scrollPanePlus, gbc);
+        listVarPlus = new ListVar(new ListModelVar());
+        this.add(new JScrollPane(listVarPlus), gbc);
 
     }
 
@@ -427,6 +242,7 @@ public final class PanelLab extends JPanel {
                         return true;
 
                     String extension = Utilitaire.getExtension(f);
+                    // Solutionner le NPE
                     if (extension.equals(Utilitaire.lab)) {
                         return true;
                     }
@@ -437,16 +253,27 @@ public final class PanelLab extends JPanel {
             final int reponse = jFileChooser.showOpenDialog(PanelLab.this);
             if (reponse == JFileChooser.APPROVE_OPTION) {
                 for (File file : jFileChooser.getSelectedFiles()) {
-                    Lab newLab = new Lab(file.getPath());
                     if (e.getActionCommand().equals(BT_ADD_LAB_REF)) {
-                        ((ListModelLab) listLabRef.getModel()).addLab(newLab);
+                        listLabRef.getModel().addLab(new Lab(file.getPath()));
                     } else {
-                        ((ListModelLab) listLabWk.getModel()).addLab(newLab);
+                        listLabWk.getModel().addLab(new Lab(file.getPath()));
                     }
                 }
-                // btCompar.setEnabled(true);
             }
         }
+    }
+
+    private class BtComparObserver implements Observateur {
+
+        @Override
+        public void update(ArrayList<Lab> listLab, String typeAction) {
+            if (!(listLabRef.getModel().getSize() * listLabWk.getModel().getSize() == 0)) {
+                btCompar.setEnabled(true);
+            } else {
+                btCompar.setEnabled(false);
+            }
+        }
+
     }
 
     private static void setGbc(int fill, int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, Insets insets,
