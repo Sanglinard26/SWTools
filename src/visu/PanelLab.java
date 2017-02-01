@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -22,6 +21,8 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -29,11 +30,10 @@ import javax.swing.filechooser.FileFilter;
 import lab.Lab;
 import lab.ListModelLab;
 import lab.ListModelVar;
-import observer.Observateur;
 import tools.Preference;
 import tools.Utilitaire;
 
-public final class PanelLab extends JPanel {
+public final class PanelLab extends JPanel implements ListDataListener {
 
     private static final long serialVersionUID = 1L;
     // Constante
@@ -101,7 +101,7 @@ public final class PanelLab extends JPanel {
         // Liste des lab r�f
         setGbc(GridBagConstraints.BOTH, 0, 1, 1, 2, 1, 0.3, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
         listLabRef = new ListLab(new ListModelLab());
-        listLabRef.getModel().addObservateur(new BtComparObserver());
+        listLabRef.getModel().addListDataListener(this);
         listLabRef.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -117,7 +117,7 @@ public final class PanelLab extends JPanel {
         // Liste des lab travail
         setGbc(GridBagConstraints.BOTH, 1, 1, 1, 2, 1, 0.3, new Insets(0, 5, 0, 20), GridBagConstraints.CENTER);
         listLabWk = new ListLab(new ListModelLab());
-        listLabWk.getModel().addObservateur(new BtComparObserver());
+        listLabWk.getModel().addListDataListener(this);
         listLabWk.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -170,6 +170,7 @@ public final class PanelLab extends JPanel {
         this.add(filterVarRef, gbc);
 
         filterVarWk = new JTextField(TXT_FILTRAGE, 20);
+        filterVarRef.setEditable(false);
         filterVarWk.setFont(new Font(null, Font.ITALIC, 12));
         filterVarWk.addMouseListener(new MouseAdapter() {
             @Override
@@ -203,21 +204,21 @@ public final class PanelLab extends JPanel {
         // Liste du lab r�f
         setGbc(GridBagConstraints.BOTH, 0, 4, 1, 1, 1, 1, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
         listVarRef = new ListVar(new ListModelVar());
-        listLabRef.getModel().addObservateur(listVarRef.getModel()); // le modèle de la liste des variables observe le modèle de la liste des lab
         this.add(new JScrollPane(listVarRef), gbc);
 
         // Liste du lab de travail
         setGbc(GridBagConstraints.BOTH, 1, 4, 1, 1, 1, 1, new Insets(0, 5, 0, 20), GridBagConstraints.CENTER);
         listVarWk = new ListVar(new ListModelVar());
-        listLabWk.getModel().addObservateur(listVarWk.getModel()); // le modèle de la liste des variables observe le modèle de la liste des lab
         this.add(new JScrollPane(listVarWk), gbc);
 
         setGbc(GridBagConstraints.BOTH, 2, 2, 1, 3, 1, 1, new Insets(0, 20, 0, 0), GridBagConstraints.CENTER);
         listVarMoins = new ListVar(new ListModelVar());
+        listVarMoins.getModel().addListDataListener(this);
         this.add(new JScrollPane(listVarMoins), gbc);
 
         setGbc(GridBagConstraints.BOTH, 3, 2, 1, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         listVarPlus = new ListVar(new ListModelVar());
+        listVarPlus.getModel().addListDataListener(this);
         this.add(new JScrollPane(listVarPlus), gbc);
 
     }
@@ -263,19 +264,6 @@ public final class PanelLab extends JPanel {
         }
     }
 
-    private class BtComparObserver implements Observateur {
-
-        @Override
-        public void update(ArrayList<Lab> listLab, String typeAction) {
-            if (!(listLabRef.getModel().getSize() * listLabWk.getModel().getSize() == 0)) {
-                btCompar.setEnabled(true);
-            } else {
-                btCompar.setEnabled(false);
-            }
-        }
-
-    }
-
     private static void setGbc(int fill, int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, Insets insets,
             int anchor) {
         gbc.fill = fill;
@@ -287,6 +275,55 @@ public final class PanelLab extends JPanel {
         gbc.weighty = weighty;
         gbc.insets = insets;
         gbc.anchor = anchor;
+    }
+
+    @Override
+    public void intervalAdded(ListDataEvent e) {
+        // Non utilisé
+
+    }
+
+    @Override
+    public void intervalRemoved(ListDataEvent e) {
+        // Non utilisé
+
+    }
+
+    @Override
+    public void contentsChanged(ListDataEvent e) {
+
+        // Condition pour autoriser le filtrage de label réf
+        if (listLabRef.getModel().getSize() > 0) {
+            filterVarRef.setEditable(true);
+        } else {
+            listVarRef.getModel().clearList();
+            filterVarRef.setText(TXT_FILTRAGE);
+            filterVarRef.setEditable(false);
+        }
+
+        // Condition pour autoriser le filtrage de label wk
+        if (listLabWk.getModel().getSize() > 0) {
+            filterVarWk.setEditable(true);
+        } else {
+            listVarWk.getModel().clearList();
+            filterVarWk.setText(TXT_FILTRAGE);
+            filterVarWk.setEditable(false);
+        }
+
+        // Condition d'activation du bouton "Comparer"
+        if (listLabRef.getModel().getSize() * listLabWk.getModel().getSize() != 0) {
+            btCompar.setEnabled(true);
+        } else {
+            btCompar.setEnabled(false);
+        }
+
+        // Condition d'activation du bouton "Exporter"
+        if (listVarMoins.getModel().getSize() + listVarPlus.getModel().getSize() != 0) {
+            btExport.setEnabled(true);
+        } else {
+            btExport.setEnabled(false);
+        }
+
     }
 
 }

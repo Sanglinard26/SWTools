@@ -9,10 +9,7 @@ import java.util.List;
 
 import javax.swing.AbstractListModel;
 
-import lab.ListModelLab.Type;
-import observer.Observateur;
-
-public class ListModelVar extends AbstractListModel<Variable> implements Observateur {
+public class ListModelVar extends AbstractListModel<Variable> {
 
     private static final long serialVersionUID = 1L;
     private ArrayList<Variable> listVariable;
@@ -21,12 +18,6 @@ public class ListModelVar extends AbstractListModel<Variable> implements Observa
     public ListModelVar() {
         this.listVariable = new ArrayList<Variable>();
         this.listVariableFiltre = new ArrayList<Variable>();
-    }
-
-    @Override
-    public String toString() {
-        // TODO Auto-generated method stub
-        return "ListModelVar";
     }
 
     @Override
@@ -83,14 +74,6 @@ public class ListModelVar extends AbstractListModel<Variable> implements Observa
 
     public List<Variable> getList() {
         return Collections.unmodifiableList(this.listVariableFiltre);
-    }
-
-    @Override
-    public void update(ArrayList<Lab> listLab, String typeAction) {
-        if (typeAction.equals(Type.DEL.toString()) | typeAction.equals(Type.CLEAR.toString())) {
-            this.clearList();
-        }
-
     }
 
 }
