@@ -39,7 +39,7 @@ public final class PanelLab extends JPanel implements ListDataListener {
     // Constante
     private static final String BT_COMPAR_LAB = "Comparer";
     private static final String BT_EXPORT = "Exporter";
-    private static final String BT_ADD_LAB_REF = "Ajout lab(s) de référence";
+    private static final String BT_ADD_LAB_REF = "Ajout lab(s) de reference";
     private static final String BT_ADD_LAB_WK = "Ajout lab(s) de travail";
     private static final String TXT_FILTRAGE = "Entrer une partie du mot pour filtrer";
 
@@ -81,7 +81,7 @@ public final class PanelLab extends JPanel implements ListDataListener {
                     listVarMoins.getModel().setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
                     listVarPlus.getModel().setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));
                 } else {
-                    JOptionPane.showMessageDialog(null, "Le nombre de fichier à comparer est différent !");
+                    JOptionPane.showMessageDialog(null, "Le nombre de fichier a comparer est different !");
                 }
             }
         });
@@ -135,7 +135,7 @@ public final class PanelLab extends JPanel implements ListDataListener {
         this.add(new JLabel("Label(s) disparu(s)"), gbc);
 
         setGbc(GridBagConstraints.NONE, 3, 1, 1, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
-        this.add(new JLabel("Label(s) suppl�mentaire(s)"), gbc);
+        this.add(new JLabel("Label(s) supplementaire(s)"), gbc);
 
         filterVarRef = new JTextField(TXT_FILTRAGE, 20);
         filterVarRef.setEditable(false);
@@ -203,7 +203,7 @@ public final class PanelLab extends JPanel implements ListDataListener {
         setGbc(GridBagConstraints.HORIZONTAL, 1, 3, 1, 1, 0, 0, new Insets(10, 5, 0, 20), GridBagConstraints.CENTER);
         this.add(filterVarWk, gbc);
 
-        // Liste du lab r�f
+        // Liste du lab ref
         setGbc(GridBagConstraints.BOTH, 0, 4, 1, 1, 1, 1, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
         listVarRef = new ListVar(new ListModelVar());
         this.add(new JScrollPane(listVarRef), gbc);

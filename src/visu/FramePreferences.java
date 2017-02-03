@@ -23,7 +23,7 @@ public final class FramePreferences extends JFrame {
     private static final long serialVersionUID = 1L;
 
     public FramePreferences() {
-        this.setTitle("Préférences utilisateur");
+        this.setTitle("Preferences utilisateur");
         this.setMinimumSize(new Dimension(300, 300));
 
         getContentPane().add(createPanPrefLab());
@@ -67,8 +67,8 @@ public final class FramePreferences extends JFrame {
         return panLab;
     }
 
-    private String getFolder(String title, String defautPah) {
-        JFileChooser fileChooser = new JFileChooser();
+    private String getFolder(String title, String defautPath) {
+        JFileChooser fileChooser = new JFileChooser("C:/");
         fileChooser.setDialogTitle(title);
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileChooser.setMultiSelectionEnabled(false);
@@ -76,7 +76,7 @@ public final class FramePreferences extends JFrame {
         if (reponse == JFileChooser.APPROVE_OPTION) {
             return fileChooser.getSelectedFile().getPath();
         }
-        return defautPah;
+        return defautPath;
     }
 
 }

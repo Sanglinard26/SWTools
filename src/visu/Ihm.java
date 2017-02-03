@@ -32,7 +32,7 @@ public final class Ihm extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         JToolBar toolBar = new JToolBar("Option");
-        toolBar.add(new AbstractAction("Préférences") {
+        toolBar.add(new AbstractAction("Preferences") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -43,6 +43,11 @@ public final class Ihm extends JFrame {
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
         onglets = new JTabbedPane(JTabbedPane.TOP);
+        
+        // Onglet lecteur PaCo
+        JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
+        ongletPaCo.add(new PanelPaCo());
+        onglets.addTab("Lecteur PaCo", ongletPaCo);
 
         // Onglet comparaison de Lab
         JPanel onglet2 = new JPanel(new GridLayout(1, 1));

@@ -23,8 +23,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        // Preference.setPreference(Preference.KEY_ADD_LAB, "C:/User/U354706/DV5RC/06_SW");
-
         Ihm ihm = new Ihm();
         ihm.setVisible(true);
 
