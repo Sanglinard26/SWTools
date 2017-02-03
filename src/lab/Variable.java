@@ -4,11 +4,13 @@ import java.util.HashMap;
 
 public final class Variable {
     private final String nom;
+    private final String nomLab;
     private final String type;
     private static final HashMap<String, String> mapTypeVar = new HashMap<String, String>();
 
-    public Variable(String nom) {
+    public Variable(String nom, String nomLab) {
         this.nom = nom;
+        this.nomLab = nomLab;
         initMapTypeVar();
         this.type = findType();
     }
@@ -22,6 +24,10 @@ public final class Variable {
 
     public String getNom() {
         return this.nom;
+    }
+
+    public String getNomLab() {
+        return nomLab;
     }
 
     public String getType() {

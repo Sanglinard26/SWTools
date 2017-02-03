@@ -37,7 +37,7 @@ public final class Lab {
             buf = new BufferedReader(new FileReader(fileLab));
             while ((line = buf.readLine()) != null) {
                 if (!line.equals("[Label]")) {
-                    var = new Variable(line);
+                    var = new Variable(line, fileLab.getName());
                     listVariable.add(var);
                 }
             }
@@ -93,6 +93,7 @@ public final class Lab {
 
             JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_RESULT_LAB));
             fileChooser.setDialogTitle("Enregistement du rapport");
+            fileChooser.setSelectedFile(new File(".txt"));
             int rep = fileChooser.showSaveDialog(null);
 
             if (rep == JFileChooser.APPROVE_OPTION) {
@@ -109,14 +110,14 @@ public final class Lab {
                 printWriter.println("\n" + "Label(s) disparu(s) (" + labelDisp.size() + ") : ");
 
                 for (Variable label : labelDisp) {
-                    printWriter.println("\t -" + label.getNom());
+                    printWriter.println("\t -" + label.getNom() + " =======> " + "<< " + label.getNomLab() + " >>");
                 }
 
                 printWriter.println("\n----------");
                 printWriter.println("\n" + "Label(s) supplémentaire(s) (" + labelSup.size() + ") : ");
 
                 for (Variable label : labelSup) {
-                    printWriter.println("\t -" + label.getNom());
+                    printWriter.println("\t -" + label.getNom() + " =======> " + "<< " + label.getNomLab() + " >>");
                 }
 
                 printWriter.println("\n" + " -----");

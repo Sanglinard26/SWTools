@@ -10,10 +10,12 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
 
 public final class Ihm extends JFrame {
 
@@ -28,6 +30,17 @@ public final class Ihm extends JFrame {
         // setExtendedState(MAXIMIZED_BOTH);
         setSize(1200, 700);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        JToolBar toolBar = new JToolBar("Option");
+        toolBar.add(new AbstractAction("Préférences") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new FramePreferences();
+
+            }
+        });
+        getContentPane().add(toolBar, BorderLayout.NORTH);
 
         onglets = new JTabbedPane(JTabbedPane.TOP);
 

@@ -74,6 +74,7 @@ public final class PanelLab extends JPanel implements ListDataListener {
             public void actionPerformed(ActionEvent e) {
 
                 if (listLabRef.getModel().getSize() == listLabWk.getModel().getSize()) {
+
                     Lab multiLabRef = Lab.compilLab(listLabRef.getModel().getList());
                     Lab multiLabWk = Lab.compilLab(listLabWk.getModel().getList());
 
@@ -170,12 +171,13 @@ public final class PanelLab extends JPanel implements ListDataListener {
         this.add(filterVarRef, gbc);
 
         filterVarWk = new JTextField(TXT_FILTRAGE, 20);
-        filterVarRef.setEditable(false);
+        filterVarWk.setEditable(false);
         filterVarWk.setFont(new Font(null, Font.ITALIC, 12));
         filterVarWk.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                ((JTextField) e.getSource()).setText("");
+                if (((JTextField) e.getSource()).isEditable())
+                    ((JTextField) e.getSource()).setText("");
             }
         });
         filterVarWk.setBorder(new LineBorder(Color.BLACK, 1, false));
@@ -279,51 +281,99 @@ public final class PanelLab extends JPanel implements ListDataListener {
 
     @Override
     public void intervalAdded(ListDataEvent e) {
-        // Non utilisé
-
+        traitementEven(e);
     }
 
     @Override
     public void intervalRemoved(ListDataEvent e) {
-        // Non utilisé
-
+        traitementEven(e);
     }
 
     @Override
     public void contentsChanged(ListDataEvent e) {
+        traitementEven(e);
+    }
 
-        // Condition pour autoriser le filtrage de label réf
-        if (listLabRef.getModel().getSize() > 0) {
+    private void traitementEven(ListDataEvent event) {
+        switch (event.getType()) {
+        case ListDataEvent.INTERVAL_ADDED:
+            // Condition pour autoriser le filtrage de label réf
             filterVarRef.setEditable(true);
-        } else {
+
+            // Condition pour autoriser le filtrage de label wk
+            filterVarWk.setEditable(true);
+
+            // Condition d'activation du bouton "Comparer"
+            if (listLabRef.getModel().getSize() * listLabWk.getModel().getSize() != 0) {
+                btCompar.setEnabled(true);
+            }
+
+            // Condition d'activation du bouton "Exporter"
+            if (listVarMoins.getModel().getSize() + listVarPlus.getModel().getSize() != 0) {
+                btExport.setEnabled(true);
+            }
+
+            break;
+        case ListDataEvent.INTERVAL_REMOVED:
+            // Condition pour autoriser le filtrage de label réf
+
             listVarRef.getModel().clearList();
             filterVarRef.setText(TXT_FILTRAGE);
-            filterVarRef.setEditable(false);
-        }
 
-        // Condition pour autoriser le filtrage de label wk
-        if (listLabWk.getModel().getSize() > 0) {
-            filterVarWk.setEditable(true);
-        } else {
+            // Condition pour autoriser le filtrage de label wk
             listVarWk.getModel().clearList();
             filterVarWk.setText(TXT_FILTRAGE);
-            filterVarWk.setEditable(false);
-        }
 
-        // Condition d'activation du bouton "Comparer"
-        if (listLabRef.getModel().getSize() * listLabWk.getModel().getSize() != 0) {
-            btCompar.setEnabled(true);
-        } else {
-            btCompar.setEnabled(false);
-        }
+            // Condition d'activation du bouton "Comparer"
+            if (listLabRef.getModel().getSize() * listLabWk.getModel().getSize() != 0) {
+                btCompar.setEnabled(true);
+            } else {
+                btCompar.setEnabled(false);
+            }
 
-        // Condition d'activation du bouton "Exporter"
-        if (listVarMoins.getModel().getSize() + listVarPlus.getModel().getSize() != 0) {
-            btExport.setEnabled(true);
-        } else {
-            btExport.setEnabled(false);
-        }
+            // Condition d'activation du bouton "Exporter"
+            if (listVarMoins.getModel().getSize() + listVarPlus.getModel().getSize() != 0) {
+                btExport.setEnabled(true);
+            } else {
+                btExport.setEnabled(false);
+            }
 
+            break;
+        case ListDataEvent.CONTENTS_CHANGED:
+            // Condition pour autoriser le filtrage de label réf
+            if (listLabRef.getModel().getSize() > 0) {
+                filterVarRef.setEditable(true);
+            } else {
+                listVarRef.getModel().clearList();
+                filterVarRef.setText(TXT_FILTRAGE);
+                filterVarRef.setEditable(false);
+            }
+
+            // Condition pour autoriser le filtrage de label wk
+            if (listLabWk.getModel().getSize() > 0) {
+                filterVarWk.setEditable(true);
+            } else {
+                listVarWk.getModel().clearList();
+                filterVarWk.setText(TXT_FILTRAGE);
+                filterVarWk.setEditable(false);
+            }
+
+            // Condition d'activation du bouton "Comparer"
+            if (listLabRef.getModel().getSize() * listLabWk.getModel().getSize() != 0) {
+                btCompar.setEnabled(true);
+            } else {
+                btCompar.setEnabled(false);
+            }
+
+            // Condition d'activation du bouton "Exporter"
+            if (listVarMoins.getModel().getSize() + listVarPlus.getModel().getSize() != 0) {
+                btExport.setEnabled(true);
+            } else {
+                btExport.setEnabled(false);
+            }
+
+            break;
+        }
     }
 
 }
