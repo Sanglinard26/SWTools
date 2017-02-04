@@ -23,10 +23,10 @@ public class PaCo {
 	Document document = null;
 	DocumentBuilderFactory factory = null;
 	
-	public String[] listLabel=null;
-	public Label[] variable=null;
-	public ArrayList<Scalaire> scalaires = new ArrayList<>();
-	public ArrayList<Curve> curves = new ArrayList<>();
+	
+	private String name = "";
+	private int nbLabel = 0;
+	private ArrayList<Label> listLabel=new ArrayList<Label>();
 	
 	public PaCo(String path) {
 		
@@ -49,18 +49,17 @@ public class PaCo {
 			NodeList enfantRacine = racine.getChildNodes();
 			Node enfant;
 			
-			System.out.println("Nom du PaCo : " + enfantRacine.item(0).getTextContent() + "\n");
+			this.name = enfantRacine.item(0).getTextContent();
+			
+			System.out.println("Nom du PaCo : " + this.name + "\n");
 			
 			NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
 			Node shortName, category, swFeatureRef;
 			NodeList swCsEntry,swAxisCont;
-			int nbLabel = listSwInstance.getLength();
+			nbLabel = listSwInstance.getLength();
 			Element label;
 			
 			System.out.println("Nombre de label(s) : " + nbLabel + "\n");
-			
-			listLabel = new String[nbLabel];
-			variable = new Label[nbLabel];
 			
 			for (int i=0; i<nbLabel; i++)
 			{
@@ -77,8 +76,6 @@ public class PaCo {
 //						swFeatureRef.getTextContent(), 
 //						ReadEntryTab(swCsEntry));
 				
-				listLabel[i]=shortName.getTextContent();
-				
 				System.out.println("*****");
 				
 				System.out.println(shortName.getTextContent() + " / "
@@ -90,11 +87,11 @@ public class PaCo {
 				switch (category.getTextContent()) {
 				case PaCo._C:
 					
-					variable[i] = new Scalaire(
+					listLabel.add(new Scalaire(
 							shortName.getTextContent(), 
 							category.getTextContent(), 
 							swFeatureRef.getTextContent(), 
-							ReadEntryTab(swCsEntry));
+							ReadEntryTab(swCsEntry)));
 					
 //					scalaires.add(new Scalaire(
 //							shortName.getTextContent(), 
@@ -104,11 +101,11 @@ public class PaCo {
 					break;
 				case PaCo._T:
 					
-					variable[i] = new Curve(
+					listLabel.add(new Curve(
 							shortName.getTextContent(), 
 							category.getTextContent(), 
 							swFeatureRef.getTextContent(), 
-							ReadEntryTab(swCsEntry));
+							ReadEntryTab(swCsEntry)));
 					
 //					curves.add(new Curve(
 //							shortName.getTextContent(), 
@@ -118,11 +115,11 @@ public class PaCo {
 					break;
 				case PaCo._T_GROUPED:
 					
-					variable[i] = new Curve(
+					listLabel.add(new Curve(
 							shortName.getTextContent(), 
 							category.getTextContent(), 
 							swFeatureRef.getTextContent(), 
-							ReadEntryTab(swCsEntry));
+							ReadEntryTab(swCsEntry)));
 					
 //					curves.add(new Curve(
 //							shortName.getTextContent(), 
@@ -132,11 +129,11 @@ public class PaCo {
 					break;
 				case PaCo._M:
 					
-					variable[i] = new Map(
+					listLabel.add(new Map(
 							shortName.getTextContent(), 
 							category.getTextContent(), 
 							swFeatureRef.getTextContent(), 
-							ReadEntryTab(swCsEntry));
+							ReadEntryTab(swCsEntry)));
 					
 					//ReadMap(swAxisCont);
 					break;
@@ -146,6 +143,21 @@ public class PaCo {
 			}
 		}
 
+	}
+	
+	public String getName()
+	{
+		return this.name;
+	}
+	
+	public int getNbLabel()
+	{
+		return this.nbLabel;
+	}
+	
+	public ArrayList<Label> getListLabel()
+	{
+		return this.listLabel;
 	}
 	
 	private HashMap<StringBuffer, StringBuffer> ReadEntry(NodeList swCsEntry)

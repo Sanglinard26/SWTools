@@ -7,6 +7,7 @@ import javax.swing.JList;
 
 import lab.ListModelVar;
 import lab.Variable;
+import paco.ListModelLabel;
 
 public class ListVar extends JList<Variable> {
 
