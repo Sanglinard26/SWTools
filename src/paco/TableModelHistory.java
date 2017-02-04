@@ -6,7 +6,7 @@ public class TableModelHistory extends AbstractTableModel{
 
 	private static final long serialVersionUID = 1L;
 	
-	public static final String[] ENTETE = new String[]{"Date","Auteur","Maturite","Commentaire"};
+	public static final String[] ENTETE = new String[]{"DATE","AUTEUR","SCORE","COMMENTAIRES"};
 	private String[][] history = new String[0][0];
 	
 	@Override

@@ -177,9 +177,10 @@ public final class PanelPaCo extends JPanel {
 		add(new JScrollPane(listLabel), gbc);
 		
         JPanel panVisu = new JPanel();
-        panVisu.setBackground(Color.LIGHT_GRAY);
+        panVisu.setBackground(Color.WHITE);
 
         tableHistory = new TableHistory(new TableModelHistory());
+        tableHistory.setFillsViewportHeight(false);
         
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 1;

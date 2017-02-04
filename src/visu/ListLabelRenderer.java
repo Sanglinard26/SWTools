@@ -45,7 +45,13 @@ public final class ListLabelRenderer extends JLabel implements ListCellRenderer<
 		case PaCo._T :
 			setIcon(new ImageIcon(getClass().getResource(CURVE)));
 			break;
+		case PaCo._T_GROUPED :
+			setIcon(new ImageIcon(getClass().getResource(CURVE)));
+			break;
 		case PaCo._M :
+			setIcon(new ImageIcon(getClass().getResource(MAP)));
+			break;
+		case PaCo._M_GROUPED :
 			setIcon(new ImageIcon(getClass().getResource(MAP)));
 			break;
 		default :
