@@ -7,4 +7,10 @@ public class Map extends Label {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public void showView() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

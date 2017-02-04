@@ -18,34 +18,19 @@ public abstract class Label {
 		return shortName;
 	}
 
-	public void setShortName(String shortName) {
-		this.shortName = shortName;
-	}
-
 	public String getCategory() {
 		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
 	}
 
 	public String getSwFeatureRef() {
 		return swFeatureRef;
 	}
 
-	public void setSwFeatureRef(String swFeatureRef) {
-		this.swFeatureRef = swFeatureRef;
-	}
-
 	public String[][] getSwCsHistory() {
 		return swCsHistory;
 	}
 
-	public void setSwCsHistory(String[][] swCsHistory) {
-		this.swCsHistory = swCsHistory;
-	}
-	
+	public abstract void showView();
 	
 
 }

@@ -15,9 +15,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -26,6 +29,8 @@ import javax.swing.table.DefaultTableModel;
 import lab.ListModelVar;
 import paco.ListModelLabel;
 import paco.PaCo;
+import paco.TableModelHistory;
+import tools.Preference;
 import tools.Utilitaire;
 
 public final class PanelPaCo extends JPanel {
@@ -38,7 +43,7 @@ public final class PanelPaCo extends JPanel {
 	private final JLabel labelNbLabel;
 	private final JTextField txtFiltre;
 	private final ListLabel listLabel;
-	private final JTable tableHistory;
+	private final TableHistory tableHistory;
 	
 	// PaCo
 	private PaCo paco;
@@ -60,7 +65,7 @@ public final class PanelPaCo extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				final JFileChooser jFileChooser = new JFileChooser();
+				final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
 				jFileChooser.setFileFilter(new FileFilter() {
 					
 					@Override
@@ -89,6 +94,7 @@ public final class PanelPaCo extends JPanel {
 					labelNomPaCo.setText("Nom : " + paco.getName());
 					labelNbLabel.setText("Nombre de label : " + paco.getNbLabel());
 					listLabel.getModel().setList(paco.getListLabel());
+					tableHistory.getModel().setData(new String[0][0]);
 				}
 			}
 		});
@@ -128,6 +134,24 @@ public final class PanelPaCo extends JPanel {
         gbc.insets = new Insets(0, 5, 0, 10);
         gbc.anchor = GridBagConstraints.CENTER;
         txtFiltre = new JTextField(20);
+        txtFiltre.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				listLabel.getModel().setFilter(txtFiltre.getText().toLowerCase());
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				listLabel.getModel().setFilter(txtFiltre.getText().toLowerCase());
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// Non utilise
+				
+			}
+		});
         add(txtFiltre, gbc);
 		
 		gbc.fill = GridBagConstraints.BOTH;
@@ -135,7 +159,7 @@ public final class PanelPaCo extends JPanel {
         gbc.gridy = 3;
         gbc.gridwidth = 1;
         gbc.gridheight = 3;
-        gbc.weightx = 0;
+        gbc.weightx = 0.2;
         gbc.weighty = 1;
         gbc.insets = new Insets(0, 5, 0, 10);
         gbc.anchor = GridBagConstraints.CENTER;
@@ -146,38 +170,33 @@ public final class PanelPaCo extends JPanel {
 			public void valueChanged(ListSelectionEvent e) {
 				if(!e.getValueIsAdjusting())
 				{
-					tableHistory.setModel(new DefaultTableModel(listLabel.getSelectedValue().getSwCsHistory(), new String[]{"Date","Auteur","Maturite","Commentaire"}));
+					tableHistory.getModel().setData(listLabel.getSelectedValue().getSwCsHistory());
 				}
-				
 			}
 		});
 		add(new JScrollPane(listLabel), gbc);
 		
-		gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 3;
-        gbc.weightx = 0;
-        gbc.weighty = 0.7;
-        gbc.insets = new Insets(0, 0, 0, 0);
-        gbc.anchor = GridBagConstraints.CENTER;
-        JPanel panVisu = new JPanel(new BorderLayout());
+        JPanel panVisu = new JPanel();
         panVisu.setBackground(Color.LIGHT_GRAY);
-        add(new JScrollPane(panVisu), gbc);
+
+        tableHistory = new TableHistory(new TableModelHistory());
         
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 1;
-        gbc.gridy = 5;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0.3;
+        gbc.gridy = 2;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.gridheight = 4;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
-        tableHistory = new JTable();
-        tableHistory.setPreferredScrollableViewportSize(new Dimension(100, 50));
-        add(new JScrollPane(tableHistory), gbc);
+        JSplitPane splitPane = new JSplitPane(
+        		JSplitPane.VERTICAL_SPLIT, 
+        		new JScrollPane(panVisu), 
+        		new JScrollPane(tableHistory));
+        splitPane.setOneTouchExpandable(true);
+        splitPane.setDividerLocation(400);
+        add(splitPane, gbc);
 	}
 
 }

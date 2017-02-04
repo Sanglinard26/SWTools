@@ -37,10 +37,11 @@ public class ListModelLabel extends AbstractListModel<Label> {
     public void setFilter(String filter) {
         listLabelFiltre.clear();
         for (Label label : listLabel) {
-            if (label.toString().toLowerCase().indexOf(filter) > -1) {
+            if (label.getShortName().toLowerCase().indexOf(filter) > -1) {
                 listLabelFiltre.add(label);
             }
         }
+        this.fireContentsChanged(this, 0, getSize());
     }
 
     public void clearList() {

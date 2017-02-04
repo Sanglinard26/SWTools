@@ -49,7 +49,7 @@ public class ListModelVar extends AbstractListModel<Variable> {
                 listVariableFiltre.add(var);
             }
         }
-        // this.fireContentsChanged(this, 0, getSize());
+        this.fireContentsChanged(this, 0, getSize());
     }
 
     public void removeVar(int index) {

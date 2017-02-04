@@ -20,14 +20,12 @@ public class ListModelLab extends AbstractListModel<Lab> {
     public void addLab(Lab lab) {
         if (!(listLab.contains(lab))) {
             listLab.add(lab);
-            // this.fireContentsChanged(this, 0, getSize());
             this.fireIntervalAdded(this, getSize() - 1, getSize() - 1);
         }
     }
 
     public void removeLab(int index) {
         if (listLab.remove(index) != null) {
-            // this.fireContentsChanged(this, 0, getSize());
             this.fireIntervalRemoved(this, index, index);
         }
     }
