@@ -47,11 +47,10 @@ public class PaCo {
 			Element racine = document.getDocumentElement();
 
 			NodeList enfantRacine = racine.getChildNodes();
-			Node enfant;
 
 			this.name = enfantRacine.item(0).getTextContent();
 
-			System.out.println("Nom du PaCo : " + this.name + "\n");
+			//			System.out.println("Nom du PaCo : " + this.name + "\n");
 
 			NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
 			Node shortName, category, swFeatureRef;
@@ -59,7 +58,7 @@ public class PaCo {
 			nbLabel = listSwInstance.getLength();
 			Element label;
 
-			System.out.println("Nombre de label(s) : " + nbLabel + "\n");
+			//			System.out.println("Nombre de label(s) : " + nbLabel + "\n");
 
 			for (int i=0; i<nbLabel; i++)
 			{
@@ -70,13 +69,13 @@ public class PaCo {
 				swAxisCont = label.getElementsByTagName("SW-AXIS-CONT");
 				swCsEntry = label.getElementsByTagName("SW-CS-ENTRY");
 
-				System.out.println("*****");
-
-				System.out.println(shortName.getTextContent() + " / "
-						+ category.getTextContent() + " / "
-						+ swFeatureRef.getTextContent() + "\n"
-						+ "Nombre d'axe : " + swAxisCont.getLength() + "\n"
-						+ "Nombre de commentaire : " + swCsEntry.getLength());
+				//				System.out.println("*****");
+				//
+				//				System.out.println(shortName.getTextContent() + " / "
+				//						+ category.getTextContent() + " / "
+				//						+ swFeatureRef.getTextContent() + "\n"
+				//						+ "Nombre d'axe : " + swAxisCont.getLength() + "\n"
+				//						+ "Nombre de commentaire : " + swCsEntry.getLength());
 
 				switch (category.getTextContent()) {
 				case PaCo._C:
@@ -85,7 +84,8 @@ public class PaCo {
 							shortName.getTextContent(), 
 							category.getTextContent(), 
 							swFeatureRef.getTextContent(), 
-							ReadEntry(swCsEntry)));
+							ReadEntry(swCsEntry),
+							ReadValue(swAxisCont)));
 					break;
 				case PaCo._T:
 
@@ -166,11 +166,12 @@ public class PaCo {
 
 	private Object ReadValue(NodeList swAxisCont)
 	{
-		Element eAxisCont = (Element) swAxisCont.item(0);
-		Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
-		Node value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName()).item(0);
-		System.out.print(value.getTextContent());
-		System.out.println("");
+//		Element eAxisCont = (Element) swAxisCont.item(0);
+//		Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+//		Node value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName()).item(0);
+		Node value = swAxisCont.item(0).getLastChild();
+		//		System.out.print(value.getTextContent());
+		//		System.out.println("");
 		return value.getTextContent();
 	}
 
@@ -193,17 +194,17 @@ public class PaCo {
 				for (int b=0; b<value.getLength(); b++)
 				{
 					val[0][b]=value.item(b).getTextContent();
-					System.out.print(value.item(b).getTextContent() + "|");
+					//					System.out.print(value.item(b).getTextContent() + "|");
 				}
-				System.out.println("");
+				//				System.out.println("");
 				break;
 			case "0":
 				for (int a=0; a<value.getLength(); a++)
 				{
 					val[1][a]=value.item(a).getTextContent();
-					System.out.print(value.item(a).getTextContent() + "|");
+					//					System.out.print(value.item(a).getTextContent() + "|");
 				}
-				System.out.println("");
+				//				System.out.println("");
 				break;
 			}
 		}

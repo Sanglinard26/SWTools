@@ -43,6 +43,7 @@ public final class PanelPaCo extends JPanel {
 	private final JLabel labelNbLabel;
 	private final JTextField txtFiltre;
 	private final ListLabel listLabel;
+	private JPanel panVisu;
 	private final TableHistory tableHistory;
 	
 	// PaCo
@@ -94,6 +95,7 @@ public final class PanelPaCo extends JPanel {
 					labelNomPaCo.setText("Nom : " + paco.getName());
 					labelNbLabel.setText("Nombre de label : " + paco.getNbLabel());
 					listLabel.getModel().setList(paco.getListLabel());
+					listLabel.clearSelection();
 					tableHistory.getModel().setData(new String[0][0]);
 				}
 			}
@@ -168,15 +170,20 @@ public final class PanelPaCo extends JPanel {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				if(!e.getValueIsAdjusting())
+				if(!e.getValueIsAdjusting() & !listLabel.isSelectionEmpty())
 				{
 					tableHistory.getModel().setData(listLabel.getSelectedValue().getSwCsHistory());
+					panVisu.removeAll();
+					panVisu.repaint();
+					panVisu.add(listLabel.getSelectedValue().showView());
+					panVisu.validate();
 				}
 			}
 		});
 		add(new JScrollPane(listLabel), gbc);
 		
-        JPanel panVisu = new JPanel();
+        panVisu = new JPanel();
+        //panVisu.add(new JLabel(String.valueOf(Math.random())));
         panVisu.setBackground(Color.WHITE);
 
         tableHistory = new TableHistory(new TableModelHistory());

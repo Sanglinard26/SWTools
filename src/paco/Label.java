@@ -1,5 +1,7 @@
 package paco;
 
+import java.awt.Component;
+
 public abstract class Label {
 	
 	private String shortName;
@@ -30,7 +32,7 @@ public abstract class Label {
 		return swCsHistory;
 	}
 
-	public abstract void showView();
+	public abstract Component showView();
 	
 
 }

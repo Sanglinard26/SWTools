@@ -21,7 +21,7 @@ import javax.swing.text.TableView.TableCell;
 import paco.TableModelHistory;
 
 public final class TableHistory extends JTable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	public TableHistory(TableModelHistory model) {
@@ -29,23 +29,30 @@ public final class TableHistory extends JTable {
 		this.setDefaultRenderer(Object.class, new TableHistoryRenderer());
 		this.setRowSelectionAllowed(false);
 		this.setRowHeight(30);;
-		
-		this.getColumnModel().getColumn(0).setMaxWidth(200);
-		this.getColumnModel().getColumn(1).setMaxWidth(150);
-		this.getColumnModel().getColumn(2).setMaxWidth(200);
-		this.getColumnModel().getColumn(3).setMaxWidth(900);
-		
-		this.getColumnModel().getColumn(0).setHeaderRenderer(new ColumnRender());
-		this.getColumnModel().getColumn(1).setHeaderRenderer(new ColumnRender());
-		this.getColumnModel().getColumn(2).setHeaderRenderer(new ColumnRender());
-		this.getColumnModel().getColumn(3).setHeaderRenderer(new ColumnRender());
+
+		for(int i = 0; i<this.getColumnModel().getColumnCount();i++)
+		{
+			this.getColumnModel().getColumn(i).setHeaderRenderer(new ColumnRender());
+			switch (i) {
+			case 1:
+				this.getColumnModel().getColumn(i).setMaxWidth(150);
+				break;
+			case 3:
+				this.getColumnModel().getColumn(i).setMaxWidth(900);
+				break;
+
+			default:
+				this.getColumnModel().getColumn(i).setMaxWidth(200);
+				break;
+			}
+		}
 	}
-	
+
 	@Override
 	public TableModelHistory getModel() {
 		return (TableModelHistory) super.getModel();
 	}
-	
+
 	private class ColumnRender extends JLabel implements TableCellRenderer
 	{
 		public ColumnRender() {
@@ -60,12 +67,12 @@ public final class TableHistory extends JTable {
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
-			
+
 			setText(value.toString());
-			
+
 			return this;
 		}
-		
+
 	}
 
 }

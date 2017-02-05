@@ -1,5 +1,9 @@
 package paco;
 
+import java.awt.Component;
+
+import javax.swing.JLabel;
+
 public class Map extends Label {
 
 	public Map(String shortName, String category, String swFeatureRef, String[][] swCsHistory) {
@@ -8,9 +12,9 @@ public class Map extends Label {
 	}
 
 	@Override
-	public void showView() {
+	public Component showView() {
 		// TODO Auto-generated method stub
-		
+		return new JLabel("Non implémenté");
 	}
 
 }

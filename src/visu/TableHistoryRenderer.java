@@ -21,7 +21,6 @@ public class TableHistoryRenderer implements TableCellRenderer {
 	private final JLabel label = new JLabel();
 	private final JProgressBar progressBar = new JProgressBar(0, 100);
 	private final JTextPane textPane = new JTextPane();
-	//private JScrollPane scrollPane = new JScrollPane(textPane);
 
 	private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>();
 
