@@ -1,8 +1,10 @@
 package visu;
 
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -201,7 +203,7 @@ public final class PanelPaCo extends JPanel {
         });
         add(new JScrollPane(listLabel), gbc);
 
-        panVisu = new JPanel();
+        panVisu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         // panVisu.add(new JLabel(String.valueOf(Math.random())));
         panVisu.setBackground(Color.WHITE);
 
