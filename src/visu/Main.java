@@ -7,6 +7,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+        // "http://annuaire-entreprise.inetpsa.com/?action=exec_recherche_personne&identifiant="
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException e) {
