@@ -78,13 +78,13 @@ public class PaCo {
                     break;
                 case PaCo._T:
 
-                    listLabel.add(
-                            new Curve(shortName.getTextContent(), category.getTextContent(), swFeatureRef.getTextContent(), ReadEntry(swCsEntry)));
+                    listLabel.add(new Curve(shortName.getTextContent(), category.getTextContent(), swFeatureRef.getTextContent(),
+                            ReadEntry(swCsEntry), ReadCurve(swAxisCont)));
                     break;
                 case PaCo._T_GROUPED:
 
-                    listLabel.add(
-                            new Curve(shortName.getTextContent(), category.getTextContent(), swFeatureRef.getTextContent(), ReadEntry(swCsEntry)));
+                    listLabel.add(new Curve(shortName.getTextContent(), category.getTextContent(), swFeatureRef.getTextContent(),
+                            ReadEntry(swCsEntry), ReadCurve(swAxisCont)));
                     break;
                 case PaCo._M:
 
