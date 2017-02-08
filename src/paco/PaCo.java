@@ -16,6 +16,7 @@ public class PaCo {
     public static final String _T = "CURVE_INDIVIDUAL";
     public static final String _M = "MAP_INDIVIDUAL";
     public static final String _A = "AXIS_VALUES";
+    public static final String _T_CA = "VALUE_BLOCK";
     public static final String _T_GROUPED = "CURVE_GROUPED";
     public static final String _M_GROUPED = "MAP_GROUPED";
 
@@ -47,7 +48,7 @@ public class PaCo {
             // System.out.println("Nom du PaCo : " + this.name + "\n");
 
             NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
-            Node shortName, category, swFeatureRef;
+            String shortName, category, swFeatureRef;
             NodeList swCsEntry, swAxisCont;
             nbLabel = listSwInstance.getLength();
             Element label;
@@ -56,45 +57,41 @@ public class PaCo {
 
             for (int i = 0; i < nbLabel; i++) {
                 label = (Element) listSwInstance.item(i);
-                shortName = label.getElementsByTagName("SHORT-NAME").item(0);
-                category = label.getElementsByTagName("CATEGORY").item(0);
-                swFeatureRef = label.getElementsByTagName("SW-FEATURE-REF").item(0);
+                shortName = label.getElementsByTagName("SHORT-NAME").item(0).getTextContent();
+                category = label.getElementsByTagName("CATEGORY").item(0).getTextContent();
+                if (label.getElementsByTagName("SW-FEATURE-REF").item(0) != null) {
+                    swFeatureRef = label.getElementsByTagName("SW-FEATURE-REF").item(0).getTextContent();
+                } else {
+                    swFeatureRef = "Pas de fonction definie";
+                }
+
                 swAxisCont = label.getElementsByTagName("SW-AXIS-CONT");
                 swCsEntry = label.getElementsByTagName("SW-CS-ENTRY");
 
-                // System.out.println("*****");
-                //
-                // System.out.println(shortName.getTextContent() + " / "
-                // + category.getTextContent() + " / "
-                // + swFeatureRef.getTextContent() + "\n"
-                // + "Nombre d'axe : " + swAxisCont.getLength() + "\n"
-                // + "Nombre de commentaire : " + swCsEntry.getLength());
+                // NPE sur swFeatureRef car non présent pour les axes "_A"
 
-                switch (category.getTextContent()) {
+                switch (category) {
                 case PaCo._C:
-
-                    listLabel.add(new Scalaire(shortName.getTextContent(), category.getTextContent(), swFeatureRef.getTextContent(),
-                            ReadEntry(swCsEntry), ReadValue(swAxisCont)));
+                    listLabel.add(new Scalaire(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadValue(swAxisCont)));
                     break;
                 case PaCo._T:
-
-                    listLabel.add(new Curve(shortName.getTextContent(), category.getTextContent(), swFeatureRef.getTextContent(),
-                            ReadEntry(swCsEntry), ReadCurve(swAxisCont)));
+                    listLabel.add(new Curve(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadCurve(swAxisCont)));
+                    break;
+                case PaCo._A:
+                    // Non implemente
                     break;
                 case PaCo._T_GROUPED:
-
-                    listLabel.add(new Curve(shortName.getTextContent(), category.getTextContent(), swFeatureRef.getTextContent(),
-                            ReadEntry(swCsEntry), ReadCurve(swAxisCont)));
+                    listLabel.add(new Curve(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadCurve(swAxisCont)));
+                    break;
+                case PaCo._T_CA:
+                    System.out.println(shortName);
+                    // Non implemente
                     break;
                 case PaCo._M:
-
-                    listLabel
-                            .add(new Map(shortName.getTextContent(), category.getTextContent(), swFeatureRef.getTextContent(), ReadEntry(swCsEntry)));
+                    listLabel.add(new Map(shortName, category, swFeatureRef, ReadEntry(swCsEntry)));
                     break;
                 case PaCo._M_GROUPED:
-
-                    listLabel
-                            .add(new Map(shortName.getTextContent(), category.getTextContent(), swFeatureRef.getTextContent(), ReadEntry(swCsEntry)));
+                    listLabel.add(new Map(shortName, category, swFeatureRef, ReadEntry(swCsEntry)));
                     break;
                 }
             }

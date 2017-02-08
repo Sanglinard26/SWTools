@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -195,8 +194,8 @@ public final class PanelPaCo extends JPanel {
                 if (!e.getValueIsAdjusting() & !listLabel.isSelectionEmpty()) {
                     tableHistory.getModel().setData(listLabel.getSelectedValue().getSwCsHistory());
                     panVisu.removeAll();
-                    panVisu.repaint();
                     panVisu.add(listLabel.getSelectedValue().showView());
+                    panVisu.repaint();
                     panVisu.validate();
                 }
             }
