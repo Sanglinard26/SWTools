@@ -2,6 +2,7 @@ package paco;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
@@ -42,6 +43,7 @@ public class Curve extends Label {
             valueViewX[i] = new JLabel(getValue(0, i));
             panel.add(valueViewX[i]);
             panel.setBackground(Color.WHITE);
+            valueViewX[i].setFont(new Font(null, Font.BOLD, valueViewX[i].getFont().getSize()));
             valueViewX[i].setOpaque(true);
             valueViewX[i].setBackground(Color.LIGHT_GRAY);
             valueViewX[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

@@ -1,7 +1,10 @@
 package paco;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
+import javax.swing.JPanel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -10,7 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class PaCo {
+public class PaCo extends Observable {
 
     public static final String _C = "VALUE";
     public static final String _T = "CURVE_INDIVIDUAL";
@@ -27,7 +30,9 @@ public class PaCo {
     private int nbLabel = 0;
     private ArrayList<Label> listLabel = new ArrayList<Label>();
 
-    public PaCo(String path) {
+    public PaCo(String path, JPanel panelPaco) {
+
+        addObserver((Observer) panelPaco);
 
         try {
             factory = DocumentBuilderFactory.newInstance();
@@ -39,13 +44,12 @@ public class PaCo {
         }
 
         if (document != null) {
+
             Element racine = document.getDocumentElement();
 
             NodeList enfantRacine = racine.getChildNodes();
 
             this.name = enfantRacine.item(0).getTextContent();
-
-            // System.out.println("Nom du PaCo : " + this.name + "\n");
 
             NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
             String shortName, category, swFeatureRef;
@@ -53,12 +57,11 @@ public class PaCo {
             nbLabel = listSwInstance.getLength();
             Element label;
 
-            // System.out.println("Nombre de label(s) : " + nbLabel + "\n");
-
             for (int i = 0; i < nbLabel; i++) {
                 label = (Element) listSwInstance.item(i);
                 shortName = label.getElementsByTagName("SHORT-NAME").item(0).getTextContent();
                 category = label.getElementsByTagName("CATEGORY").item(0).getTextContent();
+
                 if (label.getElementsByTagName("SW-FEATURE-REF").item(0) != null) {
                     swFeatureRef = label.getElementsByTagName("SW-FEATURE-REF").item(0).getTextContent();
                 } else {
@@ -84,7 +87,6 @@ public class PaCo {
                     listLabel.add(new Curve(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadCurve(swAxisCont)));
                     break;
                 case PaCo._T_CA:
-                    System.out.println(shortName);
                     // Non implemente
                     break;
                 case PaCo._M:
@@ -94,6 +96,9 @@ public class PaCo {
                     listLabel.add(new Map(shortName, category, swFeatureRef, ReadEntry(swCsEntry)));
                     break;
                 }
+
+                this.setChanged();
+                this.notifyObservers(i + 1);
             }
         }
 
@@ -134,16 +139,11 @@ public class PaCo {
     }
 
     private Object ReadValue(NodeList swAxisCont) {
-        // Element eAxisCont = (Element) swAxisCont.item(0);
-        // Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
-        // Node value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName()).item(0);
-        Node value = swAxisCont.item(0).getLastChild();
-        // System.out.print(value.getTextContent());
-        // System.out.println("");
-        return value.getTextContent();
+        return swAxisCont.item(0).getLastChild().getTextContent();
     }
 
     private Object[][] ReadCurve(NodeList swAxisCont) {
+
         Object val[][] = null;
 
         for (int n = 0; n < swAxisCont.getLength(); n++) {
@@ -160,16 +160,12 @@ public class PaCo {
 
                 for (int b = 0; b < value.getLength(); b++) {
                     val[0][b] = value.item(b).getTextContent();
-                    // System.out.print(value.item(b).getTextContent() + "|");
                 }
-                // System.out.println("");
                 break;
             case "0":
                 for (int a = 0; a < value.getLength(); a++) {
                     val[1][a] = value.item(a).getTextContent();
-                    // System.out.print(value.item(a).getTextContent() + "|");
                 }
-                // System.out.println("");
                 break;
             }
         }
