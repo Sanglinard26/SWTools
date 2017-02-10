@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,12 +22,15 @@ public final class Ihm extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String APP_ICON = "/eeprom.png";
     private static final String ICON = "/Icon_tools.png";
 
     private JTabbedPane onglets;
 
     public Ihm() {
+
         setTitle("SW Tools");
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(APP_ICON)));
         // setExtendedState(MAXIMIZED_BOTH);
         setSize(1200, 700);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -43,7 +47,7 @@ public final class Ihm extends JFrame {
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
         onglets = new JTabbedPane(JTabbedPane.TOP);
-        
+
         // Onglet lecteur PaCo
         JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
         ongletPaCo.add(new PanelPaCo());
