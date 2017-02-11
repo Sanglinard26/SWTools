@@ -4,19 +4,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import javax.swing.text.TableView.TableCell;
 
 import paco.TableModelHistory;
 
@@ -55,6 +47,8 @@ public final class TableHistory extends JTable {
 
 	private class ColumnRender extends JLabel implements TableCellRenderer
 	{
+		private static final long serialVersionUID = 1L;
+
 		public ColumnRender() {
 			this.setHorizontalAlignment(SwingConstants.CENTER);
 			this.setPreferredSize(new Dimension(0, 30));

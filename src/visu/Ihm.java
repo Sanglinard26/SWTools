@@ -38,12 +38,23 @@ public final class Ihm extends JFrame {
         JToolBar toolBar = new JToolBar("Option");
         toolBar.add(new AbstractAction("Preferences") {
 
-            @Override
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void actionPerformed(ActionEvent e) {
                 new FramePreferences();
 
             }
         });
+        toolBar.add(new AbstractAction("Info") {
+			
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new FrameInfo();
+			}
+		});
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
         onglets = new JTabbedPane(JTabbedPane.TOP);

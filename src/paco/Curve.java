@@ -12,21 +12,21 @@ import javax.swing.SwingConstants;
 
 public class Curve extends Label {
 
-    private Object[][] value;
+    private Object[][] values;
     private JPanel panel;
 
-    public Curve(String shortName, String category, String swFeatureRef, String[][] swCsHistory, Object[][] value) {
+    public Curve(String shortName, String category, String swFeatureRef, String[][] swCsHistory, Object[][] values) {
         super(shortName, category, swFeatureRef, swCsHistory);
-        this.value = value;
+        this.values = values;
 
     }
 
     public String getValue(int x, int y) {
-        return value[x][y].toString();
+        return values[x][y].toString();
     }
 
     public int getDimX() {
-        return value[0].length;
+        return values[0].length;
     }
 
     @Override
@@ -36,24 +36,23 @@ public class Curve extends Label {
     }
 
     private void initLabel() {
-        panel = new JPanel(new GridLayout(2, getDimX(), 2, 2));
+        panel = new JPanel(new GridLayout(2, getDimX(), 1, 1));
+        panel.setBackground(Color.BLACK);
+        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         JLabel[] valueViewX = new JLabel[getDimX()];
         JLabel[] valueViewY = new JLabel[getDimX()];
         for (int i = 0; i < valueViewX.length; i++) {
             valueViewX[i] = new JLabel(getValue(0, i));
             panel.add(valueViewX[i]);
-            panel.setBackground(Color.WHITE);
             valueViewX[i].setFont(new Font(null, Font.BOLD, valueViewX[i].getFont().getSize()));
             valueViewX[i].setOpaque(true);
             valueViewX[i].setBackground(Color.LIGHT_GRAY);
             valueViewX[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             valueViewX[i].setHorizontalAlignment(SwingConstants.CENTER);
-
         }
         for (int i = 0; i < valueViewY.length; i++) {
             valueViewY[i] = new JLabel(getValue(1, i));
             panel.add(valueViewY[i]);
-            panel.setBackground(Color.WHITE);
             valueViewY[i].setOpaque(true);
             valueViewY[i].setBackground(Color.LIGHT_GRAY);
             valueViewY[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

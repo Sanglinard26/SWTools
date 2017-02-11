@@ -9,8 +9,6 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-
-import lab.Variable;
 import paco.Label;
 import paco.PaCo;
 

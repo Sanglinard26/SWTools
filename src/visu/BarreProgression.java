@@ -12,7 +12,9 @@ import javax.swing.plaf.basic.BasicProgressBarUI;
 
 public class BarreProgression extends JProgressBar {
 
-    public BarreProgression() {
+	private static final long serialVersionUID = 1L;
+
+	public BarreProgression() {
         setUI(new MyProgressUI());
     }
 

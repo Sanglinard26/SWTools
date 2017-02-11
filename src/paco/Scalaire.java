@@ -19,7 +19,6 @@ public class Scalaire extends Label {
     public Scalaire(String shortName, String category, String swFeatureRef, String[][] swCsHistory, Object value) {
         super(shortName, category, swFeatureRef, swCsHistory);
         this.value = value;
-        initLabel();
     }
 
     public Object getValue() {
@@ -28,18 +27,19 @@ public class Scalaire extends Label {
 
     @Override
     public Component showView() {
-        valueView.setText(value.toString());
-        valueView.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        initLabel();
         return panel;
     }
 
-    private static void initLabel() {
+    private void initLabel() {
         panel.add(valueView);
-        panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         valueView.setOpaque(true);
         valueView.setBackground(Color.LIGHT_GRAY);
         valueView.setBorder(new LineBorder(Color.BLACK, 2));
         valueView.setHorizontalAlignment(SwingConstants.CENTER);
+        valueView.setText(value.toString());
+        valueView.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     }
 
 }

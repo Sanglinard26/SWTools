@@ -7,11 +7,12 @@ import javax.swing.JList;
 
 import lab.ListModelVar;
 import lab.Variable;
-import paco.ListModelLabel;
 
 public class ListVar extends JList<Variable> {
 
-    public ListVar(ListModelVar dataModel) {
+	private static final long serialVersionUID = 1L;
+
+	public ListVar(ListModelVar dataModel) {
         super(dataModel);
         setCellRenderer(new ListVarRenderer());
     }

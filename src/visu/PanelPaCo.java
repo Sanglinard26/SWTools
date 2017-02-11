@@ -17,6 +17,7 @@ import java.util.Observer;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -39,8 +40,11 @@ import tools.Utilitaire;
 
 public final class PanelPaCo extends JPanel implements Observer {
 
-    // Constante
-    private final static String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
+	private static final long serialVersionUID = 1L;
+
+	// Constante
+    private static final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
+    private static final String WARNING = "/warning_32.png";
 
     private static final GridBagConstraints gbc = new GridBagConstraints();
 
@@ -72,7 +76,9 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.anchor = GridBagConstraints.CENTER;
         btOpen = new JButton(new AbstractAction("Ouvrir") {
 
-            @Override
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void actionPerformed(ActionEvent arg0) {
                 final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
                 jFileChooser.setFileFilter(new FileFilter() {
@@ -123,7 +129,7 @@ public final class PanelPaCo extends JPanel implements Observer {
                     barChargement.setString("...");
                     barChargement.setValue(0);
 
-                    new ReaderPaCo(jFileChooser.getSelectedFile().getPath()).start();
+                    new ReaderPaCo(jFileChooser.getSelectedFile()).start();
                 }
             }
         });
@@ -139,7 +145,7 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.LINE_START;
         labelNomPaCo = new JLabel("Nom : ");
-        labelNomPaCo.setFont(new Font(null, Font.BOLD, 12));
+        labelNomPaCo.setFont(new Font(null, Font.BOLD, 14));
         add(labelNomPaCo, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -241,16 +247,25 @@ public final class PanelPaCo extends JPanel implements Observer {
 
     private class ReaderPaCo extends Thread {
 
-        private String path;
+        private File file;
 
-        public ReaderPaCo(String path) {
-            this.path = path;
+        public ReaderPaCo(File file) {
+            this.file = file;
         }
 
         @Override
         public void run() {
-            paco = new PaCo(path, PanelPaCo.this);
+            paco = new PaCo(file, PanelPaCo.this);
             labelNomPaCo.setText("Nom : " + paco.getName());
+            if(paco.checkName())
+            {
+            	labelNomPaCo.setToolTipText(null);
+            	labelNomPaCo.setIcon(null);
+            }else{
+            	labelNomPaCo.setToolTipText("Incoherence de nom");
+            	labelNomPaCo.setIcon(new ImageIcon(getClass().getResource(WARNING)));
+            }
+            
             listLabel.getModel().setList(paco.getListLabel());
             listLabel.clearSelection();
             tableHistory.getModel().setData(new String[0][0]);
