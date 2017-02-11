@@ -4,4 +4,4 @@ Description  : Suite de petits outils destinés aux fichiers générés par le l
 
 Fonctionnalités :
   - [X] Comparaison de fichiers "*.lab"
-  - [ ] Visualiseur de PaCo ("*.xml")
+  - [X] Visualiseur de PaCo ("*.xml")
