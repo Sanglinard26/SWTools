@@ -10,19 +10,21 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import tools.Utilitaire;
+
 public class Curve extends Label {
 
-    private Object[][] values;
+    private String[][] values;
     private JPanel panel;
 
-    public Curve(String shortName, String category, String swFeatureRef, String[][] swCsHistory, Object[][] values) {
+    public Curve(String shortName, String category, String swFeatureRef, String[][] swCsHistory, String[][] values) {
         super(shortName, category, swFeatureRef, swCsHistory);
         this.values = values;
 
     }
 
     public String getValue(int x, int y) {
-        return values[x][y].toString();
+        return Utilitaire.cutNumber(values[x][y]);
     }
 
     public int getDimX() {

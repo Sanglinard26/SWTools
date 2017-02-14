@@ -16,234 +16,230 @@ import org.w3c.dom.NodeList;
 
 public class PaCo extends Observable {
 
-	public static final String _C = "VALUE";
-	public static final String _T = "CURVE_INDIVIDUAL";
-	public static final String _M = "MAP_INDIVIDUAL";
-	public static final String _A = "AXIS_VALUES";
-	public static final String _T_CA = "VALUE_BLOCK";
-	public static final String _T_GROUPED = "CURVE_GROUPED";
-	public static final String _M_GROUPED = "MAP_GROUPED";
+    public static final String _C = "VALUE";
+    public static final String _T = "CURVE_INDIVIDUAL";
+    public static final String _M = "MAP_INDIVIDUAL";
+    public static final String _A = "AXIS_VALUES";
+    public static final String _T_CA = "VALUE_BLOCK";
+    public static final String _T_GROUPED = "CURVE_GROUPED";
+    public static final String _M_GROUPED = "MAP_GROUPED";
 
-	Document document = null;
-	DocumentBuilderFactory factory = null;
+    Document document = null;
+    DocumentBuilderFactory factory = null;
 
-	private File file = null;
-	private String name = "";
-	private int nbLabel = 0;
-	private ArrayList<Label> listLabel = new ArrayList<Label>();
+    private File file = null;
+    private String name = "";
+    private int nbLabel = 0;
+    private ArrayList<Label> listLabel = new ArrayList<Label>();
 
-	public PaCo(File file, JPanel panelPaco) {
+    public PaCo(File file, JPanel panelPaco) {
 
-		this.file = file;
-		
-		addObserver((Observer) panelPaco);
+        this.file = file;
 
-		try {
-			factory = DocumentBuilderFactory.newInstance();
-			factory.setIgnoringElementContentWhitespace(true);
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			document = builder.parse(file.getPath());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        addObserver((Observer) panelPaco);
 
-		if (document != null) {
+        try {
+            factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringElementContentWhitespace(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            document = builder.parse(file.getPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-			Element racine = document.getDocumentElement();
+        if (document != null) {
 
-			NodeList enfantRacine = racine.getChildNodes();
+            Element racine = document.getDocumentElement();
 
-			this.name = enfantRacine.item(0).getTextContent();
+            NodeList enfantRacine = racine.getChildNodes();
 
-			NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
-			String shortName, category, swFeatureRef;
-			NodeList swCsEntry, swAxisCont;
-			nbLabel = listSwInstance.getLength();
-			Element label;
+            this.name = enfantRacine.item(0).getTextContent();
 
-			for (int i = 0; i < nbLabel; i++) {
-				label = (Element) listSwInstance.item(i);
-				shortName = label.getElementsByTagName("SHORT-NAME").item(0).getTextContent();
-				category = label.getElementsByTagName("CATEGORY").item(0).getTextContent();
+            NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
+            String shortName, category, swFeatureRef;
+            NodeList swCsEntry, swAxisCont;
+            nbLabel = listSwInstance.getLength();
+            Element label;
 
-				if (label.getElementsByTagName("SW-FEATURE-REF").item(0) != null) {
-					swFeatureRef = label.getElementsByTagName("SW-FEATURE-REF").item(0).getTextContent();
-				} else {
-					swFeatureRef = "Pas de fonction definie";
-				}
+            for (int i = 0; i < nbLabel; i++) {
+                label = (Element) listSwInstance.item(i);
+                shortName = label.getElementsByTagName("SHORT-NAME").item(0).getTextContent();
+                category = label.getElementsByTagName("CATEGORY").item(0).getTextContent();
 
-				swAxisCont = label.getElementsByTagName("SW-AXIS-CONT");
-				swCsEntry = label.getElementsByTagName("SW-CS-ENTRY");
+                if (label.getElementsByTagName("SW-FEATURE-REF").item(0) != null) {
+                    swFeatureRef = label.getElementsByTagName("SW-FEATURE-REF").item(0).getTextContent();
+                } else {
+                    swFeatureRef = "Pas de fonction definie";
+                }
 
-				// NPE sur swFeatureRef car non présent pour les axes "_A"
+                swAxisCont = label.getElementsByTagName("SW-AXIS-CONT");
+                swCsEntry = label.getElementsByTagName("SW-CS-ENTRY");
 
-				switch (category) {
-				case PaCo._C:
-					listLabel.add(new Scalaire(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadValue(swAxisCont)));
-					break;
-				case PaCo._T:
-					listLabel.add(new Curve(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadCurve(swAxisCont)));
-					break;
-				case PaCo._A:
-					// Non implemente
-					break;
-				case PaCo._T_GROUPED:
-					listLabel.add(new Curve(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadCurve(swAxisCont)));
-					break;
-				case PaCo._T_CA:
-					// Non implemente
-					break;
-				case PaCo._M:
-					listLabel.add(new Map(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadMap(swAxisCont)));
-					break;
-				case PaCo._M_GROUPED:
-					listLabel.add(new Map(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadMap(swAxisCont)));
-					break;
-				}
+                // NPE sur swFeatureRef car non présent pour les axes "_A"
 
-				this.setChanged();
-				this.notifyObservers(i + 1);
-			}
-		}
+                switch (category) {
+                case PaCo._C:
+                    listLabel.add(new Scalaire(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadValue(swAxisCont)));
+                    break;
+                case PaCo._T:
+                    listLabel.add(new Curve(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadCurve(swAxisCont)));
+                    break;
+                case PaCo._A:
+                    // Non implemente
+                    break;
+                case PaCo._T_GROUPED:
+                    listLabel.add(new Curve(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadCurve(swAxisCont)));
+                    break;
+                case PaCo._T_CA:
+                    // Non implemente
+                    break;
+                case PaCo._M:
+                    listLabel.add(new Map(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadMap(swAxisCont)));
+                    break;
+                case PaCo._M_GROUPED:
+                    listLabel.add(new Map(shortName, category, swFeatureRef, ReadEntry(swCsEntry), ReadMap(swAxisCont)));
+                    break;
+                }
 
-	}
+                this.setChanged();
+                this.notifyObservers(i + 1);
+            }
+        }
 
-	public Boolean checkName() {
-		return this.file.getName().substring(0, this.file.getName().length()-4).equals(this.name);
-	}
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public Boolean checkName() {
+        return this.file.getName().substring(0, this.file.getName().length() - 4).equals(this.name);
+    }
 
-	public int getNbLabel() {
-		return this.nbLabel;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public ArrayList<Label> getListLabel() {
-		return this.listLabel;
-	}
+    public int getNbLabel() {
+        return this.nbLabel;
+    }
 
-	private String[][] ReadEntry(NodeList swCsEntry) {
-		String[][] entry = new String[swCsEntry.getLength()][4];
+    public ArrayList<Label> getListLabel() {
+        return this.listLabel;
+    }
 
-		Element aEntry;
-		Node swCsState, swCsPerformedBy, remark, date;
+    private String[][] ReadEntry(NodeList swCsEntry) {
+        String[][] entry = new String[swCsEntry.getLength()][4];
 
-		for (int n = 0; n < swCsEntry.getLength(); n++) {
-			aEntry = (Element) swCsEntry.item(n);
+        Element aEntry;
+        Node swCsState, swCsPerformedBy, remark, date;
 
-			swCsPerformedBy = aEntry.getElementsByTagName("SW-CS-PERFORMED-BY").item(0);
-			date = aEntry.getElementsByTagName("DATE").item(0);
-			swCsState = aEntry.getElementsByTagName("SW-CS-STATE").item(0);
-			remark = aEntry.getElementsByTagName("REMARK").item(0);
+        for (int n = 0; n < swCsEntry.getLength(); n++) {
+            aEntry = (Element) swCsEntry.item(n);
 
-			entry[n][0] = date.getTextContent().replace("T", " @ ");
-			entry[n][1] = swCsPerformedBy.getTextContent();
-			entry[n][2] = swCsState.getTextContent();
-			entry[n][3] = remark.getTextContent();
-		}
-		return entry;
-	}
+            swCsPerformedBy = aEntry.getElementsByTagName("SW-CS-PERFORMED-BY").item(0);
+            date = aEntry.getElementsByTagName("DATE").item(0);
+            swCsState = aEntry.getElementsByTagName("SW-CS-STATE").item(0);
+            remark = aEntry.getElementsByTagName("REMARK").item(0);
 
-	private Object ReadValue(NodeList swAxisCont) {
-		return swAxisCont.item(0).getLastChild().getTextContent();
-	}
+            entry[n][0] = date.getTextContent().replace("T", " @ ");
+            entry[n][1] = swCsPerformedBy.getTextContent();
+            entry[n][2] = swCsState.getTextContent();
+            entry[n][3] = remark.getTextContent();
+        }
+        return entry;
+    }
 
-	private Object[][] ReadCurve(NodeList swAxisCont) {
+    private String ReadValue(NodeList swAxisCont) {
+        return swAxisCont.item(0).getLastChild().getTextContent();
+    }
 
-		Object val[][] = null;
+    private String[][] ReadCurve(NodeList swAxisCont) {
 
-		for (int n = 0; n < swAxisCont.getLength(); n++) {
-			Element eAxisCont = (Element) swAxisCont.item(n);
-			Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
-			Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
-			NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
+        String val[][] = null;
 
-			if (val == null)
-				val = new Object[swAxisCont.getLength()][value.getLength()];
+        for (int n = 0; n < swAxisCont.getLength(); n++) {
+            Element eAxisCont = (Element) swAxisCont.item(n);
+            Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
+            Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+            NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
 
-			switch (indexAxis.getTextContent()) {
-			case "1":
+            if (val == null)
+                val = new String[swAxisCont.getLength()][value.getLength()];
 
-				for (int b = 0; b < value.getLength(); b++) {
-					val[0][b] = value.item(b).getTextContent();
-				}
-				break;
-			case "0":
-				for (int a = 0; a < value.getLength(); a++) {
-					val[1][a] = value.item(a).getTextContent();
-				}
-				break;
-			}
-		}
-		return val;
-	}
+            switch (indexAxis.getTextContent()) {
+            case "1":
 
-	private Object[][] ReadMap(NodeList swAxisCont) {
-		// Premiere dimension = Axe Y car nombre de ligne
-		// Deuxieme dimension = Axe X car nombre de colonne
-		Object val[][] = new Object
-				[((Element)swAxisCont.item(1)).getLastChild().getChildNodes().getLength()+1]
-						[((Element)swAxisCont.item(0)).getLastChild().getChildNodes().getLength()+1];
+                for (int b = 0; b < value.getLength(); b++) {
+                    val[0][b] = value.item(b).getTextContent();
+                }
+                break;
+            case "0":
+                for (int a = 0; a < value.getLength(); a++) {
+                    val[1][a] = value.item(a).getTextContent();
+                }
+                break;
+            }
+        }
+        return val;
+    }
 
-		val[0][0] = "Y \\ X";
+    private String[][] ReadMap(NodeList swAxisCont) {
+        // Premiere dimension = Axe Y car nombre de ligne
+        // Deuxieme dimension = Axe X car nombre de colonne
+        String val[][] = new String[((Element) swAxisCont.item(1)).getLastChild().getChildNodes().getLength()
+                + 1][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength() + 1];
 
-		for (int n = 0; n < swAxisCont.getLength(); n++) {
-			Element eAxisCont = (Element) swAxisCont.item(n);
-			Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
-			Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
-			NodeList nodeListV = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
+        val[0][0] = "Y \\ X";
 
-			switch (indexAxis.getTextContent()) {
-			case "1": // Axe X
+        for (int n = 0; n < swAxisCont.getLength(); n++) {
+            Element eAxisCont = (Element) swAxisCont.item(n);
+            Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
+            Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+            NodeList nodeListV = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
 
-				for (int x = 0; x < nodeListV.getLength(); x++) {
+            switch (indexAxis.getTextContent()) {
+            case "1": // Axe X
 
-					switch (nodeListV.item(x).getNodeName()) {
-					case "VT":
-						val[0][x+1] = nodeListV.item(x).getFirstChild().getTextContent();
-						break;
+                for (int x = 0; x < nodeListV.getLength(); x++) {
 
-					default:
-						val[0][x+1] = nodeListV.item(x).getTextContent();
-						break;
-					}
-				}
-				break;
+                    switch (nodeListV.item(x).getNodeName()) {
+                    case "VT":
+                        val[0][x + 1] = nodeListV.item(x).getFirstChild().getTextContent();
+                        break;
 
-			case "2": // Axe Y
+                    default:
+                        val[0][x + 1] = nodeListV.item(x).getTextContent();
+                        break;
+                    }
+                }
+                break;
 
-				for (int y = 0; y < nodeListV.getLength(); y++) {
-					switch (nodeListV.item(y).getNodeName()) {
-					case "VT":
-						val[y+1][0] = nodeListV.item(y).getFirstChild().getTextContent();
-						break;
-					default:
-						val[y+1][0] = nodeListV.item(y).getTextContent();
-						break;
-					}
-				}
-				break;
-			case "0": // Valeur Z
+            case "2": // Axe Y
 
-				NodeList vg =((Element)swValuesPhys).getElementsByTagName("VG");
+                for (int y = 0; y < nodeListV.getLength(); y++) {
+                    switch (nodeListV.item(y).getNodeName()) {
+                    case "VT":
+                        val[y + 1][0] = nodeListV.item(y).getFirstChild().getTextContent();
+                        break;
+                    default:
+                        val[y + 1][0] = nodeListV.item(y).getTextContent();
+                        break;
+                    }
+                }
+                break;
+            case "0": // Valeur Z
 
-				for(int nVG = 1; nVG<vg.getLength()+1; nVG++)
-				{
-					NodeList nodeV = ((Element) vg.item(nVG-1)).getElementsByTagName("V");
+                NodeList vg = ((Element) swValuesPhys).getElementsByTagName("VG");
 
+                for (int nVG = 1; nVG < vg.getLength() + 1; nVG++) {
+                    NodeList nodeV = ((Element) vg.item(nVG - 1)).getElementsByTagName("V");
 
-					for(int nV = 1; nV<nodeV.getLength()+1; nV++)
-					{
-						val[nVG][nV] = nodeV.item(nV-1).getTextContent();
-					}
-				}
-				break;
-			}
-		}
+                    for (int nV = 1; nV < nodeV.getLength() + 1; nV++) {
+                        val[nVG][nV] = nodeV.item(nV - 1).getTextContent();
+                    }
+                }
+                break;
+            }
+        }
 
-		return val;
-	}
+        return val;
+    }
 
 }

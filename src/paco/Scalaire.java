@@ -10,19 +10,22 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import tools.Utilitaire;
+
 public class Scalaire extends Label {
 
-    private Object value;
+    private String value;
     private static final JPanel panel = new JPanel(new GridLayout(1, 1, 2, 2));
     private static final JLabel valueView = new JLabel();
 
-    public Scalaire(String shortName, String category, String swFeatureRef, String[][] swCsHistory, Object value) {
+    public Scalaire(String shortName, String category, String swFeatureRef, String[][] swCsHistory, String value) {
         super(shortName, category, swFeatureRef, swCsHistory);
         this.value = value;
     }
 
-    public Object getValue() {
-        return value;
+    public String getValue() {
+
+        return Utilitaire.cutNumber(value);
     }
 
     @Override
@@ -38,7 +41,7 @@ public class Scalaire extends Label {
         valueView.setBackground(Color.LIGHT_GRAY);
         valueView.setBorder(new LineBorder(Color.BLACK, 2));
         valueView.setHorizontalAlignment(SwingConstants.CENTER);
-        valueView.setText(value.toString());
+        valueView.setText(getValue());
         valueView.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     }
 
