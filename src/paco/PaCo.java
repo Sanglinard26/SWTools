@@ -30,7 +30,7 @@ public class PaCo extends Observable {
     private File file = null;
     private String name = "";
     private int nbLabel = 0;
-    private ArrayList<Label> listLabel = new ArrayList<Label>();
+    private ArrayList<Variable> listLabel = new ArrayList<Variable>();
 
     public PaCo(File file, JPanel panelPaco) {
 
@@ -120,7 +120,7 @@ public class PaCo extends Observable {
         return this.nbLabel;
     }
 
-    public ArrayList<Label> getListLabel() {
+    public ArrayList<Variable> getListLabel() {
         return this.listLabel;
     }
 

@@ -4,10 +4,10 @@
 package visu;
 
 import javax.swing.JList;
-import paco.Label;
+import paco.Variable;
 import paco.ListModelLabel;
 
-public class ListLabel extends JList<Label> {
+public class ListLabel extends JList<Variable> {
 
 	private static final long serialVersionUID = 1L;
 

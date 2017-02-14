@@ -9,15 +9,15 @@ import java.util.List;
 
 import javax.swing.AbstractListModel;
 
-public class ListModelLabel extends AbstractListModel<Label> {
+public class ListModelLabel extends AbstractListModel<Variable> {
 
     private static final long serialVersionUID = 1L;
-    private ArrayList<Label> listLabel;
-    private ArrayList<Label> listLabelFiltre;
+    private ArrayList<Variable> listLabel;
+    private ArrayList<Variable> listLabelFiltre;
 
     public ListModelLabel() {
-        this.listLabel = new ArrayList<Label>();
-        this.listLabelFiltre = new ArrayList<Label>();
+        this.listLabel = new ArrayList<Variable>();
+        this.listLabelFiltre = new ArrayList<Variable>();
     }
 
     @Override
@@ -25,7 +25,7 @@ public class ListModelLabel extends AbstractListModel<Label> {
         return listLabelFiltre.size();
     }
 
-    public void setList(ArrayList<Label> list) {
+    public void setList(ArrayList<Variable> list) {
         if (!listLabel.isEmpty()) {
             listLabel.clear();
         }
@@ -36,7 +36,7 @@ public class ListModelLabel extends AbstractListModel<Label> {
 
     public void setFilter(String filter) {
         listLabelFiltre.clear();
-        for (Label label : listLabel) {
+        for (Variable label : listLabel) {
             if (label.getShortName().toLowerCase().indexOf(filter) > -1) {
                 listLabelFiltre.add(label);
             }
@@ -51,11 +51,11 @@ public class ListModelLabel extends AbstractListModel<Label> {
     }
 
     @Override
-    public Label getElementAt(int index) {
+    public Variable getElementAt(int index) {
         return listLabelFiltre.get(index);
     }
 
-    public List<Label> getList() {
+    public List<Variable> getList() {
         return Collections.unmodifiableList(this.listLabelFiltre);
     }
 

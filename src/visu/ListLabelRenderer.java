@@ -9,10 +9,10 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import paco.Label;
+import paco.Variable;
 import paco.PaCo;
 
-public final class ListLabelRenderer extends JLabel implements ListCellRenderer<Label> {
+public final class ListLabelRenderer extends JLabel implements ListCellRenderer<Variable> {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -28,7 +28,7 @@ public final class ListLabelRenderer extends JLabel implements ListCellRenderer<
 	}
 
 	@Override
-	public Component getListCellRendererComponent(JList<? extends Label> list, Label value, int index,
+	public Component getListCellRendererComponent(JList<? extends Variable> list, Variable value, int index,
 			boolean isSelected, boolean cellHasFocus) {
 		
 		setText(value.getShortName());
