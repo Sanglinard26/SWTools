@@ -105,7 +105,7 @@ public final class Lab {
                 printWriter.println("| RAPPORT DE COMPARAISON DE LAB |");
                 printWriter.println(" -------------------------------");
 
-                printWriter.println("\n" + "Lab de référence : " + ref.getName());
+                printWriter.println("\n" + "Lab de reference : " + ref.getName());
                 printWriter.println("Lab de travail : " + work.getName());
                 printWriter.println("\n" + "Label(s) disparu(s) (" + labelDisp.size() + ") : ");
 
@@ -114,7 +114,7 @@ public final class Lab {
                 }
 
                 printWriter.println("\n----------");
-                printWriter.println("\n" + "Label(s) supplémentaire(s) (" + labelSup.size() + ") : ");
+                printWriter.println("\n" + "Label(s) supplementaire(s) (" + labelSup.size() + ") : ");
 
                 for (Variable label : labelSup) {
                     printWriter.println("\t -" + label.getNom() + " =======> " + "<< " + label.getNomLab() + " >>");
@@ -123,7 +123,7 @@ public final class Lab {
                 printWriter.println("\n" + " -----");
                 printWriter.println("| FIN |");
                 printWriter.println(" -----");
-                printWriter.println("\n" + "\n" + "Fichier crée par SWTools, " + new Date().toString());
+                printWriter.println("\n" + "\n" + "Fichier cree par SWTools, " + new Date().toString());
 
                 printWriter.close();
 

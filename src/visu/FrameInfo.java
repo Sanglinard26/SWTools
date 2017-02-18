@@ -1,32 +1,33 @@
 package visu;
 
-import java.awt.Color;
+import java.awt.BorderLayout;
 import java.awt.Desktop;
-import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JTextPane;
-import javax.swing.border.TitledBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 public class FrameInfo extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
+	private static final String FENETRE_ICON = "/info_32.png";
 	
 	private final JTextPane txtContact = new JTextPane();
 
 	public FrameInfo() {
         this.setTitle("Info");
-        this.setLayout(new GridLayout(2, 1));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(FENETRE_ICON)));
+        this.setLayout(new BorderLayout());
         
         txtContact.setEditable(false);
         txtContact.setContentType("text/html");
-        txtContact.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.BLACK, 1), "Contact"));
+        txtContact.setBorder(new EmptyBorder(10, 10, 10, 10));
         txtContact.addHyperlinkListener(new HyperlinkListener() {
 			
 			@Override

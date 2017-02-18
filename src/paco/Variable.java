@@ -6,10 +6,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
@@ -42,12 +40,16 @@ public abstract class Variable extends MouseAdapter {
     public String[][] getSwCsHistory() {
         return swCsHistory;
     }
+    
+    public abstract void initVariable();
 
     public abstract Component showView();
 
     public abstract void exportToExcel() throws RowsExceededException, WriteException, IOException;
 
     public abstract void exportToPicture();
+    
+    public abstract void copyToClipboard();
 
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -73,6 +75,15 @@ public abstract class Variable extends MouseAdapter {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     exportToPicture();
+                }
+            });
+            menu.add(menuItem);
+            menuItem = new JMenuItem("Copier dans le presse-papier");
+            menuItem.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    copyToClipboard();
                 }
             });
             menu.add(menuItem);

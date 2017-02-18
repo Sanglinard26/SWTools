@@ -99,7 +99,7 @@ public final class PanelLab extends JPanel implements ListDataListener {
         setGbc(GridBagConstraints.HORIZONTAL, 3, 0, 1, 1, 0, 0, new Insets(0, 0, 10, 0), GridBagConstraints.CENTER);
         this.add(btExport, gbc);
 
-        // Liste des lab r�f
+        // Liste des lab ref
         setGbc(GridBagConstraints.BOTH, 0, 1, 1, 2, 1, 0.3, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
         listLabRef = new ListLab(new ListModelLab());
         listLabRef.getModel().addListDataListener(this);

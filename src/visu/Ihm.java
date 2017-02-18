@@ -2,6 +2,7 @@ package visu;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -31,8 +32,8 @@ public final class Ihm extends JFrame {
 
         setTitle("SW Tools");
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(APP_ICON)));
-        // setExtendedState(MAXIMIZED_BOTH);
-        setSize(1200, 700);
+        setExtendedState(MAXIMIZED_BOTH);
+        setMinimumSize(new Dimension(1200, 700));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         JToolBar toolBar = new JToolBar("Option");
