@@ -16,9 +16,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -61,7 +59,6 @@ public class Map extends Variable {
 
 	@Override
 	public Component showView() {
-		//initLabel();
 		initVariable();
 		return panel;
 	}
@@ -90,7 +87,7 @@ public class Map extends Variable {
 
 		JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_RESULT_LAB));
 		fileChooser.setDialogTitle("Enregistement de l'image");
-		fileChooser.setFileFilter(new FileNameExtensionFilter("Image jpg", "jpg"));
+		fileChooser.setFileFilter(new FileNameExtensionFilter("Image (*.jpg)", "jpg"));
 		fileChooser.setSelectedFile(new File(".jpg"));
 		int rep = fileChooser.showSaveDialog(null);
 
@@ -125,7 +122,10 @@ public class Map extends Variable {
 	public void copyToClipboard()
 	{
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		Image img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+		BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = img.createGraphics();
+		panel.printAll(g);
+		g.dispose();
 		clipboard.setContents(new ImgTransfert(img), null);
 	}
 	

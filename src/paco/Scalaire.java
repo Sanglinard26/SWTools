@@ -4,6 +4,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +46,6 @@ public class Scalaire extends Variable {
 	}
 
 	public String getValue() {
-
 		return Utilitaire.cutNumber(value);
 	}
 
@@ -87,7 +92,7 @@ public class Scalaire extends Variable {
 
 		JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_RESULT_LAB));
 		fileChooser.setDialogTitle("Enregistement de l'image");
-		fileChooser.setFileFilter(new FileNameExtensionFilter("Image jpg", "jpg"));
+		fileChooser.setFileFilter(new FileNameExtensionFilter("Image (*.jpg)", "jpg"));
 		fileChooser.setSelectedFile(new File(".jpg"));
 		int rep = fileChooser.showSaveDialog(null);
 
@@ -119,9 +124,40 @@ public class Scalaire extends Variable {
 
 	}
 
-	@Override
-	public void copyToClipboard() {
-		// TODO Auto-generated method stub
+	public void copyToClipboard()
+	{
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = img.createGraphics();
+		panel.printAll(g);
+		g.dispose();
+		clipboard.setContents(new ImgTransfert(img), null);
 		
 	}
+	
+	class ImgTransfert implements Transferable
+	{
+		private Image img;
+		
+		public ImgTransfert(Image img) {
+			this.img = img;
+		}
+
+		@Override
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+			return img;
+		}
+
+		@Override
+		public DataFlavor[] getTransferDataFlavors() {
+			return new DataFlavor[]{DataFlavor.imageFlavor};
+		}
+
+		@Override
+		public boolean isDataFlavorSupported(DataFlavor flavor) {
+			return DataFlavor.imageFlavor.equals(flavor);
+		}
+		
+	}
+
 }
