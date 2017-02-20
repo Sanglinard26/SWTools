@@ -63,7 +63,7 @@ public final class PanelPaCo extends JPanel implements Observer {
     private final JTextField txtFiltre;
     private final ListLabel listLabel;
     private JPanel panVisu;
-    private static final JPanel panGraph = new JPanel();
+    private static final PanelGraph panGraph = new PanelGraph();
     private final TableHistory tableHistory;
     private final JProgressBar barChargement = new BarreProgression();
 
@@ -258,6 +258,11 @@ public final class PanelPaCo extends JPanel implements Observer {
                     panVisu.add(listLabel.getSelectedValue().showView());
                     panVisu.revalidate();
                     panVisu.repaint();
+                    
+                    panGraph.removeAll();
+                    panGraph.createChart(listLabel.getSelectedValue());
+                    panGraph.revalidate();
+                    panGraph.repaint();
                 }
             }
         });
