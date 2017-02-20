@@ -36,155 +36,148 @@ import tools.Utilitaire;
 
 public class Curve extends Variable {
 
-	private String[][] values;
-	private JPanel panel;
+    private String[][] values;
+    private JPanel panel;
 
-	public Curve(String shortName, String category, String swFeatureRef, String[][] swCsHistory, String[][] values) {
-		super(shortName, category, swFeatureRef, swCsHistory);
-		this.values = values;
+    public Curve(String shortName, String category, String swFeatureRef, String[][] swCsHistory, String[][] values) {
+        super(shortName, category, swFeatureRef, swCsHistory);
+        this.values = values;
 
-	}
+    }
 
-	public String[][] getValues() {
-		return this.values;
-	}
+    public String[][] getValues() {
+        return this.values;
+    }
 
-	public String getValue(int x, int y) {
-		return Utilitaire.cutNumber(values[x][y]);
-	}
+    public String getValue(int col, int row) {
+        return Utilitaire.cutNumber(values[col][row]);
+    }
 
-	public int getDimX() {
-		return values[0].length;
-	}
+    public int getDimX() {
+        return values[0].length;
+    }
 
-	@Override
-	public Component showView() {
-		initVariable();
-		return panel;
-	}
+    @Override
+    public Component showView() {
+        initVariable();
+        return panel;
+    }
 
-	@Override
-	public void exportToExcel() throws RowsExceededException, WriteException, IOException {
-		WritableWorkbook workbook = Workbook.createWorkbook(new File("D:/" + this.getShortName() + ".xls"));
-		WritableSheet sheet = workbook.createSheet("Export", 0);
-		WritableFont arial10Bold = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
-		WritableCellFormat arial10format = new WritableCellFormat(arial10Bold);
+    @Override
+    public void exportToExcel() throws RowsExceededException, WriteException, IOException {
+        WritableWorkbook workbook = Workbook.createWorkbook(new File("D:/" + this.getShortName() + ".xls"));
+        WritableSheet sheet = workbook.createSheet("Export", 0);
+        WritableFont arial10Bold = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
+        WritableCellFormat arial10format = new WritableCellFormat(arial10Bold);
 
-		sheet.addCell(new Label(0, 0, this.getShortName(), arial10format));
-		for (int x = 0; x < getDimX(); x++) {
-			for (int y = 0; y < 2; y++) {
-				sheet.addCell(new Label(x, y + 1, this.getValue(y, x)));
-			}
-		}
+        sheet.addCell(new Label(0, 0, this.getShortName(), arial10format));
+        for (int x = 0; x < getDimX(); x++) {
+            for (int y = 0; y < 2; y++) {
+                sheet.addCell(new Label(x, y + 1, this.getValue(y, x)));
+            }
+        }
 
-		workbook.write();
-		workbook.close();
+        workbook.write();
+        workbook.close();
 
-	}
+    }
 
+    @Override
+    public void initVariable() {
+        panel = new JPanel(new GridLayout(2, getDimX(), 1, 1));
+        panel.setLayout(new GridLayout(2, getDimX(), 1, 1));
+        panel.setBackground(Color.BLACK);
+        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        panel.addMouseListener(this);
+        JLabel[] valueViewX = new JLabel[getDimX()];
+        JLabel[] valueViewY = new JLabel[getDimX()];
+        for (int i = 0; i < valueViewX.length; i++) {
+            valueViewX[i] = new JLabel(getValue(0, i));
+            panel.add(valueViewX[i]);
+            valueViewX[i].setFont(new Font(null, Font.BOLD, valueViewX[i].getFont().getSize()));
+            valueViewX[i].setOpaque(true);
+            valueViewX[i].setBackground(Color.LIGHT_GRAY);
+            valueViewX[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            valueViewX[i].setHorizontalAlignment(SwingConstants.CENTER);
+        }
+        for (int i = 0; i < valueViewY.length; i++) {
+            valueViewY[i] = new JLabel(getValue(1, i));
+            panel.add(valueViewY[i]);
+            valueViewY[i].setOpaque(true);
+            valueViewY[i].setBackground(Color.LIGHT_GRAY);
+            valueViewY[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            valueViewY[i].setHorizontalAlignment(SwingConstants.CENTER);
 
-	@Override
-	public void initVariable() {
-		panel = new JPanel(new GridLayout(2, getDimX(), 1, 1));
-		panel.setLayout(new GridLayout(2, getDimX(), 1, 1));
-		panel.setBackground(Color.BLACK);
-		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-		panel.addMouseListener(this);
-		JLabel[] valueViewX = new JLabel[getDimX()];
-		JLabel[] valueViewY = new JLabel[getDimX()];
-		for (int i = 0; i < valueViewX.length; i++) {
-			valueViewX[i] = new JLabel(getValue(0, i));
-			panel.add(valueViewX[i]);
-			valueViewX[i].setFont(new Font(null, Font.BOLD, valueViewX[i].getFont().getSize()));
-			valueViewX[i].setOpaque(true);
-			valueViewX[i].setBackground(Color.LIGHT_GRAY);
-			valueViewX[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			valueViewX[i].setHorizontalAlignment(SwingConstants.CENTER);
-		}
-		for (int i = 0; i < valueViewY.length; i++) {
-			valueViewY[i] = new JLabel(getValue(1, i));
-			panel.add(valueViewY[i]);
-			valueViewY[i].setOpaque(true);
-			valueViewY[i].setBackground(Color.LIGHT_GRAY);
-			valueViewY[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			valueViewY[i].setHorizontalAlignment(SwingConstants.CENTER);
+        }
 
-		}
+    }
 
-	}
+    @Override
+    public void exportToPicture() {
 
-	@Override
-	public void exportToPicture() {
+        JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_RESULT_LAB));
+        fileChooser.setDialogTitle("Enregistement de l'image");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Image (*.jpg)", "jpg"));
+        fileChooser.setSelectedFile(new File(".jpg"));
+        int rep = fileChooser.showSaveDialog(null);
 
-		JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_RESULT_LAB));
-		fileChooser.setDialogTitle("Enregistement de l'image");
-		fileChooser.setFileFilter(new FileNameExtensionFilter("Image (*.jpg)", "jpg"));
-		fileChooser.setSelectedFile(new File(".jpg"));
-		int rep = fileChooser.showSaveDialog(null);
+        if (rep == JFileChooser.APPROVE_OPTION) {
+            File img = fileChooser.getSelectedFile();
+            BufferedImage image = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = image.createGraphics();
+            panel.printAll(g);
+            g.dispose();
+            try {
+                String pathImg = img.getPath();
+                String extension = "";
+                if (Utilitaire.getExtension(img) == null) {
+                    extension = ".jpg";
+                } else {
+                    if (!Utilitaire.getExtension(img).equals(Utilitaire.jpg)) {
+                        pathImg = img.getPath().substring(0, img.getPath().lastIndexOf("."));
+                        extension = ".jpg";
+                    }
+                }
+                ImageIO.write(image, "jpg", new File(pathImg + extension));
+            } catch (IOException exp) {
+                System.out.println(exp);
+            }
+        }
 
-		if (rep == JFileChooser.APPROVE_OPTION) {
-			File img = fileChooser.getSelectedFile();
-			BufferedImage image = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = image.createGraphics();
-			panel.printAll(g);
-			g.dispose();
-			try {
-				String pathImg = img.getPath();
-				String extension = "";
-				if(Utilitaire.getExtension(img)==null)
-				{
-					extension = ".jpg";
-				}else{
-					if(!Utilitaire.getExtension(img).equals(Utilitaire.jpg))
-					{
-						pathImg = img.getPath().substring(0, img.getPath().lastIndexOf("."));
-						extension = ".jpg";
-					}
-				}
-				ImageIO.write(image, "jpg", new File(pathImg + extension));
-			} catch (IOException exp) {
-				System.out.println(exp);
-			}
-		}
+    }
 
+    public void copyToClipboard() {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = img.createGraphics();
+        panel.printAll(g);
+        g.dispose();
+        clipboard.setContents(new ImgTransfert(img), null);
 
-	}
+    }
 
-	public void copyToClipboard()
-	{
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
-		Graphics2D g = img.createGraphics();
-		panel.printAll(g);
-		g.dispose();
-		clipboard.setContents(new ImgTransfert(img), null);
-		
-	}
-	
-	class ImgTransfert implements Transferable
-	{
-		private Image img;
-		
-		public ImgTransfert(Image img) {
-			this.img = img;
-		}
+    class ImgTransfert implements Transferable {
+        private Image img;
 
-		@Override
-		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-			return img;
-		}
+        public ImgTransfert(Image img) {
+            this.img = img;
+        }
 
-		@Override
-		public DataFlavor[] getTransferDataFlavors() {
-			return new DataFlavor[]{DataFlavor.imageFlavor};
-		}
+        @Override
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+            return img;
+        }
 
-		@Override
-		public boolean isDataFlavorSupported(DataFlavor flavor) {
-			return DataFlavor.imageFlavor.equals(flavor);
-		}
-		
-	}
+        @Override
+        public DataFlavor[] getTransferDataFlavors() {
+            return new DataFlavor[] { DataFlavor.imageFlavor };
+        }
 
+        @Override
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return DataFlavor.imageFlavor.equals(flavor);
+        }
+
+    }
 
 }
