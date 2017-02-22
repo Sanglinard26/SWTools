@@ -38,10 +38,26 @@ public class Curve extends Variable {
 
     private String[][] values;
     private JPanel panel;
+    private String[] xValues;
+    private String[] zValues;
 
     public Curve(String shortName, String category, String swFeatureRef, String[][] swCsHistory, String[][] values) {
         super(shortName, category, swFeatureRef, swCsHistory);
         this.values = values;
+
+        xValues = new String[values[0].length];
+        for (int i = 0; i < xValues.length; i++) {
+            xValues[i] = values[0][i];
+        }
+
+        zValues = new String[values[0].length];
+        for (int i = 0; i < zValues.length; i++) {
+            zValues[i] = values[1][i];
+        }
+
+        for (String s : zValues) {
+            System.out.println(s);
+        }
 
     }
 

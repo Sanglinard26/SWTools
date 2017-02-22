@@ -258,11 +258,16 @@ public final class PanelPaCo extends JPanel implements Observer {
                     panVisu.add(listLabel.getSelectedValue().showView());
                     panVisu.revalidate();
                     panVisu.repaint();
-                    
-                    panGraph.removeAll();
+
+                    panGraph.getPan3D().removeAll();
                     panGraph.createChart(listLabel.getSelectedValue());
-                    panGraph.revalidate();
-                    panGraph.repaint();
+                    panGraph.getPan3D().revalidate();
+                    panGraph.getPan3D().repaint();
+
+                    panGraph.getPan2D().removeAll();
+                    panGraph.createXYChart(listLabel.getSelectedValue());
+                    panGraph.getPan2D().revalidate();
+                    panGraph.getPan2D().repaint();
                 }
             }
         });
@@ -270,17 +275,13 @@ public final class PanelPaCo extends JPanel implements Observer {
 
         panVisu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panVisu.setBackground(Color.WHITE);
-        
-        
-        
+
         tableHistory = new TableHistory(new TableModelHistory());
         tableHistory.setFillsViewportHeight(false);
-        
-        JTabbedPane tabPan = new JTabbedPane();
-        tabPan.addTab("Historique",new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(tableHistory));
-        tabPan.addTab("Graphique",new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
 
-        
+        JTabbedPane tabPan = new JTabbedPane();
+        tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(tableHistory));
+        tabPan.addTab("Graphique", new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 1;
@@ -291,7 +292,7 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.weighty = 1;
         gbc.insets = new Insets(0, 0, 0, 5);
         gbc.anchor = GridBagConstraints.CENTER;
-        //JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), new JScrollPane(tableHistory));
+        // JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), new JScrollPane(tableHistory));
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
         splitPane.setOneTouchExpandable(true);
         splitPane.setDividerLocation(400);
