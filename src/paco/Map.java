@@ -42,6 +42,9 @@ public class Map extends Variable {
     private String[] yValues;
     private String[][] zValues;
 
+    private Double minZValue = Double.POSITIVE_INFINITY;
+    private Double maxZValue = Double.NEGATIVE_INFINITY;
+
     public Map(String shortName, String category, String swFeatureRef, String[][] swCsHistory, String[][] values) {
         super(shortName, category, swFeatureRef, swCsHistory);
         this.values = values;
@@ -60,9 +63,43 @@ public class Map extends Variable {
         for (int x = 0; x < xValues.length; x++) {
             for (int y = 0; y < yValues.length; y++) {
                 zValues[y][x] = values[y + 1][x + 1];
+
+                try {
+                    if (Double.parseDouble(values[y + 1][x + 1]) < minZValue) {
+                        minZValue = Double.parseDouble(values[y + 1][x + 1]);
+                    }
+
+                    if (Double.parseDouble(values[y + 1][x + 1]) > maxZValue) {
+                        maxZValue = Double.parseDouble(values[y + 1][x + 1]);
+                    }
+                } catch (NumberFormatException e) {
+                    minZValue = Double.NaN;
+                    maxZValue = Double.NaN;
+                }
+
             }
         }
 
+    }
+
+    public String[] getxValues() {
+        return xValues;
+    }
+
+    public String[] getyValues() {
+        return yValues;
+    }
+
+    public String getzValue(int col, int row) {
+        return Utilitaire.cutNumber(zValues[col][row]);
+    }
+
+    public Double getMaxZValue() {
+        return maxZValue;
+    }
+
+    public Double getMinZValue() {
+        return minZValue;
     }
 
     public String getValue(int col, int row) {

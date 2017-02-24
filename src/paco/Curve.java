@@ -55,10 +55,6 @@ public class Curve extends Variable {
             zValues[i] = values[1][i];
         }
 
-        for (String s : zValues) {
-            System.out.println(s);
-        }
-
     }
 
     public String[][] getValues() {

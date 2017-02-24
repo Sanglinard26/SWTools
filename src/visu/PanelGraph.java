@@ -89,9 +89,9 @@ public class PanelGraph extends JPanel {
 
                 if (variable instanceof Map) {
                     try {
-                        return Double.valueOf(((Map) variable).getValue((int) z, (int) x));
+                        return Double.valueOf(((Map) variable).getzValue((int) z, (int) x));
                     } catch (NumberFormatException nbfEx) {
-                        // System.out.println(nbfEx);
+                        System.out.println(nbfEx);
                         return 0;
                     }
 
@@ -104,12 +104,14 @@ public class PanelGraph extends JPanel {
         XYZPlot plot = (XYZPlot) chart.getPlot();
         plot.setDimensions(new Dimension3D(20, 10, 20));
         ValueAxis3D xAxis = plot.getXAxis();
-        xAxis.setRange(1, ((Map) variable).getDimX() - 1);
+        xAxis.setRange(0, ((Map) variable).getxValues().length - 1);
         ValueAxis3D zAxis = plot.getZAxis();
-        zAxis.setRange(1, ((Map) variable).getDimY() - 1);
+        zAxis.setRange(0, ((Map) variable).getyValues().length - 1);
         SurfaceRenderer renderer = (SurfaceRenderer) plot.getRenderer();
-        renderer.setColorScale(new RainbowScale(new Range(-1.0, 1.0)));
-        renderer.setDrawFaceOutlines(true);
+        renderer.setColorScale(new RainbowScale(new Range(((Map) variable).getMinZValue(), ((Map) variable).getMaxZValue())));
+        renderer.setDrawFaceOutlines(false);
+        renderer.setXSamples(((Map) variable).getxValues().length);
+        renderer.setZSamples(((Map) variable).getyValues().length);
         chart.setLegendPosition(LegendAnchor.BOTTOM_CENTER, Orientation.HORIZONTAL);
 
         Chart3DPanel chartPanel = new Chart3DPanel(chart);
