@@ -101,6 +101,10 @@ public class Map extends Variable {
     public Double getMinZValue() {
         return minZValue;
     }
+    
+    public String[][] getValues() {
+		return values;
+	}
 
     public String getValue(int col, int row) {
         return Utilitaire.cutNumber(values[col][row]);

@@ -259,15 +259,10 @@ public final class PanelPaCo extends JPanel implements Observer {
                     panVisu.revalidate();
                     panVisu.repaint();
 
-                    panGraph.getPan3D().removeAll();
+                    panGraph.getPanCard().removeAll();
                     panGraph.createChart(listLabel.getSelectedValue());
-                    panGraph.getPan3D().revalidate();
-                    panGraph.getPan3D().repaint();
-
-                    panGraph.getPan2D().removeAll();
-                    panGraph.createXYChart(listLabel.getSelectedValue());
-                    panGraph.getPan2D().revalidate();
-                    panGraph.getPan2D().repaint();
+                    panGraph.getPanCard().revalidate();
+                    panGraph.getPanCard().repaint();
                 }
             }
         });

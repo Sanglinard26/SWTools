@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -47,6 +48,7 @@ public class PaCo extends Observable {
     private File file = null;
     private String name = "";
     private int nbLabel = 0;
+    private HashMap<String, String> unit = new HashMap<String,String>();
     private ArrayList<Variable> listLabel = new ArrayList<Variable>();
 
     public PaCo(File file, JPanel panelPaco) {
@@ -73,10 +75,20 @@ public class PaCo extends Observable {
             this.name = enfantRacine.item(0).getTextContent();
 
             NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
+            NodeList listSwUnit = racine.getElementsByTagName("SW-UNIT");
+            Element eUnit;
             String shortName, category, swFeatureRef;
             NodeList swCsEntry, swAxisCont;
             nbLabel = listSwInstance.getLength();
             Element label;
+            
+            for(int u=0; u<listSwUnit.getLength(); u++)
+            {
+            	eUnit = (Element) listSwUnit.item(u);
+            	unit.put(
+            			eUnit.getElementsByTagName("SHORT-NAME").item(0).getTextContent(), 
+            			eUnit.getElementsByTagName("SW-UNIT-DISPLAY").item(0).getTextContent());
+            }
 
             for (int i = 0; i < nbLabel; i++) {
                 label = (Element) listSwInstance.item(i);
@@ -132,6 +144,7 @@ public class PaCo extends Observable {
     public String getName() {
         return this.name;
     }
+    
 
     public int getNbLabel() {
         return this.nbLabel;
