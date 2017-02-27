@@ -34,7 +34,7 @@ import jxl.write.biff.RowsExceededException;
 import tools.Preference;
 import tools.Utilitaire;
 
-public class Map extends Variable {
+public final class Map extends Variable {
 
     private String[][] values;
     private JPanel panel;
@@ -51,18 +51,18 @@ public class Map extends Variable {
 
         xValues = new String[values[0].length - 1];
         for (int i = 0; i < xValues.length; i++) {
-            xValues[i] = values[0][i + 1];
+            xValues[i] = Utilitaire.cutNumber(values[0][i + 1]);
         }
 
         yValues = new String[values.length - 1];
         for (int i = 0; i < yValues.length; i++) {
-            yValues[i] = values[i + 1][0];
+            yValues[i] = Utilitaire.cutNumber(values[i + 1][0]);
         }
 
         zValues = new String[yValues.length][xValues.length];
         for (int x = 0; x < xValues.length; x++) {
             for (int y = 0; y < yValues.length; y++) {
-                zValues[y][x] = values[y + 1][x + 1];
+                zValues[y][x] = Utilitaire.cutNumber(values[y + 1][x + 1]);
 
                 try {
                     if (Double.parseDouble(values[y + 1][x + 1]) < minZValue) {

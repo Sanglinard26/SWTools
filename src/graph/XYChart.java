@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import org.jfree.chart.ChartFactory;
@@ -76,6 +77,7 @@ public class XYChart extends JPanel {
 	
 	private void createIsoX(Map variable)
 	{
+		JPanel panel = new JPanel(new BorderLayout());
 		JList<String> listSeries = new JList<String>();
 		
 		String chartTitle = "Iso X";
@@ -110,13 +112,14 @@ public class XYChart extends JPanel {
 
         JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset);
 
-        this.add(listSeries);
-        this.add(new ChartPanel(chart));
+        panel.add(new JScrollPane(listSeries),BorderLayout.WEST);
+        panel.add(new ChartPanel(chart),BorderLayout.CENTER);
+        this.add(panel);
 	}
 	
 	private void createIsoY(Map variable)
 	{
-		
+		JPanel panel = new JPanel(new BorderLayout());
 		JList<String> listSeries = new JList<String>();
 		
 		String chartTitle = "Iso Y";
@@ -147,8 +150,10 @@ public class XYChart extends JPanel {
         listSeries.setListData(seriesName);
 
         JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset);
-        this.add(listSeries);
-        this.add(new ChartPanel(chart));
+        
+        panel.add(new JScrollPane(listSeries),BorderLayout.WEST);
+        panel.add(new ChartPanel(chart),BorderLayout.CENTER);
+        this.add(panel);
 	}
 
 }

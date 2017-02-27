@@ -34,7 +34,7 @@ import jxl.write.biff.RowsExceededException;
 import tools.Preference;
 import tools.Utilitaire;
 
-public class Curve extends Variable {
+public final class Curve extends Variable {
 
     private String[][] values;
     private JPanel panel;
@@ -47,12 +47,12 @@ public class Curve extends Variable {
 
         xValues = new String[values[0].length];
         for (int i = 0; i < xValues.length; i++) {
-            xValues[i] = values[0][i];
+            xValues[i] = Utilitaire.cutNumber(values[0][i]);
         }
 
         zValues = new String[values[0].length];
         for (int i = 0; i < zValues.length; i++) {
-            zValues[i] = values[1][i];
+            zValues[i] = Utilitaire.cutNumber(values[1][i]);
         }
 
     }
