@@ -40,8 +40,8 @@ public final class Scalaire extends Variable {
 	private static final JPanel panel = new JPanel(new GridLayout(1, 1, 2, 2));
 	private static final JLabel valueView = new JLabel();
 
-	public Scalaire(String shortName, String category, String swFeatureRef, String[][] swCsHistory, String value) {
-		super(shortName, category, swFeatureRef, swCsHistory);
+	public Scalaire(String shortName,String longName, String category, String swFeatureRef, String[][] swCsHistory, String value) {
+		super(shortName, longName, category, swFeatureRef, swCsHistory);
 		this.value = Utilitaire.cutNumber(value);
 	}
 

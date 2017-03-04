@@ -23,7 +23,9 @@ import com.orsoncharts.util.Orientation;
 import paco.Map;
 import paco.Variable;
 
-public class SurfaceChart extends JPanel{
+public final class SurfaceChart extends JPanel{
+	
+	private static final long serialVersionUID = 1L;
 	
 	private static final JLabel labelNoGraph = new JLabel("Graphique non disponible");
 
@@ -34,10 +36,11 @@ public class SurfaceChart extends JPanel{
 			this.setLayout(new BorderLayout());
 
 			Function3D function = new Function3D() {
+				
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public double getValue(double x, double z) {
-
-
 					try {
 						return Double.valueOf(((Map) variable).getzValue((int) z, (int) x));
 					} catch (NumberFormatException nbfEx) {
@@ -47,7 +50,7 @@ public class SurfaceChart extends JPanel{
 				}
 			};
 
-			Chart3D chart = Chart3DFactory.createSurfaceChart(variable.getShortName(), variable.getSwFeatureRef(), function, "X", "Y", "Z");
+			Chart3D chart = Chart3DFactory.createSurfaceChart("", "", function, "X", "Y", "Z");
 			XYZPlot plot = (XYZPlot) chart.getPlot();
 			plot.setDimensions(new Dimension3D(20, 10, 20));
 			ValueAxis3D xAxis = plot.getXAxis();

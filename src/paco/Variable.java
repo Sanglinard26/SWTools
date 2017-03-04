@@ -13,13 +13,15 @@ import jxl.write.biff.RowsExceededException;
 
 public abstract class Variable extends MouseAdapter {
 
+	private String longName;
     private String shortName;
     private String category;
     private String swFeatureRef;
     private String[][] swCsHistory;
 
-    public Variable(String shortName, String category, String swFeatureRef, String[][] swCsHistory) {
+    public Variable(String shortName, String longName, String category, String swFeatureRef, String[][] swCsHistory) {
         this.shortName = shortName;
+        this.longName = longName;
         this.category = category;
         this.swFeatureRef = swFeatureRef;
         this.swCsHistory = swCsHistory;
@@ -28,6 +30,10 @@ public abstract class Variable extends MouseAdapter {
     public String getShortName() {
         return shortName;
     }
+    
+    public String getLongName() {
+		return longName;
+	}
 
     public String getCategory() {
         return category;

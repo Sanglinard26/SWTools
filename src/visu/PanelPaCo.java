@@ -1,7 +1,6 @@
 package visu;
 
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -255,7 +254,28 @@ public final class PanelPaCo extends JPanel implements Observer {
                 if (!e.getValueIsAdjusting() & !listLabel.isSelectionEmpty()) {
                     tableHistory.getModel().setData(listLabel.getSelectedValue().getSwCsHistory());
                     panVisu.removeAll();
-                    panVisu.add(listLabel.getSelectedValue().showView());
+                    
+                    gbc.fill = GridBagConstraints.HORIZONTAL;
+                    gbc.gridx = 0;
+                    gbc.gridy = 0;
+                    gbc.gridwidth = GridBagConstraints.REMAINDER;
+                    gbc.gridheight = 1;
+                    gbc.weightx = 1;
+                    gbc.weighty = 0;
+                    gbc.insets = new Insets(10, 10, 10, 0);
+                    gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+                    panVisu.add(new PanelInfoVariable(listLabel.getSelectedValue()),gbc);
+                    
+                    gbc.fill = GridBagConstraints.NONE;
+                    gbc.gridx = 0;
+                    gbc.gridy = 1;
+                    gbc.gridwidth = GridBagConstraints.REMAINDER;
+                    gbc.gridheight = 1;
+                    gbc.weightx = 1;
+                    gbc.weighty = 1;
+                    gbc.insets = new Insets(0, 10, 0, 0);
+                    gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+                    panVisu.add(listLabel.getSelectedValue().showView(),gbc);
                     panVisu.revalidate();
                     panVisu.repaint();
 
@@ -268,7 +288,8 @@ public final class PanelPaCo extends JPanel implements Observer {
         });
         add(new JScrollPane(listLabel), gbc);
 
-        panVisu = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        //panVisu = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panVisu = new JPanel(new GridBagLayout());
         panVisu.setBackground(Color.WHITE);
 
         tableHistory = new TableHistory(new TableModelHistory());
@@ -287,7 +308,6 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.weighty = 1;
         gbc.insets = new Insets(0, 0, 0, 5);
         gbc.anchor = GridBagConstraints.CENTER;
-        // JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), new JScrollPane(tableHistory));
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
         splitPane.setOneTouchExpandable(true);
         splitPane.setDividerLocation(400);

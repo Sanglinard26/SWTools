@@ -4,22 +4,18 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
-import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JToggleButton;
-
 import graph.SurfaceChart;
 import graph.XYChart;
 import paco.Variable;
 
-public class PanelGraph extends JPanel {
+public final class PanelGraph extends JPanel {
 
-    private CardLayout cardLayout = new CardLayout();
+	private static final long serialVersionUID = 1L;
+	
+	private CardLayout cardLayout = new CardLayout();
     private JPanel panCard = new JPanel(cardLayout);
     private JPanel panBtRadio;
     private ButtonGroup buttonGroup;

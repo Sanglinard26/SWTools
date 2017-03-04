@@ -34,13 +34,13 @@ import jxl.write.biff.RowsExceededException;
 import tools.Preference;
 import tools.Utilitaire;
 
-public class Axis extends Variable {
+public final class Axis extends Variable {
 
 	private JPanel panel;
 	private String[] zValues;
 
-	public Axis(String shortName, String category, String swFeatureRef, String[][] swCsHistory, String[] values) {
-		super(shortName, category, swFeatureRef, swCsHistory);
+	public Axis(String shortName,String longName, String category, String swFeatureRef, String[][] swCsHistory, String[] values) {
+		super(shortName,longName, category, swFeatureRef, swCsHistory);
 
 		this.zValues = values;
 

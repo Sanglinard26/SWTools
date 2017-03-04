@@ -26,7 +26,7 @@ public final class FramePreferences extends JFrame {
     public FramePreferences() {
         this.setTitle("Preferences utilisateur");
         this.setMinimumSize(new Dimension(300, 300));
-        this.setLayout(new GridLayout(3, 1));
+        this.setLayout(new GridLayout(2, 1));
 
         getContentPane().add(createPanPrefPaco());
         getContentPane().add(createPanPrefLab());

@@ -33,7 +33,6 @@ public final class ListLabelRenderer extends JLabel implements ListCellRenderer<
 		
 		setText(value.getShortName());
 		setBorder(new EmptyBorder(2, 0, 2, 0));
-		setToolTipText("Fonction : " + value.getSwFeatureRef());
 		
 		switch(value.getCategory())
 		{

@@ -78,11 +78,12 @@ public final class PaCo extends Observable {
 			NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
 			NodeList listSwUnit = racine.getElementsByTagName("SW-UNIT");
 			Element eUnit;
-			String shortName, category, swFeatureRef;
+			String longName, shortName, category, swFeatureRef;
 			NodeList swCsEntry, swAxisCont;
 			nbLabel = listSwInstance.getLength();
 			Element label;
 
+			// Remplissage de la HashMap des unites
 			for(int u=0; u<listSwUnit.getLength(); u++)
 			{
 				eUnit = (Element) listSwUnit.item(u);
@@ -93,6 +94,7 @@ public final class PaCo extends Observable {
 
 			for (int i = 0; i < nbLabel; i++) {
 				label = (Element) listSwInstance.item(i);
+				longName = label.getElementsByTagName("LONG-NAME").item(0).getTextContent();
 				shortName = label.getElementsByTagName("SHORT-NAME").item(0).getTextContent();
 				category = label.getElementsByTagName("CATEGORY").item(0).getTextContent();
 
@@ -103,10 +105,11 @@ public final class PaCo extends Observable {
 				}
 
 				swAxisCont = label.getElementsByTagName("SW-AXIS-CONT");
-				
+
 				// A finir d'implementer pour les ValueBlock
 				String fullAttributAxe;
 				String attributAxe;
+				String[] splitAttributAxe=null; //Le tableau est cense avoir trois elements
 				for(int n = 0; n<swAxisCont.getLength(); n++)
 				{
 					if(swAxisCont.item(n).hasAttributes())
@@ -115,8 +118,11 @@ public final class PaCo extends Observable {
 						if(fullAttributAxe.indexOf(";")>-1)
 						{
 							attributAxe = fullAttributAxe.substring(fullAttributAxe.indexOf(";")+1);
+							if(attributAxe.indexOf("@")>-1)
+							{
+								splitAttributAxe = attributAxe.split("@");
+							}
 						}
-						
 					}
 				}
 				// _________________________________________
@@ -126,28 +132,28 @@ public final class PaCo extends Observable {
 
 				switch (category) {
 				case PaCo.ASCII:
-					listLabel.add(new Scalaire(shortName, category, swFeatureRef, readEntry(swCsEntry), readValue(swAxisCont)));
+					listLabel.add(new Scalaire(shortName,longName, category, swFeatureRef, readEntry(swCsEntry), readValue(swAxisCont)));
 					break;
 				case PaCo._C:
-					listLabel.add(new Scalaire(shortName, category, swFeatureRef, readEntry(swCsEntry), readValue(swAxisCont)));
+					listLabel.add(new Scalaire(shortName,longName, category, swFeatureRef, readEntry(swCsEntry), readValue(swAxisCont)));
 					break;
 				case PaCo._T:
-					listLabel.add(new Curve(shortName, category, swFeatureRef, readEntry(swCsEntry), readCurve(swAxisCont)));
+					listLabel.add(new Curve(shortName,longName, category, swFeatureRef, readEntry(swCsEntry), readCurve(swAxisCont)));
 					break;
 				case PaCo._A:
-					listLabel.add(new Axis(shortName, category, swFeatureRef, readEntry(swCsEntry), readAxis(swAxisCont)));
+					listLabel.add(new Axis(shortName,longName, category, swFeatureRef, readEntry(swCsEntry), readAxis(swAxisCont)));
 					break;
 				case PaCo._T_GROUPED:
-					listLabel.add(new Curve(shortName, category, swFeatureRef, readEntry(swCsEntry), readCurve(swAxisCont)));
+					listLabel.add(new Curve(shortName,longName, category, swFeatureRef, readEntry(swCsEntry), readCurve(swAxisCont)));
 					break;
 				case PaCo._T_CA:
-					listLabel.add(new ValueBlock(shortName, category, swFeatureRef, readEntry(swCsEntry), readValueBlock(swAxisCont)));
+					listLabel.add(new ValueBlock(shortName,longName, category, swFeatureRef, readEntry(swCsEntry), readValueBlock(splitAttributAxe, swAxisCont)));
 					break;
 				case PaCo._M:
-					listLabel.add(new Map(shortName, category, swFeatureRef, readEntry(swCsEntry), readMap(swAxisCont)));
+					listLabel.add(new Map(shortName,longName, category, swFeatureRef, readEntry(swCsEntry), readMap(swAxisCont)));
 					break;
 				case PaCo._M_GROUPED:
-					listLabel.add(new Map(shortName, category, swFeatureRef, readEntry(swCsEntry), readMap(swAxisCont)));
+					listLabel.add(new Map(shortName,longName, category, swFeatureRef, readEntry(swCsEntry), readMap(swAxisCont)));
 					break;
 				}
 
@@ -219,9 +225,28 @@ public final class PaCo extends Observable {
 		return val;
 	}
 
-	private String[][] readValueBlock(NodeList swAxisCont)
+	private String[][] readValueBlock(String [] dim, NodeList swAxisCont)
 	{
 		String val[][] = null;
+		
+		for (int n = 0; n < swAxisCont.getLength(); n++) {
+			Element eAxisCont = (Element) swAxisCont.item(n);
+			Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
+			Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+			NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
+
+			if (val == null)
+				val = new String[2][value.getLength()];
+
+			switch (indexAxis.getTextContent()) {
+			case "0":
+				for (int a = 0; a < value.getLength(); a++) {
+					val[0][a] = String.valueOf(a+1);
+					val[1][a] = value.item(a).getTextContent();
+				}
+				break;
+			}
+		}
 
 		return val;
 	}
@@ -438,6 +463,17 @@ public final class PaCo extends Observable {
 					}
 					printWriter.println();
 
+				}
+				if (var instanceof ValueBlock) {
+					ValueBlock variableType = (ValueBlock) var;
+					printWriter.println();
+
+					for (int y = 0; y < 2; y++) {
+						for (int x = 0; x < variableType.getDimX(); x++) {
+							printWriter.print("|" + variableType.getValue(y, x) + "|");
+						}
+						printWriter.println();
+					}
 				}
 				if (var instanceof Curve) {
 					Curve variableType = (Curve) var;
