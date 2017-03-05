@@ -41,8 +41,8 @@ public final class Curve extends Variable {
     private String[] xValues;
     private String[] zValues;
 
-    public Curve(String shortName,String longName, String category, String swFeatureRef, String[][] swCsHistory, String[][] values) {
-        super(shortName,longName, category, swFeatureRef, swCsHistory);
+    public Curve(String shortName,String longName, String category, String swFeatureRef,String[] swUnitRef, String[][] swCsHistory, String[][] values) {
+        super(shortName,longName, category, swFeatureRef,swUnitRef, swCsHistory);
         this.values = values;
 
         xValues = new String[values[0].length];

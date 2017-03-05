@@ -358,6 +358,14 @@ public final class PanelPaCo extends JPanel implements Observer {
             listLabel.getModel().setList(paco.getListLabel());
             listLabel.clearSelection();
             tableHistory.getModel().setData(new String[0][0]);
+            
+            panVisu.removeAll();
+            panVisu.revalidate();
+            panVisu.repaint();
+            
+            panGraph.getPanCard().removeAll();
+            panGraph.getPanCard().revalidate();
+            panGraph.getPanCard().repaint();
 
             dtd.delete();
         }

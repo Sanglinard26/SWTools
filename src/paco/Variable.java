@@ -17,13 +17,15 @@ public abstract class Variable extends MouseAdapter {
     private String shortName;
     private String category;
     private String swFeatureRef;
+    private String[] swUnitRef;
     private String[][] swCsHistory;
 
-    public Variable(String shortName, String longName, String category, String swFeatureRef, String[][] swCsHistory) {
+    public Variable(String shortName, String longName, String category, String swFeatureRef,String[] swUnitRef, String[][] swCsHistory) {
         this.shortName = shortName;
         this.longName = longName;
         this.category = category;
         this.swFeatureRef = swFeatureRef;
+        this.swUnitRef = swUnitRef;
         this.swCsHistory = swCsHistory;
     }
 
@@ -42,6 +44,10 @@ public abstract class Variable extends MouseAdapter {
     public String getSwFeatureRef() {
         return swFeatureRef;
     }
+    
+    public String[] getSwUnitRef() {
+		return swUnitRef;
+	}
 
     public String[][] getSwCsHistory() {
         return swCsHistory;

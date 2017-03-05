@@ -39,8 +39,8 @@ public final class Axis extends Variable {
 	private JPanel panel;
 	private String[] zValues;
 
-	public Axis(String shortName,String longName, String category, String swFeatureRef, String[][] swCsHistory, String[] values) {
-		super(shortName,longName, category, swFeatureRef, swCsHistory);
+	public Axis(String shortName,String longName, String category, String swFeatureRef,String[] swUnitRef, String[][] swCsHistory, String[] values) {
+		super(shortName,longName, category, swFeatureRef,swUnitRef, swCsHistory);
 
 		this.zValues = values;
 

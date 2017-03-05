@@ -14,20 +14,30 @@ public final class PanelInfoVariable extends JPanel {
 	private final JLabel labelShortName = new JLabel("Nom :");
 	private final JLabel labelLongName = new JLabel("Description :");
 	private final JLabel labelSwFeatureRef = new JLabel("Fonction :");
+	private final JLabel labelUnit = new JLabel("Unité(s) :");
 	private final JLabel labelValue = new JLabel("Valeur(s) :");
 	
 	public PanelInfoVariable(Variable variable) {
 		
-		this.setLayout(new GridLayout(4, 1));
+		this.setLayout(new GridLayout(5, 1));
 		this.setBackground(Color.WHITE);
 		
 		labelShortName.setText("Nom : " + variable.getShortName());
 		labelLongName.setText("Description : " + variable.getLongName());
 		labelSwFeatureRef.setText("Fonction : " + variable.getSwFeatureRef());
 		
+		String unite = "";
+		for(String s : variable.getSwUnitRef())
+		{
+			unite = unite + "[" + s + "] ";
+		}
+		
+		labelUnit.setText("Unité(s) : " + unite);
+		
 		this.add(labelShortName);
 		this.add(labelLongName);
 		this.add(labelSwFeatureRef);
+		this.add(labelUnit);
 		this.add(labelValue);
 	}
 
