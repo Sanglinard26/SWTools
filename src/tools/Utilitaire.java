@@ -47,4 +47,14 @@ public final class Utilitaire {
         }
         return number;
     } // Fin methode
+
+    public static Boolean isNumber(String s) {
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+    }
 }

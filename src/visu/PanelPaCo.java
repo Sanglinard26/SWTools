@@ -53,18 +53,20 @@ public final class PanelPaCo extends JPanel implements Observer {
     private static final String WARNING = "/warning_32.png";
     private static final String ICON_HISTORY = "/historique_32.png";
     private static final String ICON_CHART = "/graph_32.png";
+    private static final String ICON_EXCEL = "/excel_icon_16.png";
+    private static final String ICON_TEXT = "/text_icon_16.png";
 
     private static final GridBagConstraints gbc = new GridBagConstraints();
 
     // GUI
     private final JButton btOpen;
-    private final JLabel labelNomPaCo;
-    private final JTextField txtFiltre;
-    private final ListLabel listLabel;
-    private JPanel panVisu;
+    private static final JLabel labelNomPaCo = new JLabel("Nom : ");
+    private static final JTextField txtFiltre = new JTextField(20);
+    private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
+    private static final JPanel panVisu = new JPanel(new GridBagLayout());;
     private static final PanelGraph panGraph = new PanelGraph();
-    private final TableHistory tableHistory;
-    private final JProgressBar barChargement = new BarreProgression();
+    private static final TableHistory tableHistory = new TableHistory(new TableModelHistory());
+    private static final JProgressBar barChargement = new BarreProgression();
 
     // PaCo
     private File dtd;
@@ -153,7 +155,6 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.weighty = 0;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.LINE_START;
-        labelNomPaCo = new JLabel("Nom : ");
         labelNomPaCo.setFont(new Font(null, Font.BOLD, 14));
         add(labelNomPaCo, gbc);
 
@@ -166,7 +167,6 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.weighty = 0;
         gbc.insets = new Insets(0, 5, 0, 10);
         gbc.anchor = GridBagConstraints.CENTER;
-        txtFiltre = new JTextField(20);
         txtFiltre.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
@@ -196,14 +196,13 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.weighty = 1;
         gbc.insets = new Insets(0, 5, 0, 10);
         gbc.anchor = GridBagConstraints.CENTER;
-        listLabel = new ListLabel(new ListModelLabel());
         listLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (e.isPopupTrigger() & listLabel.getModel().getSize() > 0) {
-                    JPopupMenu menu = new JPopupMenu();
+                    final JPopupMenu menu = new JPopupMenu();
                     JMenuItem menuItem;
-                    menuItem = new JMenuItem("Exporter le PaCo en txt");
+                    menuItem = new JMenuItem("Exporter le PaCo en txt", new ImageIcon(getClass().getResource(ICON_TEXT)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -222,7 +221,8 @@ public final class PanelPaCo extends JPanel implements Observer {
                         }
                     });
                     menu.add(menuItem);
-                    menuItem = new JMenuItem("Exporter le PaCo en xls");
+                    menu.addSeparator();
+                    menuItem = new JMenuItem("Exporter le PaCo en xls", new ImageIcon(getClass().getResource(ICON_EXCEL)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -252,9 +252,12 @@ public final class PanelPaCo extends JPanel implements Observer {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() & !listLabel.isSelectionEmpty()) {
+
+                    Main.getLogger().info("Selection de la variable < " + listLabel.getSelectedValue().getShortName() + " >");
+
                     tableHistory.getModel().setData(listLabel.getSelectedValue().getSwCsHistory());
                     panVisu.removeAll();
-                    
+
                     gbc.fill = GridBagConstraints.HORIZONTAL;
                     gbc.gridx = 0;
                     gbc.gridy = 0;
@@ -264,8 +267,8 @@ public final class PanelPaCo extends JPanel implements Observer {
                     gbc.weighty = 0;
                     gbc.insets = new Insets(10, 10, 10, 0);
                     gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-                    panVisu.add(new PanelInfoVariable(listLabel.getSelectedValue()),gbc);
-                    
+                    panVisu.add(new PanelInfoVariable(listLabel.getSelectedValue()), gbc);
+
                     gbc.fill = GridBagConstraints.NONE;
                     gbc.gridx = 0;
                     gbc.gridy = 1;
@@ -275,7 +278,7 @@ public final class PanelPaCo extends JPanel implements Observer {
                     gbc.weighty = 1;
                     gbc.insets = new Insets(0, 10, 0, 0);
                     gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-                    panVisu.add(listLabel.getSelectedValue().showView(),gbc);
+                    panVisu.add(listLabel.getSelectedValue().showView(), gbc);
                     panVisu.revalidate();
                     panVisu.repaint();
 
@@ -288,14 +291,11 @@ public final class PanelPaCo extends JPanel implements Observer {
         });
         add(new JScrollPane(listLabel), gbc);
 
-        //panVisu = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panVisu = new JPanel(new GridBagLayout());
         panVisu.setBackground(Color.WHITE);
 
-        tableHistory = new TableHistory(new TableModelHistory());
         tableHistory.setFillsViewportHeight(false);
 
-        JTabbedPane tabPan = new JTabbedPane();
+        final JTabbedPane tabPan = new JTabbedPane();
         tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(tableHistory));
         tabPan.addTab("Graphique", new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
 
@@ -337,14 +337,23 @@ public final class PanelPaCo extends JPanel implements Observer {
 
     private class ReaderPaCo extends Thread {
 
-        private File file;
+        private final File file;
 
         public ReaderPaCo(File file) {
             this.file = file;
+            Main.getLogger().info("Ouverture de < " + file + " >");
         }
 
         @Override
         public void run() {
+
+            if (listLabel.getModel().getSize() > 0) {
+                listLabel.getModel().clearList();
+                labelNomPaCo.setText("Nom : ");
+                labelNomPaCo.setToolTipText(null);
+                labelNomPaCo.setIcon(null);
+            }
+
             paco = new PaCo(file, PanelPaCo.this);
             labelNomPaCo.setText("Nom : " + paco.getName());
             if (paco.checkName()) {
@@ -358,11 +367,11 @@ public final class PanelPaCo extends JPanel implements Observer {
             listLabel.getModel().setList(paco.getListLabel());
             listLabel.clearSelection();
             tableHistory.getModel().setData(new String[0][0]);
-            
+
             panVisu.removeAll();
             panVisu.revalidate();
             panVisu.repaint();
-            
+
             panGraph.getPanCard().removeAll();
             panGraph.getPanCard().revalidate();
             panGraph.getPanCard().repaint();

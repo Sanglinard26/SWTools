@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractListModel;
 
-public class ListModelLab extends AbstractListModel<Lab> {
+public final class ListModelLab extends AbstractListModel<Lab> {
 
     private static final long serialVersionUID = 1L;
 
-    private ArrayList<Lab> listLab;
+    private final ArrayList<Lab> listLab;
 
     public ListModelLab() {
         this.listLab = new ArrayList<Lab>();

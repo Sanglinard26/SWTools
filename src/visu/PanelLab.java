@@ -44,25 +44,25 @@ public final class PanelLab extends JPanel implements ListDataListener {
     private static final String TXT_FILTRAGE = "Entrer une partie du mot pour filtrer";
 
     // GUI
-    private final JButton btCompar, btExport;
+    private final JButton btAddLabRef, btAddLabWk, btCompar, btExport;
     private static final GridBagConstraints gbc = new GridBagConstraints();
-    private ListLab listLabRef;
-    private ListLab listLabWk;
-    private ListVar listVarRef;
-    private ListVar listVarWk, listVarPlus, listVarMoins;
-    private JTextField filterVarRef, filterVarWk;
+    private final ListLab listLabRef;
+    private final ListLab listLabWk;
+    private final ListVar listVarRef;
+    private final ListVar listVarWk, listVarPlus, listVarMoins;
+    private final JTextField filterVarRef, filterVarWk;
 
     public PanelLab() {
 
         this.setLayout(new GridBagLayout());
 
         setGbc(GridBagConstraints.HORIZONTAL, 0, 0, 1, 1, 0, 0, new Insets(0, 0, 5, 5), GridBagConstraints.CENTER);
-        JButton btAddLabRef = new JButton(BT_ADD_LAB_REF);
+        btAddLabRef = new JButton(BT_ADD_LAB_REF);
         btAddLabRef.addActionListener(new addLab());
         this.add(btAddLabRef, gbc);
 
         setGbc(GridBagConstraints.HORIZONTAL, 1, 0, 1, 1, 0, 0, new Insets(0, 5, 5, 20), GridBagConstraints.CENTER);
-        JButton btAddLabWk = new JButton(BT_ADD_LAB_WK);
+        btAddLabWk = new JButton(BT_ADD_LAB_WK);
         btAddLabWk.addActionListener(new addLab());
         this.add(btAddLabWk, gbc);
 
@@ -75,8 +75,8 @@ public final class PanelLab extends JPanel implements ListDataListener {
 
                 if (listLabRef.getModel().getSize() == listLabWk.getModel().getSize()) {
 
-                    Lab multiLabRef = Lab.compilLab(listLabRef.getModel().getList());
-                    Lab multiLabWk = Lab.compilLab(listLabWk.getModel().getList());
+                    final Lab multiLabRef = Lab.compilLab(listLabRef.getModel().getList());
+                    final Lab multiLabWk = Lab.compilLab(listLabWk.getModel().getList());
 
                     listVarMoins.getModel().setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
                     listVarPlus.getModel().setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));

@@ -19,7 +19,7 @@ public final class Variable {
         mapTypeVar.put("C", "SCALAIRE");
         mapTypeVar.put("T", "CURVE");
         mapTypeVar.put("M", "MAP");
-        mapTypeVar.put("CA", "MATRICE");
+        mapTypeVar.put("CA", "VALUEBLOCK");
     }
 
     public String getNom() {

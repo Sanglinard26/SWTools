@@ -1,19 +1,12 @@
 package visu;
 
-import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
 import java.awt.Toolkit;
-import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -24,9 +17,8 @@ public final class Ihm extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private static final String APP_ICON = "/eeprom.png";
-    private static final String ICON = "/Icon_tools.png";
 
-    private JTabbedPane onglets;
+    private final JTabbedPane onglets;
 
     public Ihm() {
 
@@ -36,26 +28,37 @@ public final class Ihm extends JFrame {
         setMinimumSize(new Dimension(1200, 700));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        JToolBar toolBar = new JToolBar("Option");
+        final JToolBar toolBar = new JToolBar("Option");
         toolBar.add(new AbstractAction("Preferences") {
 
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-			@Override
+            @Override
             public void actionPerformed(ActionEvent e) {
                 new FramePreferences();
 
             }
         });
         toolBar.add(new AbstractAction("Info") {
-			
-			private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				new FrameInfo();
-			}
-		});
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                new FrameInfo();
+            }
+        });
+
+        toolBar.add(new AbstractAction("Log") {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                new FrameLog();
+            }
+        });
+
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
         onglets = new JTabbedPane(JTabbedPane.TOP);
@@ -72,32 +75,6 @@ public final class Ihm extends JFrame {
 
         onglets.setOpaque(true);
         getContentPane().add(onglets, BorderLayout.CENTER);
-
-        if (SystemTray.isSupported()) {
-
-            PopupMenu menu = new PopupMenu("SystemTray");
-            MenuItem itemQuit = new MenuItem("Quitter");
-            itemQuit.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
-                }
-            });
-            menu.add(itemQuit);
-
-            if (getClass().getResource(ICON) != null) {
-                ImageIcon imageIcon = new ImageIcon(getClass().getResource(ICON));
-                TrayIcon trayIcon = new TrayIcon(imageIcon.getImage(), "SW Tools en cours...", menu);
-
-                try {
-                    SystemTray.getSystemTray().add(trayIcon);
-
-                } catch (AWTException awtEx) {
-
-                }
-            }
-        }
 
     }
 

@@ -18,7 +18,7 @@ import javax.swing.ListSelectionModel;
 import lab.Lab;
 import lab.ListModelLab;
 
-public class ListLab extends JList<Lab> implements KeyListener {
+public final class ListLab extends JList<Lab> implements KeyListener {
 
     private static final long serialVersionUID = 1L;
 

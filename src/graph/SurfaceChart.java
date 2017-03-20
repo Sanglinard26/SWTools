@@ -23,56 +23,56 @@ import com.orsoncharts.util.Orientation;
 import paco.Map;
 import paco.Variable;
 
-public final class SurfaceChart extends JPanel{
-	
-	private static final long serialVersionUID = 1L;
-	
-	private static final JLabel labelNoGraph = new JLabel("Graphique non disponible");
+public final class SurfaceChart extends JPanel {
 
-	public SurfaceChart(final Variable variable) {
+    private static final long serialVersionUID = 1L;
 
-		if (variable instanceof Map) {
+    private static final JLabel labelNoGraph = new JLabel("Graphique non disponible");
 
-			this.setLayout(new BorderLayout());
+    public SurfaceChart(final Variable variable) {
 
-			Function3D function = new Function3D() {
-				
-				private static final long serialVersionUID = 1L;
+        if (variable instanceof Map) {
 
-				@Override
-				public double getValue(double x, double z) {
-					try {
-						return Double.valueOf(((Map) variable).getzValue((int) z, (int) x));
-					} catch (NumberFormatException nbfEx) {
-						System.out.println(nbfEx);
-						return 0;
-					}
-				}
-			};
+            this.setLayout(new BorderLayout());
 
-			Chart3D chart = Chart3DFactory.createSurfaceChart("", "", function, "X", "Y", "Z");
-			XYZPlot plot = (XYZPlot) chart.getPlot();
-			plot.setDimensions(new Dimension3D(20, 10, 20));
-			ValueAxis3D xAxis = plot.getXAxis();
-			xAxis.setRange(0, ((Map) variable).getxValues().length - 1);
-			ValueAxis3D zAxis = plot.getZAxis();
-			zAxis.setRange(0, ((Map) variable).getyValues().length - 1);
-			SurfaceRenderer renderer = (SurfaceRenderer) plot.getRenderer();
-			renderer.setColorScale(new RainbowScale(new Range(((Map) variable).getMinZValue(), ((Map) variable).getMaxZValue())));
-			renderer.setDrawFaceOutlines(false);
-			renderer.setXSamples(((Map) variable).getxValues().length);
-			renderer.setZSamples(((Map) variable).getyValues().length);
-			chart.setLegendPosition(LegendAnchor.BOTTOM_CENTER, Orientation.HORIZONTAL);
+            final Function3D function = new Function3D() {
 
-			Chart3DPanel chartPanel = new Chart3DPanel(chart);
-			this.add(new DisplayPanel3D(chartPanel));
-		}else{
-			this.setLayout(new BorderLayout());
-			labelNoGraph.setHorizontalAlignment(SwingConstants.CENTER);
-			this.add(labelNoGraph,BorderLayout.CENTER);
-		}
+                private static final long serialVersionUID = 1L;
 
-	}
+                @Override
+                public double getValue(double x, double z) {
+                    try {
+                        return Double.valueOf(((Map) variable).getzValue((int) z, (int) x));
+                    } catch (NumberFormatException nbfEx) {
+                        return Double.NaN;
+                    }
+                }
+            };
 
+            // Erreur sur les axes (nom)
+            final Chart3D chart = Chart3DFactory.createSurfaceChart("", "", function, "X [" + ((Map) variable).getUnitX() + "]",
+                    "Y [" + ((Map) variable).getUnitY() + "]", "Z [" + ((Map) variable).getUnitZ() + "]");
+            final XYZPlot plot = (XYZPlot) chart.getPlot();
+            plot.setDimensions(new Dimension3D(20, 10, 20));
+            final ValueAxis3D xAxis = plot.getXAxis();
+            xAxis.setRange(0, ((Map) variable).getxValues().length - 1);
+            final ValueAxis3D zAxis = plot.getZAxis();
+            zAxis.setRange(0, ((Map) variable).getyValues().length - 1);
+            final SurfaceRenderer renderer = (SurfaceRenderer) plot.getRenderer();
+            renderer.setColorScale(new RainbowScale(new Range(((Map) variable).getMinZValue(), ((Map) variable).getMaxZValue())));
+            renderer.setDrawFaceOutlines(false);
+            renderer.setXSamples(((Map) variable).getxValues().length);
+            renderer.setZSamples(((Map) variable).getyValues().length);
+            chart.setLegendPosition(LegendAnchor.BOTTOM_CENTER, Orientation.HORIZONTAL);
+
+            final Chart3DPanel chartPanel = new Chart3DPanel(chart);
+            this.add(new DisplayPanel3D(chartPanel));
+        } else {
+            this.setLayout(new BorderLayout());
+            labelNoGraph.setHorizontalAlignment(SwingConstants.CENTER);
+            this.add(labelNoGraph, BorderLayout.CENTER);
+        }
+
+    }
 
 }

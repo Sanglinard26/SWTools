@@ -4,14 +4,15 @@
 package visu;
 
 import javax.swing.JList;
-import paco.Variable;
+
 import paco.ListModelLabel;
+import paco.Variable;
 
-public class ListLabel extends JList<Variable> {
+public final class ListLabel extends JList<Variable> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ListLabel(ListModelLabel dataModel) {
+    public ListLabel(ListModelLabel dataModel) {
         super(dataModel);
         setCellRenderer(new ListLabelRenderer());
     }

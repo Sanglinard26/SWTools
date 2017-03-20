@@ -2,6 +2,7 @@ package graph;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
@@ -22,195 +23,191 @@ import org.jfree.data.xy.XYSeriesCollection;
 import paco.Curve;
 import paco.Map;
 import paco.Variable;
+import tools.Utilitaire;
 
 public final class XYChart extends JPanel {
 
-	private static final long serialVersionUID = 1L;
-	
-	private static final JLabel labelNoGraph = new JLabel("Graphique non disponible");
+    private static final long serialVersionUID = 1L;
 
-	public XYChart(Variable variable) {
+    private static final JLabel labelNoGraph = new JLabel("Graphique non disponible");
 
-		if (variable instanceof Curve)
-		{
-			this.setLayout(new BorderLayout());
-			createXYLine((Curve)variable);
+    public XYChart(Variable variable) {
 
-		}else if (variable instanceof Map) {
-			this.setLayout(new GridLayout(1, 2));
-			createIsoX((Map)variable);
-			createIsoY((Map)variable);
-		}else{
-			this.setLayout(new BorderLayout());
-			labelNoGraph.setHorizontalAlignment(SwingConstants.CENTER);
-			this.add(labelNoGraph,BorderLayout.CENTER);
-		}
+        if (variable instanceof Curve) {
+            this.setLayout(new BorderLayout());
+            createXYLine((Curve) variable);
 
-	}
+        } else if (variable instanceof Map) {
+            this.setLayout(new GridLayout(1, 2));
+            createIsoX((Map) variable);
+            createIsoY((Map) variable);
+        } else {
+            this.setLayout(new BorderLayout());
+            labelNoGraph.setHorizontalAlignment(SwingConstants.CENTER);
+            this.add(labelNoGraph, BorderLayout.CENTER);
+        }
 
-	private void createXYLine(Curve variable)
-	{
+    }
 
-		String chartTitle = "Y = f(X)";
-		String xAxisLabel = "X";
-		String yAxisLabel = "Y";
+    private void createXYLine(Curve variable) {
 
-		XYSeriesCollection dataset = new XYSeriesCollection();
-		XYSeries series1 = new XYSeries(variable.getShortName());
+        final String chartTitle = "Y = f(X)";
+        final String xAxisLabel = "X [" + variable.getUnitX() + "]";
+        final String yAxisLabel = "Y [" + variable.getUnitZ() + "]";
 
-		String[][] variableValues = variable.getValues();
+        final XYSeriesCollection dataset = new XYSeriesCollection();
+        final XYSeries series1 = new XYSeries(variable.getShortName());
 
-		for(int i = 0; i<variable.getDimX(); i++)
-		{
-			try {
-				series1.add(
-						Double.parseDouble(variableValues[0][i]),
-						Double.parseDouble(variableValues[1][i]));
-			} catch (NumberFormatException e) {
-				series1.add(i, Double.parseDouble(variableValues[1][i]));
-			}
+        final String[][] variableValues = variable.getValues();
 
-		}
+        for (int i = 0; i < variable.getDimX(); i++) {
+            try {
+                series1.add(Double.parseDouble(variableValues[0][i]), Double.parseDouble(variableValues[1][i]));
+            } catch (NumberFormatException e) {
+                series1.add(i, Double.parseDouble(variableValues[1][i]));
+            }
 
-		dataset.addSeries(series1);
+        }
 
-		JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset);
-		chart.setBackgroundPaint(Color.LIGHT_GRAY);
-		chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer(true, true));
-		chart.getXYPlot().setBackgroundPaint(Color.WHITE);
-		chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
-		chart.getXYPlot().setDomainGridlinePaint(Color.BLACK);
-		chart.removeLegend();
+        dataset.addSeries(series1);
 
-		this.add(new ChartPanel(chart));
-	}
+        final JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset);
+        chart.setBackgroundPaint(Color.LIGHT_GRAY);
+        chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer(true, true));
+        chart.getXYPlot().setBackgroundPaint(Color.WHITE);
+        chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        chart.getXYPlot().setDomainGridlinePaint(Color.BLACK);
+        chart.removeLegend();
 
-	private void createIsoX(Map variable)
-	{
-		JPanel panel = new JPanel(new BorderLayout());
-		final JList<String> listSeries = new JList<String>();
-		listSeries.setBackground(Color.LIGHT_GRAY);
-		
-		String chartTitle = "Iso X";
-		String xAxisLabel = "Y";
-		String yAxisLabel = "Z";
+        this.add(new ChartPanel(chart));
+    }
 
-		final XYSeriesCollection dataset = new XYSeriesCollection();
-		final JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset);
-		//chart.getXYPlot().getRenderer().setSeriesVisible(0, false); //A voir si utile plutot que de supprimer toutes les series à chaque selection
-		chart.setBackgroundPaint(Color.LIGHT_GRAY);
-		chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer(true, true));
-		chart.getXYPlot().setBackgroundPaint(Color.WHITE);
-		chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
-		chart.getXYPlot().setDomainGridlinePaint(Color.BLACK);
-		final XYSeries[] series = new XYSeries[variable.getDimX()-1]; //-1 pour ne pas tenir compte de la cas "X\Y"
-		String[] seriesName = new String[variable.getDimX()-1];
-		int[] indexSerie = new int[variable.getDimX()-1];
+    private void createIsoX(Map variable) {
+        final JPanel panel = new JPanel(new BorderLayout());
+        final JList<String> listSeries = new JList<String>();
+        listSeries.setPreferredSize(new Dimension(50, 100));
+        listSeries.setBackground(Color.LIGHT_GRAY);
 
-		for(int x = 0; x<variable.getDimX()-1; x++)
-		{
-			series[x] = new XYSeries(variable.getxValues()[x]);
-			seriesName[x] = variable.getxValues()[x];
-			indexSerie[x] = x;
+        final String chartTitle = "Iso X";
+        final String xAxisLabel = "Y [" + variable.getUnitY() + "]";
+        final String yAxisLabel = "Z [" + variable.getUnitZ() + "]";
 
-			for(int y = 0; y<variable.getDimY()-1; y++)
-			{
-				try {
-					series[x].add(Double.parseDouble(variable.getyValues()[y]),Double.parseDouble(variable.getzValue(y, x)));
-				} catch (NumberFormatException e) {
-					series[x].add(y,Double.parseDouble(variable.getzValue(y, x)));
-				}
+        final XYSeriesCollection dataset = new XYSeriesCollection();
+        final JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset);
+        // chart.getXYPlot().getRenderer().setSeriesVisible(0, false); //A voir si utile plutot que de supprimer toutes les series ï¿½ chaque selection
+        chart.setBackgroundPaint(Color.LIGHT_GRAY);
+        chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer(true, true));
+        chart.getXYPlot().setBackgroundPaint(Color.WHITE);
+        chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        chart.getXYPlot().setDomainGridlinePaint(Color.BLACK);
+        final XYSeries[] series = new XYSeries[variable.getDimX() - 1]; // -1 pour ne pas tenir compte de la case "X\Y"
+        final String[] seriesName = new String[variable.getDimX() - 1];
+        final int[] indexSerie = new int[variable.getDimX() - 1];
 
-			}
-			dataset.addSeries(series[x]);
+        for (int x = 0; x < variable.getDimX() - 1; x++) {
+            series[x] = new XYSeries(variable.getxValues()[x]);
+            seriesName[x] = variable.getxValues()[x];
+            indexSerie[x] = x;
 
-		}
+            for (int y = 0; y < variable.getDimY() - 1; y++) {
+                try {
+                    series[x].add(Double.parseDouble(variable.getyValues()[y]), Double.parseDouble(variable.getzValue(y, x)));
+                } catch (NumberFormatException e) {
+                    if (Utilitaire.isNumber(variable.getzValue(y, x))) {
+                        series[x].add(y, Double.parseDouble(variable.getzValue(y, x)));
+                    } else {
+                        series[x].add(y, Double.NaN);
+                    }
 
-		listSeries.setListData(seriesName);
-		listSeries.setSelectedIndices(indexSerie);
+                }
 
-		listSeries.addListSelectionListener(new ListSelectionListener() {
+            }
+            dataset.addSeries(series[x]);
+        }
 
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if(!e.getValueIsAdjusting() & listSeries.getModel().getSize()>0)
-				{
-					dataset.removeAllSeries();
-					for(int indice : listSeries.getSelectedIndices())
-					{
-						dataset.addSeries(series[indice]);
-					}
-				}
+        listSeries.setListData(seriesName);
+        listSeries.setSelectedIndices(indexSerie);
 
-			}
-		});
+        listSeries.addListSelectionListener(new ListSelectionListener() {
 
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting() & listSeries.getModel().getSize() > 0) {
+                    dataset.removeAllSeries();
+                    for (int indice : listSeries.getSelectedIndices()) {
+                        dataset.addSeries(series[indice]);
+                    }
+                }
 
-		panel.add(new JScrollPane(listSeries),BorderLayout.WEST);
-		panel.add(new ChartPanel(chart),BorderLayout.CENTER);
-		this.add(panel);
-	}
+            }
+        });
 
-	private void createIsoY(Map variable)
-	{
-		JPanel panel = new JPanel(new BorderLayout());
-		final JList<String> listSeries = new JList<String>();
-		listSeries.setBackground(Color.LIGHT_GRAY);
+        panel.add(new JScrollPane(listSeries), BorderLayout.WEST);
+        panel.add(new ChartPanel(chart), BorderLayout.CENTER);
+        this.add(panel);
+    }
 
-		String chartTitle = "Iso Y";
-		String xAxisLabel = "X";
-		String yAxisLabel = "Z";
+    private void createIsoY(Map variable) {
+        final JPanel panel = new JPanel(new BorderLayout());
+        final JList<String> listSeries = new JList<String>();
+        listSeries.setPreferredSize(new Dimension(50, 100));
+        listSeries.setBackground(Color.LIGHT_GRAY);
 
-		final XYSeriesCollection dataset = new XYSeriesCollection();
-		JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset);
-		chart.setBackgroundPaint(Color.LIGHT_GRAY);
-		chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer(true, true));
-		chart.getXYPlot().setBackgroundPaint(Color.WHITE);
-		chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
-		chart.getXYPlot().setDomainGridlinePaint(Color.BLACK);
-		final XYSeries[] series = new XYSeries[variable.getDimY()-1];
-		String[] seriesName = new String[variable.getDimY()-1];
-		int[] indexSerie = new int[variable.getDimY()-1];
+        final String chartTitle = "Iso Y";
+        final String xAxisLabel = "X [" + variable.getUnitX() + "]";
+        final String yAxisLabel = "Z [" + variable.getUnitZ() + "]";
 
-		for(int y = 0; y<variable.getDimY()-1; y++)
-		{
-			indexSerie[y] = y;
-			series[y] = new XYSeries(variable.getyValues()[y]);
-			seriesName[y] = variable.getyValues()[y];
+        final XYSeriesCollection dataset = new XYSeriesCollection();
+        final JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset);
+        chart.setBackgroundPaint(Color.LIGHT_GRAY);
+        chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer(true, true));
+        chart.getXYPlot().setBackgroundPaint(Color.WHITE);
+        chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        chart.getXYPlot().setDomainGridlinePaint(Color.BLACK);
+        final XYSeries[] series = new XYSeries[variable.getDimY() - 1];
+        final String[] seriesName = new String[variable.getDimY() - 1];
+        final int[] indexSerie = new int[variable.getDimY() - 1];
 
-			for(int x = 0; x<variable.getDimX()-1; x++)
-			{
-				try {
-					series[y].add(Double.parseDouble(variable.getxValues()[x]),Double.parseDouble(variable.getzValue(y, x)));
-				} catch (NumberFormatException e) {
-					series[y].add(x,Double.parseDouble(variable.getzValue(y, x)));
-				}
+        for (int y = 0; y < variable.getDimY() - 1; y++) {
+            indexSerie[y] = y;
+            series[y] = new XYSeries(variable.getyValues()[y]);
+            seriesName[y] = variable.getyValues()[y];
 
-			}
-			dataset.addSeries(series[y]);
-		}
-		listSeries.setListData(seriesName);
-		listSeries.setSelectedIndices(indexSerie);
+            for (int x = 0; x < variable.getDimX() - 1; x++) {
+                try {
+                    series[y].add(Double.parseDouble(variable.getxValues()[x]), Double.parseDouble(variable.getzValue(y, x)));
+                } catch (NumberFormatException e) {
+                    if (Utilitaire.isNumber(variable.getzValue(y, x))) {
+                        series[y].add(x, Double.parseDouble(variable.getzValue(y, x)));
+                    } else {
+                        series[y].add(x, Double.NaN);
+                    }
 
-		listSeries.addListSelectionListener(new ListSelectionListener() {
+                }
 
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if(!e.getValueIsAdjusting() & listSeries.getModel().getSize()>0)
-				{
-					dataset.removeAllSeries();
-					for(int indice : listSeries.getSelectedIndices())
-					{
-						dataset.addSeries(series[indice]);
-					}
-				}
+            }
+            dataset.addSeries(series[y]);
+        }
+        listSeries.setListData(seriesName);
+        listSeries.setSelectedIndices(indexSerie);
 
-			}
-		});
+        listSeries.addListSelectionListener(new ListSelectionListener() {
 
-		panel.add(new JScrollPane(listSeries),BorderLayout.EAST);
-		panel.add(new ChartPanel(chart),BorderLayout.CENTER);
-		this.add(panel);
-	}
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting() & listSeries.getModel().getSize() > 0) {
+                    dataset.removeAllSeries();
+                    for (int indice : listSeries.getSelectedIndices()) {
+                        dataset.addSeries(series[indice]);
+                    }
+                }
+
+            }
+        });
+
+        panel.add(new JScrollPane(listSeries), BorderLayout.EAST);
+        panel.add(new ChartPanel(chart), BorderLayout.CENTER);
+        this.add(panel);
+    }
 
 }

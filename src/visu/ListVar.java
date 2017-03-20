@@ -8,11 +8,11 @@ import javax.swing.JList;
 import lab.ListModelVar;
 import lab.Variable;
 
-public class ListVar extends JList<Variable> {
+public final class ListVar extends JList<Variable> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ListVar(ListModelVar dataModel) {
+    public ListVar(ListModelVar dataModel) {
         super(dataModel);
         setCellRenderer(new ListVarRenderer());
     }

@@ -9,11 +9,11 @@ import java.util.List;
 
 import javax.swing.AbstractListModel;
 
-public class ListModelVar extends AbstractListModel<Variable> {
+public final class ListModelVar extends AbstractListModel<Variable> {
 
     private static final long serialVersionUID = 1L;
-    private ArrayList<Variable> listVariable;
-    private ArrayList<Variable> listVariableFiltre;
+    private final ArrayList<Variable> listVariable;
+    private final ArrayList<Variable> listVariableFiltre;
 
     public ListModelVar() {
         this.listVariable = new ArrayList<Variable>();
