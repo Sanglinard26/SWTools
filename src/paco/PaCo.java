@@ -192,7 +192,7 @@ public final class PaCo extends Observable {
         Element aEntry;
         Node swCsState, swCsPerformedBy, remark, date;
 
-        for (int n = 0; n < nbEntry; n++) {
+        for (byte n = 0; n < nbEntry; n++) {
             aEntry = (Element) swCsEntry.item(n);
 
             swCsPerformedBy = aEntry.getElementsByTagName("SW-CS-PERFORMED-BY").item(0);
@@ -223,7 +223,7 @@ public final class PaCo extends Observable {
 
         val = new String[nbVal];
 
-        for (int a = 0; a < nbVal; a++) {
+        for (byte a = 0; a < nbVal; a++) {
             val[a] = value.item(a).getTextContent();
         }
 
@@ -235,7 +235,7 @@ public final class PaCo extends Observable {
         String val[][] = null;
         final int nbAxe = swAxisCont.getLength();
 
-        for (int n = 0; n < nbAxe; n++) {
+        for (byte n = 0; n < nbAxe; n++) {
             Element eAxisCont = (Element) swAxisCont.item(n);
             Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
             Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
@@ -249,7 +249,7 @@ public final class PaCo extends Observable {
 
             switch (indexAxis.getTextContent()) {
             case "0":
-                for (int a = 0; a < nbVal; a++) {
+                for (byte a = 0; a < nbVal; a++) {
                     val[0][a] = String.valueOf(a + 1);
                     if (value.item(a).getTextContent() != null) {
                         val[1][a] = value.item(a).getTextContent();
@@ -270,7 +270,7 @@ public final class PaCo extends Observable {
         String val[][] = null;
         final int nbAxe = swAxisCont.getLength();
 
-        for (int n = 0; n < nbAxe; n++) {
+        for (byte n = 0; n < nbAxe; n++) {
 
             Element eAxisCont = (Element) swAxisCont.item(n);
             Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
@@ -285,12 +285,12 @@ public final class PaCo extends Observable {
             switch (indexAxis.getTextContent()) {
             case "1":
 
-                for (int b = 0; b < nbVal; b++) {
+                for (byte b = 0; b < nbVal; b++) {
                     val[0][b] = value.item(b).getTextContent();
                 }
                 break;
             case "0":
-                for (int a = 0; a < nbVal; a++) {
+                for (byte a = 0; a < nbVal; a++) {
                     val[1][a] = value.item(a).getTextContent();
                 }
                 break;
@@ -309,7 +309,7 @@ public final class PaCo extends Observable {
 
         val[0][0] = "Y \\ X";
 
-        for (int n = 0; n < nbAxe; n++) {
+        for (byte n = 0; n < nbAxe; n++) {
             Element eAxisCont = (Element) swAxisCont.item(n);
             Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
             Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
@@ -320,7 +320,7 @@ public final class PaCo extends Observable {
             switch (indexAxis.getTextContent()) {
             case "1": // Axe X
 
-                for (int x = 0; x < nbAxeVal; x++) {
+                for (byte x = 0; x < nbAxeVal; x++) {
 
                     switch (nodeListV.item(x).getNodeName()) {
                     case "VT":
@@ -336,7 +336,7 @@ public final class PaCo extends Observable {
 
             case "2": // Axe Y
 
-                for (int y = 0; y < nbAxeVal; y++) {
+                for (byte y = 0; y < nbAxeVal; y++) {
                     switch (nodeListV.item(y).getNodeName()) {
                     case "VT":
                         val[y + 1][0] = nodeListV.item(y).getFirstChild().getTextContent();

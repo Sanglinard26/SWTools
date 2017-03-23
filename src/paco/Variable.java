@@ -64,7 +64,7 @@ public abstract class Variable extends MouseAdapter {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Nom : " + this.shortName + "\n");
         sb.append("Description : " + this.longName + "\n");
         sb.append("Fonction : " + this.swFeatureRef + "\n");
@@ -78,7 +78,7 @@ public abstract class Variable extends MouseAdapter {
     public abstract void copyToClipboard();
 
     public void copyTxtToClipboard() {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new TxtTransfert(this.toString()), null);
     }
 
@@ -109,8 +109,8 @@ public abstract class Variable extends MouseAdapter {
     @Override
     public void mouseReleased(MouseEvent e) {
         if (e.isPopupTrigger()) {
-            JPopupMenu menu = new JPopupMenu();
-            JMenu menuCopy = new JMenu("Copier dans le presse-papier");
+            final JPopupMenu menu = new JPopupMenu();
+            final JMenu menuCopy = new JMenu("Copier dans le presse-papier");
             JMenuItem subMenu = new JMenuItem("Format image", new ImageIcon(getClass().getResource(ICON_IMAGE)));
             subMenu.addActionListener(new ActionListener() {
 
