@@ -1,5 +1,6 @@
 package visu;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -11,6 +12,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class Main {
 
+    private static File logFile = null;
     private static Logger logger = Logger.getLogger("MyLogger");
     private static Handler fileHandler;
 
@@ -29,7 +31,9 @@ public class Main {
         }
 
         try {
-            fileHandler = new FileHandler("C:/SwTools.log", false);
+            logFile = File.createTempFile("SwTools_", ".log");
+            logFile.deleteOnExit();
+            fileHandler = new FileHandler(logFile.getPath(), false);
             fileHandler.setFormatter(new SimpleFormatter());
             logger.addHandler(fileHandler);
         } catch (SecurityException e) {
@@ -47,6 +51,10 @@ public class Main {
 
     public static Logger getLogger() {
         return logger;
+    }
+
+    public static File getLogFile() {
+        return logFile;
     }
 
 }

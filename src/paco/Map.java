@@ -179,20 +179,38 @@ public final class Map extends Variable {
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         panel.addMouseListener(this);
-        JLabel[] valueView = new JLabel[getDimX() * (getDimY() - 1)];
+        // JLabel[] valueView = new JLabel[getDimX() * (getDimY() - 1)];
+        //
+        // for (int y = 0; y < getDimY(); y++) {
+        // for (int x = 0; x < getDimX(); x++) {
+        // valueView[y * x] = new JLabel(getValue(y, x));
+        // panel.add(valueView[y * x]);
+        //
+        // if (y == 0 | x == 0) {
+        // valueView[y * x].setFont(new Font(null, Font.BOLD, valueView[y * x].getFont().getSize()));
+        // }
+        // valueView[y * x].setOpaque(true);
+        // valueView[y * x].setBackground(Color.LIGHT_GRAY);
+        // valueView[y * x].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        // valueView[y * x].setHorizontalAlignment(SwingConstants.CENTER);
+        //
+        // }
+        // }
+
+        JLabel valueView;
 
         for (int y = 0; y < getDimY(); y++) {
             for (int x = 0; x < getDimX(); x++) {
-                valueView[y * x] = new JLabel(getValue(y, x));
-                panel.add(valueView[y * x]);
+                valueView = new JLabel(getValue(y, x));
+                panel.add(valueView);
 
                 if (y == 0 | x == 0) {
-                    valueView[y * x].setFont(new Font(null, Font.BOLD, valueView[y * x].getFont().getSize()));
+                    valueView.setFont(new Font(null, Font.BOLD, valueView.getFont().getSize()));
                 }
-                valueView[y * x].setOpaque(true);
-                valueView[y * x].setBackground(Color.LIGHT_GRAY);
-                valueView[y * x].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                valueView[y * x].setHorizontalAlignment(SwingConstants.CENTER);
+                valueView.setOpaque(true);
+                valueView.setBackground(Color.LIGHT_GRAY);
+                valueView.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                valueView.setHorizontalAlignment(SwingConstants.CENTER);
 
             }
         }

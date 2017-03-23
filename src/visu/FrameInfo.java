@@ -17,6 +17,7 @@ public final class FrameInfo extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private static final String FENETRE_ICON = "/info_32.png";
+    private static final String ADRESSE_MAIL = "kevin.raillon1@mpsa.com";
 
     private final JTextPane txtContact = new JTextPane();
 
@@ -33,7 +34,7 @@ public final class FrameInfo extends JFrame {
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    sendMail(e.getURL().toString());
+                    sendMail();
                     FrameInfo.this.dispose();
                 }
             }
@@ -48,12 +49,12 @@ public final class FrameInfo extends JFrame {
 
     }
 
-    private void sendMail(String adresse) {
+    private static void sendMail() {
         if (Desktop.isDesktopSupported()) {
             if (Desktop.getDesktop().isSupported(Desktop.Action.MAIL)) {
-                adresse = adresse.replaceAll("mailto:", "");
-                adresse += "?subject=[SW Tools] Bugs ou ameliorations";
-                adresse += "&body=Bonjour,";
+
+                String adresse = ADRESSE_MAIL + "?subject=[SW Tools] Bugs ou ameliorations" + "&body=Bonjour,";
+
                 try {
                     Desktop.getDesktop().mail(new URI("mailto", adresse, null));
                 } catch (IOException | URISyntaxException e) {

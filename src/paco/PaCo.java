@@ -64,7 +64,7 @@ public final class PaCo extends Observable {
         try {
             factory = DocumentBuilderFactory.newInstance();
             factory.setIgnoringElementContentWhitespace(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
+            final DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(file.getPath());
         } catch (Exception e) {
             Main.getLogger().severe(e.getMessage());
@@ -72,14 +72,14 @@ public final class PaCo extends Observable {
 
         if (document != null) {
 
-            Element racine = document.getDocumentElement();
+            final Element racine = document.getDocumentElement();
 
-            NodeList enfantRacine = racine.getChildNodes();
+            final NodeList enfantRacine = racine.getChildNodes();
 
             this.name = enfantRacine.item(0).getTextContent();
 
-            NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
-            NodeList listSwUnit = racine.getElementsByTagName("SW-UNIT");
+            final NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
+            final NodeList listSwUnit = racine.getElementsByTagName("SW-UNIT");
             Element eUnit;
             String longName, shortName, category, swFeatureRef;
             String[] swUnitRef = null;
@@ -184,13 +184,15 @@ public final class PaCo extends Observable {
         return this.listLabel;
     }
 
-    private String[][] readEntry(NodeList swCsEntry) {
-        String[][] entry = new String[swCsEntry.getLength()][4];
+    private final String[][] readEntry(NodeList swCsEntry) {
+
+        final int nbEntry = swCsEntry.getLength();
+        String[][] entry = new String[nbEntry][4];
 
         Element aEntry;
         Node swCsState, swCsPerformedBy, remark, date;
 
-        for (int n = 0; n < swCsEntry.getLength(); n++) {
+        for (int n = 0; n < nbEntry; n++) {
             aEntry = (Element) swCsEntry.item(n);
 
             swCsPerformedBy = aEntry.getElementsByTagName("SW-CS-PERFORMED-BY").item(0);
@@ -206,42 +208,48 @@ public final class PaCo extends Observable {
         return entry;
     }
 
-    private String readValue(NodeList swAxisCont) {
+    private final String readValue(NodeList swAxisCont) {
         return swAxisCont.item(0).getLastChild().getTextContent();
     }
 
-    private String[] readAxis(NodeList swAxisCont) {
+    private final String[] readAxis(NodeList swAxisCont) {
         String val[] = null;
 
-        Element eAxisCont = (Element) swAxisCont.item(0);
-        Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
-        NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
+        final Element eAxisCont = (Element) swAxisCont.item(0);
+        final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+        final NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
 
-        val = new String[value.getLength()];
+        final int nbVal = value.getLength();
 
-        for (int a = 0; a < value.getLength(); a++) {
+        val = new String[nbVal];
+
+        for (int a = 0; a < nbVal; a++) {
             val[a] = value.item(a).getTextContent();
         }
 
         return val;
     }
 
-    private String[][] readValueBlock(String[] dim, NodeList swAxisCont) {
-        String val[][] = null;
+    private final String[][] readValueBlock(String[] dim, NodeList swAxisCont) {
 
-        for (int n = 0; n < swAxisCont.getLength(); n++) {
+        String val[][] = null;
+        final int nbAxe = swAxisCont.getLength();
+
+        for (int n = 0; n < nbAxe; n++) {
             Element eAxisCont = (Element) swAxisCont.item(n);
             Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
             Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
 
             NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(0).getNodeName());
 
+            final int nbVal = value.getLength();
+
             if (val == null)
-                val = new String[2][value.getLength()];
+                val = new String[2][nbVal];
 
             switch (indexAxis.getTextContent()) {
             case "0":
-                for (int a = 0; a < value.getLength(); a++) {
+                for (int a = 0; a < nbVal; a++) {
                     val[0][a] = String.valueOf(a + 1);
                     if (value.item(a).getTextContent() != null) {
                         val[1][a] = value.item(a).getTextContent();
@@ -257,28 +265,32 @@ public final class PaCo extends Observable {
         return val;
     }
 
-    private String[][] readCurve(NodeList swAxisCont) {
+    private final String[][] readCurve(NodeList swAxisCont) {
 
         String val[][] = null;
+        final int nbAxe = swAxisCont.getLength();
 
-        for (int n = 0; n < swAxisCont.getLength(); n++) {
+        for (int n = 0; n < nbAxe; n++) {
+
             Element eAxisCont = (Element) swAxisCont.item(n);
             Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
             Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
             NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
 
+            final int nbVal = value.getLength();
+
             if (val == null)
-                val = new String[swAxisCont.getLength()][value.getLength()];
+                val = new String[nbAxe][nbVal];
 
             switch (indexAxis.getTextContent()) {
             case "1":
 
-                for (int b = 0; b < value.getLength(); b++) {
+                for (int b = 0; b < nbVal; b++) {
                     val[0][b] = value.item(b).getTextContent();
                 }
                 break;
             case "0":
-                for (int a = 0; a < value.getLength(); a++) {
+                for (int a = 0; a < nbVal; a++) {
                     val[1][a] = value.item(a).getTextContent();
                 }
                 break;
@@ -287,24 +299,28 @@ public final class PaCo extends Observable {
         return val;
     }
 
-    private String[][] readMap(NodeList swAxisCont) {
+    private final String[][] readMap(NodeList swAxisCont) {
         // Premiere dimension = Axe Y car nombre de ligne
         // Deuxieme dimension = Axe X car nombre de colonne
         String val[][] = new String[((Element) swAxisCont.item(1)).getLastChild().getChildNodes().getLength()
                 + 1][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength() + 1];
 
+        final int nbAxe = swAxisCont.getLength();
+
         val[0][0] = "Y \\ X";
 
-        for (int n = 0; n < swAxisCont.getLength(); n++) {
+        for (int n = 0; n < nbAxe; n++) {
             Element eAxisCont = (Element) swAxisCont.item(n);
             Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
             Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
             NodeList nodeListV = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
 
+            final int nbAxeVal = nodeListV.getLength();
+
             switch (indexAxis.getTextContent()) {
             case "1": // Axe X
 
-                for (int x = 0; x < nodeListV.getLength(); x++) {
+                for (int x = 0; x < nbAxeVal; x++) {
 
                     switch (nodeListV.item(x).getNodeName()) {
                     case "VT":
@@ -320,7 +336,7 @@ public final class PaCo extends Observable {
 
             case "2": // Axe Y
 
-                for (int y = 0; y < nodeListV.getLength(); y++) {
+                for (int y = 0; y < nbAxeVal; y++) {
                     switch (nodeListV.item(y).getNodeName()) {
                     case "VT":
                         val[y + 1][0] = nodeListV.item(y).getFirstChild().getTextContent();
@@ -483,10 +499,10 @@ public final class PaCo extends Observable {
         }
     }
 
-    private void writeCell(WritableSheet sht, int col, int row, String txtValue, WritableCellFormat format)
+    private final void writeCell(WritableSheet sht, int col, int row, String txtValue, WritableCellFormat format)
             throws RowsExceededException, WriteException {
         try {
-            Double value = Double.parseDouble(txtValue);
+            final Double value = Double.parseDouble(txtValue);
             sht.addCell(new Number(col, row, value, format));
         } catch (NumberFormatException e) {
             sht.addCell(new Label(col, row, txtValue, format));
