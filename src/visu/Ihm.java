@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 
 public final class Ihm extends JFrame {
 
@@ -61,15 +62,15 @@ public final class Ihm extends JFrame {
 
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
-        onglets = new JTabbedPane(JTabbedPane.TOP);
+        onglets = new JTabbedPane(SwingConstants.TOP);
 
         // Onglet lecteur PaCo
-        JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
+        final JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
         ongletPaCo.add(new PanelPaCo());
         onglets.addTab("Lecteur PaCo", ongletPaCo);
 
         // Onglet comparaison de Lab
-        JPanel onglet2 = new JPanel(new GridLayout(1, 1));
+        final JPanel onglet2 = new JPanel(new GridLayout(1, 1));
         onglet2.add(new PanelLab());
         onglets.addTab("Comparaison lab", onglet2);
 

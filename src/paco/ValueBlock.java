@@ -19,8 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import tools.Utilitaire;
-
 public final class ValueBlock extends Variable {
 
     private String[][] values;
@@ -33,15 +31,20 @@ public final class ValueBlock extends Variable {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;
 
-        xValues = new String[values[0].length];
-        for (int i = 0; i < xValues.length; i++) {
-            xValues[i] = Utilitaire.cutNumber(values[0][i]);
-        }
+        this.xValues = values[0];
+        this.zValues = values[1];
 
-        zValues = new String[values[0].length];
-        for (int i = 0; i < zValues.length; i++) {
-            zValues[i] = Utilitaire.cutNumber(values[1][i]);
-        }
+        // xValues = new String[values[0].length];
+        // for (int i = 0; i < xValues.length; i++) {
+        // // xValues[i] = Utilitaire.cutNumber(values[0][i]);
+        // xValues[i] = values[0][i];
+        // }
+        //
+        // zValues = new String[values[0].length];
+        // for (int i = 0; i < zValues.length; i++) {
+        // // zValues[i] = Utilitaire.cutNumber(values[1][i]);
+        // zValues[i] = values[1][i];
+        // }
 
     }
 
@@ -71,7 +74,8 @@ public final class ValueBlock extends Variable {
     }
 
     public String getValue(int col, int row) {
-        return Utilitaire.cutNumber(values[col][row]);
+        // return Utilitaire.cutNumber(values[col][row]);
+        return values[col][row];
     }
 
     public int getDimX() {
@@ -85,27 +89,27 @@ public final class ValueBlock extends Variable {
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         panel.addMouseListener(this);
-//        JLabel[] valueViewX = new JLabel[getDimX()];
-//        JLabel[] valueViewY = new JLabel[getDimX()];
-//        for (int i = 0; i < valueViewX.length; i++) {
-//            valueViewX[i] = new JLabel(getValue(0, i));
-//            panel.add(valueViewX[i]);
-//            valueViewX[i].setFont(new Font(null, Font.BOLD, valueViewX[i].getFont().getSize()));
-//            valueViewX[i].setOpaque(true);
-//            valueViewX[i].setBackground(Color.LIGHT_GRAY);
-//            valueViewX[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-//            valueViewX[i].setHorizontalAlignment(SwingConstants.CENTER);
-//        }
-//        for (int i = 0; i < valueViewY.length; i++) {
-//            valueViewY[i] = new JLabel(getValue(1, i));
-//            panel.add(valueViewY[i]);
-//            valueViewY[i].setOpaque(true);
-//            valueViewY[i].setBackground(Color.LIGHT_GRAY);
-//            valueViewY[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-//            valueViewY[i].setHorizontalAlignment(SwingConstants.CENTER);
-//
-//        }
-        
+        // JLabel[] valueViewX = new JLabel[getDimX()];
+        // JLabel[] valueViewY = new JLabel[getDimX()];
+        // for (int i = 0; i < valueViewX.length; i++) {
+        // valueViewX[i] = new JLabel(getValue(0, i));
+        // panel.add(valueViewX[i]);
+        // valueViewX[i].setFont(new Font(null, Font.BOLD, valueViewX[i].getFont().getSize()));
+        // valueViewX[i].setOpaque(true);
+        // valueViewX[i].setBackground(Color.LIGHT_GRAY);
+        // valueViewX[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        // valueViewX[i].setHorizontalAlignment(SwingConstants.CENTER);
+        // }
+        // for (int i = 0; i < valueViewY.length; i++) {
+        // valueViewY[i] = new JLabel(getValue(1, i));
+        // panel.add(valueViewY[i]);
+        // valueViewY[i].setOpaque(true);
+        // valueViewY[i].setBackground(Color.LIGHT_GRAY);
+        // valueViewY[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        // valueViewY[i].setHorizontalAlignment(SwingConstants.CENTER);
+        //
+        // }
+
         JLabel valueViewX;
         JLabel valueViewY;
         for (int i = 0; i < getDimX(); i++) {
@@ -137,9 +141,9 @@ public final class ValueBlock extends Variable {
 
     @Override
     public void copyToClipboard() {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = img.createGraphics();
+        final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        final BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        final Graphics2D g = img.createGraphics();
         panel.printAll(g);
         g.dispose();
         clipboard.setContents(new ImgTransfert(img), null);

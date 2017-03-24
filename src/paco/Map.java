@@ -19,8 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import tools.Utilitaire;
-
 public final class Map extends Variable {
 
     private String[][] values;
@@ -39,18 +37,21 @@ public final class Map extends Variable {
 
         xValues = new String[values[0].length - 1];
         for (int i = 0; i < xValues.length; i++) {
-            xValues[i] = Utilitaire.cutNumber(values[0][i + 1]);
+            // xValues[i] = Utilitaire.cutNumber(values[0][i + 1]);
+            xValues[i] = values[0][i + 1];
         }
 
         yValues = new String[values.length - 1];
         for (int i = 0; i < yValues.length; i++) {
-            yValues[i] = Utilitaire.cutNumber(values[i + 1][0]);
+            // yValues[i] = Utilitaire.cutNumber(values[i + 1][0]);
+            yValues[i] = values[i + 1][0];
         }
 
         zValues = new String[yValues.length][xValues.length];
         for (int x = 0; x < xValues.length; x++) {
             for (int y = 0; y < yValues.length; y++) {
-                zValues[y][x] = Utilitaire.cutNumber(values[y + 1][x + 1]);
+                // zValues[y][x] = Utilitaire.cutNumber(values[y + 1][x + 1]);
+                zValues[y][x] = values[y + 1][x + 1];
 
                 try {
 
@@ -106,7 +107,8 @@ public final class Map extends Variable {
     }
 
     public String getzValue(int col, int row) {
-        return Utilitaire.cutNumber(zValues[col][row]);
+        // return Utilitaire.cutNumber(zValues[col][row]);
+        return zValues[col][row];
     }
 
     public Double getMaxZValue() {
@@ -122,7 +124,8 @@ public final class Map extends Variable {
     }
 
     public String getValue(int col, int row) {
-        return Utilitaire.cutNumber(values[col][row]);
+        // return Utilitaire.cutNumber(values[col][row]);
+        return values[col][row];
     }
 
     public int getDimX() {
@@ -139,10 +142,11 @@ public final class Map extends Variable {
         return panel;
     }
 
+    @Override
     public void copyToClipboard() {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = img.createGraphics();
+        final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        final BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        final Graphics2D g = img.createGraphics();
         panel.printAll(g);
         g.dispose();
         clipboard.setContents(new ImgTransfert(img), null);

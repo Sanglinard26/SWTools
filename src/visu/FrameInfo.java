@@ -53,7 +53,7 @@ public final class FrameInfo extends JFrame {
         if (Desktop.isDesktopSupported()) {
             if (Desktop.getDesktop().isSupported(Desktop.Action.MAIL)) {
 
-                String adresse = ADRESSE_MAIL + "?subject=[SW Tools] Bugs ou ameliorations" + "&body=Bonjour,";
+                final String adresse = ADRESSE_MAIL + "?subject=[SW Tools] Bugs ou ameliorations" + "&body=Bonjour,";
 
                 try {
                     Desktop.getDesktop().mail(new URI("mailto", adresse, null));

@@ -33,7 +33,7 @@ public final class FrameLog extends JFrame {
 
         try {
             String line;
-            StringBuilder sLog = new StringBuilder("");
+            final StringBuilder sLog = new StringBuilder("");
             brLog = new BufferedReader(new FileReader(Main.getLogFile()));
             while ((line = brLog.readLine()) != null) {
                 sLog.append("\n" + line);
@@ -64,7 +64,7 @@ public final class FrameLog extends JFrame {
         if (Desktop.isDesktopSupported()) {
             if (Desktop.getDesktop().isSupported(Desktop.Action.MAIL)) {
 
-                String adresse = ADRESSE_MAIL + "?subject=[SW Tools] Bugs ou ameliorations" + "&body=Bonjour,\n\nVoici mon log :\n" + texteLog;
+                final String adresse = ADRESSE_MAIL + "?subject=[SW Tools] Bugs ou ameliorations" + "&body=Bonjour,\n\nVoici mon log :\n" + texteLog;
 
                 try {
                     Desktop.getDesktop().mail(new URI("mailto", adresse, null));

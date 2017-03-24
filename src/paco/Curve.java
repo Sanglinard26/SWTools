@@ -19,8 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import tools.Utilitaire;
-
 public final class Curve extends Variable {
 
     private String[][] values;
@@ -33,15 +31,20 @@ public final class Curve extends Variable {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;
 
-        xValues = new String[values[0].length];
-        for (int i = 0; i < xValues.length; i++) {
-            xValues[i] = Utilitaire.cutNumber(values[0][i]);
-        }
+        this.xValues = values[0];
+        this.zValues = values[1];
 
-        zValues = new String[values[0].length];
-        for (int i = 0; i < zValues.length; i++) {
-            zValues[i] = Utilitaire.cutNumber(values[1][i]);
-        }
+        // xValues = new String[values[0].length];
+        // for (int i = 0; i < xValues.length; i++) {
+        // // xValues[i] = Utilitaire.cutNumber(values[0][i]);
+        // xValues[i] = values[0][i];
+        // }
+        //
+        // zValues = new String[values[0].length];
+        // for (int i = 0; i < zValues.length; i++) {
+        // // zValues[i] = Utilitaire.cutNumber(values[1][i]);
+        // zValues[i] = values[1][i];
+        // }
 
     }
 
@@ -71,7 +74,8 @@ public final class Curve extends Variable {
     }
 
     public String getValue(int col, int row) {
-        return Utilitaire.cutNumber(values[col][row]);
+        // return Utilitaire.cutNumber(values[col][row]);
+        return values[col][row];
     }
 
     public int getDimX() {
@@ -135,10 +139,11 @@ public final class Curve extends Variable {
 
     }
 
+    @Override
     public void copyToClipboard() {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = img.createGraphics();
+        final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        final BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        final Graphics2D g = img.createGraphics();
         panel.printAll(g);
         g.dispose();
         clipboard.setContents(new ImgTransfert(img), null);

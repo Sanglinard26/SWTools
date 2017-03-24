@@ -20,7 +20,7 @@ public final class BarreProgression extends JProgressBar {
 
 }
 
-class MyProgressUI extends BasicProgressBarUI {
+final class MyProgressUI extends BasicProgressBarUI {
 
     @Override
     protected void paintDeterminate(Graphics g, JComponent c) {

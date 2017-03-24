@@ -113,15 +113,15 @@ public final class PanelPaCo extends JPanel implements Observer {
                     }
                 });
 
-                int reponse = jFileChooser.showOpenDialog(PanelPaCo.this);
+                final int reponse = jFileChooser.showOpenDialog(PanelPaCo.this);
                 if (reponse == JFileChooser.APPROVE_OPTION) {
                     dtd = new File(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
                     if (!dtd.exists()) {
-                        InputStream myDtd = getClass().getResourceAsStream("/" + DTD);
+                        final InputStream myDtd = getClass().getResourceAsStream("/" + DTD);
 
                         try {
-                            OutputStream out = new FileOutputStream(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
-                            byte[] buffer = new byte[1024];
+                            final OutputStream out = new FileOutputStream(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
+                            final byte[] buffer = new byte[1024];
                             int len = myDtd.read(buffer);
                             while (len != -1) {
                                 out.write(buffer, 0, len);
@@ -141,6 +141,7 @@ public final class PanelPaCo extends JPanel implements Observer {
                     barChargement.setValue(0);
 
                     new ReaderPaCo(jFileChooser.getSelectedFile()).start();
+
                 }
             }
         });
@@ -208,11 +209,11 @@ public final class PanelPaCo extends JPanel implements Observer {
                         @Override
                         public void actionPerformed(ActionEvent e) {
 
-                            JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
+                            final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
                             fileChooser.setDialogTitle("Enregistement du PaCo");
                             fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier texte (*.txt)", "txt"));
                             fileChooser.setSelectedFile(new File(".txt"));
-                            int rep = fileChooser.showSaveDialog(null);
+                            final int rep = fileChooser.showSaveDialog(null);
 
                             if (rep == JFileChooser.APPROVE_OPTION) {
                                 paco.exportToTxt(fileChooser.getSelectedFile());
@@ -229,11 +230,11 @@ public final class PanelPaCo extends JPanel implements Observer {
                         public void actionPerformed(ActionEvent e) {
 
                             if (true) {
-                                JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
+                                final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
                                 fileChooser.setDialogTitle("Enregistement du PaCo");
                                 fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier Excel (*.xls)", "xls"));
                                 fileChooser.setSelectedFile(new File(paco.getName() + ".xls"));
-                                int rep = fileChooser.showSaveDialog(null);
+                                final int rep = fileChooser.showSaveDialog(null);
 
                                 if (rep == JFileChooser.APPROVE_OPTION) {
                                     paco.exportToExcel(fileChooser.getSelectedFile());
@@ -308,7 +309,7 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.weighty = 1;
         gbc.insets = new Insets(0, 0, 0, 5);
         gbc.anchor = GridBagConstraints.CENTER;
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
+        final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
         splitPane.setOneTouchExpandable(true);
         splitPane.setDividerLocation(400);
         add(splitPane, gbc);
@@ -335,7 +336,7 @@ public final class PanelPaCo extends JPanel implements Observer {
         barChargement.setValue((int) arg);
     }
 
-    private class ReaderPaCo extends Thread {
+    private final class ReaderPaCo extends Thread {
 
         private final File file;
 

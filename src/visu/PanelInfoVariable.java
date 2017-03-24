@@ -27,9 +27,9 @@ public final class PanelInfoVariable extends JPanel {
         labelLongName.setText("Description : " + variable.getLongName());
         labelSwFeatureRef.setText("Fonction : " + variable.getSwFeatureRef());
 
-        StringBuilder unite = new StringBuilder();
+        final StringBuilder unite = new StringBuilder();
         for (String s : variable.getSwUnitRef()) {
-            unite = unite.append("[" + s + "] ");
+            unite.append("[" + s + "] ");
         }
 
         labelUnit.setText("Unite(s) : " + unite);

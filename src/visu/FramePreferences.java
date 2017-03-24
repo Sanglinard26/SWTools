@@ -34,15 +34,14 @@ public final class FramePreferences extends JFrame {
         this.setVisible(true);
 
     }
-    
-    private JPanel createPanPrefPaco()
-    {
-    	final JPanel panPaco = new JPanel();
-    	panPaco.setLayout(new BoxLayout(panPaco, BoxLayout.Y_AXIS));
-    	panPaco.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 2), "Lecteur de PaCo"));
-    	
-    	final JButton btPathOpenPaco = new JButton(Preference.getPreference(Preference.KEY_OPEN_PACO));
-    	btPathOpenPaco.addActionListener(new ActionListener() {
+
+    private final JPanel createPanPrefPaco() {
+        final JPanel panPaco = new JPanel();
+        panPaco.setLayout(new BoxLayout(panPaco, BoxLayout.Y_AXIS));
+        panPaco.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 2), "Lecteur de PaCo"));
+
+        final JButton btPathOpenPaco = new JButton(Preference.getPreference(Preference.KEY_OPEN_PACO));
+        btPathOpenPaco.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -51,13 +50,13 @@ public final class FramePreferences extends JFrame {
                 btPathOpenPaco.setText(path);
             }
         });
-    	btPathOpenPaco.setToolTipText("Clicker pour choisir le chemin");
-    	panPaco.add(btPathOpenPaco);
-        
+        btPathOpenPaco.setToolTipText("Clicker pour choisir le chemin");
+        panPaco.add(btPathOpenPaco);
+
         return panPaco;
     }
 
-    private JPanel createPanPrefLab() {
+    private final JPanel createPanPrefLab() {
         final JPanel panLab = new JPanel();
         panLab.setLayout(new BoxLayout(panLab, BoxLayout.Y_AXIS));
 
@@ -92,8 +91,8 @@ public final class FramePreferences extends JFrame {
         return panLab;
     }
 
-    private String getFolder(String title, String defautPath) {
-        JFileChooser fileChooser = new JFileChooser("C:/");
+    private final String getFolder(String title, String defautPath) {
+        final JFileChooser fileChooser = new JFileChooser("C:/");
         fileChooser.setDialogTitle(title);
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileChooser.setMultiSelectionEnabled(false);

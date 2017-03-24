@@ -27,13 +27,34 @@ public final class Utilitaire {
         return ext;
     }
 
+    // public static String cutNumber(String number) {
+    //
+    // try {
+    // if (!(number.lastIndexOf(".") < 0)) {
+    // String txtDec = number.substring(number.lastIndexOf(".") + 1);
+    //
+    // if (Integer.valueOf(txtDec) == 0) {
+    // return String.valueOf(Double.valueOf(number).intValue());
+    // }
+    // int i = number.length() - 1;
+    // while (number.charAt(i) == '0') {
+    // i -= 1;
+    // }
+    // return number.substring(0, i + 1);
+    // }
+    // } catch (Exception e) {
+    // return number;
+    // }
+    // return number;
+    // } // Fin methode
+
     public static String cutNumber(String number) {
 
         try {
             if (!(number.lastIndexOf(".") < 0)) {
-                String txtDec = number.substring(number.lastIndexOf(".") + 1);
+                final String txtDec = number.substring(number.lastIndexOf(".") + 1);
 
-                if (Integer.valueOf(txtDec) == 0) {
+                if (Integer.parseInt(txtDec) == 0) {
                     return String.valueOf(Double.valueOf(number).intValue());
                 }
                 int i = number.length() - 1;

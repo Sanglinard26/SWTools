@@ -19,8 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import tools.Utilitaire;
-
 public final class Axis extends Variable {
 
     private JPanel panel;
@@ -55,7 +53,8 @@ public final class Axis extends Variable {
     }
 
     public String getzValues(int x) {
-        return Utilitaire.cutNumber(zValues[x]);
+        // return Utilitaire.cutNumber(zValues[x]);
+        return zValues[x];
     }
 
     @Override
@@ -65,17 +64,17 @@ public final class Axis extends Variable {
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         panel.addMouseListener(this);
-//        JLabel[] valueViewZ = new JLabel[getDim()];
-//        for (int i = 0; i < valueViewZ.length; i++) {
-//            valueViewZ[i] = new JLabel(getzValues(i));
-//            panel.add(valueViewZ[i]);
-//            valueViewZ[i].setFont(new Font(null, Font.BOLD, valueViewZ[i].getFont().getSize()));
-//            valueViewZ[i].setOpaque(true);
-//            valueViewZ[i].setBackground(Color.LIGHT_GRAY);
-//            valueViewZ[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-//            valueViewZ[i].setHorizontalAlignment(SwingConstants.CENTER);
-//        }
-        
+        // JLabel[] valueViewZ = new JLabel[getDim()];
+        // for (int i = 0; i < valueViewZ.length; i++) {
+        // valueViewZ[i] = new JLabel(getzValues(i));
+        // panel.add(valueViewZ[i]);
+        // valueViewZ[i].setFont(new Font(null, Font.BOLD, valueViewZ[i].getFont().getSize()));
+        // valueViewZ[i].setOpaque(true);
+        // valueViewZ[i].setBackground(Color.LIGHT_GRAY);
+        // valueViewZ[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        // valueViewZ[i].setHorizontalAlignment(SwingConstants.CENTER);
+        // }
+
         JLabel valueViewZ;
         for (int i = 0; i < getDim(); i++) {
             valueViewZ = new JLabel(getzValues(i));
@@ -96,9 +95,9 @@ public final class Axis extends Variable {
 
     @Override
     public void copyToClipboard() {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = img.createGraphics();
+        final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        final BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        final Graphics2D g = img.createGraphics();
         panel.printAll(g);
         g.dispose();
         clipboard.setContents(new ImgTransfert(img), null);

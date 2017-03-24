@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.swing.AbstractListModel;
 
-public class ListModelLabel extends AbstractListModel<Variable> {
+public final class ListModelLabel extends AbstractListModel<Variable> {
 
     private static final long serialVersionUID = 1L;
     private ArrayList<Variable> listLabel;

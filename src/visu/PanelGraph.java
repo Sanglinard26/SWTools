@@ -46,7 +46,7 @@ public final class PanelGraph extends JPanel {
 
     }
 
-    private class SwitchGraph implements ActionListener {
+    private final class SwitchGraph implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -55,11 +55,11 @@ public final class PanelGraph extends JPanel {
 
     }
 
-    public JPanel getPanCard() {
+    public final JPanel getPanCard() {
         return panCard;
     }
 
-    public void createChart(final Variable variable) {
+    public final void createChart(final Variable variable) {
         if (radioBt2D.isSelected()) {
             panCard.add(new XYChart(variable), "2D");
             panCard.add(new SurfaceChart(variable), "3D");

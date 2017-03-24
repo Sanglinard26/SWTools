@@ -19,8 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
-import tools.Utilitaire;
-
 public final class Scalaire extends Variable {
 
     private String value;
@@ -30,7 +28,8 @@ public final class Scalaire extends Variable {
     public Scalaire(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
             String value) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
-        this.value = Utilitaire.cutNumber(value);
+        // this.value = Utilitaire.cutNumber(value);
+        this.value = value;
     }
 
     @Override
@@ -39,7 +38,8 @@ public final class Scalaire extends Variable {
     }
 
     public String getValue() {
-        return Utilitaire.cutNumber(value);
+        // return Utilitaire.cutNumber(value);
+        return value;
     }
 
     public String getUnit() {
@@ -67,6 +67,7 @@ public final class Scalaire extends Variable {
 
     }
 
+    @Override
     public void copyToClipboard() {
         final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         final BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
