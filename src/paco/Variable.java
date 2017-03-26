@@ -38,27 +38,27 @@ public abstract class Variable extends MouseAdapter {
         this.swCsHistory = swCsHistory;
     }
 
-    public String getShortName() {
+    public final String getShortName() {
         return shortName;
     }
 
-    public String getLongName() {
+    public final String getLongName() {
         return longName;
     }
 
-    public String getCategory() {
+    public final String getCategory() {
         return category;
     }
 
-    public String getSwFeatureRef() {
+    public final String getSwFeatureRef() {
         return swFeatureRef;
     }
 
-    public String[] getSwUnitRef() {
+    public final String[] getSwUnitRef() {
         return swUnitRef;
     }
 
-    public String[][] getSwCsHistory() {
+    public final String[][] getSwCsHistory() {
         return swCsHistory;
     }
 
@@ -82,7 +82,7 @@ public abstract class Variable extends MouseAdapter {
         clipboard.setContents(new TxtTransfert(this.toString()), null);
     }
 
-    class TxtTransfert implements Transferable {
+    final class TxtTransfert implements Transferable {
         private String s;
 
         public TxtTransfert(String s) {

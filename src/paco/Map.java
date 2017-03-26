@@ -73,7 +73,7 @@ public final class Map extends Variable {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         StringBuilder sb = new StringBuilder("\n");
 
         for (int y = 0; y < this.getDimY(); y++) {
@@ -86,64 +86,64 @@ public final class Map extends Variable {
         return super.toString() + "Valeurs :" + sb.toString();
     }
 
-    public String getUnitX() {
+    public final String getUnitX() {
         return super.getSwUnitRef()[0];
     }
 
-    public String getUnitY() {
+    public final String getUnitY() {
         return super.getSwUnitRef()[1];
     }
 
-    public String getUnitZ() {
+    public final String getUnitZ() {
         return super.getSwUnitRef()[2];
     }
 
-    public String[] getxValues() {
+    public final String[] getxValues() {
         return xValues;
     }
 
-    public String[] getyValues() {
+    public final String[] getyValues() {
         return yValues;
     }
 
-    public String getzValue(int col, int row) {
+    public final String getzValue(int col, int row) {
         // return Utilitaire.cutNumber(zValues[col][row]);
         return zValues[col][row];
     }
 
-    public Double getMaxZValue() {
+    public final Double getMaxZValue() {
         return maxZValue;
     }
 
-    public Double getMinZValue() {
+    public final Double getMinZValue() {
         return minZValue;
     }
 
-    public String[][] getValues() {
+    public final String[][] getValues() {
         return values;
     }
 
-    public String getValue(int col, int row) {
+    public final String getValue(int col, int row) {
         // return Utilitaire.cutNumber(values[col][row]);
         return values[col][row];
     }
 
-    public int getDimX() {
+    public final int getDimX() {
         return values[0].length;
     }
 
-    public int getDimY() {
+    public final int getDimY() {
         return values.length;
     }
 
     @Override
-    public Component showView() {
+    public final Component showView() {
         initVariable();
         return panel;
     }
 
     @Override
-    public void copyToClipboard() {
+    public final void copyToClipboard() {
         final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         final BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
         final Graphics2D g = img.createGraphics();
@@ -152,7 +152,7 @@ public final class Map extends Variable {
         clipboard.setContents(new ImgTransfert(img), null);
     }
 
-    class ImgTransfert implements Transferable {
+    final class ImgTransfert implements Transferable {
         private Image img;
 
         public ImgTransfert(Image img) {
@@ -177,7 +177,7 @@ public final class Map extends Variable {
     }
 
     @Override
-    public void initVariable() {
+    public final void initVariable() {
         panel = new JPanel(new GridLayout(getDimY(), getDimX(), 1, 1));
         panel.setLayout(new GridLayout(getDimY(), getDimX(), 1, 1));
         panel.setBackground(Color.BLACK);

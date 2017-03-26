@@ -87,6 +87,8 @@ public final class PaCo extends Observable {
             NodeList swCsEntry, swAxisCont;
             nbLabel = listSwInstance.getLength();
             Element label;
+            
+            long tps = System.currentTimeMillis();
 
             // Remplissage de la HashMap des unites
             for (int u = 0; u < listSwUnit.getLength(); u++) {
@@ -161,35 +163,37 @@ public final class PaCo extends Observable {
                     listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
                     break;
                 }
-
+                
                 this.setChanged();
                 this.notifyObservers(i + 1);
             }
+            tps -= System.currentTimeMillis();
+            System.out.println("Tps : " + tps);
         }
 
     }
 
-    public Boolean checkName() {
+    public final Boolean checkName() {
         return this.file.getName().substring(0, this.file.getName().length() - 4).equals(this.name);
     }
 
-    public String getName() {
+    public final String getName() {
         return this.name;
     }
 
-    public int getNbLabel() {
+    public final int getNbLabel() {
         return this.nbLabel;
     }
 
-    public ArrayList<Variable> getListLabel() {
+    public final ArrayList<Variable> getListLabel() {
         return this.listLabel;
     }
 
     private final String[][] readEntry(NodeList swCsEntry) {
 
         final int nbEntry = swCsEntry.getLength();
-        String[][] entry = new String[nbEntry][4];
-
+        final String[][] entry = new String[nbEntry][4];
+        
         Element aEntry;
         Node swCsState, swCsPerformedBy, remark, date;
 
@@ -215,7 +219,7 @@ public final class PaCo extends Observable {
     }
 
     private final String[] readAxis(NodeList swAxisCont) {
-        String val[] = null;
+        //String val[] = null;
 
         final Element eAxisCont = (Element) swAxisCont.item(0);
         final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
@@ -223,7 +227,7 @@ public final class PaCo extends Observable {
 
         final int nbVal = value.getLength();
 
-        val = new String[nbVal];
+        final String val[] = new String[nbVal];
 
         for (int a = 0; a < nbVal; a++) {
             // val[a] = value.item(a).getTextContent();
@@ -235,20 +239,21 @@ public final class PaCo extends Observable {
 
     private final String[][] readValueBlock(String[] dim, NodeList swAxisCont) {
 
-        String val[][] = null;
+        //String val[][] = null;
+        final String val[][] = new String[2][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength()];
         final int nbAxe = swAxisCont.getLength();
 
         for (int n = 0; n < nbAxe; n++) {
-            Element eAxisCont = (Element) swAxisCont.item(n);
-            Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
-            Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+            final Element eAxisCont = (Element) swAxisCont.item(n);
+            final Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
+            final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
 
-            NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(0).getNodeName());
+            final NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(0).getNodeName());
 
             final int nbVal = value.getLength();
 
-            if (val == null)
-                val = new String[2][nbVal];
+//            if (val == null)
+//                val = new String[2][nbVal];
 
             switch (indexAxis.getTextContent()) {
             case "0":
@@ -273,20 +278,21 @@ public final class PaCo extends Observable {
 
     private final String[][] readCurve(NodeList swAxisCont) {
 
-        String val[][] = null;
-        final int nbAxe = swAxisCont.getLength();
+        //String val[][] = null;
+        final String val[][] = new String[2][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength()];
+        //final int nbAxe = swAxisCont.getLength();
 
-        for (int n = 0; n < nbAxe; n++) {
+        for (int n = 0; n < 2; n++) {
 
-            Element eAxisCont = (Element) swAxisCont.item(n);
-            Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
-            Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
-            NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
+        	final Element eAxisCont = (Element) swAxisCont.item(n);
+        	final Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
+        	final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+        	final NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
 
             final int nbVal = value.getLength();
 
-            if (val == null)
-                val = new String[nbAxe][nbVal];
+//            if (val == null)
+//                val = new String[2][nbVal];
 
             switch (indexAxis.getTextContent()) {
             case "1":
@@ -310,18 +316,18 @@ public final class PaCo extends Observable {
     private final String[][] readMap(NodeList swAxisCont) {
         // Premiere dimension = Axe Y car nombre de ligne
         // Deuxieme dimension = Axe X car nombre de colonne
-        String val[][] = new String[((Element) swAxisCont.item(1)).getLastChild().getChildNodes().getLength()
+    	final String val[][] = new String[((Element) swAxisCont.item(1)).getLastChild().getChildNodes().getLength()
                 + 1][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength() + 1];
 
-        final int nbAxe = swAxisCont.getLength();
+        //final int nbAxe = swAxisCont.getLength();
 
         val[0][0] = "Y \\ X";
 
-        for (int n = 0; n < nbAxe; n++) {
-            Element eAxisCont = (Element) swAxisCont.item(n);
-            Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
-            Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
-            NodeList nodeListV = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
+        for (int n = 0; n < 3; n++) {
+        	final Element eAxisCont = (Element) swAxisCont.item(n);
+        	final Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
+        	final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+        	final NodeList nodeListV = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
 
             final int nbAxeVal = nodeListV.getLength();
 
@@ -361,7 +367,7 @@ public final class PaCo extends Observable {
                 break;
             case "0": // Valeur Z
 
-                NodeList vg = ((Element) swValuesPhys).getElementsByTagName("VG");
+                final NodeList vg = ((Element) swValuesPhys).getElementsByTagName("VG");
 
                 for (int nVG = 1; nVG < vg.getLength() + 1; nVG++) {
                     NodeList nodeV = ((Element) vg.item(nVG - 1)).getElementsByTagName("V");

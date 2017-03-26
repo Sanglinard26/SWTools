@@ -12,12 +12,12 @@ import javax.swing.AbstractListModel;
 public final class ListModelLabel extends AbstractListModel<Variable> {
 
     private static final long serialVersionUID = 1L;
-    private ArrayList<Variable> listLabel;
-    private ArrayList<Variable> listLabelFiltre;
+    private static final ArrayList<Variable> listLabel = new ArrayList<Variable>();
+    private static final ArrayList<Variable> listLabelFiltre = new ArrayList<Variable>();
 
     public ListModelLabel() {
-        this.listLabel = new ArrayList<Variable>();
-        this.listLabelFiltre = new ArrayList<Variable>();
+        //this.listLabel = new ArrayList<Variable>();
+        //this.listLabelFiltre = new ArrayList<Variable>();
     }
 
     @Override
@@ -31,7 +31,7 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
         }
         listLabel.addAll(list);
         setFilter("");
-        this.fireContentsChanged(this, 0, getSize());
+        //this.fireContentsChanged(this, 0, getSize());
     }
 
     public void setFilter(String filter) {
@@ -45,9 +45,9 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
     }
 
     public void clearList() {
-        this.listLabel.clear();
+        listLabel.clear();
         setFilter("");
-        this.fireContentsChanged(this, 0, getSize());
+        //this.fireContentsChanged(this, 0, getSize());
     }
 
     @Override
@@ -56,7 +56,7 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
     }
 
     public List<Variable> getList() {
-        return Collections.unmodifiableList(this.listLabelFiltre);
+        return Collections.unmodifiableList(listLabelFiltre);
     }
 
 }

@@ -33,27 +33,27 @@ public final class Scalaire extends Variable {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return super.toString() + "Valeur : " + this.value;
     }
 
-    public String getValue() {
+    public final String getValue() {
         // return Utilitaire.cutNumber(value);
         return value;
     }
 
-    public String getUnit() {
+    public final String getUnit() {
         return super.getSwUnitRef()[0];
     }
 
     @Override
-    public Component showView() {
+    public final Component showView() {
         initVariable();
         return panel;
     }
 
     @Override
-    public void initVariable() {
+    public final void initVariable() {
         panel.setLayout(new GridLayout(1, 1, 2, 2));
         panel.add(valueView);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
@@ -68,7 +68,7 @@ public final class Scalaire extends Variable {
     }
 
     @Override
-    public void copyToClipboard() {
+    public final void copyToClipboard() {
         final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         final BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
         final Graphics2D g = img.createGraphics();
@@ -78,7 +78,7 @@ public final class Scalaire extends Variable {
 
     }
 
-    class ImgTransfert implements Transferable {
+    final class ImgTransfert implements Transferable {
         private Image img;
 
         public ImgTransfert(Image img) {

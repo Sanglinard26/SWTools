@@ -30,7 +30,7 @@ public final class TableModelHistory extends AbstractTableModel {
     }
 
     public void setData(String[][] data) {
-        this.history = data.clone();
+        this.history = data;
         fireTableDataChanged();
     }
 

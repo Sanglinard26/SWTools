@@ -33,7 +33,7 @@ public final class Axis extends Variable {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         StringBuilder sb = new StringBuilder("\n");
 
         for (int x = 0; x < this.getDim(); x++) {
@@ -44,21 +44,21 @@ public final class Axis extends Variable {
         return super.toString() + "Valeurs :" + sb.toString();
     }
 
-    public int getDim() {
+    public final int getDim() {
         return zValues.length;
     }
 
-    public String getUnit() {
+    public final String getUnit() {
         return super.getSwUnitRef()[0];
     }
 
-    public String getzValues(int x) {
+    public final String getzValues(int x) {
         // return Utilitaire.cutNumber(zValues[x]);
         return zValues[x];
     }
 
     @Override
-    public void initVariable() {
+    public final void initVariable() {
         panel = new JPanel(new GridLayout(1, getDim(), 1, 1));
         panel.setLayout(new GridLayout(1, getDim(), 1, 1));
         panel.setBackground(Color.BLACK);
@@ -88,13 +88,13 @@ public final class Axis extends Variable {
     }
 
     @Override
-    public Component showView() {
+    public final Component showView() {
         initVariable();
         return panel;
     }
 
     @Override
-    public void copyToClipboard() {
+    public final void copyToClipboard() {
         final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         final BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
         final Graphics2D g = img.createGraphics();
@@ -103,7 +103,7 @@ public final class Axis extends Variable {
         clipboard.setContents(new ImgTransfert(img), null);
     }
 
-    class ImgTransfert implements Transferable {
+    final class ImgTransfert implements Transferable {
         private Image img;
 
         public ImgTransfert(Image img) {
