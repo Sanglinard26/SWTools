@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.util.HashMap;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
@@ -16,6 +17,7 @@ public class TableHistoryRenderer implements TableCellRenderer {
 	private final JLabel label = new JLabel();
 	private final JProgressBar progressBar = new JProgressBar(0, 100);
 	private final JTextPane textPane = new JTextPane();
+	private final JScrollPane scrollPane = new JScrollPane(textPane);
 
 	private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>();
 
@@ -53,9 +55,10 @@ public class TableHistoryRenderer implements TableCellRenderer {
 			component = progressBar;
 			break;
 		case 3:
-			if(value.toString().length()>200) table.setRowHeight(row, 100);
+			//if(value.toString().length()>200) table.setRowHeight(row, 100);
 			textPane.setText(value.toString());
-			component = textPane;
+			//component = textPane;
+			component = scrollPane;
 			break;
 		}
 

@@ -20,7 +20,7 @@ public final class TableHistory extends JTable {
 		super(model);
 		this.setDefaultRenderer(Object.class, new TableHistoryRenderer());
 		this.setRowSelectionAllowed(false);
-		this.setRowHeight(30);;
+		this.setRowHeight(40);
 
 		for(int i = 0; i<this.getColumnModel().getColumnCount();i++)
 		{
@@ -31,6 +31,7 @@ public final class TableHistory extends JTable {
 				break;
 			case 3:
 				this.getColumnModel().getColumn(i).setMaxWidth(900);
+				this.getColumnModel().getColumn(i).setCellEditor(new TableHistoryEditor());
 				break;
 
 			default:
