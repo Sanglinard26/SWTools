@@ -7,6 +7,7 @@ import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -30,6 +31,15 @@ public class Main {
             e.printStackTrace();
         }
 
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                final Ihm ihm = new Ihm();
+                ihm.setVisible(true);
+            }
+        });
+
         try {
             logFile = File.createTempFile("SwTools_", ".log");
             logFile.deleteOnExit();
@@ -43,9 +53,6 @@ public class Main {
         }
 
         logger.info("Demarrage de l'application");
-
-        final Ihm ihm = new Ihm();
-        ihm.setVisible(true);
 
     }
 

@@ -17,7 +17,6 @@ import java.io.OutputStream;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -31,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -59,7 +59,7 @@ public final class PanelPaCo extends JPanel implements Observer {
     private static final GridBagConstraints gbc = new GridBagConstraints();
 
     // GUI
-    private final JButton btOpen;
+    private static final JButton btOpen = new JButton("Ouvrir");
     private static final JLabel labelNomPaCo = new JLabel("Nom : ");
     private static final JTextField txtFiltre = new JTextField(20);
     private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
@@ -85,66 +85,7 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.weighty = 0;
         gbc.insets = new Insets(0, 5, 0, 10);
         gbc.anchor = GridBagConstraints.CENTER;
-        btOpen = new JButton(new AbstractAction("Ouvrir") {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
-                jFileChooser.setFileFilter(new FileFilter() {
-
-                    @Override
-                    public String getDescription() {
-                        return "PaCo *.xml";
-                    }
-
-                    @Override
-                    public boolean accept(File f) {
-
-                        if (f.isDirectory())
-                            return true;
-
-                        String extension = Utilitaire.getExtension(f);
-                        if (extension.equals(Utilitaire.xml)) {
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-
-                final int reponse = jFileChooser.showOpenDialog(PanelPaCo.this);
-                if (reponse == JFileChooser.APPROVE_OPTION) {
-                    dtd = new File(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
-                    if (!dtd.exists()) {
-                        final InputStream myDtd = getClass().getResourceAsStream("/" + DTD);
-
-                        try {
-                            final OutputStream out = new FileOutputStream(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
-                            final byte[] buffer = new byte[1024];
-                            int len = myDtd.read(buffer);
-                            while (len != -1) {
-                                out.write(buffer, 0, len);
-                                len = myDtd.read(buffer);
-                            }
-                            myDtd.close();
-                            out.close();
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-
-                    panVisu.removeAll();
-                    barChargement.setString("...");
-                    barChargement.setValue(0);
-
-                    new ReaderPaCo(jFileChooser.getSelectedFile()).start();
-
-                }
-            }
-        });
+        btOpen.addActionListener(new OpenPaco());
         add(btOpen, gbc);
 
         gbc.fill = GridBagConstraints.NONE;
@@ -329,11 +270,85 @@ public final class PanelPaCo extends JPanel implements Observer {
         add(barChargement, gbc);
     }
 
+    private class OpenPaco implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
+            jFileChooser.setFileFilter(new FileFilter() {
+
+                @Override
+                public String getDescription() {
+                    return "PaCo *.xml";
+                }
+
+                @Override
+                public boolean accept(File f) {
+
+                    if (f.isDirectory())
+                        return true;
+
+                    String extension = Utilitaire.getExtension(f);
+                    if (extension.equals(Utilitaire.xml)) {
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            final int reponse = jFileChooser.showOpenDialog(PanelPaCo.this);
+            if (reponse == JFileChooser.APPROVE_OPTION) {
+
+                dtd = new File(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
+                if (!dtd.exists()) {
+                    final InputStream myDtd = getClass().getResourceAsStream("/" + DTD);
+
+                    try {
+                        final OutputStream out = new FileOutputStream(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
+                        final byte[] buffer = new byte[1024];
+                        int len = myDtd.read(buffer);
+                        while (len != -1) {
+                            out.write(buffer, 0, len);
+                            len = myDtd.read(buffer);
+                        }
+                        myDtd.close();
+                        out.close();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                razUI();
+
+                new ReaderPaCo(jFileChooser.getSelectedFile()).start();
+
+            }
+        }
+
+    }
+
     @Override
-    public void update(Observable o, Object arg) {
-        barChargement.setString(arg.toString() + " label(s)");
-        barChargement.setMaximum((((PaCo) o).getNbLabel()));
-        barChargement.setValue((int) arg);
+    public void update(final Observable o, final Object arg) {
+
+        Thread t = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                barChargement.setString(arg.toString() + " label(s)");
+                barChargement.setMaximum((((PaCo) o).getNbLabel()));
+                barChargement.setValue((int) arg);
+
+            }
+        });
+
+        if (SwingUtilities.isEventDispatchThread()) {
+            t.start();
+        } else {
+            SwingUtilities.invokeLater(t);
+        }
+
     }
 
     private final class ReaderPaCo extends Thread {
@@ -348,13 +363,6 @@ public final class PanelPaCo extends JPanel implements Observer {
         @Override
         public void run() {
 
-            if (listLabel.getModel().getSize() > 0) {
-                listLabel.getModel().clearList();
-                labelNomPaCo.setText("Nom : ");
-                labelNomPaCo.setToolTipText(null);
-                labelNomPaCo.setIcon(null);
-            }
-
             paco = new PaCo(file, PanelPaCo.this);
             labelNomPaCo.setText("Nom : " + paco.getName());
             if (paco.checkName()) {
@@ -366,7 +374,21 @@ public final class PanelPaCo extends JPanel implements Observer {
             }
 
             listLabel.getModel().setList(paco.getListLabel());
+
+            dtd.delete();
+        }
+    }
+
+    private static void razUI() {
+
+        if (listLabel.getModel().getSize() > 0) {
+            txtFiltre.setText("");
             listLabel.clearSelection();
+            listLabel.getModel().clearList();
+            labelNomPaCo.setText("Nom : ");
+            labelNomPaCo.setToolTipText(null);
+            labelNomPaCo.setIcon(null);
+
             tableHistory.getModel().setData(new String[0][0]);
 
             panVisu.removeAll();
@@ -377,8 +399,10 @@ public final class PanelPaCo extends JPanel implements Observer {
             panGraph.getPanCard().revalidate();
             panGraph.getPanCard().repaint();
 
-            dtd.delete();
+            barChargement.setString("...");
+            barChargement.setValue(0);
         }
+
     }
 
 }
