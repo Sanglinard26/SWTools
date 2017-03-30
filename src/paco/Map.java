@@ -21,11 +21,13 @@ import javax.swing.SwingConstants;
 
 public final class Map extends Variable {
 
-    private String[][] values;
+    private final String[][] values;
     private JPanel panel;
-    private String[] xValues;
-    private String[] yValues;
-    private String[][] zValues;
+    private final String[] xValues;
+    private final String[] yValues;
+    private final String[][] zValues;
+    private final int dimX;
+    private final int dimY;
 
     private Double minZValue = Double.POSITIVE_INFINITY;
     private Double maxZValue = Double.NEGATIVE_INFINITY;
@@ -33,15 +35,18 @@ public final class Map extends Variable {
     public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
             String[][] values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
-        this.values = values;
 
-        xValues = new String[values[0].length - 1];
+        this.values = values;
+        this.dimX = values[0].length;
+        this.dimY = values.length;
+
+        xValues = new String[dimX - 1];
         for (int i = 0; i < xValues.length; i++) {
             // xValues[i] = Utilitaire.cutNumber(values[0][i + 1]);
             xValues[i] = values[0][i + 1];
         }
 
-        yValues = new String[values.length - 1];
+        yValues = new String[dimY - 1];
         for (int i = 0; i < yValues.length; i++) {
             // yValues[i] = Utilitaire.cutNumber(values[i + 1][0]);
             yValues[i] = values[i + 1][0];
@@ -76,8 +81,8 @@ public final class Map extends Variable {
     public final String toString() {
         StringBuilder sb = new StringBuilder("\n");
 
-        for (int y = 0; y < this.getDimY(); y++) {
-            for (int x = 0; x < this.getDimX(); x++) {
+        for (int y = 0; y < dimY; y++) {
+            for (int x = 0; x < dimX; x++) {
                 sb.append(this.getValue(y, x) + "\t");
             }
             sb.append("\n");
@@ -129,11 +134,11 @@ public final class Map extends Variable {
     }
 
     public final int getDimX() {
-        return values[0].length;
+        return dimX;
     }
 
     public final int getDimY() {
-        return values.length;
+        return dimY;
     }
 
     @Override
@@ -178,8 +183,8 @@ public final class Map extends Variable {
 
     @Override
     public final void initVariable() {
-        panel = new JPanel(new GridLayout(getDimY(), getDimX(), 1, 1));
-        panel.setLayout(new GridLayout(getDimY(), getDimX(), 1, 1));
+        panel = new JPanel(new GridLayout(dimY, dimX, 1, 1));
+        // panel.setLayout(new GridLayout(dimY, dimX, 1, 1));
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         panel.addMouseListener(this);
@@ -203,8 +208,8 @@ public final class Map extends Variable {
 
         JLabel valueView;
 
-        for (int y = 0; y < getDimY(); y++) {
-            for (int x = 0; x < getDimX(); x++) {
+        for (int y = 0; y < dimY; y++) {
+            for (int x = 0; x < dimX; x++) {
                 valueView = new JLabel(getValue(y, x));
                 panel.add(valueView);
 

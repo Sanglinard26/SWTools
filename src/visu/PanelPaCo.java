@@ -67,6 +67,8 @@ public final class PanelPaCo extends JPanel implements Observer {
     private static final PanelGraph panGraph = new PanelGraph();
     private static final TableHistory tableHistory = new TableHistory(new TableModelHistory());
     private static final JProgressBar barChargement = new BarreProgression();
+    private static final JTabbedPane tabPan = new JTabbedPane();
+    private static final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
 
     // PaCo
     private File dtd;
@@ -237,7 +239,6 @@ public final class PanelPaCo extends JPanel implements Observer {
 
         tableHistory.setFillsViewportHeight(false);
 
-        final JTabbedPane tabPan = new JTabbedPane();
         tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(tableHistory));
         tabPan.addTab("Graphique", new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
 
@@ -250,7 +251,6 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.weighty = 1;
         gbc.insets = new Insets(0, 0, 0, 5);
         gbc.anchor = GridBagConstraints.CENTER;
-        final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
         splitPane.setOneTouchExpandable(true);
         splitPane.setDividerLocation(400);
         add(splitPane, gbc);
@@ -332,7 +332,7 @@ public final class PanelPaCo extends JPanel implements Observer {
     @Override
     public void update(final Observable o, final Object arg) {
 
-        Thread t = new Thread(new Runnable() {
+        final Thread t = new Thread(new Runnable() {
 
             @Override
             public void run() {
@@ -343,11 +343,7 @@ public final class PanelPaCo extends JPanel implements Observer {
             }
         });
 
-        if (SwingUtilities.isEventDispatchThread()) {
-            t.start();
-        } else {
-            SwingUtilities.invokeLater(t);
-        }
+        SwingUtilities.invokeLater(t);
 
     }
 

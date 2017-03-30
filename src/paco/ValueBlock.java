@@ -21,10 +21,11 @@ import javax.swing.SwingConstants;
 
 public final class ValueBlock extends Variable {
 
-    private String[][] values;
+    private final String[][] values;
     private JPanel panel;
-    private String[] xValues;
-    private String[] zValues;
+    private final String[] xValues;
+    private final String[] zValues;
+    private final int dimX;
 
     public ValueBlock(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
             String[][] values) {
@@ -33,6 +34,7 @@ public final class ValueBlock extends Variable {
 
         this.xValues = values[0];
         this.zValues = values[1];
+        this.dimX = values[0].length;
 
         // xValues = new String[values[0].length];
         // for (int i = 0; i < xValues.length; i++) {
@@ -53,7 +55,7 @@ public final class ValueBlock extends Variable {
 
         StringBuilder sb = new StringBuilder("\n");
         for (int y = 0; y < 2; y++) {
-            for (int x = 0; x < this.getDimX(); x++) {
+            for (int x = 0; x < dimX; x++) {
                 sb.append(this.getValue(y, x) + "\t");
             }
             sb.append("\n");
@@ -79,13 +81,13 @@ public final class ValueBlock extends Variable {
     }
 
     public final int getDimX() {
-        return values[0].length;
+        return dimX;
     }
 
     @Override
     public final void initVariable() {
-        panel = new JPanel(new GridLayout(2, getDimX(), 1, 1));
-        panel.setLayout(new GridLayout(2, getDimX(), 1, 1));
+        panel = new JPanel(new GridLayout(2, dimX, 1, 1));
+        // panel.setLayout(new GridLayout(2, dimX, 1, 1));
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         panel.addMouseListener(this);
@@ -112,7 +114,8 @@ public final class ValueBlock extends Variable {
 
         JLabel valueViewX;
         JLabel valueViewY;
-        for (int i = 0; i < getDimX(); i++) {
+
+        for (int i = 0; i < dimX; i++) {
             valueViewX = new JLabel(getValue(0, i));
             panel.add(valueViewX);
             valueViewX.setFont(new Font(null, Font.BOLD, valueViewX.getFont().getSize()));
@@ -121,7 +124,7 @@ public final class ValueBlock extends Variable {
             valueViewX.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             valueViewX.setHorizontalAlignment(SwingConstants.CENTER);
         }
-        for (int i = 0; i < getDimX(); i++) {
+        for (int i = 0; i < dimX; i++) {
             valueViewY = new JLabel(getValue(1, i));
             panel.add(valueViewY);
             valueViewY.setOpaque(true);

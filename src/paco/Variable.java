@@ -19,12 +19,12 @@ import javax.swing.JPopupMenu;
 
 public abstract class Variable extends MouseAdapter {
 
-    private String longName;
-    private String shortName;
-    private String category;
-    private String swFeatureRef;
-    private String[] swUnitRef;
-    private String[][] swCsHistory;
+    private final String longName;
+    private final String shortName;
+    private final String category;
+    private final String swFeatureRef;
+    private final String[] swUnitRef;
+    private final String[][] swCsHistory;
 
     private static final String ICON_TEXT = "/text_icon_16.png";
     private static final String ICON_IMAGE = "/image_icon_16.png";

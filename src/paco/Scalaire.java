@@ -21,7 +21,7 @@ import javax.swing.border.LineBorder;
 
 public final class Scalaire extends Variable {
 
-    private String value;
+    private final String value;
     private static final JPanel panel = new JPanel(new GridLayout(1, 1, 2, 2));
     private static final JLabel valueView = new JLabel();
 

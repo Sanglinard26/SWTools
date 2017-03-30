@@ -22,13 +22,15 @@ import javax.swing.SwingConstants;
 public final class Axis extends Variable {
 
     private JPanel panel;
-    private String[] zValues;
+    private final String[] zValues;
+    private final int dim;
 
     public Axis(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
             String[] values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 
         this.zValues = values;
+        this.dim = zValues.length;
 
     }
 
@@ -36,7 +38,7 @@ public final class Axis extends Variable {
     public final String toString() {
         StringBuilder sb = new StringBuilder("\n");
 
-        for (int x = 0; x < this.getDim(); x++) {
+        for (int x = 0; x < dim; x++) {
             sb.append(this.getzValues(x) + "\t");
         }
         sb.append("\n");
@@ -45,7 +47,7 @@ public final class Axis extends Variable {
     }
 
     public final int getDim() {
-        return zValues.length;
+        return dim;
     }
 
     public final String getUnit() {
@@ -59,8 +61,8 @@ public final class Axis extends Variable {
 
     @Override
     public final void initVariable() {
-        panel = new JPanel(new GridLayout(1, getDim(), 1, 1));
-        panel.setLayout(new GridLayout(1, getDim(), 1, 1));
+        panel = new JPanel(new GridLayout(1, dim, 1, 1));
+        // panel.setLayout(new GridLayout(1, dim, 1, 1));
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         panel.addMouseListener(this);
@@ -76,7 +78,8 @@ public final class Axis extends Variable {
         // }
 
         JLabel valueViewZ;
-        for (int i = 0; i < getDim(); i++) {
+
+        for (int i = 0; i < dim; i++) {
             valueViewZ = new JLabel(getzValues(i));
             panel.add(valueViewZ);
             valueViewZ.setFont(new Font(null, Font.BOLD, valueViewZ.getFont().getSize()));
