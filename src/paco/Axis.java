@@ -38,7 +38,7 @@ public final class Axis extends Variable {
     public final String toString() {
         StringBuilder sb = new StringBuilder("\n");
 
-        for (int x = 0; x < dim; x++) {
+        for (short x = 0; x < dim; x++) {
             sb.append(this.getzValues(x) + "\t");
         }
         sb.append("\n");
@@ -55,31 +55,19 @@ public final class Axis extends Variable {
     }
 
     public final String getzValues(int x) {
-        // return Utilitaire.cutNumber(zValues[x]);
         return zValues[x];
     }
 
     @Override
     public final void initVariable() {
         panel = new JPanel(new GridLayout(1, dim, 1, 1));
-        // panel.setLayout(new GridLayout(1, dim, 1, 1));
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         panel.addMouseListener(this);
-        // JLabel[] valueViewZ = new JLabel[getDim()];
-        // for (int i = 0; i < valueViewZ.length; i++) {
-        // valueViewZ[i] = new JLabel(getzValues(i));
-        // panel.add(valueViewZ[i]);
-        // valueViewZ[i].setFont(new Font(null, Font.BOLD, valueViewZ[i].getFont().getSize()));
-        // valueViewZ[i].setOpaque(true);
-        // valueViewZ[i].setBackground(Color.LIGHT_GRAY);
-        // valueViewZ[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        // valueViewZ[i].setHorizontalAlignment(SwingConstants.CENTER);
-        // }
 
         JLabel valueViewZ;
 
-        for (int i = 0; i < dim; i++) {
+        for (short i = 0; i < dim; i++) {
             valueViewZ = new JLabel(getzValues(i));
             panel.add(valueViewZ);
             valueViewZ.setFont(new Font(null, Font.BOLD, valueViewZ.getFont().getSize()));

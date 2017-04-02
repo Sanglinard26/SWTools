@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,7 +47,7 @@ public final class PaCo extends Observable {
     public static final String _T_CA = "VALUE_BLOCK";
     public static final String _T_GROUPED = "CURVE_GROUPED";
     public static final String _M_GROUPED = "MAP_GROUPED";
-
+    	
     private File file = null;
     private String name = "";
     private int nbLabel = 0;
@@ -82,8 +83,10 @@ public final class PaCo extends Observable {
 
             long tps = System.currentTimeMillis();
 
+            final int nbUnit = listSwUnit.getLength();
+            
             // Remplissage de la HashMap des unites
-            for (int u = 0; u < listSwUnit.getLength(); u++) {
+            for (short u = 0; u < nbUnit; u++) {
                 eUnit = (Element) listSwUnit.item(u);
                 unit.put(eUnit.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                         eUnit.getElementsByTagName("SW-UNIT-DISPLAY").item(0).getTextContent());
@@ -104,13 +107,14 @@ public final class PaCo extends Observable {
                 }
 
                 swAxisCont = label.getElementsByTagName("SW-AXIS-CONT");
+                final int nbAxe = swAxisCont.getLength();
                 swUnitRef = new String[swAxisCont.getLength()];
 
                 // A finir d'implementer pour les ValueBlock
                 String fullAttributAxe;
                 String attributAxe;
                 String[] splitAttributAxe = null; // Le tableau est cense avoir trois elements
-                for (int n = 0; n < swAxisCont.getLength(); n++) {
+                for (byte n = 0; n < nbAxe; n++) {
                     if (swAxisCont.item(n).hasAttributes()) {
                         fullAttributAxe = swAxisCont.item(n).getAttributes().getNamedItem("SI").getTextContent();
                         if (fullAttributAxe.indexOf(";") > -1) {
@@ -192,7 +196,7 @@ public final class PaCo extends Observable {
         Element aEntry;
         Node swCsState, swCsPerformedBy, remark, date;
 
-        for (int n = 0; n < nbEntry; n++) {
+        for (byte n = 0; n < nbEntry; n++) {
             aEntry = (Element) swCsEntry.item(n);
 
             swCsPerformedBy = aEntry.getElementsByTagName("SW-CS-PERFORMED-BY").item(0);
@@ -222,7 +226,7 @@ public final class PaCo extends Observable {
 
         final String val[] = new String[nbVal];
 
-        for (int a = 0; a < nbVal; a++) {
+        for (short a = 0; a < nbVal; a++) {
             val[a] = Utilitaire.cutNumber(value.item(a).getTextContent());
         }
 
@@ -230,11 +234,11 @@ public final class PaCo extends Observable {
     }
 
     private final String[][] readValueBlock(String[] dim, NodeList swAxisCont) {
-
+    	// A finir d'implementer pour les dimensions multiples
         final String val[][] = new String[2][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength()];
         final int nbAxe = swAxisCont.getLength();
 
-        for (int n = 0; n < nbAxe; n++) {
+        for (byte n = 0; n < nbAxe; n++) {
             final Element eAxisCont = (Element) swAxisCont.item(n);
             final Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
             final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
@@ -245,7 +249,7 @@ public final class PaCo extends Observable {
 
             switch (indexAxis.getTextContent()) {
             case "0":
-                for (int a = 0; a < nbVal; a++) {
+                for (short a = 0; a < nbVal; a++) {
                     val[0][a] = Integer.toString(a + 1);
                     if (value.item(a).getTextContent() != null) {
                         val[1][a] = Utilitaire.cutNumber(value.item(a).getTextContent());
@@ -265,7 +269,7 @@ public final class PaCo extends Observable {
 
         final String val[][] = new String[2][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength()];
 
-        for (int n = 0; n < 2; n++) {
+        for (byte n = 0; n < 2; n++) {
 
             final Element eAxisCont = (Element) swAxisCont.item(n);
             final Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
@@ -277,12 +281,12 @@ public final class PaCo extends Observable {
             switch (indexAxis.getTextContent()) {
             case "1":
 
-                for (int b = 0; b < nbVal; b++) {
+                for (short b = 0; b < nbVal; b++) {
                     val[0][b] = Utilitaire.cutNumber(value.item(b).getTextContent());
                 }
                 break;
             case "0":
-                for (int a = 0; a < nbVal; a++) {
+                for (short a = 0; a < nbVal; a++) {
                     val[1][a] = Utilitaire.cutNumber(value.item(a).getTextContent());
                 }
                 break;
@@ -299,7 +303,7 @@ public final class PaCo extends Observable {
 
         val[0][0] = "Y \\ X";
 
-        for (int n = 0; n < 3; n++) {
+        for (byte n = 0; n < 3; n++) {
             final Element eAxisCont = (Element) swAxisCont.item(n);
             final Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
             final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
@@ -310,7 +314,7 @@ public final class PaCo extends Observable {
             switch (indexAxis.getTextContent()) {
             case "1": // Axe X
 
-                for (int x = 0; x < nbAxeVal; x++) {
+                for (short x = 0; x < nbAxeVal; x++) {
 
                     switch (nodeListV.item(x).getNodeName()) {
                     case "VT":
@@ -326,7 +330,7 @@ public final class PaCo extends Observable {
 
             case "2": // Axe Y
 
-                for (int y = 0; y < nbAxeVal; y++) {
+                for (short y = 0; y < nbAxeVal; y++) {
                     switch (nodeListV.item(y).getNodeName()) {
                     case "VT":
                         val[y + 1][0] = Utilitaire.cutNumber(nodeListV.item(y).getFirstChild().getTextContent());
@@ -341,17 +345,17 @@ public final class PaCo extends Observable {
 
                 final NodeList vg = ((Element) swValuesPhys).getElementsByTagName("VG");
 
-                for (int nVG = 1; nVG < vg.getLength() + 1; nVG++) {
+                for (short nVG = 1; nVG < vg.getLength() + 1; nVG++) {
                     NodeList nodeV = ((Element) vg.item(nVG - 1)).getElementsByTagName("V");
 
                     if (nodeV.getLength() > 0) {
-                        for (int nV = 1; nV < nodeV.getLength() + 1; nV++) {
+                        for (short nV = 1; nV < nodeV.getLength() + 1; nV++) {
                             val[nVG][nV] = Utilitaire.cutNumber(nodeV.item(nV - 1).getTextContent());
                         }
                     } else {
                         nodeV = ((Element) vg.item(nVG - 1)).getElementsByTagName("VT");
 
-                        for (int nV = 1; nV < nodeV.getLength() + 1; nV++) {
+                        for (short nV = 1; nV < nodeV.getLength() + 1; nV++) {
                             val[nVG][nV] = Utilitaire.cutNumber(nodeV.item(nV - 1).getFirstChild().getTextContent());
                         }
                     }
@@ -406,7 +410,7 @@ public final class PaCo extends Observable {
 
                     int col = 0;
                     row += 1;
-                    for (int x = 0; x < variableType.getDim(); x++) {
+                    for (short x = 0; x < variableType.getDim(); x++) {
                         writeCell(sheet, col, row, variableType.getzValues(x), borderFormat);
                         col += 1;
                     }
@@ -416,10 +420,10 @@ public final class PaCo extends Observable {
                     Curve variableType = (Curve) var;
                     writeCell(sheet, 0, row, variableType.getShortName(), arial10format);
 
-                    for (int y = 0; y < 2; y++) {
+                    for (byte y = 0; y < 2; y++) {
                         int col = 0;
                         row += 1;
-                        for (int x = 0; x < variableType.getDimX(); x++) {
+                        for (short x = 0; x < variableType.getDimX(); x++) {
                             if (y == 0) {
                                 writeCell(sheet, col, row, variableType.getValue(y, x), axisFormat);
                             } else {
@@ -437,10 +441,10 @@ public final class PaCo extends Observable {
                     ValueBlock variableType = (ValueBlock) var;
                     writeCell(sheet, 0, row, variableType.getShortName(), arial10format);
 
-                    for (int y = 0; y < 2; y++) {
+                    for (byte y = 0; y < 2; y++) {
                         int col = 0;
                         row += 1;
-                        for (int x = 0; x < variableType.getDimX(); x++) {
+                        for (short x = 0; x < variableType.getDimX(); x++) {
                             if (y == 0) {
                                 writeCell(sheet, col, row, variableType.getValue(y, x), axisFormat);
                             } else {
@@ -457,10 +461,10 @@ public final class PaCo extends Observable {
                     Map variableType = (Map) var;
                     writeCell(sheet, 0, row, variableType.getShortName(), arial10format);
 
-                    for (int y = 0; y < variableType.getDimY(); y++) {
+                    for (short y = 0; y < variableType.getDimY(); y++) {
                         int col = 0;
                         row += 1;
-                        for (int x = 0; x < variableType.getDimX(); x++) {
+                        for (short x = 0; x < variableType.getDimX(); x++) {
                             if (y == 0 | x == 0) {
                                 writeCell(sheet, col, row, variableType.getValue(y, x), axisFormat);
                             } else {
@@ -530,6 +534,38 @@ public final class PaCo extends Observable {
         } catch (FileNotFoundException e) {
             Main.getLogger().severe(e.getMessage());
         }
+    }
+    
+    public void syntheseScore()
+    {
+    	if(!listLabel.isEmpty())
+    	{
+    		float scoreMoy;
+    		final DecimalFormat df = new DecimalFormat("#.##");
+    		final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>();
+    		repartitionScore.put(0, 0);
+    		repartitionScore.put(25, 0);
+    		repartitionScore.put(50, 0);
+    		repartitionScore.put(75, 0);
+    		repartitionScore.put(100, 0);
+    		
+    		for(Variable v : listLabel)
+    		{
+    			if(repartitionScore.get(v.getLastScore())!=null)
+    			repartitionScore.put(v.getLastScore(), repartitionScore.get(v.getLastScore())+1);
+    		}
+    		
+    		System.out.println(repartitionScore);
+    		
+    		scoreMoy = (float)
+    				(repartitionScore.get(0)*0 +
+    				repartitionScore.get(25)*25 +
+    				repartitionScore.get(50)*50 +
+    				repartitionScore.get(75)*75 +
+    				repartitionScore.get(100)*100)/listLabel.size();
+    		
+    		System.out.println("Score moyen du PaCo : " + df.format(scoreMoy) + "%");
+    	}
     }
 
 }

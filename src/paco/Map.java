@@ -41,21 +41,18 @@ public final class Map extends Variable {
         this.dimY = values.length;
 
         xValues = new String[dimX - 1];
-        for (int i = 0; i < xValues.length; i++) {
-            // xValues[i] = Utilitaire.cutNumber(values[0][i + 1]);
+        for (short i = 0; i < xValues.length; i++) {
             xValues[i] = values[0][i + 1];
         }
 
         yValues = new String[dimY - 1];
-        for (int i = 0; i < yValues.length; i++) {
-            // yValues[i] = Utilitaire.cutNumber(values[i + 1][0]);
+        for (short i = 0; i < yValues.length; i++) {
             yValues[i] = values[i + 1][0];
         }
 
         zValues = new String[yValues.length][xValues.length];
-        for (int x = 0; x < xValues.length; x++) {
-            for (int y = 0; y < yValues.length; y++) {
-                // zValues[y][x] = Utilitaire.cutNumber(values[y + 1][x + 1]);
+        for (short x = 0; x < xValues.length; x++) {
+            for (short y = 0; y < yValues.length; y++) {
                 zValues[y][x] = values[y + 1][x + 1];
 
                 try {
@@ -81,8 +78,8 @@ public final class Map extends Variable {
     public final String toString() {
         StringBuilder sb = new StringBuilder("\n");
 
-        for (int y = 0; y < dimY; y++) {
-            for (int x = 0; x < dimX; x++) {
+        for (short y = 0; y < dimY; y++) {
+            for (short x = 0; x < dimX; x++) {
                 sb.append(this.getValue(y, x) + "\t");
             }
             sb.append("\n");
@@ -112,7 +109,6 @@ public final class Map extends Variable {
     }
 
     public final String getzValue(int col, int row) {
-        // return Utilitaire.cutNumber(zValues[col][row]);
         return zValues[col][row];
     }
 
@@ -129,7 +125,6 @@ public final class Map extends Variable {
     }
 
     public final String getValue(int col, int row) {
-        // return Utilitaire.cutNumber(values[col][row]);
         return values[col][row];
     }
 
@@ -184,32 +179,14 @@ public final class Map extends Variable {
     @Override
     public final void initVariable() {
         panel = new JPanel(new GridLayout(dimY, dimX, 1, 1));
-        // panel.setLayout(new GridLayout(dimY, dimX, 1, 1));
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         panel.addMouseListener(this);
-        // JLabel[] valueView = new JLabel[getDimX() * (getDimY() - 1)];
-        //
-        // for (int y = 0; y < getDimY(); y++) {
-        // for (int x = 0; x < getDimX(); x++) {
-        // valueView[y * x] = new JLabel(getValue(y, x));
-        // panel.add(valueView[y * x]);
-        //
-        // if (y == 0 | x == 0) {
-        // valueView[y * x].setFont(new Font(null, Font.BOLD, valueView[y * x].getFont().getSize()));
-        // }
-        // valueView[y * x].setOpaque(true);
-        // valueView[y * x].setBackground(Color.LIGHT_GRAY);
-        // valueView[y * x].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        // valueView[y * x].setHorizontalAlignment(SwingConstants.CENTER);
-        //
-        // }
-        // }
 
         JLabel valueView;
 
-        for (int y = 0; y < dimY; y++) {
-            for (int x = 0; x < dimX; x++) {
+        for (short y = 0; y < dimY; y++) {
+            for (short x = 0; x < dimX; x++) {
                 valueView = new JLabel(getValue(y, x));
                 panel.add(valueView);
 

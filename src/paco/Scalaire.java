@@ -28,7 +28,7 @@ public final class Scalaire extends Variable {
     public Scalaire(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
             String value) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
-        // this.value = Utilitaire.cutNumber(value);
+        
         this.value = value;
     }
 
@@ -38,7 +38,6 @@ public final class Scalaire extends Variable {
     }
 
     public final String getValue() {
-        // return Utilitaire.cutNumber(value);
         return value;
     }
 

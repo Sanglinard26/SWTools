@@ -55,6 +55,7 @@ public final class PanelPaCo extends JPanel implements Observer {
     private static final String ICON_CHART = "/graph_32.png";
     private static final String ICON_EXCEL = "/excel_icon_16.png";
     private static final String ICON_TEXT = "/text_icon_16.png";
+    private static final String ICON_SCORE = "/score_icon_16.png";
 
     private static final GridBagConstraints gbc = new GridBagConstraints();
 
@@ -184,6 +185,16 @@ public final class PanelPaCo extends JPanel implements Observer {
                                 }
                             }
 
+                        }
+                    });
+                    menu.add(menuItem);
+                    menu.addSeparator();
+                    menuItem = new JMenuItem("Synthese des scores", new ImageIcon(getClass().getResource(ICON_SCORE)));
+                    menuItem.addActionListener(new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                        	paco.syntheseScore();
                         }
                     });
                     menu.add(menuItem);

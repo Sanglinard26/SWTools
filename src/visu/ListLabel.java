@@ -4,7 +4,6 @@
 package visu;
 
 import javax.swing.JList;
-
 import paco.ListModelLabel;
 import paco.Variable;
 

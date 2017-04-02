@@ -23,8 +23,6 @@ public final class Curve extends Variable {
 
     private final String[][] values;
     private JPanel panel;
-    private final String[] xValues;
-    private final String[] zValues;
     private final int dimX;
 
     public Curve(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
@@ -32,21 +30,7 @@ public final class Curve extends Variable {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;
 
-        this.xValues = values[0];
-        this.zValues = values[1];
         this.dimX = values[0].length;
-
-        // xValues = new String[values[0].length];
-        // for (int i = 0; i < xValues.length; i++) {
-        // // xValues[i] = Utilitaire.cutNumber(values[0][i]);
-        // xValues[i] = values[0][i];
-        // }
-        //
-        // zValues = new String[values[0].length];
-        // for (int i = 0; i < zValues.length; i++) {
-        // // zValues[i] = Utilitaire.cutNumber(values[1][i]);
-        // zValues[i] = values[1][i];
-        // }
 
     }
 
@@ -54,8 +38,8 @@ public final class Curve extends Variable {
     public final String toString() {
 
         StringBuilder sb = new StringBuilder("\n");
-        for (int y = 0; y < 2; y++) {
-            for (int x = 0; x < dimX; x++) {
+        for (byte y = 0; y < 2; y++) {
+            for (short x = 0; x < dimX; x++) {
                 sb.append(this.getValue(y, x) + "\t");
             }
             sb.append("\n");
@@ -76,7 +60,6 @@ public final class Curve extends Variable {
     }
 
     public final String getValue(int col, int row) {
-        // return Utilitaire.cutNumber(values[col][row]);
         return values[col][row];
     }
 
@@ -93,35 +76,14 @@ public final class Curve extends Variable {
     @Override
     public final void initVariable() {
         panel = new JPanel(new GridLayout(2, dimX, 1, 1));
-        // panel.setLayout(new GridLayout(2, dimX, 1, 1));
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         panel.addMouseListener(this);
-        // JLabel[] valueViewX = new JLabel[getDimX()];
-        // JLabel[] valueViewY = new JLabel[getDimX()];
-        // for (int i = 0; i < valueViewX.length; i++) {
-        // valueViewX[i] = new JLabel(getValue(0, i));
-        // panel.add(valueViewX[i]);
-        // valueViewX[i].setFont(new Font(null, Font.BOLD, valueViewX[i].getFont().getSize()));
-        // valueViewX[i].setOpaque(true);
-        // valueViewX[i].setBackground(Color.LIGHT_GRAY);
-        // valueViewX[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        // valueViewX[i].setHorizontalAlignment(SwingConstants.CENTER);
-        // }
-        // for (int i = 0; i < valueViewY.length; i++) {
-        // valueViewY[i] = new JLabel(getValue(1, i));
-        // panel.add(valueViewY[i]);
-        // valueViewY[i].setOpaque(true);
-        // valueViewY[i].setBackground(Color.LIGHT_GRAY);
-        // valueViewY[i].setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        // valueViewY[i].setHorizontalAlignment(SwingConstants.CENTER);
-        //
-        // }
 
         JLabel valueViewX;
         JLabel valueViewY;
 
-        for (int i = 0; i < dimX; i++) {
+        for (short i = 0; i < dimX; i++) {
             valueViewX = new JLabel(getValue(0, i));
             panel.add(valueViewX);
             valueViewX.setFont(new Font(null, Font.BOLD, valueViewX.getFont().getSize()));
@@ -130,7 +92,7 @@ public final class Curve extends Variable {
             valueViewX.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             valueViewX.setHorizontalAlignment(SwingConstants.CENTER);
         }
-        for (int i = 0; i < dimX; i++) {
+        for (short i = 0; i < dimX; i++) {
             valueViewY = new JLabel(getValue(1, i));
             panel.add(valueViewY);
             valueViewY.setOpaque(true);
