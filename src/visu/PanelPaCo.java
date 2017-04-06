@@ -1,14 +1,11 @@
 package visu;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,10 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -36,9 +30,9 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import paco.ListModelLabel;
+import paco.ListModelPaco;
 import paco.PaCo;
 import paco.TableModelHistory;
 import tools.Preference;
@@ -50,18 +44,14 @@ public final class PanelPaCo extends JPanel implements Observer {
 
     // Constante
     private static final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
-    private static final String WARNING = "/warning_32.png";
     private static final String ICON_HISTORY = "/historique_32.png";
     private static final String ICON_CHART = "/graph_32.png";
-    private static final String ICON_EXCEL = "/excel_icon_16.png";
-    private static final String ICON_TEXT = "/text_icon_16.png";
-    private static final String ICON_SCORE = "/score_icon_16.png";
 
     private static final GridBagConstraints gbc = new GridBagConstraints();
 
     // GUI
-    private static final JButton btOpen = new JButton("Ouvrir");
-    private static final JLabel labelNomPaCo = new JLabel("Nom : ");
+    private static final JButton btOpen = new JButton("Ajouter PaCo(s)");
+    private static final ListPaco listPaco = new ListPaco(new ListModelPaco());
     private static final JTextField txtFiltre = new JTextField(20);
     private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
     private static final JPanel panVisu = new JPanel(new GridBagLayout());;
@@ -71,9 +61,7 @@ public final class PanelPaCo extends JPanel implements Observer {
     private static final JTabbedPane tabPan = new JTabbedPane();
     private static final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
 
-    // PaCo
     private File dtd;
-    private PaCo paco;
 
     public PanelPaCo() {
 
@@ -83,7 +71,7 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
-        gbc.gridheight = 2;
+        gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
         gbc.insets = new Insets(0, 5, 0, 10);
@@ -91,17 +79,27 @@ public final class PanelPaCo extends JPanel implements Observer {
         btOpen.addActionListener(new OpenPaco());
         add(btOpen, gbc);
 
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.gridheight = 2;
-        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
         gbc.weighty = 0;
-        gbc.insets = new Insets(0, 0, 0, 0);
-        gbc.anchor = GridBagConstraints.LINE_START;
-        labelNomPaCo.setFont(new Font(null, Font.BOLD, 14));
-        add(labelNomPaCo, gbc);
+        gbc.insets = new Insets(0, 5, 0, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
+        listPaco.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting() == false & !listPaco.isSelectionEmpty()) {
+                    razUI();
+                    listLabel.getModel().setList(listPaco.getSelectedValue().getListLabel());
+                }
+
+            }
+        });
+        add(new JScrollPane(listPaco), gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
@@ -141,67 +139,6 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.weighty = 1;
         gbc.insets = new Insets(0, 5, 0, 10);
         gbc.anchor = GridBagConstraints.CENTER;
-        listLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (e.isPopupTrigger() & listLabel.getModel().getSize() > 0) {
-                    final JPopupMenu menu = new JPopupMenu();
-                    JMenuItem menuItem;
-                    menuItem = new JMenuItem("Exporter le PaCo en txt", new ImageIcon(getClass().getResource(ICON_TEXT)));
-                    menuItem.addActionListener(new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-
-                            final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
-                            fileChooser.setDialogTitle("Enregistement du PaCo");
-                            fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier texte (*.txt)", "txt"));
-                            fileChooser.setSelectedFile(new File(".txt"));
-                            final int rep = fileChooser.showSaveDialog(null);
-
-                            if (rep == JFileChooser.APPROVE_OPTION) {
-                                paco.exportToTxt(fileChooser.getSelectedFile());
-                            }
-
-                        }
-                    });
-                    menu.add(menuItem);
-                    menu.addSeparator();
-                    menuItem = new JMenuItem("Exporter le PaCo en xls", new ImageIcon(getClass().getResource(ICON_EXCEL)));
-                    menuItem.addActionListener(new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-
-                            if (true) {
-                                final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
-                                fileChooser.setDialogTitle("Enregistement du PaCo");
-                                fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier Excel (*.xls)", "xls"));
-                                fileChooser.setSelectedFile(new File(paco.getName() + ".xls"));
-                                final int rep = fileChooser.showSaveDialog(null);
-
-                                if (rep == JFileChooser.APPROVE_OPTION) {
-                                    paco.exportToExcel(fileChooser.getSelectedFile());
-                                }
-                            }
-
-                        }
-                    });
-                    menu.add(menuItem);
-                    menu.addSeparator();
-                    menuItem = new JMenuItem("Synthese des scores", new ImageIcon(getClass().getResource(ICON_SCORE)));
-                    menuItem.addActionListener(new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                        	paco.syntheseScore();
-                        }
-                    });
-                    menu.add(menuItem);
-                    menu.show(e.getComponent(), e.getX(), e.getY());
-                }
-            }
-        });
         listLabel.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -255,9 +192,9 @@ public final class PanelPaCo extends JPanel implements Observer {
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 0;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.gridheight = 4;
+        gbc.gridheight = 6;
         gbc.weightx = 1;
         gbc.weighty = 1;
         gbc.insets = new Insets(0, 0, 0, 5);
@@ -286,6 +223,7 @@ public final class PanelPaCo extends JPanel implements Observer {
         @Override
         public void actionPerformed(ActionEvent ae) {
             final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
+            jFileChooser.setMultiSelectionEnabled(true); // Test
             jFileChooser.setFileFilter(new FileFilter() {
 
                 @Override
@@ -311,6 +249,7 @@ public final class PanelPaCo extends JPanel implements Observer {
             if (reponse == JFileChooser.APPROVE_OPTION) {
 
                 dtd = new File(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
+                dtd.deleteOnExit();
                 if (!dtd.exists()) {
                     final InputStream myDtd = getClass().getResourceAsStream("/" + DTD);
 
@@ -333,8 +272,9 @@ public final class PanelPaCo extends JPanel implements Observer {
 
                 razUI();
 
-                new ReaderPaCo(jFileChooser.getSelectedFile()).start();
-
+                for (File file : jFileChooser.getSelectedFiles()) {
+                    new ReaderPaCo(file).start();
+                }
             }
         }
 
@@ -369,20 +309,7 @@ public final class PanelPaCo extends JPanel implements Observer {
 
         @Override
         public void run() {
-
-            paco = new PaCo(file, PanelPaCo.this);
-            labelNomPaCo.setText("Nom : " + paco.getName());
-            if (paco.checkName()) {
-                labelNomPaCo.setToolTipText(null);
-                labelNomPaCo.setIcon(null);
-            } else {
-                labelNomPaCo.setToolTipText("Incoherence de nom");
-                labelNomPaCo.setIcon(new ImageIcon(getClass().getResource(WARNING)));
-            }
-
-            listLabel.getModel().setList(paco.getListLabel());
-
-            dtd.delete();
+            listPaco.getModel().addPaco(new PaCo(file, PanelPaCo.this));
         }
     }
 
@@ -392,9 +319,6 @@ public final class PanelPaCo extends JPanel implements Observer {
             txtFiltre.setText("");
             listLabel.clearSelection();
             listLabel.getModel().clearList();
-            labelNomPaCo.setText("Nom : ");
-            labelNomPaCo.setToolTipText(null);
-            labelNomPaCo.setIcon(null);
 
             tableHistory.getModel().setData(new String[0][0]);
 

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,7 +46,7 @@ public final class PaCo extends Observable {
     public static final String _T_CA = "VALUE_BLOCK";
     public static final String _T_GROUPED = "CURVE_GROUPED";
     public static final String _M_GROUPED = "MAP_GROUPED";
-    	
+
     private File file = null;
     private String name = "";
     private int nbLabel = 0;
@@ -64,7 +63,8 @@ public final class PaCo extends Observable {
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setIgnoringElementContentWhitespace(true);
             final DocumentBuilder builder = factory.newDocumentBuilder();
-            final Document document = builder.parse(file.getPath());
+            final Document document = builder.parse(new File(file.toURI())); // Permet de virer l'exception <java.net.malformedurlexception unknown
+                                                                             // protocol c>
 
             final Element racine = document.getDocumentElement();
 
@@ -84,7 +84,7 @@ public final class PaCo extends Observable {
             long tps = System.currentTimeMillis();
 
             final int nbUnit = listSwUnit.getLength();
-            
+
             // Remplissage de la HashMap des unites
             for (short u = 0; u < nbUnit; u++) {
                 eUnit = (Element) listSwUnit.item(u);
@@ -167,7 +167,7 @@ public final class PaCo extends Observable {
             System.out.println("Tps : " + tps);
 
         } catch (Exception e) {
-            Main.getLogger().severe(e.getMessage());
+            Main.getLogger().severe(e.toString());
         }
 
     }
@@ -186,6 +186,11 @@ public final class PaCo extends Observable {
 
     public final ArrayList<Variable> getListLabel() {
         return this.listLabel;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 
     private final String[][] readEntry(NodeList swCsEntry) {
@@ -234,7 +239,7 @@ public final class PaCo extends Observable {
     }
 
     private final String[][] readValueBlock(String[] dim, NodeList swAxisCont) {
-    	// A finir d'implementer pour les dimensions multiples
+        // A finir d'implementer pour les dimensions multiples
         final String val[][] = new String[2][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength()];
         final int nbAxe = swAxisCont.getLength();
 
@@ -388,14 +393,56 @@ public final class PaCo extends Observable {
             writeCell(shtInfo, 0, 1, "Nombre de variables : " + String.valueOf(this.getNbLabel()), arial10format);
             writeCell(shtInfo, 0, 2, "Liste des variables : ", arial10format);
 
+            final WritableSheet shtScore = workbook.createSheet("Scores", 2);
+
+            final float scoreMoy = (float) (getScores().get(0) * 0 + getScores().get(25) * 25 + getScores().get(50) * 50 + getScores().get(75) * 75
+                    + getScores().get(100) * 100) / listLabel.size();
+
+            writeCell(shtScore, 0, 0, "Score moyen du PaCo : " + scoreMoy, arial10format);
+            writeCell(shtScore, 0, 2, "0% " + "(" + getScores().get(0) + ")", arial10format);
+            writeCell(shtScore, 1, 2, "25% " + "(" + getScores().get(25) + ")", arial10format);
+            writeCell(shtScore, 2, 2, "50% " + "(" + getScores().get(50) + ")", arial10format);
+            writeCell(shtScore, 3, 2, "75% " + "(" + getScores().get(75) + ")", arial10format);
+            writeCell(shtScore, 4, 2, "100% " + "(" + getScores().get(100) + ")", arial10format);
+
             final WritableSheet sheet = workbook.createSheet("Export", 1);
 
             int row = 0;
             int cnt = 0;
+            int cnt0 = 0;
+            int cnt25 = 0;
+            int cnt50 = 0;
+            int cnt75 = 0;
+            int cnt100 = 0;
 
             for (Variable var : listLabel) {
 
                 shtInfo.addHyperlink(new WritableHyperlink(0, 3 + cnt, var.getShortName(), sheet, 0, row));
+
+                switch (var.getLastScore()) {
+                case 0:
+                    writeCell(shtScore, 0, cnt0 + 3, var.getShortName(), new WritableCellFormat());
+                    cnt0++;
+                    break;
+                case 25:
+                    writeCell(shtScore, 1, cnt25 + 3, var.getShortName(), new WritableCellFormat());
+                    cnt25++;
+                    break;
+                case 50:
+                    writeCell(shtScore, 2, cnt50 + 3, var.getShortName(), new WritableCellFormat());
+                    cnt50++;
+                    break;
+                case 75:
+                    writeCell(shtScore, 3, cnt75 + 3, var.getShortName(), new WritableCellFormat());
+                    cnt75++;
+                    break;
+                case 100:
+                    writeCell(shtScore, 4, cnt100 + 3, var.getShortName(), new WritableCellFormat());
+                    cnt100++;
+                    break;
+                default:
+                    break;
+                }
 
                 if (var instanceof Scalaire) {
                     Scalaire variableType = (Scalaire) var;
@@ -535,37 +582,26 @@ public final class PaCo extends Observable {
             Main.getLogger().severe(e.getMessage());
         }
     }
-    
-    public void syntheseScore()
-    {
-    	if(!listLabel.isEmpty())
-    	{
-    		float scoreMoy;
-    		final DecimalFormat df = new DecimalFormat("#.##");
-    		final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>();
-    		repartitionScore.put(0, 0);
-    		repartitionScore.put(25, 0);
-    		repartitionScore.put(50, 0);
-    		repartitionScore.put(75, 0);
-    		repartitionScore.put(100, 0);
-    		
-    		for(Variable v : listLabel)
-    		{
-    			if(repartitionScore.get(v.getLastScore())!=null)
-    			repartitionScore.put(v.getLastScore(), repartitionScore.get(v.getLastScore())+1);
-    		}
-    		
-    		System.out.println(repartitionScore);
-    		
-    		scoreMoy = (float)
-    				(repartitionScore.get(0)*0 +
-    				repartitionScore.get(25)*25 +
-    				repartitionScore.get(50)*50 +
-    				repartitionScore.get(75)*75 +
-    				repartitionScore.get(100)*100)/listLabel.size();
-    		
-    		System.out.println("Score moyen du PaCo : " + df.format(scoreMoy) + "%");
-    	}
+
+    private HashMap<Integer, Integer> getScores() {
+        if (!listLabel.isEmpty()) {
+
+            final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
+            repartitionScore.put(0, 0);
+            repartitionScore.put(25, 0);
+            repartitionScore.put(50, 0);
+            repartitionScore.put(75, 0);
+            repartitionScore.put(100, 0);
+
+            for (Variable v : listLabel) {
+                if (repartitionScore.get(v.getLastScore()) != null)
+                    repartitionScore.put(v.getLastScore(), repartitionScore.get(v.getLastScore()) + 1);
+            }
+
+            return repartitionScore;
+        }
+        return null;
+
     }
 
 }

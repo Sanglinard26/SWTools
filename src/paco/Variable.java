@@ -29,9 +29,8 @@ public abstract class Variable extends MouseAdapter {
 
     private static final String ICON_TEXT = "/text_icon_16.png";
     private static final String ICON_IMAGE = "/image_icon_16.png";
-    
-    private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(5);
 
+    private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6);
 
     public Variable(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory) {
         this.shortName = shortName;
@@ -40,7 +39,8 @@ public abstract class Variable extends MouseAdapter {
         this.swFeatureRef = swFeatureRef;
         this.swUnitRef = swUnitRef;
         this.swCsHistory = swCsHistory;
-        
+
+        maturite.put("---", 0);
         maturite.put("changed", 0);
         maturite.put("prelimcalibrated", 25);
         maturite.put("calibrated", 50);
@@ -71,14 +71,12 @@ public abstract class Variable extends MouseAdapter {
     public final String[][] getSwCsHistory() {
         return swCsHistory;
     }
-    
-    public final int getLastScore()
-    {
-    	if(!(swCsHistory.length<1))
-    	{
-    		return maturite.get(swCsHistory[swCsHistory.length-1][2].toLowerCase());
-    	}
-		return 0;
+
+    public final int getLastScore() {
+        if (!(swCsHistory.length < 1)) {
+            return maturite.get(swCsHistory[swCsHistory.length - 1][2].toLowerCase());
+        }
+        return 0;
     }
 
     @Override

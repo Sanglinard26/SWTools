@@ -20,12 +20,13 @@ public final class TableHistoryRenderer implements TableCellRenderer {
     private final JTextPane textPane = new JTextPane();
     private final JScrollPane scrollPane = new JScrollPane(textPane);
 
-    private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>();
+    private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6);
 
     public TableHistoryRenderer() {
         label.setOpaque(true);
         label.setBackground(Color.WHITE);
 
+        maturite.put("---", 0);
         maturite.put("changed", 0);
         maturite.put("prelimcalibrated", 25);
         maturite.put("calibrated", 50);
