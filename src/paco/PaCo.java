@@ -8,10 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -47,17 +45,14 @@ public final class PaCo extends Observable {
     public static final String _T_GROUPED = "CURVE_GROUPED";
     public static final String _M_GROUPED = "MAP_GROUPED";
 
-    private File file = null;
-    private String name = "";
+    private final String name;
     private int nbLabel = 0;
     private final HashMap<String, String> unit = new HashMap<String, String>();
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
 
-    public PaCo(File file, JPanel panelPaco) {
+    public PaCo(final File file) {
 
-        this.file = file;
-
-        addObserver((Observer) panelPaco);
+        this.name = file.getName().substring(0, file.getName().length() - 4);
 
         try {
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -67,10 +62,6 @@ public final class PaCo extends Observable {
                                                                              // protocol c>
 
             final Element racine = document.getDocumentElement();
-
-            final NodeList enfantRacine = racine.getChildNodes();
-
-            this.name = enfantRacine.item(0).getTextContent();
 
             final NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
             final NodeList listSwUnit = racine.getElementsByTagName("SW-UNIT");
@@ -170,10 +161,6 @@ public final class PaCo extends Observable {
             Main.getLogger().severe(e.toString());
         }
 
-    }
-
-    public final Boolean checkName() {
-        return this.file.getName().substring(0, this.file.getName().length() - 4).equals(this.name);
     }
 
     public final String getName() {

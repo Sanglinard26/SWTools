@@ -11,10 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Observable;
-import java.util.Observer;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -38,7 +35,7 @@ import paco.TableModelHistory;
 import tools.Preference;
 import tools.Utilitaire;
 
-public final class PanelPaCo extends JPanel implements Observer {
+public final class PanelPaCo extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -59,7 +56,7 @@ public final class PanelPaCo extends JPanel implements Observer {
     private static final TableHistory tableHistory = new TableHistory(new TableModelHistory());
     private static final JProgressBar barChargement = new BarreProgression();
     private static final JTabbedPane tabPan = new JTabbedPane();
-    private static final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
+    private static final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
 
     private File dtd;
 
@@ -199,9 +196,9 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.weighty = 1;
         gbc.insets = new Insets(0, 0, 0, 5);
         gbc.anchor = GridBagConstraints.CENTER;
-        splitPane.setOneTouchExpandable(true);
-        splitPane.setDividerLocation(400);
-        add(splitPane, gbc);
+        splitPaneRight.setOneTouchExpandable(true);
+        splitPaneRight.setDividerLocation(400);
+        add(splitPaneRight, gbc);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
@@ -212,9 +209,6 @@ public final class PanelPaCo extends JPanel implements Observer {
         gbc.weighty = 0;
         gbc.insets = new Insets(2, 5, 0, 5);
         gbc.anchor = GridBagConstraints.CENTER;
-        barChargement.setStringPainted(true);
-        barChargement.setString("Aucun label");
-        barChargement.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         add(barChargement, gbc);
     }
 
@@ -272,29 +266,15 @@ public final class PanelPaCo extends JPanel implements Observer {
 
                 razUI();
 
+                barChargement.setValue(0);
+                barChargement.setMaximum(jFileChooser.getSelectedFiles().length);
+
                 for (File file : jFileChooser.getSelectedFiles()) {
                     new ReaderPaCo(file).start();
                 }
+
             }
         }
-
-    }
-
-    @Override
-    public void update(final Observable o, final Object arg) {
-
-        final Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                barChargement.setString(arg.toString() + " label(s)");
-                barChargement.setMaximum((((PaCo) o).getNbLabel()));
-                barChargement.setValue((int) arg);
-
-            }
-        });
-
-        SwingUtilities.invokeLater(t);
 
     }
 
@@ -309,11 +289,20 @@ public final class PanelPaCo extends JPanel implements Observer {
 
         @Override
         public void run() {
-            listPaco.getModel().addPaco(new PaCo(file, PanelPaCo.this));
+
+            listPaco.getModel().addPaco(new PaCo(file));
+
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    barChargement.setValue(barChargement.getValue() + 1);
+                }
+            });
         }
     }
 
-    private static void razUI() {
+    public static void razUI() {
 
         if (listLabel.getModel().getSize() > 0) {
             txtFiltre.setText("");
@@ -329,9 +318,6 @@ public final class PanelPaCo extends JPanel implements Observer {
             panGraph.getPanCard().removeAll();
             panGraph.getPanCard().revalidate();
             panGraph.getPanCard().repaint();
-
-            barChargement.setString("...");
-            barChargement.setValue(0);
         }
 
     }

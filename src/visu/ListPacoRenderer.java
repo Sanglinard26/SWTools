@@ -32,7 +32,7 @@ public class ListPacoRenderer extends JLabel implements ListCellRenderer<PaCo> {
         setBorder(new EmptyBorder(2, 0, 2, 0));
 
         if (isSelected) {
-            setBackground(Color.WHITE);
+            setBackground(Color.getHSBColor(100, 100, 100));
             setFont(new Font(null, Font.BOLD, 12));
             setBorder(new LineBorder(Color.BLACK, 1));
         } else {

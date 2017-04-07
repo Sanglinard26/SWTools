@@ -6,6 +6,7 @@ package visu;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JProgressBar;
 import javax.swing.plaf.basic.BasicProgressBarUI;
@@ -16,6 +17,9 @@ public final class BarreProgression extends JProgressBar {
 
     public BarreProgression() {
         setUI(new MyProgressUI());
+        setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        setValue(0);
+        setStringPainted(true);
     }
 
 }
@@ -27,5 +31,4 @@ final class MyProgressUI extends BasicProgressBarUI {
         super.paintDeterminate(g, c);
         c.setForeground(Color.DARK_GRAY);
     }
-
 }
