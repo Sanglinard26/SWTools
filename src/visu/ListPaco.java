@@ -14,6 +14,7 @@ import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -67,11 +68,12 @@ public class ListPaco extends JList<PaCo> implements KeyListener {
         @Override
         public void mouseReleased(MouseEvent e) {
             if (e.isPopupTrigger() & ListPaco.this.getModel().getSize() > 0) {
-                JPopupMenu menu = new JPopupMenu();
+                final JPopupMenu menu = new JPopupMenu();
+                final JMenu menuExport = new JMenu("Export");
                 JMenuItem menuItem;
                 if (ListPaco.this.locationToIndex(e.getPoint()) == ListPaco.this.getSelectedIndex()) {
 
-                    menuItem = new JMenuItem("Supprimer");
+                    menuItem = new JMenuItem("Supprimer ce PaCo");
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -82,6 +84,7 @@ public class ListPaco extends JList<PaCo> implements KeyListener {
                         }
                     });
                     menu.add(menuItem);
+                    menu.addSeparator();
                     menuItem = new JMenuItem("Exporter le PaCo en txt", new ImageIcon(getClass().getResource(ICON_TEXT)));
                     menuItem.addActionListener(new ActionListener() {
 
@@ -101,8 +104,8 @@ public class ListPaco extends JList<PaCo> implements KeyListener {
 
                         }
                     });
-                    menu.add(menuItem);
-                    menu.addSeparator();
+                    menuExport.add(menuItem);
+                    menuExport.addSeparator();
                     menuItem = new JMenuItem("Exporter le PaCo en xls", new ImageIcon(getClass().getResource(ICON_EXCEL)));
                     menuItem.addActionListener(new ActionListener() {
 
@@ -124,10 +127,11 @@ public class ListPaco extends JList<PaCo> implements KeyListener {
 
                         }
                     });
-                    menu.add(menuItem);
+                    menuExport.add(menuItem);
+                    menu.add(menuExport);
 
                 } else {
-                    menuItem = new JMenuItem("Tout supprimer");
+                    menuItem = new JMenuItem("Supprimer tous les PaCos");
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override

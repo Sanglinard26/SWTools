@@ -382,10 +382,7 @@ public final class PaCo extends Observable {
 
             final WritableSheet shtScore = workbook.createSheet("Scores", 2);
 
-            final float scoreMoy = (float) (getScores().get(0) * 0 + getScores().get(25) * 25 + getScores().get(50) * 50 + getScores().get(75) * 75
-                    + getScores().get(100) * 100) / listLabel.size();
-
-            writeCell(shtScore, 0, 0, "Score moyen du PaCo : " + scoreMoy, arial10format);
+            writeCell(shtScore, 0, 0, "Score moyen du PaCo : " + getAvgScore(), arial10format);
             writeCell(shtScore, 0, 2, "0% " + "(" + getScores().get(0) + ")", arial10format);
             writeCell(shtScore, 1, 2, "25% " + "(" + getScores().get(25) + ")", arial10format);
             writeCell(shtScore, 2, 2, "50% " + "(" + getScores().get(50) + ")", arial10format);
@@ -537,7 +534,7 @@ public final class PaCo extends Observable {
 
     }
 
-    public void exportToTxt(File file) {
+    public final void exportToTxt(File file) {
         try {
             final PrintWriter printWriter = new PrintWriter(file);
 
@@ -569,8 +566,15 @@ public final class PaCo extends Observable {
             Main.getLogger().severe(e.getMessage());
         }
     }
+    
+    public final float getAvgScore()
+    {
+    	return (float) (getScores().get(0) * 0 + getScores().get(25) * 25 + getScores().get(50) * 50 + getScores().get(75) * 75
+                + getScores().get(100) * 100) / listLabel.size();
+    	 
+    }
 
-    private HashMap<Integer, Integer> getScores() {
+    private final HashMap<Integer, Integer> getScores() {
         if (!listLabel.isEmpty()) {
 
             final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);

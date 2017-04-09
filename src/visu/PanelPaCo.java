@@ -1,6 +1,8 @@
 package visu;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -51,39 +53,46 @@ public final class PanelPaCo extends JPanel {
     private static final ListPaco listPaco = new ListPaco(new ListModelPaco());
     private static final JTextField txtFiltre = new JTextField(20);
     private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
-    private static final JPanel panVisu = new JPanel(new GridBagLayout());;
+    private static final JPanel panVisu = new JPanel(new GridBagLayout());
     private static final PanelGraph panGraph = new PanelGraph();
     private static final TableHistory tableHistory = new TableHistory(new TableModelHistory());
     private static final JProgressBar barChargement = new BarreProgression();
     private static final JTabbedPane tabPan = new JTabbedPane();
+    private static final JPanel panPaco = new JPanel(new GridBagLayout());
+    private static final JPanel panLabel = new JPanel(new GridBagLayout());
+    private static final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panPaco, panLabel);
     private static final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
+    private static final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPaneLeft, splitPaneRight);
 
     private File dtd;
 
     public PanelPaCo() {
 
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout());
+        
+        panPaco.setMinimumSize(new Dimension(500, 300));
+        panLabel.setMinimumSize(new Dimension(500, 300));
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.weightx = 0;
+        gbc.weightx = 1;
         gbc.weighty = 0;
-        gbc.insets = new Insets(0, 5, 0, 10);
+        gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
         btOpen.addActionListener(new OpenPaco());
-        add(btOpen, gbc);
+        panPaco.add(btOpen, gbc);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.insets = new Insets(0, 5, 0, 10);
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
         listPaco.addListSelectionListener(new ListSelectionListener() {
 
@@ -96,16 +105,16 @@ public final class PanelPaCo extends JPanel {
 
             }
         });
-        add(new JScrollPane(listPaco), gbc);
+        panPaco.add(new JScrollPane(listPaco), gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
-        gbc.insets = new Insets(0, 5, 0, 10);
+        gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
         txtFiltre.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -125,16 +134,16 @@ public final class PanelPaCo extends JPanel {
 
             }
         });
-        add(txtFiltre, gbc);
+        panLabel.add(txtFiltre, gbc);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.gridheight = 3;
-        gbc.weightx = 0.2;
+        gbc.weightx = 1;
         gbc.weighty = 1;
-        gbc.insets = new Insets(0, 5, 0, 10);
+        gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
         listLabel.addListSelectionListener(new ListSelectionListener() {
 
@@ -178,8 +187,14 @@ public final class PanelPaCo extends JPanel {
                 }
             }
         });
-        add(new JScrollPane(listLabel), gbc);
-
+        panLabel.add(new JScrollPane(listLabel), gbc);
+        
+        splitPaneLeft.setOneTouchExpandable(true);
+        splitPaneLeft.setDividerLocation(200);
+        
+        splitPaneRight.setOneTouchExpandable(true);
+        splitPaneRight.setDividerLocation(400);
+        
         panVisu.setBackground(Color.WHITE);
 
         tableHistory.setFillsViewportHeight(false);
@@ -187,29 +202,10 @@ public final class PanelPaCo extends JPanel {
         tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(tableHistory));
         tabPan.addTab("Graphique", new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
 
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.gridheight = 6;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        gbc.insets = new Insets(0, 0, 0, 5);
-        gbc.anchor = GridBagConstraints.CENTER;
-        splitPaneRight.setOneTouchExpandable(true);
-        splitPaneRight.setDividerLocation(400);
-        add(splitPaneRight, gbc);
-
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 0;
-        gbc.gridy = 6;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.gridheight = 1;
-        gbc.weightx = 1;
-        gbc.weighty = 0;
-        gbc.insets = new Insets(2, 5, 0, 5);
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(barChargement, gbc);
+        splitPaneGlobal.setDividerSize(10);
+        splitPaneGlobal.setDividerLocation(500);
+        add(splitPaneGlobal, BorderLayout.CENTER);
+        add(barChargement, BorderLayout.SOUTH);
     }
 
     private class OpenPaco implements ActionListener {
