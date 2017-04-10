@@ -573,6 +573,40 @@ public final class PaCo extends Observable {
                 + getScores().get(100) * 100) / listLabel.size();
     	 
     }
+    
+    public final int getMinScore()
+    {
+    	int minScore = Byte.MAX_VALUE;
+    	for(int score = 0; score<=100; score+=25)
+    	{
+    		if(getScores().get(score)>0)
+    		{
+    			if(score<=minScore)
+    			{
+    				minScore = score;
+    			}
+    		}
+    	}
+    	
+    	return minScore;
+    }
+    
+    public final int getMaxScore()
+    {
+    	int maxScore = Byte.MIN_VALUE;
+    	for(int score = 0; score<=100; score+=25)
+    	{
+    		if(getScores().get(score)>0)
+    		{
+    			if(score>=maxScore)
+    			{
+    				maxScore = score;
+    			}
+    		}
+    	}
+    	
+    	return maxScore;
+    }
 
     private final HashMap<Integer, Integer> getScores() {
         if (!listLabel.isEmpty()) {
