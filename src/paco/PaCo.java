@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Observable;
 
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
@@ -34,7 +33,7 @@ import jxl.write.biff.RowsExceededException;
 import tools.Utilitaire;
 import visu.Main;
 
-public final class PaCo extends Observable {
+public final class PaCo {
 
     public static final String ASCII = "ASCII";
     public static final String _C = "VALUE";
@@ -150,9 +149,6 @@ public final class PaCo extends Observable {
                     listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
                     break;
                 }
-
-                this.setChanged();
-                this.notifyObservers(i + 1);
             }
             tps -= System.currentTimeMillis();
             System.out.println("Tps : " + tps);
@@ -178,6 +174,11 @@ public final class PaCo extends Observable {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.name.equals(obj.toString());
     }
 
     private final String[][] readEntry(NodeList swCsEntry) {
@@ -566,46 +567,37 @@ public final class PaCo extends Observable {
             Main.getLogger().severe(e.getMessage());
         }
     }
-    
-    public final float getAvgScore()
-    {
-    	return (float) (getScores().get(0) * 0 + getScores().get(25) * 25 + getScores().get(50) * 50 + getScores().get(75) * 75
+
+    public final float getAvgScore() {
+        return (float) (getScores().get(0) * 0 + getScores().get(25) * 25 + getScores().get(50) * 50 + getScores().get(75) * 75
                 + getScores().get(100) * 100) / listLabel.size();
-    	 
+
     }
-    
-    public final int getMinScore()
-    {
-    	int minScore = Byte.MAX_VALUE;
-    	for(int score = 0; score<=100; score+=25)
-    	{
-    		if(getScores().get(score)>0)
-    		{
-    			if(score<=minScore)
-    			{
-    				minScore = score;
-    			}
-    		}
-    	}
-    	
-    	return minScore;
+
+    public final int getMinScore() {
+        int minScore = Byte.MAX_VALUE;
+        for (int score = 0; score <= 100; score += 25) {
+            if (getScores().get(score) > 0) {
+                if (score <= minScore) {
+                    minScore = score;
+                }
+            }
+        }
+
+        return minScore;
     }
-    
-    public final int getMaxScore()
-    {
-    	int maxScore = Byte.MIN_VALUE;
-    	for(int score = 0; score<=100; score+=25)
-    	{
-    		if(getScores().get(score)>0)
-    		{
-    			if(score>=maxScore)
-    			{
-    				maxScore = score;
-    			}
-    		}
-    	}
-    	
-    	return maxScore;
+
+    public final int getMaxScore() {
+        int maxScore = Byte.MIN_VALUE;
+        for (int score = 0; score <= 100; score += 25) {
+            if (getScores().get(score) > 0) {
+                if (score >= maxScore) {
+                    maxScore = score;
+                }
+            }
+        }
+
+        return maxScore;
     }
 
     private final HashMap<Integer, Integer> getScores() {

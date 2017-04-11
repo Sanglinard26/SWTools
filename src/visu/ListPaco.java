@@ -25,11 +25,12 @@ import paco.ListModelPaco;
 import paco.PaCo;
 import tools.Preference;
 
-public class ListPaco extends JList<PaCo> implements KeyListener {
+public final class ListPaco extends JList<PaCo> implements KeyListener {
 
     private static final long serialVersionUID = 1L;
     private static final String ICON_EXCEL = "/excel_icon_16.png";
     private static final String ICON_TEXT = "/text_icon_16.png";
+    private static final String ICON_TRASH = "/corbeille_icon_16.png";
 
     public ListPaco(ListModelPaco dataModel) {
         super(dataModel);
@@ -64,7 +65,7 @@ public class ListPaco extends JList<PaCo> implements KeyListener {
 
     }
 
-    private class ListMouseListener extends MouseAdapter {
+    private final class ListMouseListener extends MouseAdapter {
         @Override
         public void mouseReleased(MouseEvent e) {
             if (e.isPopupTrigger() & ListPaco.this.getModel().getSize() > 0) {
@@ -73,7 +74,7 @@ public class ListPaco extends JList<PaCo> implements KeyListener {
                 JMenuItem menuItem;
                 if (ListPaco.this.locationToIndex(e.getPoint()) == ListPaco.this.getSelectedIndex()) {
 
-                    menuItem = new JMenuItem("Supprimer ce PaCo");
+                    menuItem = new JMenuItem("Supprimer ce PaCo", new ImageIcon(getClass().getResource(ICON_TRASH)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -131,7 +132,7 @@ public class ListPaco extends JList<PaCo> implements KeyListener {
                     menu.add(menuExport);
 
                 } else {
-                    menuItem = new JMenuItem("Supprimer tous les PaCos");
+                    menuItem = new JMenuItem("Supprimer tous les PaCos", new ImageIcon(getClass().getResource(ICON_TRASH)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override

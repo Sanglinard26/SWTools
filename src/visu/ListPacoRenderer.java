@@ -18,7 +18,7 @@ import javax.swing.border.LineBorder;
 
 import paco.PaCo;
 
-public class ListPacoRenderer extends JPanel implements ListCellRenderer<PaCo> {
+public final class ListPacoRenderer extends JPanel implements ListCellRenderer<PaCo> {
 
     private static final long serialVersionUID = 1L;
     private final JLabel txtNamePaco = new JLabel();
@@ -27,23 +27,22 @@ public class ListPacoRenderer extends JPanel implements ListCellRenderer<PaCo> {
     private static final DecimalFormat df = new DecimalFormat("###.##");
 
     public ListPacoRenderer() {
-    	setLayout(new GridLayout(3, 1, 5, 5));
-    	txtNamePaco.setFont(new Font(null, Font.BOLD, 12));
-    	add(txtNamePaco);
-    	add(txtNbVariable);
-    	progressBarScore.setStringPainted(true);
-    	add(progressBarScore);
+        setLayout(new GridLayout(3, 1, 5, 5));
+        txtNamePaco.setFont(new Font(null, Font.BOLD, 12));
+        add(txtNamePaco);
+        add(txtNbVariable);
+        progressBarScore.setStringPainted(true);
+        add(progressBarScore);
     }
 
     @Override
     public Component getListCellRendererComponent(JList<? extends PaCo> list, PaCo value, int index, boolean isSelected, boolean cellHasFocus) {
-    	
-    	txtNamePaco.setText(value.getName());
-    	txtNbVariable.setText("Nombre de label(s) : " + Integer.toString(value.getNbLabel()));
-    	progressBarScore.setValue(Math.round(value.getAvgScore()));
-    	progressBarScore.setString("Score moyen = " + df.format(value.getAvgScore()) + "%"
-    	+ " (Min = " + value.getMinScore() + "%"
-    	+ " ; Max = " + value.getMaxScore() + "%)");
+
+        txtNamePaco.setText(value.getName());
+        txtNbVariable.setText("Nombre de label(s) : " + Integer.toString(value.getNbLabel()));
+        progressBarScore.setValue(Math.round(value.getAvgScore()));
+        progressBarScore.setString("Score moyen = " + df.format(value.getAvgScore()) + "%" + " (Min = " + value.getMinScore() + "%" + " ; Max = "
+                + value.getMaxScore() + "%)");
 
         if (isSelected) {
             setBackground(Color.getHSBColor(100, 100, 100));

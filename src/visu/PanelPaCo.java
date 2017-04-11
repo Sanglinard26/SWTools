@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -69,7 +70,7 @@ public final class PanelPaCo extends JPanel {
     public PanelPaCo() {
 
         setLayout(new BorderLayout());
-        
+
         panPaco.setMinimumSize(new Dimension(500, 300));
         panLabel.setMinimumSize(new Dimension(500, 300));
 
@@ -151,8 +152,6 @@ public final class PanelPaCo extends JPanel {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() & !listLabel.isSelectionEmpty()) {
 
-                    Main.getLogger().info("Selection de la variable < " + listLabel.getSelectedValue().getShortName() + " >");
-
                     tableHistory.getModel().setData(listLabel.getSelectedValue().getSwCsHistory());
                     panVisu.removeAll();
 
@@ -188,13 +187,13 @@ public final class PanelPaCo extends JPanel {
             }
         });
         panLabel.add(new JScrollPane(listLabel), gbc);
-        
+
         splitPaneLeft.setOneTouchExpandable(true);
         splitPaneLeft.setDividerLocation(200);
-        
+
         splitPaneRight.setOneTouchExpandable(true);
         splitPaneRight.setDividerLocation(400);
-        
+
         panVisu.setBackground(Color.WHITE);
 
         tableHistory.setFillsViewportHeight(false);
@@ -266,7 +265,11 @@ public final class PanelPaCo extends JPanel {
                 barChargement.setMaximum(jFileChooser.getSelectedFiles().length);
 
                 for (File file : jFileChooser.getSelectedFiles()) {
-                    new ReaderPaCo(file).start();
+                    if (!(listPaco.getModel().getList().contains(file.getName().substring(0, file.getName().length() - 4)))) {
+                        new ReaderPaCo(file).start();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "PaCo deja present dans la liste", "INFO", JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
 
             }
