@@ -19,7 +19,10 @@ public final class Ihm extends JFrame {
 
     private static final String APP_ICON = "/eeprom.png";
 
-    private final JTabbedPane onglets;
+    private static final JTabbedPane onglets = new JTabbedPane(SwingConstants.TOP);
+    private static final JToolBar toolBar = new JToolBar("Option");
+    private static final JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
+    private static final JPanel ongletLab = new JPanel(new GridLayout(1, 1));
 
     public Ihm() {
 
@@ -29,7 +32,6 @@ public final class Ihm extends JFrame {
         setMinimumSize(new Dimension(1200, 700));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        final JToolBar toolBar = new JToolBar("Option");
         toolBar.add(new AbstractAction("Preferences") {
 
             private static final long serialVersionUID = 1L;
@@ -62,17 +64,17 @@ public final class Ihm extends JFrame {
 
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
-        onglets = new JTabbedPane(SwingConstants.TOP);
+        // onglets = new JTabbedPane(SwingConstants.TOP);
 
         // Onglet lecteur PaCo
-        final JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
+
         ongletPaCo.add(new PanelPaCo());
         onglets.addTab("Lecteur PaCo", ongletPaCo);
 
         // Onglet comparaison de Lab
-        final JPanel onglet2 = new JPanel(new GridLayout(1, 1));
-        onglet2.add(new PanelLab());
-        onglets.addTab("Comparaison lab", onglet2);
+
+        ongletLab.add(new PanelLab());
+        onglets.addTab("Comparaison lab", ongletLab);
 
         onglets.setOpaque(true);
         getContentPane().add(onglets, BorderLayout.CENTER);

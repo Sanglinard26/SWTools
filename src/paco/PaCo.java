@@ -48,6 +48,9 @@ public final class PaCo {
     private int nbLabel = 0;
     private final HashMap<String, String> unit = new HashMap<String, String>();
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
+    private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
+    private int minScore = Byte.MAX_VALUE;
+    private int maxScore = Byte.MIN_VALUE;
 
     public PaCo(final File file) {
 
@@ -150,6 +153,20 @@ public final class PaCo {
                     break;
                 }
             }
+
+            getScores();
+
+            for (int score = 0; score <= 100; score += 25) {
+                if (repartitionScore.get(score) > 0) {
+                    if (score <= minScore) {
+                        minScore = score;
+                    }
+                    if (score >= maxScore) {
+                        maxScore = score;
+                    }
+                }
+            }
+
             tps -= System.currentTimeMillis();
             System.out.println("Tps : " + tps);
 
@@ -384,11 +401,11 @@ public final class PaCo {
             final WritableSheet shtScore = workbook.createSheet("Scores", 2);
 
             writeCell(shtScore, 0, 0, "Score moyen du PaCo : " + getAvgScore(), arial10format);
-            writeCell(shtScore, 0, 2, "0% " + "(" + getScores().get(0) + ")", arial10format);
-            writeCell(shtScore, 1, 2, "25% " + "(" + getScores().get(25) + ")", arial10format);
-            writeCell(shtScore, 2, 2, "50% " + "(" + getScores().get(50) + ")", arial10format);
-            writeCell(shtScore, 3, 2, "75% " + "(" + getScores().get(75) + ")", arial10format);
-            writeCell(shtScore, 4, 2, "100% " + "(" + getScores().get(100) + ")", arial10format);
+            writeCell(shtScore, 0, 2, "0% " + "(" + repartitionScore.get(0) + ")", arial10format);
+            writeCell(shtScore, 1, 2, "25% " + "(" + repartitionScore.get(25) + ")", arial10format);
+            writeCell(shtScore, 2, 2, "50% " + "(" + repartitionScore.get(50) + ")", arial10format);
+            writeCell(shtScore, 3, 2, "75% " + "(" + repartitionScore.get(75) + ")", arial10format);
+            writeCell(shtScore, 4, 2, "100% " + "(" + repartitionScore.get(100) + ")", arial10format);
 
             final WritableSheet sheet = workbook.createSheet("Export", 1);
 
@@ -569,41 +586,21 @@ public final class PaCo {
     }
 
     public final float getAvgScore() {
-        return (float) (getScores().get(0) * 0 + getScores().get(25) * 25 + getScores().get(50) * 50 + getScores().get(75) * 75
-                + getScores().get(100) * 100) / listLabel.size();
-
+        return (float) (repartitionScore.get(0) * 0 + repartitionScore.get(25) * 25 + repartitionScore.get(50) * 50 + repartitionScore.get(75) * 75
+                + repartitionScore.get(100) * 100) / listLabel.size();
     }
 
     public final int getMinScore() {
-        int minScore = Byte.MAX_VALUE;
-        for (int score = 0; score <= 100; score += 25) {
-            if (getScores().get(score) > 0) {
-                if (score <= minScore) {
-                    minScore = score;
-                }
-            }
-        }
-
-        return minScore;
+        return this.minScore;
     }
 
     public final int getMaxScore() {
-        int maxScore = Byte.MIN_VALUE;
-        for (int score = 0; score <= 100; score += 25) {
-            if (getScores().get(score) > 0) {
-                if (score >= maxScore) {
-                    maxScore = score;
-                }
-            }
-        }
-
-        return maxScore;
+        return this.maxScore;
     }
 
-    private final HashMap<Integer, Integer> getScores() {
+    private final void getScores() {
         if (!listLabel.isEmpty()) {
 
-            final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
             repartitionScore.put(0, 0);
             repartitionScore.put(25, 0);
             repartitionScore.put(50, 0);
@@ -614,11 +611,7 @@ public final class PaCo {
                 if (repartitionScore.get(v.getLastScore()) != null)
                     repartitionScore.put(v.getLastScore(), repartitionScore.get(v.getLastScore()) + 1);
             }
-
-            return repartitionScore;
         }
-        return null;
-
     }
 
 }

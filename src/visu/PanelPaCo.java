@@ -261,7 +261,6 @@ public final class PanelPaCo extends JPanel {
 
                 razUI();
 
-                barChargement.setValue(0);
                 barChargement.setMaximum(jFileChooser.getSelectedFiles().length);
 
                 for (File file : jFileChooser.getSelectedFiles()) {

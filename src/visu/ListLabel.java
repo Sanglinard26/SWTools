@@ -4,6 +4,7 @@
 package visu;
 
 import javax.swing.JList;
+
 import paco.ListModelLabel;
 import paco.Variable;
 
@@ -20,5 +21,4 @@ public final class ListLabel extends JList<Variable> {
     public ListModelLabel getModel() {
         return (ListModelLabel) super.getModel();
     }
-
 }
