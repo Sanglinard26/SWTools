@@ -9,10 +9,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -26,15 +26,17 @@ import tools.Preference;
 public final class FramePreferences extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    private static final String FENETRE_ICON = "/preferences_32.png";
 
-    private static final JTabbedPane onglets = new JTabbedPane(SwingConstants.TOP);
-    private static final JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
-    private static final JPanel ongletLab = new JPanel(new GridLayout(1, 1));
+    private final JTabbedPane onglets = new JTabbedPane(SwingConstants.TOP);
+    private final JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
+    private final JPanel ongletLab = new JPanel(new GridLayout(1, 1));
 
     private static final GridBagConstraints gbc = new GridBagConstraints();
 
     public FramePreferences() {
         this.setTitle("Preferences utilisateur");
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(FENETRE_ICON)));
         this.setMinimumSize(new Dimension(300, 300));
 
         ongletPaCo.add(createPanPrefPaco());
@@ -48,7 +50,7 @@ public final class FramePreferences extends JFrame {
 
         this.pack();
         this.setVisible(true);
-
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     private final JPanel createPanPrefPaco() {
@@ -61,9 +63,9 @@ public final class FramePreferences extends JFrame {
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        gbc.insets = new Insets(0, 0, 0, 5);
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(10, 5, 0, 5);
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         panPaco.add(txtPath, gbc);
 
@@ -73,9 +75,9 @@ public final class FramePreferences extends JFrame {
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        gbc.insets = new Insets(0, 0, 0, 5);
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(10, 0, 0, 5);
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         panPaco.add(path, gbc);
 
@@ -84,8 +86,14 @@ public final class FramePreferences extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                String path = getFolder("Choix du chemin d'import", Preference.getPreference(Preference.KEY_OPEN_PACO));
-                Preference.setPreference(Preference.KEY_OPEN_PACO, path);
+                final String pathFolder = getFolder("Choix du chemin d'import", Preference.getPreference(Preference.KEY_OPEN_PACO));
+                if (!Preference.KEY_OPEN_PACO.equals(pathFolder))
+                {
+                	Preference.setPreference(Preference.KEY_OPEN_PACO, pathFolder);
+                	path.setText(pathFolder);
+                	
+                }
+                
             }
         });
         btPathOpenPaco.setToolTipText("Clicker pour choisir le chemin");
@@ -94,9 +102,9 @@ public final class FramePreferences extends JFrame {
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(5, 0, 0, 5);
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         panPaco.add(btPathOpenPaco, gbc);
 
@@ -105,33 +113,106 @@ public final class FramePreferences extends JFrame {
 
     private final JPanel createPanPrefLab() {
         final JPanel panLab = new JPanel();
-        panLab.setLayout(new BoxLayout(panLab, BoxLayout.Y_AXIS));
+        panLab.setLayout(new GridBagLayout());
 
-        final JButton btPathAddLab = new JButton(Preference.getPreference(Preference.KEY_ADD_LAB));
+        final JLabel txtPathAdd = new JLabel("Chemin d'import : ");
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(10, 5, 0, 5);
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        panLab.add(txtPathAdd, gbc);
+
+        final JLabel pathAdd = new JLabel(Preference.getPreference(Preference.KEY_ADD_LAB));
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(10, 0, 0, 5);
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        panLab.add(pathAdd, gbc);
+
+        final JButton btPathAddLab = new JButton("...");
         btPathAddLab.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                String path = getFolder("Choix du chemin d'import", Preference.getPreference(Preference.KEY_ADD_LAB));
-                Preference.setPreference(Preference.KEY_ADD_LAB, path);
-                btPathAddLab.setText(path);
+                final String pathFolder = getFolder("Choix du chemin d'import", Preference.getPreference(Preference.KEY_ADD_LAB));
+                if(!Preference.KEY_ADD_LAB.equals(pathFolder))
+                {
+                	Preference.setPreference(Preference.KEY_ADD_LAB, pathFolder);
+                	pathAdd.setText(pathFolder);
+                }   
             }
         });
         btPathAddLab.setToolTipText("Clicker pour choisir le chemin");
-        panLab.add(btPathAddLab);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(5, 0, 0, 5);
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        panLab.add(btPathAddLab, gbc);
+      
 
-        final JButton btPathResLab = new JButton(Preference.getPreference(Preference.KEY_RESULT_LAB));
+        final JLabel txtPathRes = new JLabel("Choix du chemin d'export des résultats : ");
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(10, 5, 0, 5);
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        panLab.add(txtPathRes, gbc);
+
+        final JLabel pathRes = new JLabel(Preference.getPreference(Preference.KEY_RESULT_LAB));
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(10, 0, 0, 5);
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        panLab.add(pathRes, gbc);
+
+        final JButton btPathResLab = new JButton("...");
         btPathResLab.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                String path = getFolder("Choix du chemin d'export", Preference.getPreference(Preference.KEY_RESULT_LAB));
-                Preference.setPreference(Preference.KEY_RESULT_LAB, path);
-                btPathResLab.setText(path);
+                final String pathFolder = getFolder("Choix du chemin d'export des résultats", Preference.getPreference(Preference.KEY_RESULT_LAB));
+                if(!Preference.KEY_RESULT_LAB.equals(pathFolder))
+                {
+                	Preference.setPreference(Preference.KEY_RESULT_LAB, pathFolder);
+                	pathRes.setText(pathFolder);
+                }
             }
         });
         btPathResLab.setToolTipText("Clicker pour choisir le chemin");
-        panLab.add(btPathResLab);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(5, 0, 0, 5);
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        panLab.add(btPathResLab, gbc);
 
         return panLab;
     }
