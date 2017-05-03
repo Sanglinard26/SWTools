@@ -87,13 +87,12 @@ public final class FramePreferences extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final String pathFolder = getFolder("Choix du chemin d'import", Preference.getPreference(Preference.KEY_OPEN_PACO));
-                if (!Preference.KEY_OPEN_PACO.equals(pathFolder))
-                {
-                	Preference.setPreference(Preference.KEY_OPEN_PACO, pathFolder);
-                	path.setText(pathFolder);
-                	
+                if (!Preference.KEY_OPEN_PACO.equals(pathFolder)) {
+                    Preference.setPreference(Preference.KEY_OPEN_PACO, pathFolder);
+                    path.setText(pathFolder);
+
                 }
-                
+
             }
         });
         btPathOpenPaco.setToolTipText("Clicker pour choisir le chemin");
@@ -145,11 +144,10 @@ public final class FramePreferences extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final String pathFolder = getFolder("Choix du chemin d'import", Preference.getPreference(Preference.KEY_ADD_LAB));
-                if(!Preference.KEY_ADD_LAB.equals(pathFolder))
-                {
-                	Preference.setPreference(Preference.KEY_ADD_LAB, pathFolder);
-                	pathAdd.setText(pathFolder);
-                }   
+                if (!Preference.KEY_ADD_LAB.equals(pathFolder)) {
+                    Preference.setPreference(Preference.KEY_ADD_LAB, pathFolder);
+                    pathAdd.setText(pathFolder);
+                }
             }
         });
         btPathAddLab.setToolTipText("Clicker pour choisir le chemin");
@@ -163,9 +161,8 @@ public final class FramePreferences extends JFrame {
         gbc.insets = new Insets(5, 0, 0, 5);
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         panLab.add(btPathAddLab, gbc);
-      
 
-        final JLabel txtPathRes = new JLabel("Choix du chemin d'export des résultats : ");
+        final JLabel txtPathRes = new JLabel("Choix du chemin d'export des resultats : ");
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -194,11 +191,10 @@ public final class FramePreferences extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                final String pathFolder = getFolder("Choix du chemin d'export des résultats", Preference.getPreference(Preference.KEY_RESULT_LAB));
-                if(!Preference.KEY_RESULT_LAB.equals(pathFolder))
-                {
-                	Preference.setPreference(Preference.KEY_RESULT_LAB, pathFolder);
-                	pathRes.setText(pathFolder);
+                final String pathFolder = getFolder("Choix du chemin d'export des rï¿½sultats", Preference.getPreference(Preference.KEY_RESULT_LAB));
+                if (!Preference.KEY_RESULT_LAB.equals(pathFolder)) {
+                    Preference.setPreference(Preference.KEY_RESULT_LAB, pathFolder);
+                    pathRes.setText(pathFolder);
                 }
             }
         });

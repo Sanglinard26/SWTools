@@ -50,5 +50,4 @@ public final class ListModelPaco extends AbstractListModel<PaCo> {
         }
         return listNomPaco;
     }
-
 }

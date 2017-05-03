@@ -40,287 +40,290 @@ import tools.Utilitaire;
 
 public final class PanelPaCo extends JPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// Constante
-	private static final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
-	private static final String ICON_HISTORY = "/historique_32.png";
-	private static final String ICON_CHART = "/graph_32.png";
+    // Constante
+    private static final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
+    private static final String ICON_HISTORY = "/historique_32.png";
+    private static final String ICON_CHART = "/graph_32.png";
 
-	private static final GridBagConstraints gbc = new GridBagConstraints();
+    private static final GridBagConstraints gbc = new GridBagConstraints();
 
-	// GUI
-	private static final JButton btOpen = new JButton("Ajouter PaCo(s)");
-	private static final ListPaco listPaco = new ListPaco(new ListModelPaco());
-	private static final JTextField txtFiltre = new JTextField(20);
-	private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
-	private static final JPanel panVisu = new JPanel(new GridBagLayout());
-	private static final PanelGraph panGraph = new PanelGraph();
-	private static final TableHistory tableHistory = new TableHistory(new TableModelHistory());
-	private static final JProgressBar barChargement = new BarreProgression();
-	private static final JTabbedPane tabPan = new JTabbedPane();
-	private static final JPanel panPaco = new JPanel(new GridBagLayout());
-	private static final JPanel panLabel = new JPanel(new GridBagLayout());
-	private static final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panPaco, panLabel);
-	private static final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
-	private static final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPaneLeft, splitPaneRight);
+    // GUI
+    private static final JButton btOpen = new JButton("Ajouter PaCo(s)");
+    private static final ListPaco listPaco = new ListPaco(new ListModelPaco());
+    private static final JTextField txtFiltre = new JTextField(20);
+    private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
+    private static final JPanel panVisu = new JPanel(new GridBagLayout());
+    private static final PanelGraph panGraph = new PanelGraph();
+    private static final TableHistory tableHistory = new TableHistory(new TableModelHistory());
+    private static final JProgressBar barChargement = new BarreProgression();
+    private static final JTabbedPane tabPan = new JTabbedPane();
+    private static final JPanel panPaco = new JPanel(new GridBagLayout());
+    private static final JPanel panLabel = new JPanel(new GridBagLayout());
+    private static final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panPaco, panLabel);
+    private static final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
+    private static final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPaneLeft, splitPaneRight);
 
-	private File dtd;
+    private File dtd;
 
-	public PanelPaCo() {
+    public PanelPaCo() {
 
-		setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
 
-		panPaco.setMinimumSize(new Dimension(500, 300));
-		panLabel.setMinimumSize(new Dimension(500, 300));
+        panPaco.setMinimumSize(new Dimension(500, 300));
+        panLabel.setMinimumSize(new Dimension(500, 300));
 
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.gridwidth = 1;
-		gbc.gridheight = 1;
-		gbc.weightx = 1;
-		gbc.weighty = 0;
-		gbc.insets = new Insets(0, 0, 0, 0);
-		gbc.anchor = GridBagConstraints.CENTER;
-		btOpen.addActionListener(new OpenPaco());
-		panPaco.add(btOpen, gbc);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 1;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.CENTER;
+        btOpen.addActionListener(new OpenPaco());
+        panPaco.add(btOpen, gbc);
 
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.gridwidth = 1;
-		gbc.gridheight = 1;
-		gbc.weightx = 1;
-		gbc.weighty = 1;
-		gbc.insets = new Insets(0, 0, 0, 0);
-		gbc.anchor = GridBagConstraints.CENTER;
-		listPaco.addListSelectionListener(new ListSelectionListener() {
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.CENTER;
+        listPaco.addListSelectionListener(new ListSelectionListener() {
 
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (e.getValueIsAdjusting() == false & !listPaco.isSelectionEmpty()) {
-					razUI();
-					listLabel.getModel().setList(listPaco.getSelectedValue().getListLabel());
-				}
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting() == false & !listPaco.isSelectionEmpty()) {
+                    razUI();
+                    listLabel.getModel().setList(listPaco.getSelectedValue().getListLabel());
+                }
 
-			}
-		});
-		panPaco.add(new JScrollPane(listPaco), gbc);
+            }
+        });
+        panPaco.add(new JScrollPane(listPaco), gbc);
 
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.gridwidth = 1;
-		gbc.gridheight = 1;
-		gbc.weightx = 0;
-		gbc.weighty = 0;
-		gbc.insets = new Insets(0, 0, 0, 0);
-		gbc.anchor = GridBagConstraints.CENTER;
-		txtFiltre.getDocument().addDocumentListener(new DocumentListener() {
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.CENTER;
+        txtFiltre.getDocument().addDocumentListener(new DocumentListener() {
 
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				listLabel.getModel().setFilter(txtFiltre.getText().toLowerCase());
-			}
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                listLabel.getModel().setFilter(txtFiltre.getText().toLowerCase());
+            }
 
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				listLabel.getModel().setFilter(txtFiltre.getText().toLowerCase());
-			}
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                listLabel.getModel().setFilter(txtFiltre.getText().toLowerCase());
+            }
 
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				// Non utilise
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                // Non utilise
 
-			}
-		});
-		panLabel.add(txtFiltre, gbc);
+            }
+        });
+        panLabel.add(txtFiltre, gbc);
 
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.gridwidth = 1;
-		gbc.gridheight = 3;
-		gbc.weightx = 1;
-		gbc.weighty = 1;
-		gbc.insets = new Insets(0, 0, 0, 0);
-		gbc.anchor = GridBagConstraints.CENTER;
-		listLabel.addListSelectionListener(new ListSelectionListener() {
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 3;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.CENTER;
+        listLabel.addListSelectionListener(new ListSelectionListener() {
 
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (!e.getValueIsAdjusting() & !listLabel.isSelectionEmpty()) {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting() & !listLabel.isSelectionEmpty()) {
 
-					tableHistory.getModel().setData(listLabel.getSelectedValue().getSwCsHistory());
-					panVisu.removeAll();
+                    tableHistory.getModel().setData(listLabel.getSelectedValue().getSwCsHistory());
+                    panVisu.removeAll();
 
-					gbc.fill = GridBagConstraints.HORIZONTAL;
-					gbc.gridx = 0;
-					gbc.gridy = 0;
-					gbc.gridwidth = GridBagConstraints.REMAINDER;
-					gbc.gridheight = 1;
-					gbc.weightx = 1;
-					gbc.weighty = 0;
-					gbc.insets = new Insets(10, 10, 10, 0);
-					gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-					panVisu.add(new PanelInfoVariable(listLabel.getSelectedValue()), gbc);
+                    gbc.fill = GridBagConstraints.HORIZONTAL;
+                    gbc.gridx = 0;
+                    gbc.gridy = 0;
+                    gbc.gridwidth = GridBagConstraints.REMAINDER;
+                    gbc.gridheight = 1;
+                    gbc.weightx = 1;
+                    gbc.weighty = 0;
+                    gbc.insets = new Insets(10, 10, 10, 0);
+                    gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+                    panVisu.add(new PanelInfoVariable(listLabel.getSelectedValue()), gbc);
 
-					gbc.fill = GridBagConstraints.NONE;
-					gbc.gridx = 0;
-					gbc.gridy = 1;
-					gbc.gridwidth = GridBagConstraints.REMAINDER;
-					gbc.gridheight = 1;
-					gbc.weightx = 1;
-					gbc.weighty = 1;
-					gbc.insets = new Insets(0, 10, 0, 0);
-					gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-					panVisu.add(listLabel.getSelectedValue().showView(), gbc);
-					panVisu.revalidate();
-					panVisu.repaint();
+                    gbc.fill = GridBagConstraints.NONE;
+                    gbc.gridx = 0;
+                    gbc.gridy = 1;
+                    gbc.gridwidth = GridBagConstraints.REMAINDER;
+                    gbc.gridheight = 1;
+                    gbc.weightx = 1;
+                    gbc.weighty = 1;
+                    gbc.insets = new Insets(0, 10, 0, 0);
+                    gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+                    panVisu.add(listLabel.getSelectedValue().showView(), gbc);
+                    panVisu.revalidate();
+                    panVisu.repaint();
 
-					panGraph.getPanCard().removeAll();
-					panGraph.createChart(listLabel.getSelectedValue());
-					panGraph.getPanCard().revalidate();
-					panGraph.getPanCard().repaint();
-				}
-			}
-		});
-		panLabel.add(new JScrollPane(listLabel), gbc);
+                    panGraph.getPanCard().removeAll();
+                    panGraph.createChart(listLabel.getSelectedValue());
+                    panGraph.getPanCard().revalidate();
+                    panGraph.getPanCard().repaint();
+                }
+            }
+        });
+        panLabel.add(new JScrollPane(listLabel), gbc);
 
-		splitPaneLeft.setOneTouchExpandable(true);
-		splitPaneLeft.setDividerLocation(200);
+        splitPaneLeft.setOneTouchExpandable(true);
+        splitPaneLeft.setDividerLocation(200);
 
-		splitPaneRight.setOneTouchExpandable(true);
-		splitPaneRight.setDividerLocation(400);
+        splitPaneRight.setOneTouchExpandable(true);
+        splitPaneRight.setDividerLocation(400);
 
-		panVisu.setBackground(Color.WHITE);
+        panVisu.setBackground(Color.WHITE);
 
-		tableHistory.setFillsViewportHeight(false);
+        tableHistory.setFillsViewportHeight(false);
 
-		tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(tableHistory));
-		tabPan.addTab("Graphique", new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
+        tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(tableHistory));
+        tabPan.addTab("Graphique", new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
 
-		splitPaneGlobal.setDividerSize(10);
-		splitPaneGlobal.setDividerLocation(500);
-		add(splitPaneGlobal, BorderLayout.CENTER);
-		add(barChargement, BorderLayout.SOUTH);
-	}
+        splitPaneGlobal.setDividerSize(10);
+        splitPaneGlobal.setDividerLocation(500);
+        add(splitPaneGlobal, BorderLayout.CENTER);
+        add(barChargement, BorderLayout.SOUTH);
+    }
 
-	private class OpenPaco implements ActionListener {
+    private class OpenPaco implements ActionListener {
 
-		@Override
-		public void actionPerformed(ActionEvent ae) {
-			final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
-			jFileChooser.setMultiSelectionEnabled(true); // Test
-			jFileChooser.setFileFilter(new FileFilter() {
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
+            jFileChooser.setMultiSelectionEnabled(true); // Test
+            jFileChooser.setFileFilter(new FileFilter() {
 
-				@Override
-				public String getDescription() {
-					return "PaCo *.xml";
-				}
+                @Override
+                public String getDescription() {
+                    return "PaCo *.xml";
+                }
 
-				@Override
-				public boolean accept(File f) {
+                @Override
+                public boolean accept(File f) {
 
-					if (f.isDirectory())
-						return true;
+                    if (f.isDirectory())
+                        return true;
 
-					String extension = Utilitaire.getExtension(f);
-					if (extension.equals(Utilitaire.xml)) {
-						return true;
-					}
-					return false;
-				}
-			});
+                    String extension = Utilitaire.getExtension(f);
+                    if (extension.equals(Utilitaire.xml)) {
+                        return true;
+                    }
+                    return false;
+                }
+            });
 
-			final int reponse = jFileChooser.showOpenDialog(PanelPaCo.this);
-			if (reponse == JFileChooser.APPROVE_OPTION) {
+            final int reponse = jFileChooser.showOpenDialog(PanelPaCo.this);
+            if (reponse == JFileChooser.APPROVE_OPTION) {
 
-				dtd = new File(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
-				dtd.deleteOnExit();
-				if (!dtd.exists()) {
-					final InputStream myDtd = getClass().getResourceAsStream("/" + DTD);
+                dtd = new File(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
+                dtd.deleteOnExit();
+                if (!dtd.exists()) {
+                    final InputStream myDtd = getClass().getResourceAsStream("/" + DTD);
 
-					try {
-						final OutputStream out = new FileOutputStream(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
-						final byte[] buffer = new byte[1024];
-						int len = myDtd.read(buffer);
-						while (len != -1) {
-							out.write(buffer, 0, len);
-							len = myDtd.read(buffer);
-						}
-						myDtd.close();
-						out.close();
+                    try {
+                        final OutputStream out = new FileOutputStream(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
+                        final byte[] buffer = new byte[1024];
+                        int len = myDtd.read(buffer);
+                        while (len != -1) {
+                            out.write(buffer, 0, len);
+                            len = myDtd.read(buffer);
+                        }
+                        myDtd.close();
+                        out.close();
 
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-				}
+                }
 
-				razUI();
+                razUI();
 
-				barChargement.setMaximum(jFileChooser.getSelectedFiles().length);
-				
-				for (File file : jFileChooser.getSelectedFiles()) {
-					if (!(listPaco.getModel().getList().contains(file.getName().substring(0, file.getName().length() - 4)))) {
-						new ReaderPaCo(file).start();
-						
-					} else {
-						JOptionPane.showMessageDialog(null, "PaCo deja present dans la liste", "INFO", JOptionPane.INFORMATION_MESSAGE);
-					}
-				}
-				
-				
+                barChargement.setMaximum(jFileChooser.getSelectedFiles().length);
 
-			}
-		}
+                for (File file : jFileChooser.getSelectedFiles()) {
+                    if (!(listPaco.getModel().getList().contains(file.getName().substring(0, file.getName().length() - 4)))) {
+                        new ReaderPaCo(file).start();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "PaCo deja present dans la liste", "INFO", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
 
-	}
+            }
+        }
 
-	private final class ReaderPaCo extends Thread {
+    }
 
-		private final File file;
+    private final class ReaderPaCo extends Thread {
 
-		public ReaderPaCo(File file) {
-			this.file = file;
-			Main.getLogger().info("Ouverture de < " + file + " >");
-		}
+        private final File file;
+        private PaCo paco;
 
-		@Override
-		public void run() {
+        public ReaderPaCo(File file) {
+            this.file = file;
+            Main.getLogger().info("Ouverture de < " + file + " >");
+        }
 
-			listPaco.getModel().addPaco(new PaCo(file));
+        @Override
+        public void run() {
 
-			SwingUtilities.invokeLater(new Runnable() {
+            paco = new PaCo(file);
 
-				@Override
-				public void run() {
-					barChargement.setValue(barChargement.getValue() + 1);
-				}
-			});
-		}
-	}
+            if (paco.getValid()) {
+                listPaco.getModel().addPaco(paco);
 
-	public static void razUI() {
+                SwingUtilities.invokeLater(new Runnable() {
 
-		if (listLabel.getModel().getSize() > 0) {
-			txtFiltre.setText("");
-			listLabel.clearSelection();
-			listLabel.getModel().clearList();
+                    @Override
+                    public void run() {
+                        barChargement.setValue(barChargement.getValue() + 1);
+                    }
+                });
+            }
 
-			tableHistory.getModel().setData(new String[0][0]);
+        }
+    }
 
-			panVisu.removeAll();
-			panVisu.revalidate();
-			panVisu.repaint();
+    public static void razUI() {
 
-			panGraph.getPanCard().removeAll();
-			panGraph.getPanCard().revalidate();
-			panGraph.getPanCard().repaint();
-		}
+        if (listLabel.getModel().getSize() > 0) {
+            txtFiltre.setText("");
+            listLabel.clearSelection();
+            listLabel.getModel().clearList();
 
-	}
+            tableHistory.getModel().setData(new String[0][0]);
+
+            panVisu.removeAll();
+            panVisu.revalidate();
+            panVisu.repaint();
+
+            panGraph.getPanCard().removeAll();
+            panGraph.getPanCard().revalidate();
+            panGraph.getPanCard().repaint();
+        }
+
+    }
 
 }
