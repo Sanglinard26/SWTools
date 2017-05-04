@@ -23,6 +23,7 @@ public final class Ihm extends JFrame {
     private static final JToolBar toolBar = new JToolBar("Option");
     private static final JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
     private static final JPanel ongletLab = new JPanel(new GridLayout(1, 1));
+    private static final JPanel ongletA2l = new JPanel(new GridLayout(1, 1));
 
     public Ihm() {
 
@@ -67,14 +68,16 @@ public final class Ihm extends JFrame {
         // onglets = new JTabbedPane(SwingConstants.TOP);
 
         // Onglet lecteur PaCo
-
         ongletPaCo.add(new PanelPaCo());
         onglets.addTab("Lecteur PaCo", ongletPaCo);
 
         // Onglet comparaison de Lab
-
         ongletLab.add(new PanelLab());
         onglets.addTab("Comparaison lab", ongletLab);
+
+        // Onglet lecteur A2l
+        ongletA2l.add(new PanelA2l());
+        onglets.addTab("Lecture A2l", ongletA2l);
 
         onglets.setOpaque(true);
         getContentPane().add(onglets, BorderLayout.CENTER);

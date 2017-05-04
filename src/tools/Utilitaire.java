@@ -12,6 +12,7 @@ public final class Utilitaire {
     public final static String png = "png";
     public final static String xml = "xml";
     public final static String lab = "lab";
+    public final static String a2l = "a2l";
 
     /*
      * Get the extension of a file.
@@ -26,27 +27,6 @@ public final class Utilitaire {
         }
         return ext;
     }
-
-    // public static String cutNumber(String number) {
-    //
-    // try {
-    // if (!(number.lastIndexOf(".") < 0)) {
-    // String txtDec = number.substring(number.lastIndexOf(".") + 1);
-    //
-    // if (Integer.valueOf(txtDec) == 0) {
-    // return String.valueOf(Double.valueOf(number).intValue());
-    // }
-    // int i = number.length() - 1;
-    // while (number.charAt(i) == '0') {
-    // i -= 1;
-    // }
-    // return number.substring(0, i + 1);
-    // }
-    // } catch (Exception e) {
-    // return number;
-    // }
-    // return number;
-    // } // Fin methode
 
     public static String cutNumber(String number) {
 

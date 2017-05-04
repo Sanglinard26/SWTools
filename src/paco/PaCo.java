@@ -95,8 +95,6 @@ public final class PaCo {
             nbLabel = listSwInstance.getLength();
             Element label;
 
-            long tps = System.currentTimeMillis();
-
             final int nbUnit = listSwUnit.getLength();
 
             // Remplissage de la HashMap des unites
@@ -212,9 +210,6 @@ public final class PaCo {
                     }
                 }
             }
-
-            tps -= System.currentTimeMillis();
-            System.out.println("Tps : " + tps);
         }
 
     }
@@ -223,7 +218,7 @@ public final class PaCo {
         return this.name;
     }
 
-    public final Boolean getValid() {
+    public final Boolean isValid() {
         return valid;
     }
 

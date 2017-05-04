@@ -19,12 +19,12 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -57,13 +57,14 @@ public final class PanelPaCo extends JPanel {
     private static final JPanel panVisu = new JPanel(new GridBagLayout());
     private static final PanelGraph panGraph = new PanelGraph();
     private static final TableHistory tableHistory = new TableHistory(new TableModelHistory());
-    private static final JProgressBar barChargement = new BarreProgression();
     private static final JTabbedPane tabPan = new JTabbedPane();
     private static final JPanel panPaco = new JPanel(new GridBagLayout());
     private static final JPanel panLabel = new JPanel(new GridBagLayout());
     private static final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panPaco, panLabel);
     private static final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
     private static final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPaneLeft, splitPaneRight);
+
+    private ProgressMonitor pm;
 
     private File dtd;
 
@@ -204,15 +205,14 @@ public final class PanelPaCo extends JPanel {
         splitPaneGlobal.setDividerSize(10);
         splitPaneGlobal.setDividerLocation(500);
         add(splitPaneGlobal, BorderLayout.CENTER);
-        add(barChargement, BorderLayout.SOUTH);
     }
 
-    private class OpenPaco implements ActionListener {
+    private final class OpenPaco implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
             final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
-            jFileChooser.setMultiSelectionEnabled(true); // Test
+            jFileChooser.setMultiSelectionEnabled(true);
             jFileChooser.setFileFilter(new FileFilter() {
 
                 @Override
@@ -261,52 +261,53 @@ public final class PanelPaCo extends JPanel {
 
                 razUI();
 
-                barChargement.setMaximum(jFileChooser.getSelectedFiles().length);
+                pm = new ProgressMonitor(PanelPaCo.this, "Fichier :", "...", 0, 0);
+                pm.setMillisToDecideToPopup(0);
+                pm.setMillisToPopup(0);
 
-                for (File file : jFileChooser.getSelectedFiles()) {
-                    if (!(listPaco.getModel().getList().contains(file.getName().substring(0, file.getName().length() - 4)))) {
-                        new ReaderPaCo(file).start();
-                    } else {
-                        JOptionPane.showMessageDialog(null, "PaCo deja present dans la liste", "INFO", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                }
+                new TaskCharging(jFileChooser.getSelectedFiles()).execute();
 
             }
         }
 
     }
 
-    private final class ReaderPaCo extends Thread {
+    private final class TaskCharging extends SwingWorker<Integer, Integer> {
 
-        private final File file;
+        private final File[] filesPaco;
+        private int cnt = 0;
         private PaCo paco;
 
-        public ReaderPaCo(File file) {
-            this.file = file;
-            Main.getLogger().info("Ouverture de < " + file + " >");
+        public TaskCharging(File[] filesPaco) {
+            this.filesPaco = filesPaco;
         }
 
         @Override
-        public void run() {
+        protected Integer doInBackground() throws Exception {
 
-            paco = new PaCo(file);
+            pm.setMaximum(filesPaco.length);
 
-            if (paco.getValid()) {
-                listPaco.getModel().addPaco(paco);
+            for (File file : filesPaco) {
+                if (!(listPaco.getModel().getList().contains(file.getName().substring(0, file.getName().length() - 4)))) {
+                    if (!pm.isCanceled()) {
+                        paco = new PaCo(file);
 
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        barChargement.setValue(barChargement.getValue() + 1);
+                        if (paco.isValid()) {
+                            listPaco.getModel().addPaco(paco);
+                            cnt += 1;
+                            pm.setProgress(cnt);
+                            pm.setNote(paco.getName());
+                        }
                     }
-                });
+                } else {
+                    JOptionPane.showMessageDialog(null, "PaCo deja present dans la liste", "INFO", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
-
+            return cnt;
         }
     }
 
-    public static void razUI() {
+    public final static void razUI() {
 
         if (listLabel.getModel().getSize() > 0) {
             txtFiltre.setText("");
