@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import soft.Soft;
+import soft.A2LParser;
 import tools.Utilitaire;
 
 public final class PanelA2l extends JPanel {
@@ -74,7 +74,7 @@ public final class PanelA2l extends JPanel {
 
             final int reponse = jFileChooser.showOpenDialog(PanelA2l.this);
             if (reponse == JFileChooser.APPROVE_OPTION) {
-                new TaskCharging(jFileChooser.getSelectedFile()).execute();
+                A2LParser.parse(jFileChooser.getSelectedFile());
             }
 
         }
@@ -90,7 +90,7 @@ public final class PanelA2l extends JPanel {
 
         @Override
         protected Integer doInBackground() throws Exception {
-            Soft a2l = new Soft(fileA2l);
+
             return null;
         }
 

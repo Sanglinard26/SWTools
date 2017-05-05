@@ -308,6 +308,9 @@ public final class PanelLab extends JPanel implements ListDataListener {
                 btCompar.setEnabled(true);
             }
 
+            listVarMoins.getModel().clearList();
+            listVarPlus.getModel().clearList();
+
             // Condition d'activation du bouton "Exporter"
             if (listVarMoins.getModel().getSize() + listVarPlus.getModel().getSize() != 0) {
                 btExport.setEnabled(true);
@@ -330,6 +333,9 @@ public final class PanelLab extends JPanel implements ListDataListener {
             } else {
                 btCompar.setEnabled(false);
             }
+
+            listVarMoins.getModel().clearList();
+            listVarPlus.getModel().clearList();
 
             // Condition d'activation du bouton "Exporter"
             if (listVarMoins.getModel().getSize() + listVarPlus.getModel().getSize() != 0) {
