@@ -30,7 +30,8 @@ public final class FrameLog extends JFrame {
     public FrameLog() {
         this.setTitle("Log");
         this.setLayout(new BorderLayout());
-
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        
         try {
             String line;
             final StringBuilder sLog = new StringBuilder("");

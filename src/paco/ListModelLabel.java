@@ -16,8 +16,6 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
     private static final ArrayList<Variable> listLabelFiltre = new ArrayList<Variable>();
 
     public ListModelLabel() {
-        //this.listLabel = new ArrayList<Variable>();
-        //this.listLabelFiltre = new ArrayList<Variable>();
     }
 
     @Override
@@ -30,15 +28,21 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
             listLabel.clear();
         }
         listLabel.addAll(list);
-        setFilter("");
-        //this.fireContentsChanged(this, 0, getSize());
+        setFilter("","");
     }
 
-    public void setFilter(String filter) {
+    public void setFilter(String type, String filter) {
         listLabelFiltre.clear();
         for (Variable label : listLabel) {
             if (label.getShortName().toLowerCase().indexOf(filter) > -1) {
-                listLabelFiltre.add(label);
+            	if (type.equals("TOUT TYPE") | type.equals(""))
+            	{
+            		listLabelFiltre.add(label);
+            	}
+				if (label.getCategory().equals(type))
+				{
+					listLabelFiltre.add(label);
+				}
             }
         }
         this.fireContentsChanged(this, 0, getSize());
@@ -46,8 +50,7 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
 
     public void clearList() {
         listLabel.clear();
-        setFilter("");
-        //this.fireContentsChanged(this, 0, getSize());
+        setFilter("","");
     }
 
     @Override

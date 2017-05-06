@@ -22,11 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -52,7 +49,6 @@ public final class PanelPaCo extends JPanel {
     // GUI
     private static final JButton btOpen = new JButton("Ajouter PaCo(s)");
     private static final ListPaco listPaco = new ListPaco(new ListModelPaco());
-    private static final JTextField txtFiltre = new JTextField(20);
     private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
     private static final JPanel panVisu = new JPanel(new GridBagLayout());
     private static final PanelGraph panGraph = new PanelGraph();
@@ -118,25 +114,7 @@ public final class PanelPaCo extends JPanel {
         gbc.weighty = 0;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
-        txtFiltre.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                listLabel.getModel().setFilter(txtFiltre.getText().toLowerCase());
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                listLabel.getModel().setFilter(txtFiltre.getText().toLowerCase());
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                // Non utilise
-
-            }
-        });
-        panLabel.add(txtFiltre, gbc);
+        panLabel.add(listLabel.getFilterField(), gbc);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
@@ -310,7 +288,7 @@ public final class PanelPaCo extends JPanel {
     public final static void razUI() {
 
         if (listLabel.getModel().getSize() > 0) {
-            txtFiltre.setText("");
+            listLabel.clearFilter();
             listLabel.clearSelection();
             listLabel.getModel().clearList();
 

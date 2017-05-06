@@ -23,6 +23,7 @@ public final class FrameInfo extends JFrame {
 
     public FrameInfo() {
         this.setTitle("Info");
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(FENETRE_ICON)));
         this.setLayout(new BorderLayout());
 
@@ -46,7 +47,6 @@ public final class FrameInfo extends JFrame {
 
         this.pack();
         this.setVisible(true);
-
     }
 
     private static void sendMail() {
@@ -58,7 +58,6 @@ public final class FrameInfo extends JFrame {
                 try {
                     Desktop.getDesktop().mail(new URI("mailto", adresse, null));
                 } catch (IOException | URISyntaxException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
