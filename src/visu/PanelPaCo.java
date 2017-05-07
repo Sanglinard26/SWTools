@@ -211,7 +211,7 @@ public final class PanelPaCo extends JPanel {
                     return false;
                 }
             });
-
+            
             final int reponse = jFileChooser.showOpenDialog(PanelPaCo.this);
             if (reponse == JFileChooser.APPROVE_OPTION) {
 

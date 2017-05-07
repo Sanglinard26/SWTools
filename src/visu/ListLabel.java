@@ -125,7 +125,7 @@ public final class ListLabel extends JList<Variable> {
 			}
 			if (e.getSource() == typeFilter)
 			{
-
+				clearSelection();
 				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
 			}
 		}

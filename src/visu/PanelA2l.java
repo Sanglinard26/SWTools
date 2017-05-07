@@ -13,7 +13,6 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
-import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
 import soft.A2LParser;
@@ -78,22 +77,6 @@ public final class PanelA2l extends JPanel {
             }
 
         }
-    }
-
-    private final class TaskCharging extends SwingWorker<Integer, Integer> {
-
-        File fileA2l;
-
-        public TaskCharging(File fileA2l) {
-            this.fileA2l = fileA2l;
-        }
-
-        @Override
-        protected Integer doInBackground() throws Exception {
-
-            return null;
-        }
-
     }
 
 }
