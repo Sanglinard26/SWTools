@@ -69,7 +69,7 @@ public final class Ihm extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new DialogAide();
+				new FrameAide();
 			}
 		});
 

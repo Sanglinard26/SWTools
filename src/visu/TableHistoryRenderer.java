@@ -25,6 +25,9 @@ public final class TableHistoryRenderer implements TableCellRenderer {
     public TableHistoryRenderer() {
         label.setOpaque(true);
         label.setBackground(Color.WHITE);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        progressBar.setStringPainted(true);
 
         maturite.put("---", 0);
         maturite.put("changed", 0);
@@ -40,29 +43,22 @@ public final class TableHistoryRenderer implements TableCellRenderer {
         switch (column) {
         case 0:
             label.setText(value.toString());
-            label.setHorizontalAlignment(SwingConstants.CENTER);
             component = label;
             break;
         case 1:
             label.setText(value.toString());
-            label.setHorizontalAlignment(SwingConstants.CENTER);
             component = label;
             break;
         case 2:
             progressBar.setValue(maturite.get(value.toString().toLowerCase()));
             progressBar.setString(String.valueOf(maturite.get(value.toString().toLowerCase())) + "%");
-            progressBar.setStringPainted(true);
             component = progressBar;
             break;
         case 3:
-            // if(value.toString().length()>200) table.setRowHeight(row, 100);
             textPane.setText(value.toString());
-            // component = textPane;
             component = scrollPane;
             break;
         }
-
         return component;
     }
-
 }

@@ -244,7 +244,6 @@ public final class PanelPaCo extends JPanel {
                 pm.setMillisToPopup(0);
 
                 new TaskCharging(jFileChooser.getSelectedFiles()).execute();
-
             }
         }
 

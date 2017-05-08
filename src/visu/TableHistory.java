@@ -67,8 +67,6 @@ public final class TableHistory extends JTable {
 
 			return this;
 		}
-
 	}
-
 }
 

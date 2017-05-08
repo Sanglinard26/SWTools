@@ -1,7 +1,6 @@
 package visu;
 
 import java.awt.Component;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -29,7 +28,4 @@ public final class TableHistoryEditor extends AbstractCellEditor implements Tabl
 			textPane.setText(value.toString());
 		return scrollPane;
 	}
-
-	
-
 }

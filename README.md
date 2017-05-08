@@ -1,6 +1,6 @@
 # SWTools
 
-Description  : Suite de petits outils destinés aux fichiers générés par le logiciel ETAS INCA.
+Description  : Suite d'outils destinés aux fichiers générés par le logiciel ETAS INCA.
 
 Fonctionnalités :
   - [X] Comparaison de fichiers "*.lab"
