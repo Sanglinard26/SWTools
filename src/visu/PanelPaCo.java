@@ -211,7 +211,7 @@ public final class PanelPaCo extends JPanel {
                     return false;
                 }
             });
-            
+
             final int reponse = jFileChooser.showOpenDialog(PanelPaCo.this);
             if (reponse == JFileChooser.APPROVE_OPTION) {
 
@@ -271,14 +271,16 @@ public final class PanelPaCo extends JPanel {
 
                         if (paco.isValid()) {
                             listPaco.getModel().addPaco(paco);
-                            cnt += 1;
-                            pm.setProgress(cnt);
-                            pm.setNote(paco.getName());
                         }
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "PaCo deja present dans la liste", "INFO", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null,
+                            "PaCo deja present dans la liste !" + "\nNom : " + file.getName().substring(0, file.getName().length() - 4), "INFO",
+                            JOptionPane.INFORMATION_MESSAGE);
                 }
+                cnt += 1;
+                pm.setProgress(cnt);
+                pm.setNote(file.getName().substring(0, file.getName().length() - 4));
             }
             return cnt;
         }

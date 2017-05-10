@@ -19,6 +19,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import com.orsoncharts.Range;
+import com.orsoncharts.renderer.RainbowScale;
+
 public final class Map extends Variable {
 
     private final String[][] values;
@@ -31,6 +34,8 @@ public final class Map extends Variable {
 
     private Double minZValue = Double.POSITIVE_INFINITY;
     private Double maxZValue = Double.NEGATIVE_INFINITY;
+
+    private final RainbowScale rainbowScale;
 
     public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
             String[][] values) {
@@ -56,14 +61,11 @@ public final class Map extends Variable {
                 zValues[y][x] = values[y + 1][x + 1];
 
                 try {
-
-                    if (Double.parseDouble(values[y + 1][x + 1]) < minZValue) {
+                    if (Double.parseDouble(values[y + 1][x + 1]) < minZValue)
                         minZValue = Double.parseDouble(values[y + 1][x + 1]);
-                    }
 
-                    if (Double.parseDouble(values[y + 1][x + 1]) > maxZValue) {
+                    if (Double.parseDouble(values[y + 1][x + 1]) > maxZValue)
                         maxZValue = Double.parseDouble(values[y + 1][x + 1]);
-                    }
                 } catch (NumberFormatException e) {
                     minZValue = Double.NaN;
                     maxZValue = Double.NaN;
@@ -71,6 +73,8 @@ public final class Map extends Variable {
 
             }
         }
+
+        rainbowScale = new RainbowScale(new Range(this.getMinZValue(), this.getMaxZValue()), (dimX - 1) * (dimY - 1), RainbowScale.BLUE_TO_RED_RANGE);
 
     }
 
@@ -190,14 +194,19 @@ public final class Map extends Variable {
                 valueView = new JLabel(getValue(y, x));
                 panel.add(valueView);
 
-                if (y == 0 | x == 0) {
+                if (y == 0 | x == 0 | (maxZValue - minZValue == 0)) {
                     valueView.setFont(new Font(null, Font.BOLD, valueView.getFont().getSize()));
+                    valueView.setBackground(Color.LIGHT_GRAY);
+                } else {
+                    try {
+                        valueView.setBackground(rainbowScale.valueToColor(Double.parseDouble(getValue(y, x))));
+                    } catch (Exception e) {
+                        valueView.setBackground(Color.LIGHT_GRAY);
+                    }
                 }
                 valueView.setOpaque(true);
-                valueView.setBackground(Color.LIGHT_GRAY);
                 valueView.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
                 valueView.setHorizontalAlignment(SwingConstants.CENTER);
-
             }
         }
 

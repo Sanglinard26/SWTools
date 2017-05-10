@@ -13,16 +13,13 @@ public final class TableModelHistory extends AbstractTableModel {
     public String getColumnName(int column) {
         return ENTETE[column];
     }
-    
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-    	if(columnIndex==3)
-    	{
-    		return true;
-    	}else{
-    		return false;
-    	}
-    		
+        if (columnIndex == 3)
+            return true;
+        return false;
+
     }
 
     @Override

@@ -80,26 +80,24 @@ public final class Curve extends Variable {
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         panel.addMouseListener(this);
 
-        JLabel valueViewX;
-        JLabel valueViewY;
+        JLabel valueView;
 
         for (short i = 0; i < dimX; i++) {
-            valueViewX = new JLabel(getValue(0, i));
-            panel.add(valueViewX);
-            valueViewX.setFont(new Font(null, Font.BOLD, valueViewX.getFont().getSize()));
-            valueViewX.setOpaque(true);
-            valueViewX.setBackground(Color.LIGHT_GRAY);
-            valueViewX.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            valueViewX.setHorizontalAlignment(SwingConstants.CENTER);
+            valueView = new JLabel(getValue(0, i));
+            panel.add(valueView);
+            valueView.setFont(new Font(null, Font.BOLD, valueView.getFont().getSize()));
+            valueView.setOpaque(true);
+            valueView.setBackground(Color.LIGHT_GRAY);
+            valueView.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            valueView.setHorizontalAlignment(SwingConstants.CENTER);
         }
         for (short i = 0; i < dimX; i++) {
-            valueViewY = new JLabel(getValue(1, i));
-            panel.add(valueViewY);
-            valueViewY.setOpaque(true);
-            valueViewY.setBackground(Color.LIGHT_GRAY);
-            valueViewY.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            valueViewY.setHorizontalAlignment(SwingConstants.CENTER);
-
+            valueView = new JLabel(getValue(1, i));
+            panel.add(valueView);
+            valueView.setOpaque(true);
+            valueView.setBackground(Color.LIGHT_GRAY);
+            valueView.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            valueView.setHorizontalAlignment(SwingConstants.CENTER);
         }
 
     }

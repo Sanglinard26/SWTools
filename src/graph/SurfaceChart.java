@@ -51,7 +51,7 @@ public final class SurfaceChart extends JPanel {
 
             // Erreur sur les axes (nom)
             final Chart3D chart = Chart3DFactory.createSurfaceChart("", "", function, "X [" + ((Map) variable).getUnitX() + "]",
-                    "Y [" + ((Map) variable).getUnitY() + "]", "Z [" + ((Map) variable).getUnitZ() + "]");
+                    "Z [" + ((Map) variable).getUnitZ() + "]", "Y [" + ((Map) variable).getUnitY() + "]");
             final XYZPlot plot = (XYZPlot) chart.getPlot();
             plot.setDimensions(new Dimension3D(20, 10, 20));
             final ValueAxis3D xAxis = plot.getXAxis();

@@ -72,7 +72,7 @@ public final class PaCo {
             if (document.getDoctype() != null) {
                 valid = Boolean.TRUE;
             } else {
-                JOptionPane.showMessageDialog(null, "Format de PaCo non valide !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Format de PaCo non valide !" + "\nNom : " + this.name, "ERREUR", JOptionPane.ERROR_MESSAGE);
                 valid = Boolean.FALSE;
                 return;
             }
@@ -129,7 +129,7 @@ public final class PaCo {
                         if (fullAttributAxe.indexOf(";") > -1) {
                             attributAxe = fullAttributAxe.substring(fullAttributAxe.indexOf(";") + 1);
                             if (attributAxe.indexOf("@") > -1) {
-                                splitAttributAxe = attributAxe.split("@");
+                                splitAttributAxe = attributAxe.split("@"); // nbColonne@nbLigne@nb?
                             }
                         }
                     }
@@ -202,12 +202,10 @@ public final class PaCo {
 
             for (int score = 0; score <= 100; score += 25) {
                 if (repartitionScore.get(score) > 0) {
-                    if (score <= minScore) {
+                    if (score <= minScore)
                         minScore = score;
-                    }
-                    if (score >= maxScore) {
+                    if (score >= maxScore)
                         maxScore = score;
-                    }
                 }
             }
         }
@@ -281,29 +279,43 @@ public final class PaCo {
 
     private final String[][] readValueBlock(String[] dim, NodeList swAxisCont) {
         // A finir d'implementer pour les dimensions multiples
-        final String val[][] = new String[2][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength()];
-        final int nbAxe = swAxisCont.getLength();
 
-        for (byte n = 0; n < nbAxe; n++) {
-            final Element eAxisCont = (Element) swAxisCont.item(n);
-            final Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
-            final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+        final String val[][];
 
-            final NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(0).getNodeName());
+        if (dim[1].equals("0")) {
+            val = new String[2][Integer.parseInt(dim[0]) + 1];
+            val[0][0] = "X";
+            val[1][0] = "Z";
+        } else {
+            val = new String[Integer.parseInt(dim[1]) + 1][Integer.parseInt(dim[0]) + 1];
+            val[0][0] = "Y \\ X";
+        }
 
-            final int nbVal = value.getLength();
+        final Element eAxisCont = (Element) swAxisCont.item(0);
+        final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
 
-            switch (indexAxis.getTextContent()) {
-            case "0":
-                for (short a = 0; a < nbVal; a++) {
-                    val[0][a] = Integer.toString(a + 1);
-                    if (value.item(a).getTextContent() != null) {
-                        val[1][a] = Utilitaire.cutNumber(value.item(a).getTextContent());
-                    } else {
-                        val[1][a] = Utilitaire.cutNumber(value.item(a).getFirstChild().getTextContent());
+        final NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(0).getNodeName());
+        NodeList valueVg = null;
+
+        for (int i = 0; i < value.getLength(); i++) {
+            switch (value.item(i).getNodeName()) {
+            case "V":
+                val[0][i + 1] = Integer.toString(i);
+                val[1][i + 1] = Utilitaire.cutNumber(value.item(i).getTextContent());
+                break;
+            case "VG":
+                valueVg = value.item(i).getChildNodes();
+                val[i + 1][0] = Integer.toString(i);
+                for (int j = 0; j < valueVg.getLength(); j++) {
+                    if (valueVg.item(j).getNodeName().equals("V")) {
+                        val[0][j] = Integer.toString(j - 1);
+                        val[i + 1][j] = valueVg.item(j).getTextContent();
                     }
-
                 }
+                break;
+            case "VT":
+                val[0][i + 1] = Integer.toString(i);
+                val[1][i + 1] = Utilitaire.cutNumber(value.item(i).getFirstChild().getTextContent());
                 break;
             }
         }
@@ -326,7 +338,6 @@ public final class PaCo {
 
             switch (indexAxis.getTextContent()) {
             case "1":
-
                 for (short b = 0; b < nbVal; b++) {
                     val[0][b] = Utilitaire.cutNumber(value.item(b).getTextContent());
                 }

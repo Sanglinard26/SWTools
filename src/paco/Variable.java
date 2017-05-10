@@ -73,9 +73,8 @@ public abstract class Variable extends MouseAdapter {
     }
 
     public final int getLastScore() {
-        if (!(swCsHistory.length < 1)) {
+        if (!(swCsHistory.length < 1))
             return maturite.get(swCsHistory[swCsHistory.length - 1][2].toLowerCase());
-        }
         return 0;
     }
 
@@ -151,5 +150,4 @@ public abstract class Variable extends MouseAdapter {
             menu.show(e.getComponent(), e.getX(), e.getY());
         }
     }
-
 }

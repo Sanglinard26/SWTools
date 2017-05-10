@@ -33,9 +33,8 @@ public final class ListModelPaco extends AbstractListModel<PaCo> {
     }
 
     public final void removePaco(int index) {
-        if (listPaco.remove(index) != null) {
+        if (listPaco.remove(index) != null)
             this.fireIntervalRemoved(this, index, index);
-        }
     }
 
     public final void clearList() {
