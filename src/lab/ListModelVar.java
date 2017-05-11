@@ -31,7 +31,6 @@ public final class ListModelVar extends AbstractListModel<Variable> {
         }
         listVariable.addAll(lab.getListVariable());
         setFilter("");
-        this.fireContentsChanged(this, 0, getSize());
     }
 
     public void addVar(Variable var) {
@@ -62,14 +61,12 @@ public final class ListModelVar extends AbstractListModel<Variable> {
     public void removeVar(Variable var) {
         if (listVariable.remove(var)) {
             setFilter("");
-            this.fireContentsChanged(this, 0, getSize());
         }
     }
 
     public void clearList() {
         this.listVariable.clear();
         setFilter("");
-        this.fireContentsChanged(this, 0, getSize());
     }
 
     @Override

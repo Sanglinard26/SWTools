@@ -78,8 +78,14 @@ public final class PanelLab extends JPanel implements ListDataListener {
                     final Lab multiLabRef = Lab.compilLab(listLabRef.getModel().getList());
                     final Lab multiLabWk = Lab.compilLab(listLabWk.getModel().getList());
 
-                    listVarMoins.getModel().setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
-                    listVarPlus.getModel().setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));
+                    if (multiLabRef.getDiffLab(multiLabWk).size()!=0 | multiLabWk.getDiffLab(multiLabRef).size()!=0)
+                    {
+                    	listVarMoins.getModel().setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
+                    	listVarPlus.getModel().setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));
+                    }else{
+                    	JOptionPane.showMessageDialog(null, "Les fichiers Lab sont identiques !", "RESULTAT", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    
                 } else {
                     JOptionPane.showMessageDialog(null, "Le nombre de fichier a comparer est different !");
                 }

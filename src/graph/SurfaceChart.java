@@ -1,7 +1,6 @@
 package graph;
 
 import java.awt.BorderLayout;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -59,7 +58,8 @@ public final class SurfaceChart extends JPanel {
             final ValueAxis3D zAxis = plot.getZAxis();
             zAxis.setRange(0, ((Map) variable).getyValues().length - 1);
             final SurfaceRenderer renderer = (SurfaceRenderer) plot.getRenderer();
-            renderer.setColorScale(new RainbowScale(new Range(((Map) variable).getMinZValue(), ((Map) variable).getMaxZValue())));
+            if (((Map) variable).getMaxZValue() - ((Map) variable).getMinZValue() != 0)
+            	renderer.setColorScale(new RainbowScale(new Range(((Map) variable).getMinZValue(), ((Map) variable).getMaxZValue())));
             renderer.setDrawFaceOutlines(false);
             renderer.setXSamples(((Map) variable).getxValues().length);
             renderer.setZSamples(((Map) variable).getyValues().length);

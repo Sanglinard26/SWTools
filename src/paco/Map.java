@@ -73,9 +73,7 @@ public final class Map extends Variable {
 
             }
         }
-
         rainbowScale = new RainbowScale(new Range(this.getMinZValue(), this.getMaxZValue()), (dimX - 1) * (dimY - 1), RainbowScale.BLUE_TO_RED_RANGE);
-
     }
 
     @Override
