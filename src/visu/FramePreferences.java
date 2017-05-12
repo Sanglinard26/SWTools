@@ -12,8 +12,11 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -106,6 +109,27 @@ public final class FramePreferences extends JFrame {
         gbc.insets = new Insets(5, 0, 0, 5);
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         panPaco.add(btPathOpenPaco, gbc);
+
+        final JCheckBox chkColorMap = new JCheckBox("Coloration des cartographies",
+                Boolean.parseBoolean(Preference.getPreference(Preference.KEY_ETAT_COLOR_MAP)));
+        chkColorMap.setHorizontalTextPosition(SwingConstants.LEFT);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 3;
+        gbc.gridheight = 1;
+        gbc.weightx = 1;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(5, 0, 0, 5);
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        chkColorMap.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                Preference.setPreference(Preference.KEY_ETAT_COLOR_MAP, Boolean.toString(chkColorMap.isSelected()));
+            }
+        });
+        panPaco.add(chkColorMap, gbc);
 
         return panPaco;
     }

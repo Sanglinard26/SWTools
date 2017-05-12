@@ -87,9 +87,9 @@ public abstract class Variable extends MouseAdapter {
         return sb.toString();
     }
 
-    public abstract void initVariable();
+    public abstract void initVariable(Boolean colored);
 
-    public abstract Component showView();
+    public abstract Component showView(Boolean colored);
 
     public abstract void copyToClipboard();
 

@@ -154,7 +154,8 @@ public final class PanelPaCo extends JPanel {
                     gbc.weighty = 1;
                     gbc.insets = new Insets(0, 10, 0, 0);
                     gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-                    panVisu.add(listLabel.getSelectedValue().showView(), gbc);
+                    panVisu.add(listLabel.getSelectedValue().showView(Boolean.parseBoolean(Preference.getPreference(Preference.KEY_ETAT_COLOR_MAP))),
+                            gbc);
                     panVisu.revalidate();
                     panVisu.repaint();
 

@@ -68,13 +68,13 @@ public final class Curve extends Variable {
     }
 
     @Override
-    public final Component showView() {
-        initVariable();
+    public final Component showView(Boolean colored) {
+        initVariable(colored);
         return panel;
     }
 
     @Override
-    public final void initVariable() {
+    public final void initVariable(Boolean colored) {
         panel = new JPanel(new GridLayout(2, dimX, 1, 1));
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));

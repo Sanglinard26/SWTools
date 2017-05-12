@@ -7,13 +7,14 @@ import java.util.prefs.Preferences;
 
 public final class Preference {
 
-	private static final String DEF_PATH_LAB = "C:/User";
+    private static final String DEF_PATH_LAB = "C:/User";
     private static final String DEF_PATH_RESULT_LAB = "C:/TEMP";
     private static final String DEF_PATH_PACO = "C:/User";
+    private static final String DEF_ETAT_COLOR_MAP = "false";
     public static final String KEY_ADD_LAB = "pathLab";
     public static final String KEY_RESULT_LAB = "pathExportLabResult";
     public static final String KEY_OPEN_PACO = "pathPaco";
-    
+    public static final String KEY_ETAT_COLOR_MAP = "flagColorMap";
 
     private static final Preferences preferences = Preferences.userRoot().node("swtools/lab");
 
@@ -29,8 +30,11 @@ public final class Preference {
         case KEY_OPEN_PACO:
             defValue = DEF_PATH_PACO;
             break;
+        case KEY_ETAT_COLOR_MAP:
+            defValue = DEF_ETAT_COLOR_MAP;
+            break;
         default:
-            defValue = "C:/";
+            defValue = "";
             break;
         }
         return preferences.get(key, defValue);

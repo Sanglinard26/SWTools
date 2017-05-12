@@ -59,7 +59,7 @@ public final class Axis extends Variable {
     }
 
     @Override
-    public final void initVariable() {
+    public final void initVariable(Boolean colored) {
         panel = new JPanel(new GridLayout(1, dim, 1, 1));
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
@@ -79,8 +79,8 @@ public final class Axis extends Variable {
     }
 
     @Override
-    public final Component showView() {
-        initVariable();
+    public final Component showView(Boolean colored) {
+        initVariable(colored);
         return panel;
     }
 

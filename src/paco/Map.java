@@ -139,8 +139,8 @@ public final class Map extends Variable {
     }
 
     @Override
-    public final Component showView() {
-        initVariable();
+    public final Component showView(Boolean colored) {
+        initVariable(colored);
         return panel;
     }
 
@@ -179,7 +179,7 @@ public final class Map extends Variable {
     }
 
     @Override
-    public final void initVariable() {
+    public final void initVariable(Boolean colored) {
         panel = new JPanel(new GridLayout(dimY, dimX, 1, 1));
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
@@ -192,14 +192,16 @@ public final class Map extends Variable {
                 valueView = new JLabel(getValue(y, x));
                 panel.add(valueView);
 
-                if (y == 0 | x == 0 | (maxZValue - minZValue == 0)) {
+                if (y == 0 | x == 0 | (maxZValue - minZValue == 0) | colored == false) {
                     valueView.setFont(new Font(null, Font.BOLD, valueView.getFont().getSize()));
-                    valueView.setBackground(Color.LIGHT_GRAY);
+                    // valueView.setBackground(Color.LIGHT_GRAY);
+                    valueView.setBackground(new Color(240, 240, 240));
                 } else {
                     try {
                         valueView.setBackground(rainbowScale.valueToColor(Double.parseDouble(getValue(y, x))));
                     } catch (Exception e) {
-                        valueView.setBackground(Color.LIGHT_GRAY);
+                        // valueView.setBackground(Color.LIGHT_GRAY);
+                        valueView.setBackground(new Color(240, 240, 240));
                     }
                 }
                 valueView.setOpaque(true);

@@ -46,13 +46,13 @@ public final class Scalaire extends Variable {
     }
 
     @Override
-    public final Component showView() {
-        initVariable();
+    public final Component showView(Boolean colored) {
+        initVariable(colored);
         return panel;
     }
 
     @Override
-    public final void initVariable() {
+    public final void initVariable(Boolean colored) {
         panel.setLayout(new GridLayout(1, 1, 2, 2));
         panel.add(valueView);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));

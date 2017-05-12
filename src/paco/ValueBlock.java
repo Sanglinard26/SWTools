@@ -69,7 +69,7 @@ public final class ValueBlock extends Variable {
     }
 
     @Override
-    public final void initVariable() {
+    public final void initVariable(Boolean colored) {
         panel = new JPanel(new GridLayout(dimY, dimX, 1, 1));
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
@@ -95,8 +95,8 @@ public final class ValueBlock extends Variable {
     }
 
     @Override
-    public final Component showView() {
-        initVariable();
+    public final Component showView(Boolean colored) {
+        initVariable(colored);
         return panel;
     }
 
