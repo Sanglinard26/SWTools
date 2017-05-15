@@ -220,7 +220,7 @@ public final class Map extends Variable {
             // JScrollPane scrollPane = new JScrollPane(tableView);
             tableView.getModel().setData(values);
 
-            // TableView.adjustCellsSize(tableView);
+            TableView.adjustCellsSize(tableView);
 
             panel.add(tableView);
 

@@ -16,16 +16,15 @@ public final class TableView extends JTable {
 
     public TableView(TableModelView model) {
         super(model);
-
-        // this.setTableHeader(null);
-        // this.setDefaultRenderer(Object.class, new TableViewRenderer());
+        this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        this.setTableHeader(null);
+        this.setDefaultRenderer(Object.class, new TableViewRenderer());
         this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         this.setCellSelectionEnabled(true);
     }
 
     @Override
     public TableModelView getModel() {
-        // TODO Auto-generated method stub
         return (TableModelView) super.getModel();
     }
 
@@ -40,7 +39,7 @@ public final class TableView extends JTable {
                 maxWidth = Math.max(component.getPreferredSize().width, maxWidth);
             }
             TableColumn column = columnModel.getColumn(col);
-            column.setPreferredWidth(maxWidth);
+            column.setPreferredWidth(maxWidth + 10);
         }
 
     }

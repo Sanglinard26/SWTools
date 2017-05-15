@@ -1,23 +1,30 @@
 package visu;
 
 import java.awt.Component;
+import java.awt.Font;
+
+import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
-
 public final class TableViewRenderer extends DefaultTableCellRenderer {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private Component component;
 
-	@Override
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-			int row, int column) {
+    private static final long serialVersionUID = 1L;
 
-		component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		
-		return component;
-	}
+    private JLabel component;
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+        component = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        component.setHorizontalAlignment(SwingConstants.CENTER);
+
+        if (row == 0 | column == 0) {
+            component.setFont(new Font(null, Font.BOLD, component.getFont().getSize()));
+        }
+
+        return component;
+    }
 
 }

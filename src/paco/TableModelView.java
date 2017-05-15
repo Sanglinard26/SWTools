@@ -9,11 +9,6 @@ public final class TableModelView extends AbstractTableModel {
     private String[] entete = new String[0];
     private String[][] values = new String[0][0];
 
-    // public TableModelView() {
-    // for (int i = 0; i < entete.length; i++)
-    // entete[i] = "";
-    // }
-
     @Override
     public String getColumnName(int column) {
         return entete[column];
@@ -45,6 +40,6 @@ public final class TableModelView extends AbstractTableModel {
         for (int i = 0; i < values[0].length; i++)
             this.entete[i] = "";
         fireTableStructureChanged();
-        fireTableDataChanged();
+        // fireTableDataChanged();
     }
 }
