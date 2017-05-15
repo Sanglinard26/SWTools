@@ -248,10 +248,18 @@ public final class PaCo {
         for (byte n = 0; n < nbEntry; n++) {
             aEntry = (Element) swCsEntry.item(n);
 
-            entry[n][0] = aEntry.getElementsByTagName("DATE").item(0).getTextContent().replace("T", " @ ");
-            entry[n][1] = aEntry.getElementsByTagName("SW-CS-PERFORMED-BY").item(0).getTextContent();
-            entry[n][2] = aEntry.getElementsByTagName("SW-CS-STATE").item(0).getTextContent();
-            entry[n][3] = aEntry.getElementsByTagName("REMARK").item(0).getTextContent();
+            try {
+                entry[n][0] = aEntry.getElementsByTagName("DATE").item(0).getTextContent().replace("T", " @ ");
+                entry[n][1] = aEntry.getElementsByTagName("SW-CS-PERFORMED-BY").item(0).getTextContent();
+                entry[n][2] = aEntry.getElementsByTagName("SW-CS-STATE").item(0).getTextContent();
+                entry[n][3] = aEntry.getElementsByTagName("REMARK").item(0).getTextContent();
+            } catch (NullPointerException npe) {
+                for (int i = 0; i < 4; i++) {
+                    if (entry[n][i] == null)
+                        entry[n][i] = "";
+                }
+            }
+
         }
         return entry;
     }

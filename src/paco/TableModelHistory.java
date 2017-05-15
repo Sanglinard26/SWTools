@@ -19,7 +19,6 @@ public final class TableModelHistory extends AbstractTableModel {
         if (columnIndex == 3)
             return true;
         return false;
-
     }
 
     @Override

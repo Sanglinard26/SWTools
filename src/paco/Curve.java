@@ -19,6 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import visu.TableView;
+
 public final class Curve extends Variable {
 
     private final String[][] values;
@@ -75,29 +77,42 @@ public final class Curve extends Variable {
 
     @Override
     public final void initVariable(Boolean colored) {
-        panel = new JPanel(new GridLayout(2, dimX, 1, 1));
-        panel.setBackground(Color.BLACK);
-        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        panel.addMouseListener(this);
 
-        JLabel valueView;
+        if (true) {
+            panel = new JPanel(new GridLayout(2, dimX, 1, 1));
+            panel.setBackground(Color.BLACK);
+            panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+            panel.addMouseListener(this);
 
-        for (short i = 0; i < dimX; i++) {
-            valueView = new JLabel(getValue(0, i));
-            panel.add(valueView);
-            valueView.setFont(new Font(null, Font.BOLD, valueView.getFont().getSize()));
-            valueView.setOpaque(true);
-            valueView.setBackground(Color.LIGHT_GRAY);
-            valueView.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            valueView.setHorizontalAlignment(SwingConstants.CENTER);
-        }
-        for (short i = 0; i < dimX; i++) {
-            valueView = new JLabel(getValue(1, i));
-            panel.add(valueView);
-            valueView.setOpaque(true);
-            valueView.setBackground(Color.LIGHT_GRAY);
-            valueView.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            valueView.setHorizontalAlignment(SwingConstants.CENTER);
+            JLabel valueView;
+
+            for (short i = 0; i < dimX; i++) {
+                valueView = new JLabel(getValue(0, i));
+                panel.add(valueView);
+                valueView.setFont(new Font(null, Font.BOLD, valueView.getFont().getSize()));
+                valueView.setOpaque(true);
+                valueView.setBackground(Color.LIGHT_GRAY);
+                valueView.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                valueView.setHorizontalAlignment(SwingConstants.CENTER);
+            }
+            for (short i = 0; i < dimX; i++) {
+                valueView = new JLabel(getValue(1, i));
+                panel.add(valueView);
+                valueView.setOpaque(true);
+                valueView.setBackground(Color.LIGHT_GRAY);
+                valueView.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                valueView.setHorizontalAlignment(SwingConstants.CENTER);
+            }
+        } else {
+            panel = new JPanel(new GridLayout(1, 1));
+            panel.addMouseListener(this);
+            TableView tableView = new TableView(new TableModelView());
+            // JScrollPane scrollPane = new JScrollPane(tableView);
+
+            TableView.adjustCellsSize(tableView);
+
+            panel.add(tableView);
+
         }
 
     }

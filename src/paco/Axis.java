@@ -19,6 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import visu.TableView;
+
 public final class Axis extends Variable {
 
     private JPanel panel;
@@ -60,22 +62,35 @@ public final class Axis extends Variable {
 
     @Override
     public final void initVariable(Boolean colored) {
-        panel = new JPanel(new GridLayout(1, dim, 1, 1));
-        panel.setBackground(Color.BLACK);
-        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        panel.addMouseListener(this);
 
-        JLabel valueViewZ;
+        if (true) {
+            panel = new JPanel(new GridLayout(1, dim, 1, 1));
+            panel.setBackground(Color.BLACK);
+            panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+            panel.addMouseListener(this);
 
-        for (short i = 0; i < dim; i++) {
-            valueViewZ = new JLabel(getzValues(i));
-            panel.add(valueViewZ);
-            valueViewZ.setFont(new Font(null, Font.BOLD, valueViewZ.getFont().getSize()));
-            valueViewZ.setOpaque(true);
-            valueViewZ.setBackground(Color.LIGHT_GRAY);
-            valueViewZ.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            valueViewZ.setHorizontalAlignment(SwingConstants.CENTER);
+            JLabel valueViewZ;
+
+            for (short i = 0; i < dim; i++) {
+                valueViewZ = new JLabel(getzValues(i));
+                panel.add(valueViewZ);
+                valueViewZ.setFont(new Font(null, Font.BOLD, valueViewZ.getFont().getSize()));
+                valueViewZ.setOpaque(true);
+                valueViewZ.setBackground(Color.LIGHT_GRAY);
+                valueViewZ.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                valueViewZ.setHorizontalAlignment(SwingConstants.CENTER);
+            }
+        } else {
+            panel = new JPanel(new GridLayout(1, 1));
+            panel.addMouseListener(this);
+            TableView tableView = new TableView(new TableModelView());
+            // JScrollPane scrollPane = new JScrollPane(tableView);
+
+            TableView.adjustCellsSize(tableView);
+
+            panel.add(tableView);
         }
+
     }
 
     @Override
