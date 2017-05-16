@@ -93,9 +93,9 @@ public abstract class Variable extends MouseAdapter {
 
     public abstract void copyToClipboard();
 
-    public void copyTxtToClipboard() {
+    public void copyTxtToClipboard(String s) {
         final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(new TxtTransfert(this.toString()), null);
+        clipboard.setContents(new TxtTransfert(s), null);
     }
 
     final class TxtTransfert implements Transferable {
@@ -142,7 +142,7 @@ public abstract class Variable extends MouseAdapter {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    copyTxtToClipboard();
+                    copyTxtToClipboard(this.toString());
                 }
             });
             menuCopy.add(subMenu);

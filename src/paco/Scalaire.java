@@ -28,7 +28,7 @@ public final class Scalaire extends Variable {
     public Scalaire(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
             String value) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
-        
+
         this.value = value;
     }
 
@@ -53,6 +53,11 @@ public final class Scalaire extends Variable {
 
     @Override
     public final void initVariable(Boolean colored) {
+
+        String val[][] = new String[1][1];
+
+        val[0][0] = this.value;
+
         panel.setLayout(new GridLayout(1, 1, 2, 2));
         panel.add(valueView);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));

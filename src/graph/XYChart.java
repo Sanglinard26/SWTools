@@ -102,44 +102,35 @@ public final class XYChart extends JPanel {
         chart.getXYPlot().setBackgroundPaint(Color.WHITE);
         chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
         chart.getXYPlot().setDomainGridlinePaint(Color.BLACK);
-        //final XYSeries[] series = new XYSeries[variable.getDimX() - 1]; // -1 pour ne pas tenir compte de la case "X\Y"
-        //final String[] seriesName = new String[variable.getDimX() - 1];
         final List<XYSeries> series = new ArrayList<XYSeries>(variable.getDimX() - 1);
         final List<String> seriesName = new ArrayList<String>(variable.getDimX() - 1);
         final int[] indexSerie = new int[variable.getDimX() - 1];
 
         for (short x = 0; x < variable.getDimX() - 1; x++) {
-            //series[x] = new XYSeries(variable.getxValues()[x]);
-            //seriesName[x] = variable.getxValues()[x];
-            if(!seriesName.contains(variable.getxValues()[x]))
-            {
-            	seriesName.add(x, variable.getxValues()[x]);
-            	series.add(new XYSeries(variable.getxValues()[x]));
-            }else{
-            	seriesName.add(x, variable.getxValues()[x] + "(" + x + ")");
-            	series.add(new XYSeries(variable.getxValues()[x] + "(" + x + ")"));
+
+            if (!seriesName.contains(variable.getxValues()[x])) {
+                seriesName.add(x, variable.getxValues()[x]);
+                series.add(new XYSeries(variable.getxValues()[x]));
+            } else {
+                seriesName.add(x, variable.getxValues()[x] + "(" + x + ")");
+                series.add(new XYSeries(variable.getxValues()[x] + "(" + x + ")"));
             }
-            
-            
+
             indexSerie[x] = x;
 
             for (short y = 0; y < variable.getDimY() - 1; y++) {
                 try {
-                    //series[x].add(Double.parseDouble(variable.getyValues()[y]), Double.parseDouble(variable.getzValue(y, x)));
                     series.get(x).add(Double.parseDouble(variable.getyValues()[y]), Double.parseDouble(variable.getzValue(y, x)));
                 } catch (NumberFormatException e) {
                     if (Utilitaire.isNumber(variable.getzValue(y, x))) {
-                        //series[x].add(y, Double.parseDouble(variable.getzValue(y, x)));
                         series.get(x).add(y, Double.parseDouble(variable.getzValue(y, x)));
                     } else {
-                        //series[x].add(y, Float.NaN);
-                    	series.get(x).add(y, Float.NaN);
+                        series.get(x).add(y, Float.NaN);
                     }
 
                 }
 
             }
-            //dataset.addSeries(series[x]);
             dataset.addSeries(series.get(x));
         }
 
@@ -153,7 +144,6 @@ public final class XYChart extends JPanel {
                 if (!e.getValueIsAdjusting() & listSeries.getModel().getSize() > 0) {
                     dataset.removeAllSeries();
                     for (int indice : listSeries.getSelectedIndices()) {
-                        //dataset.addSeries(series[indice]);
                         dataset.addSeries(series.get(indice));
                     }
                 }
@@ -183,46 +173,37 @@ public final class XYChart extends JPanel {
         chart.getXYPlot().setBackgroundPaint(Color.WHITE);
         chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
         chart.getXYPlot().setDomainGridlinePaint(Color.BLACK);
-        //final XYSeries[] series = new XYSeries[variable.getDimY() - 1];
-        //final String[] seriesName = new String[variable.getDimY() - 1];
+
         final List<XYSeries> series = new ArrayList<XYSeries>(variable.getDimY() - 1);
         final List<String> seriesName = new ArrayList<String>(variable.getDimY() - 1);
         final int[] indexSerie = new int[variable.getDimY() - 1];
 
         for (short y = 0; y < variable.getDimY() - 1; y++) {
             indexSerie[y] = y;
-            //series[y] = new XYSeries(variable.getyValues()[y]);
-            //seriesName[y] = variable.getyValues()[y];
-            
-            if(!seriesName.contains(variable.getyValues()[y]))
-            {
-            	seriesName.add(y, variable.getyValues()[y]);
-            	series.add(new XYSeries(variable.getyValues()[y]));
-            }else{
-            	seriesName.add(y, variable.getyValues()[y] + "(" + y + ")");
-            	series.add(new XYSeries(variable.getyValues()[y] + "(" + y + ")"));
+
+            if (!seriesName.contains(variable.getyValues()[y])) {
+                seriesName.add(y, variable.getyValues()[y]);
+                series.add(new XYSeries(variable.getyValues()[y]));
+            } else {
+                seriesName.add(y, variable.getyValues()[y] + "(" + y + ")");
+                series.add(new XYSeries(variable.getyValues()[y] + "(" + y + ")"));
             }
 
             for (short x = 0; x < variable.getDimX() - 1; x++) {
                 try {
-                    //series[y].add(Double.parseDouble(variable.getxValues()[x]), Double.parseDouble(variable.getzValue(y, x)));
                     series.get(y).add(Double.parseDouble(variable.getxValues()[x]), Double.parseDouble(variable.getzValue(y, x)));
                 } catch (NumberFormatException e) {
                     if (Utilitaire.isNumber(variable.getzValue(y, x))) {
-                        //series[y].add(x, Double.parseDouble(variable.getzValue(y, x)));
                         series.get(y).add(x, Double.parseDouble(variable.getzValue(y, x)));
                     } else {
-                        //series[y].add(x, Float.NaN);
                         series.get(y).add(x, Float.NaN);
                     }
 
                 }
 
             }
-            //dataset.addSeries(series[y]);
             dataset.addSeries(series.get(y));
         }
-        //listSeries.setListData(seriesName);
         listSeries.setListData(seriesName.toArray(new String[seriesName.size()]));
         listSeries.setSelectedIndices(indexSerie);
 
@@ -233,7 +214,6 @@ public final class XYChart extends JPanel {
                 if (!e.getValueIsAdjusting() & listSeries.getModel().getSize() > 0) {
                     dataset.removeAllSeries();
                     for (int indice : listSeries.getSelectedIndices()) {
-                        //dataset.addSeries(series[indice]);
                         dataset.addSeries(series.get(indice));
                     }
                 }

@@ -214,12 +214,11 @@ public final class Map extends Variable {
 
         } else {
             panel = new JPanel(new GridLayout(1, 1));
+            panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             panel.addMouseListener(this);
 
             TableView tableView = new TableView(new TableModelView());
-            // JScrollPane scrollPane = new JScrollPane(tableView);
             tableView.getModel().setData(values);
-
             TableView.adjustCellsSize(tableView);
 
             panel.add(tableView);

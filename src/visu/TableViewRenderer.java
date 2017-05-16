@@ -20,11 +20,9 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
         component = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         component.setHorizontalAlignment(SwingConstants.CENTER);
 
-        if (row == 0 | column == 0) {
+        if (row == 0 | column == 0)
             component.setFont(new Font(null, Font.BOLD, component.getFont().getSize()));
-        }
 
         return component;
     }
-
 }

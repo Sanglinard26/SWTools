@@ -40,6 +40,5 @@ public final class TableModelView extends AbstractTableModel {
         for (int i = 0; i < values[0].length; i++)
             this.entete[i] = "";
         fireTableStructureChanged();
-        // fireTableDataChanged();
     }
 }
