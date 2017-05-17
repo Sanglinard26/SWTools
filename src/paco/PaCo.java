@@ -264,11 +264,16 @@ public final class PaCo {
         return entry;
     }
 
-    private final String readValue(NodeList swAxisCont) {
-        return Utilitaire.cutNumber(swAxisCont.item(0).getLastChild().getTextContent());
+    private final String[][] readValue(NodeList swAxisCont) {
+    	
+    	final String val[][] = new String[1][1];
+    	
+    	val[0][0] = Utilitaire.cutNumber(swAxisCont.item(0).getLastChild().getTextContent());
+    	
+        return val;
     }
 
-    private final String[] readAxis(NodeList swAxisCont) {
+    private final String[][] readAxis(NodeList swAxisCont) {
 
         final Element eAxisCont = (Element) swAxisCont.item(0);
         final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
@@ -276,10 +281,10 @@ public final class PaCo {
 
         final int nbVal = value.getLength();
 
-        final String val[] = new String[nbVal];
+        final String val[][] = new String[1][nbVal];
 
         for (short a = 0; a < nbVal; a++) {
-            val[a] = Utilitaire.cutNumber(value.item(a).getTextContent());
+            val[0][a] = Utilitaire.cutNumber(value.item(a).getTextContent());
         }
 
         return val;
