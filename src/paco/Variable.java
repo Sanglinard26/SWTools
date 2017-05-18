@@ -6,19 +6,10 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
-public abstract class Variable extends MouseAdapter {
+public abstract class Variable {
 
     private final String longName;
     private final String shortName;
@@ -26,9 +17,6 @@ public abstract class Variable extends MouseAdapter {
     private final String swFeatureRef;
     private final String[] swUnitRef;
     private final String[][] swCsHistory;
-
-    private static final String ICON_TEXT = "/text_icon_16.png";
-    private static final String ICON_IMAGE = "/image_icon_16.png";
 
     private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6);
 
@@ -120,34 +108,5 @@ public abstract class Variable extends MouseAdapter {
             return DataFlavor.stringFlavor.equals(flavor);
         }
 
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            final JPopupMenu menu = new JPopupMenu();
-            final JMenu menuCopy = new JMenu("Copier dans le presse-papier");
-            JMenuItem subMenu = new JMenuItem("Format image", new ImageIcon(getClass().getResource(ICON_IMAGE)));
-            subMenu.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    copyToClipboard();
-                }
-            });
-            menuCopy.add(subMenu);
-            menuCopy.addSeparator();
-            subMenu = new JMenuItem("Format texte", new ImageIcon(getClass().getResource(ICON_TEXT)));
-            subMenu.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    copyTxtToClipboard(this.toString());
-                }
-            });
-            menuCopy.add(subMenu);
-            menu.add(menuCopy);
-            menu.show(e.getComponent(), e.getX(), e.getY());
-        }
     }
 }

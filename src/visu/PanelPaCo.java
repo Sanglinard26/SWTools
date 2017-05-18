@@ -31,7 +31,6 @@ import javax.swing.filechooser.FileFilter;
 import paco.ListModelLabel;
 import paco.ListModelPaco;
 import paco.PaCo;
-import paco.TableModelHistory;
 import tools.Preference;
 import tools.Utilitaire;
 
@@ -52,13 +51,13 @@ public final class PanelPaCo extends JPanel {
     private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
     private static final JPanel panVisu = new JPanel(new GridBagLayout());
     private static final PanelGraph panGraph = new PanelGraph();
-    private static final TableHistory tableHistory = new TableHistory(new TableModelHistory());
     private static final JTabbedPane tabPan = new JTabbedPane();
     private static final JPanel panPaco = new JPanel(new GridBagLayout());
     private static final JPanel panLabel = new JPanel(new GridBagLayout());
     private static final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panPaco, panLabel);
     private static final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
     private static final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPaneLeft, splitPaneRight);
+    private static final PanelHistory panelHistory = new PanelHistory();
 
     private ProgressMonitor pm;
 
@@ -131,7 +130,8 @@ public final class PanelPaCo extends JPanel {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() & !listLabel.isSelectionEmpty()) {
 
-                    tableHistory.getModel().setData(listLabel.getSelectedValue().getSwCsHistory());
+                    panelHistory.setDatas(listLabel.getSelectedValue().getSwCsHistory());
+
                     panVisu.removeAll();
 
                     gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -176,9 +176,8 @@ public final class PanelPaCo extends JPanel {
 
         panVisu.setBackground(Color.WHITE);
 
-        tableHistory.setFillsViewportHeight(false);
+        tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(panelHistory));
 
-        tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(tableHistory));
         tabPan.addTab("Graphique", new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
 
         splitPaneGlobal.setDividerSize(10);
@@ -294,7 +293,7 @@ public final class PanelPaCo extends JPanel {
             listLabel.clearSelection();
             listLabel.getModel().clearList();
 
-            tableHistory.getModel().setData(new String[0][0]);
+            panelHistory.removeDatas();
 
             panVisu.removeAll();
             panVisu.revalidate();
