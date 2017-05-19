@@ -20,8 +20,19 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
         component = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         component.setHorizontalAlignment(SwingConstants.CENTER);
 
-        if (row == 0 | column == 0)
+        if (table.getColumnCount() * table.getRowCount() == 1)
+            return component;
+
+        if (table.getColumnCount() * table.getRowCount() == 2 * table.getColumnCount()) {
+            if (row == 0)
+                component.setFont(new Font(null, Font.BOLD, component.getFont().getSize()));
+            return component;
+        }
+
+        if (row == 0 | column == 0) {
             component.setFont(new Font(null, Font.BOLD, component.getFont().getSize()));
+            return component;
+        }
 
         return component;
     }

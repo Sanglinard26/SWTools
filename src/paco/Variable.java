@@ -1,13 +1,23 @@
 package paco;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+
+import visu.TableView;
 
 public abstract class Variable {
 
@@ -17,6 +27,8 @@ public abstract class Variable {
     private final String swFeatureRef;
     private final String[] swUnitRef;
     private final String[][] swCsHistory;
+
+    private JPanel panel;
 
     private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6);
 
@@ -75,15 +87,24 @@ public abstract class Variable {
         return sb.toString();
     }
 
-    public abstract void initVariable(Boolean colored);
+    public abstract String[][] getValues();
 
-    public abstract Component showView(Boolean colored);
+    public final Component showValues() {
+        panel = new JPanel(new GridLayout(1, 1));
+        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-    public abstract void copyToClipboard();
+        TableView tableView = new TableView(new TableModelView());
+        tableView.getModel().setData(getValues());
+        TableView.adjustCellsSize(tableView);
 
-    public void copyTxtToClipboard(String s) {
+        panel.add(tableView);
+
+        return panel;
+    }
+
+    public final void copyTxtToClipboard() {
         final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(new TxtTransfert(s), null);
+        clipboard.setContents(new TxtTransfert(this.toString()), null);
     }
 
     final class TxtTransfert implements Transferable {
@@ -106,6 +127,40 @@ public abstract class Variable {
         @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
             return DataFlavor.stringFlavor.equals(flavor);
+        }
+
+    }
+
+    public final void copyImgToClipboard() {
+        final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        final BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        final Graphics2D g = img.createGraphics();
+        panel.printAll(g);
+        g.dispose();
+        clipboard.setContents(new ImgTransfert(img), null);
+
+    }
+
+    final class ImgTransfert implements Transferable {
+        private Image img;
+
+        public ImgTransfert(Image img) {
+            this.img = img;
+        }
+
+        @Override
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+            return img;
+        }
+
+        @Override
+        public DataFlavor[] getTransferDataFlavors() {
+            return new DataFlavor[] { DataFlavor.imageFlavor };
+        }
+
+        @Override
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return DataFlavor.imageFlavor.equals(flavor);
         }
 
     }

@@ -62,7 +62,7 @@ public final class PanelInfoVariable extends JPanel {
 
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            variable.copyToClipboard();
+                            variable.copyImgToClipboard();
                         }
                     });
                     menuCopy.add(subMenu);
@@ -72,7 +72,7 @@ public final class PanelInfoVariable extends JPanel {
 
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            variable.copyTxtToClipboard(variable.toString());
+                            variable.copyTxtToClipboard();
                         }
                     });
                     menuCopy.add(subMenu);

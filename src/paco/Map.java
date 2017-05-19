@@ -1,30 +1,8 @@
 package paco;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-
-import com.orsoncharts.Range;
-import com.orsoncharts.renderer.RainbowScale;
-
-import visu.TableView;
-
 public final class Map extends Variable {
 
     private final String[][] values;
-    private JPanel panel;
     private final String[] xValues;
     private final String[] yValues;
     private final String[][] zValues;
@@ -34,7 +12,7 @@ public final class Map extends Variable {
     private Double minZValue = Double.POSITIVE_INFINITY;
     private Double maxZValue = Double.NEGATIVE_INFINITY;
 
-    private final RainbowScale rainbowScale;
+    // private final RainbowScale rainbowScale;
 
     public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
             String[][] values) {
@@ -72,7 +50,8 @@ public final class Map extends Variable {
 
             }
         }
-        rainbowScale = new RainbowScale(new Range(this.getMinZValue(), this.getMaxZValue()), (dimX - 1) * (dimY - 1), RainbowScale.BLUE_TO_RED_RANGE);
+        // rainbowScale = new RainbowScale(new Range(this.getMinZValue(), this.getMaxZValue()), (dimX - 1) * (dimY - 1),
+        // RainbowScale.BLUE_TO_RED_RANGE);
     }
 
     @Override
@@ -121,6 +100,7 @@ public final class Map extends Variable {
         return minZValue;
     }
 
+    @Override
     public final String[][] getValues() {
         return values;
     }
@@ -135,59 +115,6 @@ public final class Map extends Variable {
 
     public final int getDimY() {
         return dimY;
-    }
-
-    @Override
-    public final Component showView(Boolean colored) {
-        initVariable(colored);
-        return panel;
-    }
-
-    @Override
-    public final void copyToClipboard() {
-        final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        final BufferedImage img = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
-        final Graphics2D g = img.createGraphics();
-        panel.printAll(g);
-        g.dispose();
-        clipboard.setContents(new ImgTransfert(img), null);
-    }
-
-    final class ImgTransfert implements Transferable {
-        private Image img;
-
-        public ImgTransfert(Image img) {
-            this.img = img;
-        }
-
-        @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-            return img;
-        }
-
-        @Override
-        public DataFlavor[] getTransferDataFlavors() {
-            return new DataFlavor[] { DataFlavor.imageFlavor };
-        }
-
-        @Override
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return DataFlavor.imageFlavor.equals(flavor);
-        }
-
-    }
-
-    @Override
-    public final void initVariable(Boolean colored) {
-
-        panel = new JPanel(new GridLayout(1, 1));
-        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-        TableView tableView = new TableView(new TableModelView());
-        tableView.getModel().setData(values);
-        TableView.adjustCellsSize(tableView);
-
-        panel.add(tableView);
     }
 
 }
