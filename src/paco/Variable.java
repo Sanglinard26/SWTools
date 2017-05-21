@@ -107,7 +107,7 @@ public abstract class Variable {
         clipboard.setContents(new TxtTransfert(this.toString()), null);
     }
 
-    final class TxtTransfert implements Transferable {
+    private final class TxtTransfert implements Transferable {
         private String s;
 
         public TxtTransfert(String s) {
@@ -141,7 +141,7 @@ public abstract class Variable {
 
     }
 
-    final class ImgTransfert implements Transferable {
+    private final class ImgTransfert implements Transferable {
         private Image img;
 
         public ImgTransfert(Image img) {

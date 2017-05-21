@@ -8,10 +8,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -109,8 +112,26 @@ public final class PanelHistory extends JPanel {
         panData.revalidate();
         panData.repaint();
     }
+    
+    private static final class FrameComment extends JFrame
+    {
 
-    private static final class Data extends JPanel {
+		private static final long serialVersionUID = 1L;
+		
+		private final JTextPane txtPane = new JTextPane();
+		
+    	public FrameComment(String txt) {
+    		
+    		setTitle("COMMENTAIRES");
+    		
+    		txtPane.setEditable(false);
+    		txtPane.setText(txt);
+			add(new JScrollPane(txtPane));
+			setMinimumSize(new Dimension(600, 400));
+		}
+    }
+
+    private final class Data extends JPanel {
 
         private static final long serialVersionUID = 1L;
 
@@ -122,12 +143,24 @@ public final class PanelHistory extends JPanel {
         public Data(String[] data) {
 
             this.setLayout(null);
-            this.setMinimumSize(new Dimension(header.getWidth(), 40));
-            this.setPreferredSize(new Dimension(header.getWidth(), 40));
-            this.setMaximumSize(new Dimension(header.getWidth(), 40));
+            this.setMinimumSize(new Dimension(header.getWidth(), 50));
+            this.setPreferredSize(new Dimension(header.getWidth(), 50));
+            this.setMaximumSize(new Dimension(header.getWidth(), 50));
 
             bar.setStringPainted(true);
             textPane.setEditable(false);
+            textPane.addMouseListener(new MouseAdapter() {
+            	@Override
+            	public void mouseClicked(MouseEvent paramMouseEvent) {
+            		if (paramMouseEvent.getClickCount() == 2 & scrollPane.getVerticalScrollBar().isShowing())
+            		{
+            			FrameComment fc = new FrameComment(textPane.getText());
+            			fc.setLocationRelativeTo(paramMouseEvent.getComponent());
+            			fc.setLocation(paramMouseEvent.getXOnScreen()-fc.getWidth(),paramMouseEvent.getYOnScreen()-fc.getHeight());
+            			fc.setVisible(true);
+            		}
+            	}
+			});
 
             for (byte i = 0; i < data.length; i++) {
 
@@ -138,7 +171,7 @@ public final class PanelHistory extends JPanel {
                     text.setBackground(Color.WHITE);
                     text.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
                     text.setHorizontalAlignment(SwingConstants.CENTER);
-                    text.setBounds(0, 0, 200, 40);
+                    text.setBounds(0, 0, 200, 50);
                     add(text);
                     break;
                 case 1:
@@ -147,26 +180,26 @@ public final class PanelHistory extends JPanel {
                     text.setBackground(Color.WHITE);
                     text.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
                     text.setHorizontalAlignment(SwingConstants.CENTER);
-                    text.setBounds(200, 0, 150, 40);
+                    text.setBounds(200, 0, 150, 50);
                     add(text);
                     break;
                 case 2:
                     bar.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
                     bar.setValue(maturite.get(data[i].toLowerCase()));
-                    bar.setBounds(350, 0, 200, 40);
+                    bar.setBounds(350, 0, 200, 50);
                     bar.setString(String.valueOf(maturite.get(data[i].toLowerCase())) + "%");
                     add(bar);
                     break;
                 case 3:
                     textPane.setText(data[i]);
+                    textPane.setCaretPosition(0);
                     scrollPane = new JScrollPane(textPane);
                     scrollPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-                    scrollPane.setBounds(550, 0, 820, 40);
+                    scrollPane.setBounds(550, 0, 820, 50);
                     add(scrollPane);
                     break;
                 }
             }
         }
     }
-
 }
