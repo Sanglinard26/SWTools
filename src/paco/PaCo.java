@@ -258,7 +258,9 @@ public final class PaCo {
 					for (byte x = 0; x<aEntry.getElementsByTagName("REMARK").item(0).getChildNodes().getLength();x++)
 					{
 						sb.append(aEntry.getElementsByTagName("REMARK").item(0).getChildNodes().item(x).getTextContent());
-						sb.append("\n");
+						
+						if (x<aEntry.getElementsByTagName("REMARK").item(0).getChildNodes().getLength()-1)
+							sb.append("\n");
 					}
 					entry[n][3] = sb.toString();
 				}else{

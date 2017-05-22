@@ -98,8 +98,8 @@ public final class PanelPaCo extends JPanel {
                 if (e.getValueIsAdjusting() == false & !listPaco.isSelectionEmpty()) {
                     razUI();
                     listLabel.getModel().setList(listPaco.getSelectedValue().getListLabel());
+                    listLabel.ensureIndexIsVisible(0);
                 }
-
             }
         });
         panPaco.add(new JScrollPane(listPaco), gbc);
@@ -283,6 +283,10 @@ public final class PanelPaCo extends JPanel {
                 pm.setProgress(cnt);
                 pm.setNote(file.getName().substring(0, file.getName().length() - 4));
             }
+            
+            if (listPaco.getSelectedIndices().length>0)
+            	listPaco.clearSelection();
+            
             return cnt;
         }
     }
