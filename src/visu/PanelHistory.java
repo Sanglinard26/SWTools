@@ -28,6 +28,7 @@ public final class PanelHistory extends JPanel {
     private static final long serialVersionUID = 1L;
     private static final JPanel header = new Header();
     private static final JPanel panData = new JPanel();
+    private static FrameComment fc = null;
 
     private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6);
 
@@ -112,23 +113,26 @@ public final class PanelHistory extends JPanel {
         panData.revalidate();
         panData.repaint();
     }
-    
-    private static final class FrameComment extends JFrame
-    {
 
-		private static final long serialVersionUID = 1L;
-		
-		private final JTextPane txtPane = new JTextPane();
-		
-    	public FrameComment(String txt) {
-    		
-    		setTitle("COMMENTAIRES");
-    		
-    		txtPane.setEditable(false);
-    		txtPane.setText(txt);
-			add(new JScrollPane(txtPane));
-			setMinimumSize(new Dimension(600, 400));
-		}
+    private static final class FrameComment extends JFrame {
+
+        private static final long serialVersionUID = 1L;
+
+        private final JTextPane txtPane = new JTextPane();
+
+        public FrameComment(String txt) {
+
+            setTitle("COMMENTAIRES");
+
+            txtPane.setEditable(false);
+            txtPane.setText(txt);
+            add(new JScrollPane(txtPane));
+            setMinimumSize(new Dimension(600, 400));
+        }
+
+        public final void setComment(String txt) {
+            txtPane.setText(txt);
+        }
     }
 
     private final class Data extends JPanel {
@@ -150,17 +154,22 @@ public final class PanelHistory extends JPanel {
             bar.setStringPainted(true);
             textPane.setEditable(false);
             textPane.addMouseListener(new MouseAdapter() {
-            	@Override
-            	public void mouseClicked(MouseEvent paramMouseEvent) {
-            		if (paramMouseEvent.getClickCount() == 2 & scrollPane.getVerticalScrollBar().isShowing())
-            		{
-            			FrameComment fc = new FrameComment(textPane.getText());
-            			fc.setLocationRelativeTo(paramMouseEvent.getComponent());
-            			fc.setLocation(paramMouseEvent.getXOnScreen()-fc.getWidth(),paramMouseEvent.getYOnScreen()-fc.getHeight());
-            			fc.setVisible(true);
-            		}
-            	}
-			});
+                @Override
+                public void mouseClicked(MouseEvent paramMouseEvent) {
+                    if (paramMouseEvent.getClickCount() == 2 & scrollPane.getVerticalScrollBar().isShowing()) {
+
+                        if (fc == null) {
+                            fc = new FrameComment(textPane.getText());
+                        } else {
+                            fc.setComment(textPane.getText());
+                        }
+
+                        fc.setLocationRelativeTo(paramMouseEvent.getComponent());
+                        fc.setLocation(paramMouseEvent.getXOnScreen() - fc.getWidth(), paramMouseEvent.getYOnScreen() - fc.getHeight());
+                        fc.setVisible(true);
+                    }
+                }
+            });
 
             for (byte i = 0; i < data.length; i++) {
 
