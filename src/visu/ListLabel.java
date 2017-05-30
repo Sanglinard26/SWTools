@@ -32,153 +32,138 @@ import paco.Variable;
 
 public final class ListLabel extends JList<Variable> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String ICON_OLD_SEARCH = "/oldsearch_24.png";
+    private static final String ICON_OLD_SEARCH = "/oldsearch_24.png";
 
-	private final FilterField filterField;
+    private final FilterField filterField;
 
-	public ListLabel(ListModelLabel dataModel) {
-		super(dataModel);
-		setCellRenderer(new ListLabelRenderer());
-		filterField = new FilterField();
-	}
+    public ListLabel(ListModelLabel dataModel) {
+        super(dataModel);
+        setCellRenderer(new ListLabelRenderer());
+        filterField = new FilterField();
+    }
 
-	@Override
-	public ListModelLabel getModel() {
-		return (ListModelLabel) super.getModel();
-	}
+    @Override
+    public ListModelLabel getModel() {
+        return (ListModelLabel) super.getModel();
+    }
 
+    private class FilterField extends JComponent implements DocumentListener, ActionListener {
 
-	private class FilterField extends JComponent implements DocumentListener, ActionListener
-	{
+        private static final long serialVersionUID = 1L;
 
-		private static final long serialVersionUID = 1L;
+        private final String[] nameFilter = { "TOUT TYPE", PaCo._A, PaCo._C, PaCo._M, PaCo._M_FIXED, PaCo._M_GROUPED, PaCo._T, PaCo._T_CA,
+                PaCo._T_GROUPED, PaCo.ASCII };
 
-		private final String[] nameFilter = {
-				"TOUT TYPE",
-				PaCo._A,
-				PaCo._C,
-				PaCo._M,
-				PaCo._M_FIXED,
-				PaCo._M_GROUPED,
-				PaCo._T,
-				PaCo._T_CA,
-				PaCo._T_GROUPED,
-				PaCo.ASCII
-		};
+        private final JComboBox<String> typeFilter;
+        private final JTextField txtFiltre;
+        private final JButton oldSearchBt;
+        private JPopupMenu oldSearchMenu;
+        private LinkedList<String> oldSearchItem;
 
-		private final JComboBox<String> typeFilter;
-		private final JTextField txtFiltre;
-		private final JButton oldSearchBt;
-		private JPopupMenu oldSearchMenu;
-		private LinkedList<String> oldSearchItem;
+        public FilterField() {
+            super();
+            setLayout(new BorderLayout());
 
-		public FilterField() {
-			super();
-			setLayout(new BorderLayout());
+            typeFilter = new JComboBox<>(nameFilter);
+            ((JLabel) typeFilter.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+            typeFilter.addActionListener(this);
 
-			typeFilter = new JComboBox<>(nameFilter);
-			((JLabel)typeFilter.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-			typeFilter.addActionListener(this);
+            txtFiltre = new JTextField(20);
+            txtFiltre.getDocument().addDocumentListener(this);
+            txtFiltre.addActionListener(this);
 
-			txtFiltre = new JTextField(20);
-			txtFiltre.getDocument().addDocumentListener(this);
-			txtFiltre.addActionListener(this);
+            oldSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_OLD_SEARCH)));
+            oldSearchBt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            oldSearchBt.setToolTipText("Historique de filtre");
+            oldSearchBt.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    popMenu(e.getX(), e.getY());
+                }
+            });
 
-			oldSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_OLD_SEARCH)));
-			oldSearchBt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			oldSearchBt.setToolTipText("Historique de filtre");
-			oldSearchBt.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mousePressed(MouseEvent e) {
-					popMenu(e.getX(), e.getY());
-				}
-			});
+            add(typeFilter, BorderLayout.WEST);
+            add(txtFiltre, BorderLayout.CENTER);
+            add(oldSearchBt, BorderLayout.EAST);
 
-			add(typeFilter, BorderLayout.WEST);
-			add(txtFiltre, BorderLayout.CENTER);
-			add(oldSearchBt, BorderLayout.EAST);
+            oldSearchItem = new LinkedList<String>();
+        }
 
-			oldSearchItem = new LinkedList<String>();
-		}
+        public void popMenu(int x, int y) {
+            oldSearchMenu = new JPopupMenu();
+            Iterator<String> it = oldSearchItem.iterator();
+            while (it.hasNext()) {
+                oldSearchMenu.add(new OldSearchAct(it.next().toString()));
+            }
+            oldSearchMenu.show(oldSearchBt, x, y);
+        }
 
-		public void popMenu(int x, int y)
-		{
-			oldSearchMenu = new JPopupMenu();
-			Iterator<String> it = oldSearchItem.iterator();
-			while (it.hasNext()) {
-				oldSearchMenu.add(new OldSearchAct(it.next().toString()));
-			}
-			oldSearchMenu.show(oldSearchBt, x, y);
-		}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == txtFiltre) {
+                oldSearchItem.addFirst(txtFiltre.getText());
+                if (oldSearchItem.size() > 10) {
+                    oldSearchItem.removeLast();
+                }
+            }
+            if (e.getSource() == typeFilter) {
+                clearSelection();
+                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+            }
+        }
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getSource() == txtFiltre)
-			{
-				oldSearchItem.addFirst(txtFiltre.getText());
-				if (oldSearchItem.size() > 10)
-				{
-					oldSearchItem.removeLast();
-				}
-			}
-			if (e.getSource() == typeFilter)
-			{
-				clearSelection();
-				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-			}
-		}
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            clearSelection();
+            getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+        }
 
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-			getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-		}
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            clearSelection();
+            getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+        }
 
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-			getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-		}
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            clearSelection();
+            getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+        }
 
-		@Override
-		public void removeUpdate(DocumentEvent e) {
-			getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-		}
+    }
 
-	}
+    private class OldSearchAct extends AbstractAction {
 
-	private class OldSearchAct extends AbstractAction
-	{
+        private static final long serialVersionUID = 1L;
 
-		private static final long serialVersionUID = 1L;
+        private String terme;
 
-		private String terme;
+        public OldSearchAct(String terme) {
+            this.terme = terme;
+            putValue(javax.swing.Action.NAME, terme);
+        }
 
-		public OldSearchAct(String terme) {
-			this.terme = terme;
-			putValue(javax.swing.Action.NAME, terme);
-		}
+        @Override
+        public String toString() {
+            return terme;
+        }
 
-		@Override
-		public String toString() {
-			return terme;
-		}
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            getFilterField().txtFiltre.setText(terme);
 
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			getFilterField().txtFiltre.setText(terme);
+        }
 
-		}
+    }
 
-	}
+    public final FilterField getFilterField() {
+        return filterField;
+    }
 
-	public final FilterField getFilterField() {
-		return filterField;
-	}
-
-	public final void clearFilter()
-	{
-		getFilterField().txtFiltre.setText("");
-		getFilterField().typeFilter.getModel().setSelectedItem("TOUT TYPE");
-	}
+    public final void clearFilter() {
+        getFilterField().txtFiltre.setText("");
+        getFilterField().typeFilter.getModel().setSelectedItem("TOUT TYPE");
+    }
 }

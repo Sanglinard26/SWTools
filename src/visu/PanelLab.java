@@ -2,6 +2,7 @@ package visu;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -56,17 +57,20 @@ public final class PanelLab extends JPanel implements ListDataListener {
 
         this.setLayout(new GridBagLayout());
 
-        setGbc(GridBagConstraints.HORIZONTAL, 0, 0, 1, 1, 0, 0, new Insets(0, 0, 5, 5), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.HORIZONTAL, 0, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
         btAddLabRef = new JButton(BT_ADD_LAB_REF);
+        btAddLabRef.setOpaque(false);
         btAddLabRef.addActionListener(new addLab());
         this.add(btAddLabRef, gbc);
 
-        setGbc(GridBagConstraints.HORIZONTAL, 1, 0, 1, 1, 0, 0, new Insets(0, 5, 5, 20), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.HORIZONTAL, 1, 0, 1, 1, 0, 0, new Insets(0, 5, 0, 20), GridBagConstraints.CENTER);
         btAddLabWk = new JButton(BT_ADD_LAB_WK);
+        btAddLabWk.setOpaque(false);
         btAddLabWk.addActionListener(new addLab());
         this.add(btAddLabWk, gbc);
 
         btCompar = new JButton(BT_COMPAR_LAB);
+        btCompar.setOpaque(false);
         btCompar.setEnabled(false);
         btCompar.addActionListener(new ActionListener() {
 
@@ -78,23 +82,23 @@ public final class PanelLab extends JPanel implements ListDataListener {
                     final Lab multiLabRef = Lab.compilLab(listLabRef.getModel().getList());
                     final Lab multiLabWk = Lab.compilLab(listLabWk.getModel().getList());
 
-                    if (multiLabRef.getDiffLab(multiLabWk).size()!=0 | multiLabWk.getDiffLab(multiLabRef).size()!=0)
-                    {
-                    	listVarMoins.getModel().setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
-                    	listVarPlus.getModel().setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));
-                    }else{
-                    	JOptionPane.showMessageDialog(null, "Les fichiers Lab sont identiques !", "RESULTAT", JOptionPane.INFORMATION_MESSAGE);
+                    if (multiLabRef.getDiffLab(multiLabWk).size() != 0 | multiLabWk.getDiffLab(multiLabRef).size() != 0) {
+                        listVarMoins.getModel().setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
+                        listVarPlus.getModel().setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Les fichiers Lab sont identiques !", "RESULTAT", JOptionPane.INFORMATION_MESSAGE);
                     }
-                    
+
                 } else {
                     JOptionPane.showMessageDialog(null, "Le nombre de fichier a comparer est different !");
                 }
             }
         });
-        setGbc(GridBagConstraints.HORIZONTAL, 2, 0, 1, 1, 0, 0, new Insets(0, 20, 10, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.HORIZONTAL, 2, 0, 1, 1, 0, 0, new Insets(0, 20, 0, 0), GridBagConstraints.CENTER);
         this.add(btCompar, gbc);
 
         btExport = new JButton(BT_EXPORT);
+        btExport.setOpaque(false);
         btExport.setEnabled(false);
         btExport.addActionListener(new ActionListener() {
             @Override
@@ -102,7 +106,7 @@ public final class PanelLab extends JPanel implements ListDataListener {
                 Lab.ecrireRapport(Lab.compilLab(listLabRef.getModel().getList()), Lab.compilLab(listLabWk.getModel().getList()));
             }
         });
-        setGbc(GridBagConstraints.HORIZONTAL, 3, 0, 1, 1, 0, 0, new Insets(0, 0, 10, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.HORIZONTAL, 3, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         this.add(btExport, gbc);
 
         // Liste des lab ref
@@ -137,10 +141,10 @@ public final class PanelLab extends JPanel implements ListDataListener {
         });
         this.add(new JScrollPane(listLabWk), gbc);
 
-        setGbc(GridBagConstraints.NONE, 2, 1, 1, 1, 0, 0, new Insets(0, 20, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.NONE, 2, 1, 1, 1, 0, 0, new Insets(10, 20, 0, 0), GridBagConstraints.CENTER);
         this.add(new JLabel("Label(s) disparu(s)"), gbc);
 
-        setGbc(GridBagConstraints.NONE, 3, 1, 1, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
+        setGbc(GridBagConstraints.NONE, 3, 1, 1, 1, 0, 0, new Insets(10, 0, 0, 0), GridBagConstraints.CENTER);
         this.add(new JLabel("Label(s) supplementaire(s)"), gbc);
 
         filterVarRef = new JTextField(TXT_FILTRAGE, 20);
@@ -229,6 +233,13 @@ public final class PanelLab extends JPanel implements ListDataListener {
         listVarPlus.getModel().addListDataListener(this);
         this.add(new JScrollPane(listVarPlus), gbc);
 
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        // g.setColor(Color.LIGHT_GRAY);
+        // g.fillRect((this.getWidth() / 2) + 5 - (8 / 2), this.getHeight() / 4, 8, this.getHeight() / 2);
     }
 
     private class addLab implements ActionListener {
