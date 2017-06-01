@@ -55,8 +55,6 @@ public final class PanelA2l extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setPaint(new GradientPaint(0, this.getHeight() / 2, Color.WHITE, this.getWidth() / 2, this.getHeight() / 2, Color.BLACK, true));
-        g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
 
         Rectangle2D tr = new Rectangle2D.Double(0, 0, 100, 100);
         GradientPaint gp = new GradientPaint(0, 0, Color.LIGHT_GRAY, 1, 1, Color.BLACK, true);
@@ -104,6 +102,9 @@ public final class PanelA2l extends JPanel {
     }
 
     private final class MyButton extends JButton {
+
+        private static final long serialVersionUID = 1L;
+
         public MyButton(String s) {
             super(s);
             setOpaque(false);

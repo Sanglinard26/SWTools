@@ -88,8 +88,10 @@ public final class PaCo {
         } catch (SAXException e) {
             logger.severe(e.toString());
 
-            final int reponse = JOptionPane.showConfirmDialog(null, "Format de PaCo non valide !" + "\nVoir le log pour plus de details."
-                    + "\n\nNom : " + this.name + "\n\n Voulez-vous corriger les erreurs?", "ERREUR", JOptionPane.YES_NO_OPTION);
+            final int reponse = JOptionPane.showConfirmDialog(null,
+                    "Le PaCo contient des caracteres invalides." + "\nVoir le log pour plus de details." + "\n\nNom : " + this.name
+                            + "\n\n Voulez-vous corriger les erreurs en creeant une copie du fichier?",
+                    "ERREUR DE PARSING", JOptionPane.YES_NO_OPTION);
 
             if (reponse == JOptionPane.OK_OPTION) {
                 String line;
@@ -117,6 +119,8 @@ public final class PaCo {
                     }
                     buf.close();
                     bw.close();
+
+                    JOptionPane.showMessageDialog(null, "Le PaCo a ete enregistre à l'adresse suivante :\n" + fileBis.getPath());
 
                 } catch (IOException e1) {
                     e1.printStackTrace();

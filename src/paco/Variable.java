@@ -93,9 +93,9 @@ public abstract class Variable {
         panel = new JPanel(new GridLayout(1, 1));
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        TableView tableView = new TableView(new TableModelView());
+        final TableView tableView = new TableView(new TableModelView(), this);
         tableView.getModel().setData(getValues());
-        TableView.adjustCellsSize(tableView);
+        TableView.adjustCells(tableView);
 
         panel.add(tableView);
 

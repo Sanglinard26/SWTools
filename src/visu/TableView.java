@@ -9,16 +9,17 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import paco.TableModelView;
+import paco.Variable;
 
 public final class TableView extends JTable {
 
     private static final long serialVersionUID = 1L;
 
-    public TableView(TableModelView model) {
+    public TableView(TableModelView model, Variable var) {
         super(model);
         this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         this.setTableHeader(null);
-        this.setDefaultRenderer(Object.class, new TableViewRenderer());
+        this.setDefaultRenderer(Object.class, new TableViewRenderer(var));
         this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         this.setCellSelectionEnabled(true);
     }
@@ -28,8 +29,10 @@ public final class TableView extends JTable {
         return (TableModelView) super.getModel();
     }
 
-    public static void adjustCellsSize(JTable table) {
+    public static void adjustCells(JTable table) {
+
         TableColumnModel columnModel = table.getColumnModel();
+
         for (int col = 0; col < columnModel.getColumnCount(); col++) {
             int maxWidth = 0;
             for (int row = 0; row < table.getRowCount(); row++) {
