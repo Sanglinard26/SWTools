@@ -4,6 +4,7 @@
 package visu;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -19,9 +20,11 @@ import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
+import graph.PieChart;
 import soft.A2LParser;
 import tools.Utilitaire;
 
@@ -69,34 +72,35 @@ public final class PanelA2l extends JPanel {
     private final class OpenA2l implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent e) {
-            final JFileChooser jFileChooser = new JFileChooser();
-            jFileChooser.setMultiSelectionEnabled(false);
-            jFileChooser.setFileFilter(new FileFilter() {
-
-                @Override
-                public String getDescription() {
-                    return "A2l *.a2l";
-                }
-
-                @Override
-                public boolean accept(File f) {
-
-                    if (f.isDirectory())
-                        return true;
-
-                    String extension = Utilitaire.getExtension(f);
-                    if (extension.equals(Utilitaire.a2l)) {
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
-            final int reponse = jFileChooser.showOpenDialog(PanelA2l.this);
-            if (reponse == JFileChooser.APPROVE_OPTION) {
-                A2LParser.parse(jFileChooser.getSelectedFile());
-            }
+        public void actionPerformed(ActionEvent e) {     	
+        	
+//            final JFileChooser jFileChooser = new JFileChooser();
+//            jFileChooser.setMultiSelectionEnabled(false);
+//            jFileChooser.setFileFilter(new FileFilter() {
+//
+//                @Override
+//                public String getDescription() {
+//                    return "A2l *.a2l";
+//                }
+//
+//                @Override
+//                public boolean accept(File f) {
+//
+//                    if (f.isDirectory())
+//                        return true;
+//
+//                    String extension = Utilitaire.getExtension(f);
+//                    if (extension.equals(Utilitaire.a2l)) {
+//                        return true;
+//                    }
+//                    return false;
+//                }
+//            });
+//
+//            final int reponse = jFileChooser.showOpenDialog(PanelA2l.this);
+//            if (reponse == JFileChooser.APPROVE_OPTION) {
+//                A2LParser.parse(jFileChooser.getSelectedFile());
+//            }
 
         }
     }
