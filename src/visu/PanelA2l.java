@@ -4,29 +4,27 @@
 package visu;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.filechooser.FileFilter;
 
-import graph.PieChart;
-import soft.A2LParser;
-import tools.Utilitaire;
+import graph.XYPlot;
 
 public final class PanelA2l extends JPanel {
 
@@ -72,35 +70,51 @@ public final class PanelA2l extends JPanel {
     private final class OpenA2l implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent e) {     	
-        	
-//            final JFileChooser jFileChooser = new JFileChooser();
-//            jFileChooser.setMultiSelectionEnabled(false);
-//            jFileChooser.setFileFilter(new FileFilter() {
-//
-//                @Override
-//                public String getDescription() {
-//                    return "A2l *.a2l";
-//                }
-//
-//                @Override
-//                public boolean accept(File f) {
-//
-//                    if (f.isDirectory())
-//                        return true;
-//
-//                    String extension = Utilitaire.getExtension(f);
-//                    if (extension.equals(Utilitaire.a2l)) {
-//                        return true;
-//                    }
-//                    return false;
-//                }
-//            });
-//
-//            final int reponse = jFileChooser.showOpenDialog(PanelA2l.this);
-//            if (reponse == JFileChooser.APPROVE_OPTION) {
-//                A2LParser.parse(jFileChooser.getSelectedFile());
-//            }
+        public void actionPerformed(ActionEvent e) {
+
+            List<Double> scores = new ArrayList<>();
+            Random random = new Random();
+            int maxDataPoints = 40;
+            int maxScore = 10;
+            for (int i = 0; i < maxDataPoints; i++) {
+                scores.add(random.nextDouble() * maxScore);
+            }
+
+            JFrame frame = new JFrame("XY Plot");
+            frame.setLayout(new GridLayout(1, 2));
+
+            frame.add(new XYPlot("Y = f(X)", scores));
+
+            frame.pack();
+            frame.setVisible(true);
+
+            // final JFileChooser jFileChooser = new JFileChooser();
+            // jFileChooser.setMultiSelectionEnabled(false);
+            // jFileChooser.setFileFilter(new FileFilter() {
+            //
+            // @Override
+            // public String getDescription() {
+            // return "A2l *.a2l";
+            // }
+            //
+            // @Override
+            // public boolean accept(File f) {
+            //
+            // if (f.isDirectory())
+            // return true;
+            //
+            // String extension = Utilitaire.getExtension(f);
+            // if (extension.equals(Utilitaire.a2l)) {
+            // return true;
+            // }
+            // return false;
+            // }
+            // });
+            //
+            // final int reponse = jFileChooser.showOpenDialog(PanelA2l.this);
+            // if (reponse == JFileChooser.APPROVE_OPTION) {
+            // A2LParser.parse(jFileChooser.getSelectedFile());
+            // }
 
         }
     }
