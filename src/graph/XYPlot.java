@@ -9,11 +9,14 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,10 +36,11 @@ public final class XYPlot extends JPanel {
     private int numberYDivisions = 10;
 
     List<Point> graphPoints;
-    Point selectedPoint;
 
     private final String title;
     private List<Double> scores;
+    
+    private Rectangle clip;
 
     public XYPlot(String title, final List<Double> scores) {
         this.title = title;
@@ -48,9 +52,9 @@ public final class XYPlot extends JPanel {
                 for (int i = 0; i < graphPoints.size(); i++) {
                     if (Math.abs(graphPoints.get(i).x - e.getX()) < 4 & Math.abs(graphPoints.get(i).y - e.getY()) < 4) {
                         System.out.println(scores.get(i));
-
+                        
                         markPoint(getGraphics(), graphPoints.get(i));
-                        selectedPoint = graphPoints.get(i);
+                        clip = getGraphics().getClipBounds(new Rectangle(graphPoints.get(i).x - 10 / 2, graphPoints.get(i).y - 10 / 2, 10, 10));
                     }
                 }
             }
@@ -157,10 +161,8 @@ public final class XYPlot extends JPanel {
     public void markPoint(Graphics g, Point p) {
         Graphics2D g2 = (Graphics2D) g;
 
-        if (selectedPoint != null) {
-
-        }
-
+        if (clip != null) repaint(clip);
+        
         g2.setColor(Color.RED);
         int x = p.x - 10 / 2;
         int y = p.y - 10 / 2;
