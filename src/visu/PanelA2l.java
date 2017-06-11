@@ -9,22 +9,16 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import graph.XYPlot;
 
 public final class PanelA2l extends JPanel {
 
@@ -71,22 +65,6 @@ public final class PanelA2l extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
-            List<Double> scores = new ArrayList<>();
-            Random random = new Random();
-            int maxDataPoints = 40;
-            int maxScore = 10;
-            for (int i = 0; i < maxDataPoints; i++) {
-                scores.add(random.nextDouble() * maxScore);
-            }
-
-            JFrame frame = new JFrame("XY Plot");
-            frame.setLayout(new GridLayout(1, 2));
-
-            frame.add(new XYPlot("Y = f(X)", scores));
-
-            frame.pack();
-            frame.setVisible(true);
 
             // final JFileChooser jFileChooser = new JFileChooser();
             // jFileChooser.setMultiSelectionEnabled(false);
