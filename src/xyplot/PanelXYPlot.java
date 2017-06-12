@@ -22,14 +22,15 @@ public final class PanelXYPlot extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private int padding = 25;
-    private int labelPadding = 25;
+    private int padding = 25; // Espace par rapport au bord de la fenetre
+    private int labelPadding = 25; // Espace pour les etiquettes
     private Color lineColor = new Color(44, 102, 230, 180);
     private Color pointColor = new Color(100, 100, 100, 180);
     private Color gridColor = new Color(200, 200, 200, 200);
     private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
     private int pointWidth = 4;
     private int numberYDivisions = 10;
+    private int numberXDivisions = 10;
 
     List<Point> graphPoints;
 
@@ -65,19 +66,27 @@ public final class PanelXYPlot extends JPanel {
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (getNbXPoints() - 1);
-        double yScale = ((double) getHeight() - 2 * padding - labelPadding) / (getMaxValue() - getMinValue());
+        //double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (getNbXPoints() - 1);
+        double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (getMaxXValue() - getMinXValue());
+        double yScale;
+        
+        if (getMaxYValue() - getMinYValue() != 0)
+        {
+        	yScale = ((double) getHeight() - (2 * padding) - labelPadding) / (getMaxYValue() - getMinYValue());
+        }else{
+        	yScale = (double) getHeight() - (2 * padding) - labelPadding;
+        }
 
         graphPoints = new ArrayList<>();
         for (int nSerie = 0; nSerie < seriesCollection.getSeriesCount(); nSerie++) {
             for (int nPoint = 0; nPoint < seriesCollection.getSerie(nSerie).getPointsCount(); nPoint++) {
-                int x1 = (int) (nPoint * xScale + padding + labelPadding);
-                int y1 = (int) ((getMaxValue() - seriesCollection.getSerie(nSerie).getPoints().get(nPoint).getY()) * yScale + padding);
+                //int x1 = (int) (nPoint * xScale + padding + labelPadding);
+            	System.out.println(seriesCollection.getSerie(nSerie).getPoints().get(nPoint));
+                int x1 = (int) ((seriesCollection.getSerie(nSerie).getPoints().get(nPoint).getX()-getMinXValue()) * xScale + padding + labelPadding);
+                int y1 = (int) ((getMaxYValue() - seriesCollection.getSerie(nSerie).getPoints().get(nPoint).getY()) * yScale + padding);
+                System.out.println(x1 + " ; " + y1);
                 graphPoints.add(new Point(x1, y1));
             }
-        }
-        for (int i = 0; i < getNbXPoints(); i++) {
-
         }
 
         // draw title
@@ -106,7 +115,7 @@ public final class PanelXYPlot extends JPanel {
                 g2.setColor(gridColor);
                 g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
                 g2.setColor(Color.BLACK);
-                String yLabel = ((int) ((getMinValue() + (getMaxValue() - getMinValue()) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
+                String yLabel = ((int) ((getMinYValue() + (getMaxYValue() - getMinYValue()) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
                 FontMetrics metrics = g2.getFontMetrics();
                 int labelWidth = metrics.stringWidth(yLabel);
                 g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
@@ -182,18 +191,34 @@ public final class PanelXYPlot extends JPanel {
         return nbMaxXpoints;
     }
 
-    public double getMaxValue() {
-        double maxValue = Double.MIN_VALUE;
+    public double getMaxYValue() {
+        double maxValue = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < seriesCollection.getSeriesCount(); i++) {
-            maxValue = Math.max(maxValue, seriesCollection.getSerie(i).getMaxValue());
+            maxValue = Math.max(maxValue, seriesCollection.getSerie(i).getMaxYValue());
+        }
+        return maxValue;
+    }
+    
+    public double getMaxXValue() {
+        double maxValue = Double.NEGATIVE_INFINITY;
+        for (int i = 0; i < seriesCollection.getSeriesCount(); i++) {
+            maxValue = Math.max(maxValue, seriesCollection.getSerie(i).getMaxXValue());
         }
         return maxValue;
     }
 
-    public double getMinValue() {
-        double minValue = Double.MAX_VALUE;
+    public double getMinYValue() {
+        double minValue = Double.POSITIVE_INFINITY;
         for (int i = 0; i < seriesCollection.getSeriesCount(); i++) {
-            minValue = Math.min(minValue, seriesCollection.getSerie(i).getMinValue());
+            minValue = Math.min(minValue, seriesCollection.getSerie(i).getMinYValue());
+        }
+        return minValue;
+    }
+    
+    public double getMinXValue() {
+        double minValue = Double.POSITIVE_INFINITY;
+        for (int i = 0; i < seriesCollection.getSeriesCount(); i++) {
+            minValue = Math.min(minValue, seriesCollection.getSerie(i).getMinXValue());
         }
         return minValue;
     }

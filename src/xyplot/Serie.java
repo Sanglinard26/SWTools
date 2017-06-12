@@ -28,9 +28,9 @@ public final class Serie {
 		return points;
 	}
     
-    public double getMaxValue()
+    public double getMaxYValue()
     {
-    	double maxValue = Double.MIN_VALUE;
+    	double maxValue = Double.NEGATIVE_INFINITY;
     	for (int i = 0; i<points.size(); i++)
     	{
     		maxValue = Math.max(maxValue, ((XYPoint)points.get(i)).getY());
@@ -38,12 +38,32 @@ public final class Serie {
     	return maxValue;
     }
     
-    public double getMinValue()
+    public double getMaxXValue()
     {
-    	double MinValue = Double.MAX_VALUE;
+    	double maxValue = Double.NEGATIVE_INFINITY;
+    	for (int i = 0; i<points.size(); i++)
+    	{
+    		maxValue = Math.max(maxValue, ((XYPoint)points.get(i)).getX());
+    	}
+    	return maxValue;
+    }
+    
+    public double getMinYValue()
+    {
+    	double MinValue = Double.POSITIVE_INFINITY;
     	for (int i = 0; i<points.size(); i++)
     	{
     		MinValue = Math.min(MinValue, ((XYPoint)points.get(i)).getY());
+    	}
+    	return MinValue;
+    }
+    
+    public double getMinXValue()
+    {
+    	double MinValue = Double.POSITIVE_INFINITY;
+    	for (int i = 0; i<points.size(); i++)
+    	{
+    		MinValue = Math.min(MinValue, ((XYPoint)points.get(i)).getX());
     	}
     	return MinValue;
     }
