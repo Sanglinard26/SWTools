@@ -33,6 +33,7 @@ import javax.swing.filechooser.FileFilter;
 import paco.Curve;
 import paco.ListModelLabel;
 import paco.ListModelPaco;
+import paco.Map;
 import paco.PaCo;
 import tools.Preference;
 import tools.Utilitaire;
@@ -187,7 +188,40 @@ public final class PanelPaCo extends JPanel {
                             JFrame frame = new JFrame("XY Plot");
                             frame.setLayout(new GridLayout(1, 1));
 
-                            frame.add(new PanelXYPlot(listLabel.getSelectedValue().getShortName(), seriesCollection));
+                            frame.add(new PanelXYPlot(curve.getShortName(), "X [" + curve.getUnitX() + "]", "Y [" + curve.getUnitZ() + "]",
+                                    seriesCollection, true));
+
+                            frame.pack();
+                            frame.setVisible(true);
+                        }
+
+                        if (listLabel.getSelectedValue() instanceof Map) {
+                            Map map = (Map) listLabel.getSelectedValue();
+
+                            for (short x = 0; x < map.getDimX() - 1; x++) {
+
+                                serie = new Serie("Serie - " + map.getxValues()[x]);
+
+                                for (short y = 0; y < map.getDimY() - 1; y++) {
+
+                                    try {
+                                        serie.addPoint(Double.parseDouble(map.getyValues()[y]), Double.parseDouble(map.getzValue(y, x)));
+                                    } catch (NumberFormatException nfe) {
+                                        if (Utilitaire.isNumber(map.getzValue(y, x))) {
+                                            serie.addPoint(y, Double.parseDouble(map.getzValue(y, x)));
+                                        } else {
+                                            serie.addPoint(y, Float.NaN);
+                                        }
+                                    }
+                                }
+                                seriesCollection.addSerie(serie);
+                            }
+
+                            JFrame frame = new JFrame("XY Plot");
+                            frame.setLayout(new GridLayout(1, 1));
+
+                            frame.add(new PanelXYPlot(map.getShortName(), "Y [" + map.getUnitY() + "]", "Z [" + map.getUnitZ() + "]",
+                                    seriesCollection, true));
 
                             frame.pack();
                             frame.setVisible(true);

@@ -96,7 +96,7 @@ public final class XYChart extends JPanel {
 
         final XYSeriesCollection dataset = new XYSeriesCollection();
         final JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset);
-        // chart.getXYPlot().getRenderer().setSeriesVisible(0, false); //A voir si utile plutot que de supprimer toutes les series � chaque selection
+
         chart.setBackgroundPaint(Color.LIGHT_GRAY);
         chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer(true, true));
         chart.getXYPlot().setBackgroundPaint(Color.WHITE);
@@ -142,9 +142,15 @@ public final class XYChart extends JPanel {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() & listSeries.getModel().getSize() > 0) {
-                    dataset.removeAllSeries();
+                    // dataset.removeAllSeries();
+
+                    for (int i = 0; i < dataset.getSeriesCount(); i++) {
+                        chart.getXYPlot().getRenderer().setSeriesVisible(i, false);
+                    }
+
                     for (int indice : listSeries.getSelectedIndices()) {
-                        dataset.addSeries(series.get(indice));
+                        // dataset.addSeries(series.get(indice));
+                        chart.getXYPlot().getRenderer().setSeriesVisible(indice, true);
                     }
                 }
 
@@ -212,9 +218,15 @@ public final class XYChart extends JPanel {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() & listSeries.getModel().getSize() > 0) {
-                    dataset.removeAllSeries();
+                    // dataset.removeAllSeries();
+
+                    for (int i = 0; i < dataset.getSeriesCount(); i++) {
+                        chart.getXYPlot().getRenderer().setSeriesVisible(i, false);
+                    }
+
                     for (int indice : listSeries.getSelectedIndices()) {
-                        dataset.addSeries(series.get(indice));
+                        // dataset.addSeries(series.get(indice));
+                        chart.getXYPlot().getRenderer().setSeriesVisible(indice, true);
                     }
                 }
 
