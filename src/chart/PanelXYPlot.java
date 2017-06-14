@@ -1,7 +1,7 @@
 /*
  * Creation : 6 juin 2017
  */
-package xyplot;
+package chart;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -31,7 +31,7 @@ public final class PanelXYPlot extends JPanel {
     private int numberYDivisions;
     private int numberXDivisions;
 
-    List<SerieScale> listSeries;
+    private List<SerieScale> listSeries;
 
     private SerieScale serieScale;
 
@@ -197,6 +197,8 @@ public final class PanelXYPlot extends JPanel {
             hue = (float) (nSerie) / (float) (listSeries.size());
 
             g2.setColor(Color.getHSBColor(hue, 1, 1));
+            
+            listSeries.get(nSerie).setSerieColor(Color.getHSBColor(hue, 1, 1));
 
             g2.setStroke(GRAPH_STROKE);
             for (int i = 0; i < listSeries.get(nSerie).size() - 1; i++) {
@@ -274,6 +276,10 @@ public final class PanelXYPlot extends JPanel {
         }
         return minValue;
     }
+    
+    public SeriesCollection getSeriesCollection() {
+		return seriesCollection;
+	}
 
     public void setSeriesCollection(SeriesCollection seriesCollection) {
         this.seriesCollection = seriesCollection;
@@ -286,10 +292,15 @@ public final class PanelXYPlot extends JPanel {
         private static final long serialVersionUID = 1L;
 
         private String serieName;
+        private Color serieColor;
 
         public SerieScale(String serieName) {
             this.serieName = serieName;
         }
+        
+        public void setSerieColor(Color serieColor) {
+			this.serieColor = serieColor;
+		}
     }
 
 }

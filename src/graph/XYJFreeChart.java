@@ -27,13 +27,13 @@ import paco.Map;
 import paco.Variable;
 import tools.Utilitaire;
 
-public final class XYChart extends JPanel {
+public final class XYJFreeChart extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
     private static final JLabel labelNoGraph = new JLabel("Graphique non disponible");
 
-    public XYChart(Variable variable) {
+    public XYJFreeChart(Variable variable) {
 
         if (variable instanceof Curve) {
             this.setLayout(new BorderLayout());

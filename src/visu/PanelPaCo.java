@@ -30,6 +30,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
+import chart.PanelXYPlot;
+import chart.Serie;
+import chart.SeriesCollection;
+import chart.XYChart;
 import paco.Curve;
 import paco.ListModelLabel;
 import paco.ListModelPaco;
@@ -37,9 +41,6 @@ import paco.Map;
 import paco.PaCo;
 import tools.Preference;
 import tools.Utilitaire;
-import xyplot.PanelXYPlot;
-import xyplot.Serie;
-import xyplot.SeriesCollection;
 
 public final class PanelPaCo extends JPanel {
 
@@ -188,8 +189,8 @@ public final class PanelPaCo extends JPanel {
                             JFrame frame = new JFrame("XY Plot");
                             frame.setLayout(new GridLayout(1, 1));
 
-                            frame.add(new PanelXYPlot(curve.getShortName(), "X [" + curve.getUnitX() + "]", "Y [" + curve.getUnitZ() + "]",
-                                    seriesCollection, true));
+                            frame.add(new XYChart(new PanelXYPlot(curve.getShortName(), "X [" + curve.getUnitX() + "]", "Y [" + curve.getUnitZ() + "]",
+                                    seriesCollection, true), XYChart.RIGHT_POSITION, false));
 
                             frame.pack();
                             frame.setVisible(true);
@@ -220,8 +221,8 @@ public final class PanelPaCo extends JPanel {
                             JFrame frame = new JFrame("XY Plot");
                             frame.setLayout(new GridLayout(1, 1));
 
-                            frame.add(new PanelXYPlot(map.getShortName(), "Y [" + map.getUnitY() + "]", "Z [" + map.getUnitZ() + "]",
-                                    seriesCollection, true));
+                            frame.add(new XYChart(new PanelXYPlot(map.getShortName(), "Y [" + map.getUnitY() + "]", "Z [" + map.getUnitZ() + "]",
+                                    seriesCollection, true),XYChart.RIGHT_POSITION, true));
 
                             frame.pack();
                             frame.setVisible(true);

@@ -11,7 +11,7 @@ import javax.swing.JRadioButton;
 import javax.swing.border.LineBorder;
 
 import graph.SurfaceChart;
-import graph.XYChart;
+import graph.XYJFreeChart;
 import paco.Variable;
 
 public final class PanelGraph extends JPanel {
@@ -61,11 +61,11 @@ public final class PanelGraph extends JPanel {
 
     public final void createChart(final Variable variable) {
         if (radioBt2D.isSelected()) {
-            panCard.add(new XYChart(variable), "2D");
+            panCard.add(new XYJFreeChart(variable), "2D");
             panCard.add(new SurfaceChart(variable), "3D");
         } else {
             panCard.add(new SurfaceChart(variable), "3D");
-            panCard.add(new XYChart(variable), "2D");
+            panCard.add(new XYJFreeChart(variable), "2D");
         }
 
     }

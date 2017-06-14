@@ -1,4 +1,4 @@
-package xyplot;
+package chart;
 
 import java.util.ArrayList;
 import java.util.List;
