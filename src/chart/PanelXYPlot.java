@@ -197,7 +197,7 @@ public final class PanelXYPlot extends JPanel {
             hue = (float) (nSerie) / (float) (listSeries.size());
 
             g2.setColor(Color.getHSBColor(hue, 1, 1));
-            
+
             listSeries.get(nSerie).setSerieColor(Color.getHSBColor(hue, 1, 1));
 
             g2.setStroke(GRAPH_STROKE);
@@ -276,10 +276,10 @@ public final class PanelXYPlot extends JPanel {
         }
         return minValue;
     }
-    
+
     public SeriesCollection getSeriesCollection() {
-		return seriesCollection;
-	}
+        return seriesCollection;
+    }
 
     public void setSeriesCollection(SeriesCollection seriesCollection) {
         this.seriesCollection = seriesCollection;
@@ -297,10 +297,10 @@ public final class PanelXYPlot extends JPanel {
         public SerieScale(String serieName) {
             this.serieName = serieName;
         }
-        
+
         public void setSerieColor(Color serieColor) {
-			this.serieColor = serieColor;
-		}
+            this.serieColor = serieColor;
+        }
     }
 
 }

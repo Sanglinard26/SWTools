@@ -189,8 +189,8 @@ public final class PanelPaCo extends JPanel {
                             JFrame frame = new JFrame("XY Plot");
                             frame.setLayout(new GridLayout(1, 1));
 
-                            frame.add(new XYChart(new PanelXYPlot(curve.getShortName(), "X [" + curve.getUnitX() + "]", "Y [" + curve.getUnitZ() + "]",
-                                    seriesCollection, true), XYChart.RIGHT_POSITION, false));
+                            frame.add(new XYChart(new PanelXYPlot(curve.getShortName(), "X [" + curve.getUnitX() + "]",
+                                    "Y [" + curve.getUnitZ() + "]", seriesCollection, true), XYChart.RIGHT_POSITION, false));
 
                             frame.pack();
                             frame.setVisible(true);
@@ -201,7 +201,7 @@ public final class PanelPaCo extends JPanel {
 
                             for (short x = 0; x < map.getDimX() - 1; x++) {
 
-                                serie = new Serie("Serie - " + map.getxValues()[x]);
+                                serie = new Serie(map.getxValues()[x]);
 
                                 for (short y = 0; y < map.getDimY() - 1; y++) {
 
@@ -222,7 +222,7 @@ public final class PanelPaCo extends JPanel {
                             frame.setLayout(new GridLayout(1, 1));
 
                             frame.add(new XYChart(new PanelXYPlot(map.getShortName(), "Y [" + map.getUnitY() + "]", "Z [" + map.getUnitZ() + "]",
-                                    seriesCollection, true),XYChart.RIGHT_POSITION, true));
+                                    seriesCollection, true), XYChart.RIGHT_POSITION, true));
 
                             frame.pack();
                             frame.setVisible(true);
