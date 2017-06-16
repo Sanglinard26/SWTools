@@ -303,6 +303,14 @@ public final class PanelXYPlot extends JPanel {
         public SerieScale(String serieName) {
             this.serieName = serieName;
         }
+        
+        public String getSerieName() {
+			return serieName;
+		}
+        
+        public Color getSerieColor() {
+			return serieColor;
+		}
 
         public void setSerieColor(int index, Color serieColor) {
             this.serieColor = serieColor;

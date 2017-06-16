@@ -1,13 +1,14 @@
 package chart;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public final class XYChart extends JPanel {
+public final class PanelXYChart extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -19,7 +20,7 @@ public final class XYChart extends JPanel {
 
     private ListLegend legendList;
 
-    public XYChart(PanelXYPlot xyPlot, int position, Boolean legend) {
+    public PanelXYChart(PanelXYPlot xyPlot, int position, Boolean legend) {
         this.xyPlot = xyPlot;
 
         setLayout(new BorderLayout());
@@ -34,6 +35,7 @@ public final class XYChart extends JPanel {
             }
 
             legendList = new ListLegend(listSerieName);
+            legendList.setBackground(Color.WHITE);
             legendList.addListSelectionListener(new ListEvent());
 
             switch (position) {
@@ -50,14 +52,21 @@ public final class XYChart extends JPanel {
 
     private final class ListEvent implements ListSelectionListener {
 
-        private SeriesCollection serieCollection = new SeriesCollection();
+        private SeriesCollection serieCollection;
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
 
             if (!e.getValueIsAdjusting() & !legendList.isSelectionEmpty()) {
+            	
+            	if (serieCollection != null)
+            	{
+            		serieCollection.removeAllSeries();
+            	}else{
+            		serieCollection = new SeriesCollection();
+            	}
+            	
                 for (int i = 0; i < legendList.getSelectedValuesList().size(); i++) {
-                    System.out.println(legendList.getSelectedValuesList().get(i));
                     serieCollection.addSerie(legendList.getSelectedValuesList().get(i));
                 }
                 xyPlot.selectSeries(serieCollection);

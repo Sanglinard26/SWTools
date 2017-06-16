@@ -58,6 +58,10 @@ public final class Serie {
         }
         return MinValue;
     }
+    
+    public Color getColor() {
+		return color;
+	}
 
     public void setColor(Color color) {
         this.color = color;

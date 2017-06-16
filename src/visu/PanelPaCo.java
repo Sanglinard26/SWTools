@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +17,6 @@ import java.io.OutputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,14 +28,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
-import chart.PanelXYPlot;
-import chart.Serie;
-import chart.SeriesCollection;
-import chart.XYChart;
-import paco.Curve;
 import paco.ListModelLabel;
 import paco.ListModelPaco;
-import paco.Map;
 import paco.PaCo;
 import tools.Preference;
 import tools.Utilitaire;
@@ -166,68 +158,6 @@ public final class PanelPaCo extends JPanel {
                     panVisu.add(listLabel.getSelectedValue().showValues(), gbc);
                     panVisu.revalidate();
                     panVisu.repaint();
-
-                    if (true) {
-                        SeriesCollection seriesCollection = new SeriesCollection();
-                        Serie serie;
-
-                        if (listLabel.getSelectedValue() instanceof Curve) {
-                            Curve curve = (Curve) listLabel.getSelectedValue();
-
-                            serie = new Serie("Serie");
-                            for (short x = 0; x < curve.getDimX(); x++) {
-                                try {
-                                    serie.addPoint(Double.parseDouble(curve.getValue(0, x)), Double.parseDouble(curve.getValue(1, x)));
-                                } catch (NumberFormatException nfe) {
-                                    serie.addPoint(x, Double.parseDouble(curve.getValue(1, x)));
-                                }
-
-                            }
-
-                            seriesCollection.addSerie(serie);
-
-                            JFrame frame = new JFrame("XY Plot");
-                            frame.setLayout(new GridLayout(1, 1));
-
-                            frame.add(new XYChart(new PanelXYPlot(curve.getShortName(), "X [" + curve.getUnitX() + "]",
-                                    "Y [" + curve.getUnitZ() + "]", seriesCollection, true), XYChart.RIGHT_POSITION, false));
-
-                            frame.pack();
-                            frame.setVisible(true);
-                        }
-
-                        if (listLabel.getSelectedValue() instanceof Map) {
-                            Map map = (Map) listLabel.getSelectedValue();
-
-                            for (short x = 0; x < map.getDimX() - 1; x++) {
-
-                                serie = new Serie(map.getxValues()[x]);
-
-                                for (short y = 0; y < map.getDimY() - 1; y++) {
-
-                                    try {
-                                        serie.addPoint(Double.parseDouble(map.getyValues()[y]), Double.parseDouble(map.getzValue(y, x)));
-                                    } catch (NumberFormatException nfe) {
-                                        if (Utilitaire.isNumber(map.getzValue(y, x))) {
-                                            serie.addPoint(y, Double.parseDouble(map.getzValue(y, x)));
-                                        } else {
-                                            serie.addPoint(y, Float.NaN);
-                                        }
-                                    }
-                                }
-                                seriesCollection.addSerie(serie);
-                            }
-
-                            JFrame frame = new JFrame("XY Plot");
-                            frame.setLayout(new GridLayout(1, 1));
-
-                            frame.add(new XYChart(new PanelXYPlot(map.getShortName(), "Y [" + map.getUnitY() + "]", "Z [" + map.getUnitZ() + "]",
-                                    seriesCollection, true), XYChart.RIGHT_POSITION, true));
-
-                            frame.pack();
-                            frame.setVisible(true);
-                        }
-                    }
 
                     panGraph.getPanCard().removeAll();
                     panGraph.createChart(listLabel.getSelectedValue());

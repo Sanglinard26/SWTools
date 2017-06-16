@@ -5,7 +5,7 @@ import java.util.List;
 
 public final class SeriesCollection {
 	
-	private List series;
+	private List<Serie> series;
 
     public SeriesCollection() {
         this(null);
