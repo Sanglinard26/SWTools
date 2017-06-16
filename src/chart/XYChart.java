@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public final class XYChart extends JPanel {
 
@@ -13,7 +15,7 @@ public final class XYChart extends JPanel {
     public static final int RIGHT_POSITION = 1;
 
     private final PanelXYPlot xyPlot;
-    private String[] listSerieName;
+    private Serie[] listSerieName;
 
     private ListLegend legendList;
 
@@ -25,13 +27,14 @@ public final class XYChart extends JPanel {
         add(xyPlot, BorderLayout.CENTER);
 
         if (legend) {
-            listSerieName = new String[xyPlot.getSeriesCollection().getSeriesCount()];
+            listSerieName = new Serie[xyPlot.getSeriesCollection().getSeriesCount()];
 
             for (int i = 0; i < xyPlot.getSeriesCollection().getSeriesCount(); i++) {
-                listSerieName[i] = xyPlot.getSeriesCollection().getSerie(i).toString();
+                listSerieName[i] = xyPlot.getSeriesCollection().getSerie(i);
             }
 
             legendList = new ListLegend(listSerieName);
+            legendList.addListSelectionListener(new ListEvent());
 
             switch (position) {
             case LEFT_POSITION:
@@ -43,5 +46,22 @@ public final class XYChart extends JPanel {
             }
         }
 
+    }
+
+    private final class ListEvent implements ListSelectionListener {
+
+        private SeriesCollection serieCollection = new SeriesCollection();
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+
+            if (!e.getValueIsAdjusting() & !legendList.isSelectionEmpty()) {
+                for (int i = 0; i < legendList.getSelectedValuesList().size(); i++) {
+                    System.out.println(legendList.getSelectedValuesList().get(i));
+                    serieCollection.addSerie(legendList.getSelectedValuesList().get(i));
+                }
+                xyPlot.selectSeries(serieCollection);
+            }
+        }
     }
 }
