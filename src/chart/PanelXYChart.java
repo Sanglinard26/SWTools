@@ -69,7 +69,7 @@ public final class PanelXYChart extends JPanel {
                 for (int i = 0; i < legendList.getSelectedValuesList().size(); i++) {
                     serieCollection.addSerie(legendList.getSelectedValuesList().get(i));
                 }
-                xyPlot.selectSeries(serieCollection);
+                xyPlot.setSeriesCollection(serieCollection);
             }
         }
     }

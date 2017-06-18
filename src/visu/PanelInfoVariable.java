@@ -19,7 +19,7 @@ import paco.Variable;
 public final class PanelInfoVariable extends JPanel {
 
     private static final long serialVersionUID = 1L;
-
+    
     private static final String ICON_TEXT = "/text_icon_16.png";
     private static final String ICON_IMAGE = "/image_icon_16.png";
 
