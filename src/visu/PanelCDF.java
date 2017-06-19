@@ -28,13 +28,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
+import dcm.Dcm;
 import paco.ListModelLabel;
 import paco.ListModelPaco;
 import paco.PaCo;
 import tools.Preference;
 import tools.Utilitaire;
 
-public final class PanelPaCo extends JPanel {
+public final class PanelCDF extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,7 +48,7 @@ public final class PanelPaCo extends JPanel {
 
     // GUI
     private static final JButton btOpen = new JButton("Ajouter PaCo(s)");
-    private static final ListPaco listPaco = new ListPaco(new ListModelPaco());
+    private static final ListPaco listCDF = new ListPaco(new ListModelPaco());
     private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
     private static final JPanel panVisu = new JPanel(new GridBagLayout());
     private static final PanelGraph panGraph = new PanelGraph();
@@ -63,7 +64,7 @@ public final class PanelPaCo extends JPanel {
 
     private File dtd;
 
-    public PanelPaCo() {
+    public PanelCDF() {
 
         setLayout(new BorderLayout());
 
@@ -91,18 +92,18 @@ public final class PanelPaCo extends JPanel {
         gbc.weighty = 1;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
-        listPaco.addListSelectionListener(new ListSelectionListener() {
+        listCDF.addListSelectionListener(new ListSelectionListener() {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting() == false & !listPaco.isSelectionEmpty()) {
+                if (e.getValueIsAdjusting() == false & !listCDF.isSelectionEmpty()) {
                     razUI();
-                    listLabel.getModel().setList(listPaco.getSelectedValue().getListLabel());
+                    listLabel.getModel().setList(listCDF.getSelectedValue().getListLabel());
                     listLabel.ensureIndexIsVisible(0);
                 }
             }
         });
-        panPaco.add(new JScrollPane(listPaco), gbc);
+        panPaco.add(new JScrollPane(listCDF), gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
@@ -195,7 +196,7 @@ public final class PanelPaCo extends JPanel {
 
                 @Override
                 public String getDescription() {
-                    return "PaCo *.xml";
+                    return "Fichier d'echange de donnees (*.xml), (*.dcm)";
                 }
 
                 @Override
@@ -205,14 +206,14 @@ public final class PanelPaCo extends JPanel {
                         return true;
 
                     String extension = Utilitaire.getExtension(f);
-                    if (extension.equals(Utilitaire.xml)) {
+                    if (extension.equals(Utilitaire.xml) | extension.equals(Utilitaire.dcm)) {
                         return true;
                     }
                     return false;
                 }
             });
 
-            final int reponse = jFileChooser.showOpenDialog(PanelPaCo.this);
+            final int reponse = jFileChooser.showOpenDialog(PanelCDF.this);
             if (reponse == JFileChooser.APPROVE_OPTION) {
 
                 dtd = new File(jFileChooser.getSelectedFile().getParent() + "/" + DTD);
@@ -239,7 +240,7 @@ public final class PanelPaCo extends JPanel {
 
                 razUI();
 
-                pm = new ProgressMonitor(PanelPaCo.this, "Fichier :", "...", 0, 0);
+                pm = new ProgressMonitor(PanelCDF.this, "Fichier :", "...", 0, 0);
                 pm.setMillisToDecideToPopup(0);
                 pm.setMillisToPopup(0);
 
@@ -254,6 +255,7 @@ public final class PanelPaCo extends JPanel {
         private final File[] filesPaco;
         private int cnt = 0;
         private PaCo paco;
+        private Dcm dcm;
 
         public TaskCharging(File[] filesPaco) {
             this.filesPaco = filesPaco;
@@ -265,17 +267,26 @@ public final class PanelPaCo extends JPanel {
             pm.setMaximum(filesPaco.length);
 
             for (File file : filesPaco) {
-                if (!(listPaco.getModel().getList().contains(file.getName().substring(0, file.getName().length() - 4)))) {
+                if (!(listCDF.getModel().getList().contains(file.getName().substring(0, file.getName().length() - 4)))) {
                     if (!pm.isCanceled()) {
-                        paco = new PaCo(file);
 
-                        if (paco.isValid()) {
-                            listPaco.getModel().addPaco(paco);
+                        switch (file.getName().substring(file.getName().length() - 3).toLowerCase()) {
+                        case "xml":
+                            paco = new PaCo(file);
+
+                            if (paco.isValid()) {
+                                listCDF.getModel().addPaco(paco);
+                            }
+                            break;
+                        case "dcm":
+                            dcm = new Dcm(file);
+                            break;
                         }
+
                     }
                 } else {
                     JOptionPane.showMessageDialog(null,
-                            "PaCo deja present dans la liste !" + "\nNom : " + file.getName().substring(0, file.getName().length() - 4), "INFO",
+                            "Fichier deja present dans la liste !" + "\nNom : " + file.getName().substring(0, file.getName().length() - 4), "INFO",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
                 cnt += 1;
@@ -283,8 +294,8 @@ public final class PanelPaCo extends JPanel {
                 pm.setNote(file.getName().substring(0, file.getName().length() - 4));
             }
 
-            if (listPaco.getSelectedIndices().length > 0)
-                listPaco.clearSelection();
+            if (listCDF.getSelectedIndices().length > 0)
+                listCDF.clearSelection();
 
             return cnt;
         }

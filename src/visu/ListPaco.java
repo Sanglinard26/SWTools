@@ -81,7 +81,7 @@ public final class ListPaco extends JList<PaCo> implements KeyListener {
                         public void actionPerformed(ActionEvent e) {
                             ListPaco.this.getModel().removePaco(ListPaco.this.getSelectedIndex());
                             ListPaco.this.clearSelection();
-                            PanelPaCo.razUI();
+                            PanelCDF.razUI();
                         }
                     });
                     menu.add(menuItem);
@@ -139,7 +139,7 @@ public final class ListPaco extends JList<PaCo> implements KeyListener {
                         public void actionPerformed(ActionEvent e) {
                             ListPaco.this.getModel().clearList();
                             ListPaco.this.clearSelection();
-                            PanelPaCo.razUI();
+                            PanelCDF.razUI();
                         }
                     });
                     menu.add(menuItem);

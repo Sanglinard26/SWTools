@@ -101,7 +101,7 @@ public final class Ihm extends JFrame {
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
         // Onglet lecteur PaCo
-        ongletPaCo.add(new PanelPaCo());
+        ongletPaCo.add(new PanelCDF());
         onglets.addTab("Lecteur PaCo", ongletPaCo);
 
         // Onglet comparaison de Lab

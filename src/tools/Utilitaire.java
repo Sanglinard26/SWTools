@@ -13,6 +13,7 @@ public final class Utilitaire {
     public final static String xml = "xml";
     public final static String lab = "lab";
     public final static String a2l = "a2l";
+    public final static String dcm = "dcm";
 
     /*
      * Get the extension of a file.
