@@ -24,6 +24,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import cdf.Axis;
+import cdf.Cdf;
+import cdf.Curve;
+import cdf.Map;
+import cdf.Scalaire;
+import cdf.ValueBlock;
+import cdf.Variable;
 import jxl.Workbook;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
@@ -40,7 +47,7 @@ import jxl.write.biff.RowsExceededException;
 import tools.Utilitaire;
 import visu.Main;
 
-public final class PaCo {
+public final class PaCo implements Cdf {
 
     public static final String ASCII = "ASCII";
     public static final String _C = "VALUE";

@@ -10,8 +10,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import cdf.Variable;
 import paco.TableModelView;
-import paco.Variable;
 
 public final class TableView extends JTable {
 

@@ -1,4 +1,4 @@
-package paco;
+package cdf;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -17,6 +17,7 @@ import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import paco.TableModelView;
 import visu.TableView;
 
 public abstract class Variable {

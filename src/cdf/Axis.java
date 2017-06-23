@@ -1,4 +1,4 @@
-package paco;
+package cdf;
 
 public final class Axis extends Variable {
 

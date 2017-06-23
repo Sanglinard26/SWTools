@@ -1,4 +1,4 @@
-package paco;
+package cdf;
 
 public final class Map extends Variable {
 

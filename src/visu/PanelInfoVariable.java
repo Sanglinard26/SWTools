@@ -14,7 +14,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import paco.Variable;
+import cdf.Variable;
 
 public final class PanelInfoVariable extends JPanel {
 

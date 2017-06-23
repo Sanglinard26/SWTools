@@ -10,9 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.LineBorder;
 
+import cdf.Variable;
 import graph.SurfaceChart;
 import graph.XYChart;
-import paco.Variable;
 
 public final class PanelGraph extends JPanel {
 

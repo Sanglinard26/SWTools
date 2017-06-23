@@ -19,8 +19,8 @@ import com.orsoncharts.renderer.RainbowScale;
 import com.orsoncharts.renderer.xyz.SurfaceRenderer;
 import com.orsoncharts.util.Orientation;
 
-import paco.Map;
-import paco.Variable;
+import cdf.Map;
+import cdf.Variable;
 
 public final class SurfaceChart extends JPanel {
 

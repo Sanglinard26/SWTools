@@ -15,9 +15,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import cdf.Variable;
 import graph.PieChart;
 import paco.PaCo;
-import paco.Variable;
 
 public final class ListLabelRenderer extends JPanel implements ListCellRenderer<Variable> {
 

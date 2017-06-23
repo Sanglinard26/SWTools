@@ -26,9 +26,9 @@ import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import paco.ListModelLabel;
+import cdf.ListModelLabel;
+import cdf.Variable;
 import paco.PaCo;
-import paco.Variable;
 
 public final class ListLabel extends JList<Variable> {
 

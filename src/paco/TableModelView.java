@@ -31,7 +31,10 @@ public final class TableModelView extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        return values[row][col];
+        if (values[row][col] != null) {
+            return values[row][col];
+        }
+        return "";
     }
 
     public void setData(String[][] data) {

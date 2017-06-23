@@ -7,13 +7,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import cdf.Curve;
+import cdf.Map;
+import cdf.Variable;
 import chart.PanelXYChart;
 import chart.PanelXYPlot;
 import chart.Serie;
 import chart.SeriesCollection;
-import paco.Curve;
-import paco.Map;
-import paco.Variable;
 import tools.Utilitaire;
 
 public final class XYChart extends JPanel {

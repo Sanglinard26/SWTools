@@ -21,28 +21,28 @@ import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import paco.ListModelPaco;
-import paco.PaCo;
+import cdf.Cdf;
+import cdf.ListModelCdf;
 import tools.Preference;
 
-public final class ListPaco extends JList<PaCo> implements KeyListener {
+public final class ListCdf extends JList<Cdf> implements KeyListener {
 
     private static final long serialVersionUID = 1L;
     private static final String ICON_EXCEL = "/excel_icon_16.png";
     private static final String ICON_TEXT = "/text_icon_16.png";
     private static final String ICON_TRASH = "/corbeille_icon_16.png";
 
-    public ListPaco(ListModelPaco dataModel) {
+    public ListCdf(ListModelCdf dataModel) {
         super(dataModel);
-        setCellRenderer(new ListPacoRenderer());
+        setCellRenderer(new ListCdfRenderer());
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         addKeyListener(this);
         addMouseListener(new ListMouseListener());
     }
 
     @Override
-    public ListModelPaco getModel() {
-        return (ListModelPaco) super.getModel();
+    public ListModelCdf getModel() {
+        return (ListModelCdf) super.getModel();
     }
 
     @Override
@@ -53,7 +53,7 @@ public final class ListPaco extends JList<PaCo> implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == 127 & this.getSelectedIndex() > -1) // touche suppr
         {
-            this.getModel().removePaco(this.getSelectedIndex());
+            this.getModel().removeCdf(this.getSelectedIndex());
             this.clearSelection();
         }
 
@@ -61,45 +61,43 @@ public final class ListPaco extends JList<PaCo> implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // TODO Auto-generated method stub
-
     }
 
     private final class ListMouseListener extends MouseAdapter {
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger() & ListPaco.this.getModel().getSize() > 0) {
+            if (e.isPopupTrigger() & ListCdf.this.getModel().getSize() > 0) {
                 final JPopupMenu menu = new JPopupMenu();
                 final JMenu menuExport = new JMenu("Export");
                 JMenuItem menuItem;
-                if (ListPaco.this.locationToIndex(e.getPoint()) == ListPaco.this.getSelectedIndex()) {
+                if (ListCdf.this.locationToIndex(e.getPoint()) == ListCdf.this.getSelectedIndex()) {
 
-                    menuItem = new JMenuItem("Supprimer ce PaCo", new ImageIcon(getClass().getResource(ICON_TRASH)));
+                    menuItem = new JMenuItem("Supprimer ce fichier", new ImageIcon(getClass().getResource(ICON_TRASH)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            ListPaco.this.getModel().removePaco(ListPaco.this.getSelectedIndex());
-                            ListPaco.this.clearSelection();
+                            ListCdf.this.getModel().removeCdf(ListCdf.this.getSelectedIndex());
+                            ListCdf.this.clearSelection();
                             PanelCDF.razUI();
                         }
                     });
                     menu.add(menuItem);
                     menu.addSeparator();
-                    menuItem = new JMenuItem("Exporter le PaCo en txt", new ImageIcon(getClass().getResource(ICON_TEXT)));
+                    menuItem = new JMenuItem("Exporter le fichier en txt", new ImageIcon(getClass().getResource(ICON_TEXT)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
                         public void actionPerformed(ActionEvent e) {
 
                             final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
-                            fileChooser.setDialogTitle("Enregistement du PaCo");
+                            fileChooser.setDialogTitle("Enregistement du fichier");
                             fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier texte (*.txt)", "txt"));
-                            fileChooser.setSelectedFile(new File(ListPaco.this.getSelectedValue() + ".txt"));
+                            fileChooser.setSelectedFile(new File(ListCdf.this.getSelectedValue() + ".txt"));
                             final int rep = fileChooser.showSaveDialog(null);
 
                             if (rep == JFileChooser.APPROVE_OPTION) {
-                                ListPaco.this.getSelectedValue().exportToTxt(fileChooser.getSelectedFile());
+                                ListCdf.this.getSelectedValue().exportToTxt(fileChooser.getSelectedFile());
                                 JOptionPane.showMessageDialog(null, "Enregistrement termine !");
                             }
 
@@ -107,7 +105,7 @@ public final class ListPaco extends JList<PaCo> implements KeyListener {
                     });
                     menuExport.add(menuItem);
                     menuExport.addSeparator();
-                    menuItem = new JMenuItem("Exporter le PaCo en xls", new ImageIcon(getClass().getResource(ICON_EXCEL)));
+                    menuItem = new JMenuItem("Exporter le fichier en xls", new ImageIcon(getClass().getResource(ICON_EXCEL)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -115,13 +113,13 @@ public final class ListPaco extends JList<PaCo> implements KeyListener {
 
                             if (true) {
                                 final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
-                                fileChooser.setDialogTitle("Enregistement du PaCo");
+                                fileChooser.setDialogTitle("Enregistement du fichier");
                                 fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier Excel (*.xls)", "xls"));
-                                fileChooser.setSelectedFile(new File(ListPaco.this.getSelectedValue() + ".xls"));
+                                fileChooser.setSelectedFile(new File(ListCdf.this.getSelectedValue() + ".xls"));
                                 final int rep = fileChooser.showSaveDialog(null);
 
                                 if (rep == JFileChooser.APPROVE_OPTION) {
-                                    ListPaco.this.getSelectedValue().exportToExcel(fileChooser.getSelectedFile());
+                                    ListCdf.this.getSelectedValue().exportToExcel(fileChooser.getSelectedFile());
                                     JOptionPane.showMessageDialog(null, "Enregistrement termine !");
                                 }
                             }
@@ -132,13 +130,13 @@ public final class ListPaco extends JList<PaCo> implements KeyListener {
                     menu.add(menuExport);
 
                 } else {
-                    menuItem = new JMenuItem("Supprimer tous les PaCos", new ImageIcon(getClass().getResource(ICON_TRASH)));
+                    menuItem = new JMenuItem("Supprimer tous les fichiers", new ImageIcon(getClass().getResource(ICON_TRASH)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            ListPaco.this.getModel().clearList();
-                            ListPaco.this.clearSelection();
+                            ListCdf.this.getModel().clearList();
+                            ListCdf.this.clearSelection();
                             PanelCDF.razUI();
                         }
                     });

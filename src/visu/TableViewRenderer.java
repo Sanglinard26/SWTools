@@ -12,8 +12,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import com.orsoncharts.Range;
 import com.orsoncharts.renderer.RainbowScale;
 
-import paco.Map;
-import paco.Variable;
+import cdf.Map;
+import cdf.Variable;
 import tools.Preference;
 import tools.Utilitaire;
 

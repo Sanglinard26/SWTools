@@ -16,9 +16,9 @@ import javax.swing.JProgressBar;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.LineBorder;
 
-import paco.PaCo;
+import cdf.Cdf;
 
-public final class ListPacoRenderer extends JPanel implements ListCellRenderer<PaCo> {
+public final class ListCdfRenderer extends JPanel implements ListCellRenderer<Cdf> {
 
     private static final long serialVersionUID = 1L;
     private final JLabel txtNamePaco = new JLabel();
@@ -26,7 +26,7 @@ public final class ListPacoRenderer extends JPanel implements ListCellRenderer<P
     private final JProgressBar progressBarScore = new JProgressBar();
     private static final DecimalFormat df = new DecimalFormat("###.##");
 
-    public ListPacoRenderer() {
+    public ListCdfRenderer() {
         setLayout(new GridLayout(3, 1, 5, 5));
         txtNamePaco.setFont(new Font(null, Font.BOLD, 12));
         add(txtNamePaco);
@@ -36,7 +36,7 @@ public final class ListPacoRenderer extends JPanel implements ListCellRenderer<P
     }
 
     @Override
-    public Component getListCellRendererComponent(JList<? extends PaCo> list, PaCo value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<? extends Cdf> list, Cdf value, int index, boolean isSelected, boolean cellHasFocus) {
 
         txtNamePaco.setText(value.getName());
         txtNbVariable.setText("Nombre de label(s) : " + Integer.toString(value.getNbLabel()));

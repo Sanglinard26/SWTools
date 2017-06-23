@@ -1,7 +1,7 @@
 /*
  * Creation : 20 janv. 2017
  */
-package paco;
+package cdf;
 
 import java.util.ArrayList;
 import java.util.Collections;

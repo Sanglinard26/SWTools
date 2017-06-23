@@ -28,9 +28,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
+import cdf.ListModelCdf;
+import cdf.ListModelLabel;
 import dcm.Dcm;
-import paco.ListModelLabel;
-import paco.ListModelPaco;
 import paco.PaCo;
 import tools.Preference;
 import tools.Utilitaire;
@@ -47,15 +47,15 @@ public final class PanelCDF extends JPanel {
     private static final GridBagConstraints gbc = new GridBagConstraints();
 
     // GUI
-    private static final JButton btOpen = new JButton("Ajouter PaCo(s)");
-    private static final ListPaco listCDF = new ListPaco(new ListModelPaco());
+    private static final JButton btOpen = new JButton("Ajouter fichier(s) de donnees de calibration");
+    private static final ListCdf listCDF = new ListCdf(new ListModelCdf());
     private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
     private static final JPanel panVisu = new JPanel(new GridBagLayout());
     private static final PanelGraph panGraph = new PanelGraph();
     private static final JTabbedPane tabPan = new JTabbedPane();
-    private static final JPanel panPaco = new JPanel(new GridBagLayout());
+    private static final JPanel panCDF = new JPanel(new GridBagLayout());
     private static final JPanel panLabel = new JPanel(new GridBagLayout());
-    private static final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panPaco, panLabel);
+    private static final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panCDF, panLabel);
     private static final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
     private static final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPaneLeft, splitPaneRight);
     private static final PanelHistory panelHistory = new PanelHistory();
@@ -68,7 +68,7 @@ public final class PanelCDF extends JPanel {
 
         setLayout(new BorderLayout());
 
-        panPaco.setMinimumSize(new Dimension(500, 300));
+        panCDF.setMinimumSize(new Dimension(500, 300));
         panLabel.setMinimumSize(new Dimension(500, 300));
 
         gbc.fill = GridBagConstraints.BOTH;
@@ -80,8 +80,8 @@ public final class PanelCDF extends JPanel {
         gbc.weighty = 0;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
-        btOpen.addActionListener(new OpenPaco());
-        panPaco.add(btOpen, gbc);
+        btOpen.addActionListener(new OpenCDF());
+        panCDF.add(btOpen, gbc);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
@@ -103,7 +103,7 @@ public final class PanelCDF extends JPanel {
                 }
             }
         });
-        panPaco.add(new JScrollPane(listCDF), gbc);
+        panCDF.add(new JScrollPane(listCDF), gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
@@ -186,7 +186,7 @@ public final class PanelCDF extends JPanel {
         add(splitPaneGlobal, BorderLayout.CENTER);
     }
 
-    private final class OpenPaco implements ActionListener {
+    private final class OpenCDF implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
@@ -252,21 +252,21 @@ public final class PanelCDF extends JPanel {
 
     private final class TaskCharging extends SwingWorker<Integer, Integer> {
 
-        private final File[] filesPaco;
+        private final File[] filesCDF;
         private int cnt = 0;
         private PaCo paco;
         private Dcm dcm;
 
         public TaskCharging(File[] filesPaco) {
-            this.filesPaco = filesPaco;
+            this.filesCDF = filesPaco;
         }
 
         @Override
         protected Integer doInBackground() throws Exception {
 
-            pm.setMaximum(filesPaco.length);
+            pm.setMaximum(filesCDF.length);
 
-            for (File file : filesPaco) {
+            for (File file : filesCDF) {
                 if (!(listCDF.getModel().getList().contains(file.getName().substring(0, file.getName().length() - 4)))) {
                     if (!pm.isCanceled()) {
 
@@ -275,11 +275,13 @@ public final class PanelCDF extends JPanel {
                             paco = new PaCo(file);
 
                             if (paco.isValid()) {
-                                listCDF.getModel().addPaco(paco);
+                                listCDF.getModel().addCdf(paco);
                             }
                             break;
                         case "dcm":
                             dcm = new Dcm(file);
+
+                            listCDF.getModel().addCdf(dcm);
                             break;
                         }
 
