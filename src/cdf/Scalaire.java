@@ -16,6 +16,15 @@ public final class Scalaire extends Variable {
         return super.toString() + "Valeur : " + getValue();
     }
 
+    @Override
+    public String toMFormat() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getShortName() + " = ");
+        sb.append(getValue() + ";");
+        sb.append("\t\t\t" + "%" + "(" + getUnit() + ")" + getLongName());
+        return sb.toString();
+    }
+
     public final String getValue() {
         return value[0][0];
     }

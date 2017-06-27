@@ -88,6 +88,8 @@ public abstract class Variable {
         return sb.toString();
     }
 
+    public abstract String toMFormat();
+
     public abstract String[][] getValues();
 
     public final Component showValues() {

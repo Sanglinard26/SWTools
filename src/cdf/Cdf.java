@@ -5,6 +5,7 @@ package cdf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface Cdf {
 
@@ -13,6 +14,8 @@ public interface Cdf {
     public int getNbLabel();
 
     public ArrayList<Variable> getListLabel();
+
+    public HashMap<Integer, Integer> getRepartitionScore();
 
     public float getAvgScore();
 

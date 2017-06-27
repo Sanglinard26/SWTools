@@ -48,4 +48,13 @@ public final class Curve extends Variable {
         return dimX;
     }
 
+    @Override
+    public String toMFormat() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getShortName() + " = ");
+        // valeur
+        // unite
+        return sb.toString();
+    }
+
 }

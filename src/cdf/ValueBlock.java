@@ -49,4 +49,13 @@ public final class ValueBlock extends Variable {
         return dimX;
     }
 
+    @Override
+    public String toMFormat() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getShortName() + " = ");
+        // valeur
+        // unite
+        return sb.toString();
+    }
+
 }

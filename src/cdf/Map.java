@@ -114,4 +114,13 @@ public final class Map extends Variable {
         return dimY;
     }
 
+    @Override
+    public String toMFormat() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getShortName() + " = ");
+        // valeur
+        // unite
+        return sb.toString();
+    }
+
 }

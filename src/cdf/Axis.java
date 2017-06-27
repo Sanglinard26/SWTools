@@ -42,4 +42,23 @@ public final class Axis extends Variable {
     public String[][] getValues() {
         return zValues;
     }
+
+    @Override
+    public String toMFormat() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getShortName() + " = ");
+        // valeur
+        sb.append("[");
+        for (int x = 0; x < this.zValues[0].length - 1; x++) {
+            if (x > 0) {
+                sb.append(" " + getzValues(x));
+            } else {
+                sb.append(getzValues(x));
+            }
+
+        }
+        sb.append("];");
+        sb.append("\t\t\t" + "%" + "(" + getUnit() + ")" + getLongName());
+        return sb.toString();
+    }
 }
