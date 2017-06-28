@@ -51,9 +51,39 @@ public final class Curve extends Variable {
     @Override
     public String toMFormat() {
         StringBuilder sb = new StringBuilder();
+        sb.append("% " + getShortName());
+        sb.append("\n");
+
+        // valeur x
+        sb.append(getShortName().substring(0, getShortName().length() - 2) + "X_A" + " = ");
+        sb.append("[");
+        for (int x = 0; x < values[0].length; x++) {
+            if (x > 0) {
+                sb.append(" " + getValue(0, x));
+            } else {
+                sb.append(getValue(0, x));
+            }
+        }
+        sb.append("];");
+        // unite x
+        sb.append("\t\t\t" + "%" + "(" + getUnitX() + ")");
+
+        // valeur z
+        sb.append("\n");
         sb.append(getShortName() + " = ");
-        // valeur
-        // unite
+        sb.append("[");
+        for (int x = 0; x < values[0].length; x++) {
+            if (x > 0) {
+                sb.append(" " + getValue(1, x));
+            } else {
+                sb.append(getValue(1, x));
+            }
+        }
+        sb.append("];");
+
+        // unite z
+        sb.append("\t\t\t" + "%" + "(" + getUnitZ() + ")" + getLongName());
+
         return sb.toString();
     }
 

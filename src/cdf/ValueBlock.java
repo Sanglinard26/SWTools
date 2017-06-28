@@ -52,9 +52,42 @@ public final class ValueBlock extends Variable {
     @Override
     public String toMFormat() {
         StringBuilder sb = new StringBuilder();
+
+        // valeur z
         sb.append(getShortName() + " = ");
-        // valeur
-        // unite
+        sb.append("[");
+
+        if (dimY > 2) {
+            for (int x = 1; x < values[0].length; x++) {
+                for (int y = 1; y < values.length; y++) {
+                    if (y > 1) {
+                        sb.append(" " + getValue(y, x));
+                    } else {
+                        sb.append(getValue(y, x));
+                    }
+
+                }
+                if (x != values[0].length - 1) {
+                    sb.append(";");
+                    sb.append("\n");
+                } else {
+                    sb.append("];");
+                }
+            }
+        } else {
+            for (int x = 1; x < values[0].length; x++) {
+                if (x > 1) {
+                    sb.append(" " + getValue(1, x));
+                } else {
+                    sb.append(getValue(1, x));
+                }
+            }
+            sb.append("];");
+        }
+
+        // unite z
+        sb.append("\t\t\t" + "%" + "(" + ")" + getLongName());
+
         return sb.toString();
     }
 

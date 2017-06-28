@@ -49,7 +49,7 @@ public final class Axis extends Variable {
         sb.append(getShortName() + " = ");
         // valeur
         sb.append("[");
-        for (int x = 0; x < this.zValues[0].length - 1; x++) {
+        for (int x = 0; x < this.zValues[0].length; x++) {
             if (x > 0) {
                 sb.append(" " + getzValues(x));
             } else {
