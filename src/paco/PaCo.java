@@ -486,16 +486,12 @@ public final class PaCo implements Cdf {
         return val;
     }
 
-    public void exportToExcel(final File file) {
-        ExportUtils.toExcel(this, file);
+    public Boolean exportToExcel(final File file) {
+        return ExportUtils.toExcel(this, file);
     }
 
-    public final void exportToTxt(File file) {
-        if (false) {
-            ExportUtils.toText(this, file);
-        } else {
-            ExportUtils.toM(this, file);
-        }
+    public final Boolean exportToTxt(File file) {
+        return ExportUtils.toText(this, file);
     }
 
     public final float getAvgScore() {
@@ -530,6 +526,11 @@ public final class PaCo implements Cdf {
     @Override
     public HashMap<Integer, Integer> getRepartitionScore() {
         return this.repartitionScore;
+    }
+
+    @Override
+    public Boolean exportToM(File file) {
+        return ExportUtils.toM(this, file);
     }
 
 }

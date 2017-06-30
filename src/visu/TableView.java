@@ -4,8 +4,6 @@ import java.awt.Component;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -24,23 +22,23 @@ public final class TableView extends JTable {
         this.setDefaultRenderer(Object.class, new TableViewRenderer(var));
         this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         this.setCellSelectionEnabled(true);
-//        ListSelectionModel listSelectionModel = this.getSelectionModel();
-//        listSelectionModel.addListSelectionListener(new ListSelectionListener() {
-//			
-//			@Override
-//			public void valueChanged(ListSelectionEvent e) {
-//				int[] selCol = TableView.this.getSelectedColumns();
-//				int[] selRow = TableView.this.getSelectedRows();
-//				
-//				for (int c : selCol)	
-//				{
-//					for (int r : selRow)
-//					{
-//						System.out.println(TableView.this.getValueAt(r, c));
-//					}
-//				}
-//			}
-//		});
+        // ListSelectionModel listSelectionModel = this.getSelectionModel();
+        // listSelectionModel.addListSelectionListener(new ListSelectionListener() {
+        //
+        // @Override
+        // public void valueChanged(ListSelectionEvent e) {
+        // int[] selCol = TableView.this.getSelectedColumns();
+        // int[] selRow = TableView.this.getSelectedRows();
+        //
+        // for (int c : selCol)
+        // {
+        // for (int r : selRow)
+        // {
+        // System.out.println(TableView.this.getValueAt(r, c));
+        // }
+        // }
+        // }
+        // });
     }
 
     @Override

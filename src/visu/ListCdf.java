@@ -30,6 +30,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     private static final long serialVersionUID = 1L;
     private static final String ICON_EXCEL = "/excel_icon_16.png";
     private static final String ICON_TEXT = "/text_icon_16.png";
+    private static final String ICON_MATLAB = "/matlab_icon_16.png";
     private static final String ICON_TRASH = "/corbeille_icon_16.png";
 
     public ListCdf(ListModelCdf dataModel) {
@@ -97,13 +98,18 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                             final int rep = fileChooser.showSaveDialog(null);
 
                             if (rep == JFileChooser.APPROVE_OPTION) {
-                                ListCdf.this.getSelectedValue().exportToTxt(fileChooser.getSelectedFile());
-                                JOptionPane.showMessageDialog(null, "Enregistrement termine !");
+                                if (ListCdf.this.getSelectedValue().exportToTxt(fileChooser.getSelectedFile())) {
+                                    JOptionPane.showMessageDialog(null, "Export termine !");
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "Export abandonne !");
+                                    fileChooser.getSelectedFile().delete();
+                                }
                             }
 
                         }
                     });
                     menuExport.add(menuItem);
+
                     menuExport.addSeparator();
                     menuItem = new JMenuItem("Exporter le fichier en xls", new ImageIcon(getClass().getResource(ICON_EXCEL)));
                     menuItem.addActionListener(new ActionListener() {
@@ -119,14 +125,47 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                                 final int rep = fileChooser.showSaveDialog(null);
 
                                 if (rep == JFileChooser.APPROVE_OPTION) {
-                                    ListCdf.this.getSelectedValue().exportToExcel(fileChooser.getSelectedFile());
-                                    JOptionPane.showMessageDialog(null, "Enregistrement termine !");
+                                    if (ListCdf.this.getSelectedValue().exportToExcel(fileChooser.getSelectedFile())) {
+                                        JOptionPane.showMessageDialog(null, "Export termine !");
+                                    } else {
+                                        JOptionPane.showMessageDialog(null, "Export abandonne !");
+                                        fileChooser.getSelectedFile().delete();
+                                    }
                                 }
                             }
 
                         }
                     });
                     menuExport.add(menuItem);
+
+                    menuExport.addSeparator();
+                    menuItem = new JMenuItem("Exporter le fichier en m", new ImageIcon(getClass().getResource(ICON_MATLAB)));
+                    menuItem.addActionListener(new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+
+                            if (true) {
+                                final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
+                                fileChooser.setDialogTitle("Enregistement du fichier");
+                                fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier m (*.m)", ".m"));
+                                fileChooser.setSelectedFile(new File(ListCdf.this.getSelectedValue() + ".m"));
+                                final int rep = fileChooser.showSaveDialog(null);
+
+                                if (rep == JFileChooser.APPROVE_OPTION) {
+                                    if (ListCdf.this.getSelectedValue().exportToM(fileChooser.getSelectedFile())) {
+                                        JOptionPane.showMessageDialog(null, "Export termine !");
+                                    } else {
+                                        JOptionPane.showMessageDialog(null, "Export abandonne !");
+                                        fileChooser.getSelectedFile().delete();
+                                    }
+                                }
+                            }
+
+                        }
+                    });
+                    menuExport.add(menuItem);
+
                     menu.add(menuExport);
 
                 } else {

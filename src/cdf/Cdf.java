@@ -23,8 +23,10 @@ public interface Cdf {
 
     public int getMaxScore();
 
-    public void exportToExcel(final File file);
+    public Boolean exportToExcel(final File file);
 
-    public void exportToTxt(File file);
+    public Boolean exportToTxt(File file);
+
+    public Boolean exportToM(File file);
 
 }

@@ -28,10 +28,12 @@ import visu.Main;
 
 public final class ExportUtils {
 
-    public static final void toExcel(Cdf cdf, final File file) {
+    public static final Boolean toExcel(Cdf cdf, final File file) {
+
+        WritableWorkbook workbook = null;
 
         try {
-            final WritableWorkbook workbook = Workbook.createWorkbook(file);
+            workbook = Workbook.createWorkbook(file);
 
             final WritableFont arial10Bold = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
             final WritableCellFormat arial10format = new WritableCellFormat(arial10Bold);
@@ -182,15 +184,27 @@ public final class ExportUtils {
 
             workbook.write();
             workbook.close();
+
         } catch (IOException e) {
             Main.getLogger().severe(e.getMessage());
         } catch (WriteException e) {
             Main.getLogger().severe(e.getMessage());
             if (e instanceof RowsExceededException) {
                 JOptionPane.showMessageDialog(null, "Trop de variables à exporter !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                if (workbook != null)
+                    try {
+                        workbook.close();
+                    } catch (WriteException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    } catch (IOException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                return false;
             }
         }
-
+        return true;
     }
 
     private static final void writeCell(WritableSheet sht, int col, int row, String txtValue, WritableCellFormat format)
@@ -204,7 +218,7 @@ public final class ExportUtils {
 
     }
 
-    public static final void toText(Cdf cdf, final File file) {
+    public static final Boolean toText(Cdf cdf, final File file) {
         try {
             final PrintWriter printWriter = new PrintWriter(file);
 
@@ -235,10 +249,11 @@ public final class ExportUtils {
         } catch (FileNotFoundException e) {
             Main.getLogger().severe(e.getMessage());
         }
+        return true;
 
     }
 
-    public static final void toM(Cdf cdf, final File file) {
+    public static final Boolean toM(Cdf cdf, final File file) {
         try {
             final PrintWriter printWriter = new PrintWriter(file);
 
@@ -261,6 +276,7 @@ public final class ExportUtils {
         } catch (FileNotFoundException e) {
             Main.getLogger().severe(e.getMessage());
         }
+        return true;
     }
 
 }

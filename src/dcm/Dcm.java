@@ -125,6 +125,7 @@ public final class Dcm implements Cdf {
                                 }
 
                             }
+
                             if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
                                 valeur[0][0] = Utilitaire.cutNumber(spaceSplitLine2[spaceSplitLine2.length - 1]);
                             }
@@ -925,28 +926,19 @@ public final class Dcm implements Cdf {
         }
     }
 
-    private void readInfo(String line, String[] unite) {
-
-    }
-
     @Override
     public ArrayList<Variable> getListLabel() {
         return this.listLabel;
     }
 
     @Override
-    public void exportToExcel(File file) {
-        ExportUtils.toExcel(this, file);
+    public Boolean exportToExcel(File file) {
+        return ExportUtils.toExcel(this, file);
     }
 
     @Override
-    public void exportToTxt(File file) {
-        if (false) {
-            ExportUtils.toText(this, file);
-        } else {
-            ExportUtils.toM(this, file);
-        }
-
+    public Boolean exportToTxt(File file) {
+        return ExportUtils.toText(this, file);
     }
 
     @Override
@@ -982,6 +974,11 @@ public final class Dcm implements Cdf {
     @Override
     public HashMap<Integer, Integer> getRepartitionScore() {
         return this.repartitionScore;
+    }
+
+    @Override
+    public Boolean exportToM(File file) {
+        return ExportUtils.toM(this, file);
     }
 
 }
