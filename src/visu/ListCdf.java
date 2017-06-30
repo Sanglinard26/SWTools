@@ -91,7 +91,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                         @Override
                         public void actionPerformed(ActionEvent e) {
 
-                            final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
+                            final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_CDF));
                             fileChooser.setDialogTitle("Enregistement du fichier");
                             fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier texte (*.txt)", "txt"));
                             fileChooser.setSelectedFile(new File(ListCdf.this.getSelectedValue() + ".txt"));
@@ -118,7 +118,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                         public void actionPerformed(ActionEvent e) {
 
                             if (true) {
-                                final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
+                                final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_CDF));
                                 fileChooser.setDialogTitle("Enregistement du fichier");
                                 fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier Excel (*.xls)", "xls"));
                                 fileChooser.setSelectedFile(new File(ListCdf.this.getSelectedValue() + ".xls"));
@@ -146,7 +146,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                         public void actionPerformed(ActionEvent e) {
 
                             if (true) {
-                                final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_PACO));
+                                final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_CDF));
                                 fileChooser.setDialogTitle("Enregistement du fichier");
                                 fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier m (*.m)", ".m"));
                                 fileChooser.setSelectedFile(new File(ListCdf.this.getSelectedValue() + ".m"));

@@ -26,9 +26,9 @@ import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import cdf.Cdf;
 import cdf.ListModelLabel;
 import cdf.Variable;
-import paco.PaCo;
 
 public final class ListLabel extends JList<Variable> {
 
@@ -53,8 +53,8 @@ public final class ListLabel extends JList<Variable> {
 
         private static final long serialVersionUID = 1L;
 
-        private final String[] nameFilter = { "TOUT TYPE", PaCo._A, PaCo._C, PaCo._M, PaCo._M_FIXED, PaCo._M_GROUPED, PaCo._T, PaCo._T_CA,
-                PaCo._T_GROUPED, PaCo.ASCII };
+        private final String[] nameFilter = { "TOUT TYPE", Cdf.AXIS_VALUES, Cdf.VALUE, Cdf.MAP_INDIVIDUAL, Cdf.MAP_FIXED, Cdf.MAP_GROUPED, Cdf.CURVE_INDIVIDUAL, Cdf.VALUE_BLOCK,
+        		Cdf.CURVE_GROUPED, Cdf.ASCII };
 
         private final JComboBox<String> typeFilter;
         private final JTextField txtFiltre;

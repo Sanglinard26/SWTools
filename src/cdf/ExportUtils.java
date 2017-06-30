@@ -174,11 +174,9 @@ public final class ExportUtils {
                             }
                             col += 1;
                         }
-
                     }
                     row += 2;
                 }
-
                 cnt += 1;
             }
 
@@ -195,10 +193,8 @@ public final class ExportUtils {
                     try {
                         workbook.close();
                     } catch (WriteException e1) {
-                        // TODO Auto-generated catch block
                         e1.printStackTrace();
                     } catch (IOException e1) {
-                        // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
                 return false;
@@ -219,8 +215,11 @@ public final class ExportUtils {
     }
 
     public static final Boolean toText(Cdf cdf, final File file) {
+    	
+    	PrintWriter printWriter = null;
+    	
         try {
-            final PrintWriter printWriter = new PrintWriter(file);
+        	printWriter = new PrintWriter(file);
 
             printWriter.println(" -----------------------");
             printWriter.println("| EXPORT TO TEXT FORMAT |");
@@ -244,18 +243,23 @@ public final class ExportUtils {
             printWriter.println();
             printWriter.println("Fichier cree par SWTools, " + new Date().toString());
 
-            printWriter.close();
-
         } catch (FileNotFoundException e) {
             Main.getLogger().severe(e.getMessage());
+            return false;
         }
+        finally {
+        	if (printWriter != null) printWriter.close();
+		}
         return true;
 
     }
 
     public static final Boolean toM(Cdf cdf, final File file) {
+    	
+    	PrintWriter printWriter = null;
+    	
         try {
-            final PrintWriter printWriter = new PrintWriter(file);
+        	printWriter = new PrintWriter(file);
 
             printWriter.println("% --------------------");
             printWriter.println("%| EXPORT TO M FORMAT |");
@@ -270,12 +274,13 @@ public final class ExportUtils {
 
                 printWriter.println(var.toMFormat());
             }
-
-            printWriter.close();
-
         } catch (FileNotFoundException e) {
             Main.getLogger().severe(e.getMessage());
+            return false;
         }
+        finally {
+        	printWriter.close();
+		}
         return true;
     }
 

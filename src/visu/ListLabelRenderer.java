@@ -15,9 +15,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import cdf.Cdf;
 import cdf.Variable;
 import graph.PieChart;
-import paco.PaCo;
 
 public final class ListLabelRenderer extends JPanel implements ListCellRenderer<Variable> {
 
@@ -55,31 +55,31 @@ public final class ListLabelRenderer extends JPanel implements ListCellRenderer<
         score.setValue(value.getLastScore());
 
         switch (value.getCategory()) {
-        case PaCo._C:
+        case Cdf.VALUE:
             variableName.setIcon(new ImageIcon(getClass().getResource(SCALAIRE)));
             break;
-        case PaCo._T:
+        case Cdf.CURVE_INDIVIDUAL:
             variableName.setIcon(new ImageIcon(getClass().getResource(CURVE)));
             break;
-        case PaCo._T_GROUPED:
+        case Cdf.CURVE_GROUPED:
             variableName.setIcon(new ImageIcon(getClass().getResource(CURVE)));
             break;
-        case PaCo._M:
+        case Cdf.MAP_INDIVIDUAL:
             variableName.setIcon(new ImageIcon(getClass().getResource(MAP)));
             break;
-        case PaCo._M_GROUPED:
+        case Cdf.MAP_GROUPED:
             variableName.setIcon(new ImageIcon(getClass().getResource(MAP)));
             break;
-        case PaCo._M_FIXED:
+        case Cdf.MAP_FIXED:
             variableName.setIcon(new ImageIcon(getClass().getResource(MAP)));
             break;
-        case PaCo._T_CA:
+        case Cdf.VALUE_BLOCK:
             variableName.setIcon(new ImageIcon(getClass().getResource(VALUEBLOCK)));
             break;
-        case PaCo._A:
+        case Cdf.AXIS_VALUES:
             variableName.setIcon(new ImageIcon(getClass().getResource(AXIS)));
             break;
-        case PaCo.ASCII:
+        case Cdf.ASCII:
             variableName.setIcon(new ImageIcon(getClass().getResource(ASCII)));
             break;
         default:

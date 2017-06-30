@@ -111,7 +111,7 @@ public final class XYChart extends JPanel {
 			seriesCollection.addSerie(serie);
 		}
 
-		this.add(new PanelXYChart(new PanelXYPlot("Z = f(X)", "X [" + map.getUnitY() + "]", "Z [" + map.getUnitZ() + "]",
+		this.add(new PanelXYChart(new PanelXYPlot("Z = f(X)", "X [" + map.getUnitX() + "]", "Z [" + map.getUnitZ() + "]",
 				seriesCollection, true), PanelXYChart.LEFT_POSITION, true));
 	}
 

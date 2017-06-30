@@ -12,7 +12,7 @@ import javax.swing.AbstractListModel;
 public final class ListModelCdf extends AbstractListModel<Cdf> {
 
     private static final long serialVersionUID = 1L;
-    // private static final ArrayList<PaCo> listPaco = new ArrayList<PaCo>();
+
     private static final Vector<Cdf> listCdf = new Vector<Cdf>(); // Remplacement de l'arraylist par un vector car thread safe
 
     @Override

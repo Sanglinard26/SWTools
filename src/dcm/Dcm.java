@@ -18,7 +18,6 @@ import cdf.Map;
 import cdf.Scalaire;
 import cdf.ValueBlock;
 import cdf.Variable;
-import paco.PaCo;
 import tools.Utilitaire;
 
 public final class Dcm implements Cdf {
@@ -134,7 +133,7 @@ public final class Dcm implements Cdf {
 
                         // System.out.println(spaceSplitLine[1]);
 
-                        listLabel.add(new Scalaire(spaceSplitLine[1], description.toString(), PaCo._C, fonction.toString(), unite, new String[0][0],
+                        listLabel.add(new Scalaire(spaceSplitLine[1], description.toString(), VALUE, fonction.toString(), unite, new String[0][0],
                                 valeur));
 
                         description.setLength(0);
@@ -167,7 +166,7 @@ public final class Dcm implements Cdf {
 
                         // System.out.println(spaceSplitLine[1]);
 
-                        listLabel.add(new Scalaire(spaceSplitLine[1], description.toString(), PaCo.ASCII, fonction.toString(), unite,
+                        listLabel.add(new Scalaire(spaceSplitLine[1], description.toString(), ASCII, fonction.toString(), unite,
                                 new String[0][0], valeur));
 
                         description.setLength(0);
@@ -241,7 +240,7 @@ public final class Dcm implements Cdf {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(
-                                new Curve(spaceSplitLine[1], description.toString(), PaCo._T, fonction.toString(), unite, new String[0][0], valeur));
+                                new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL, fonction.toString(), unite, new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -317,7 +316,7 @@ public final class Dcm implements Cdf {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(
-                                new Curve(spaceSplitLine[1], description.toString(), PaCo._T, fonction.toString(), unite, new String[0][0], valeur));
+                                new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL, fonction.toString(), unite, new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -393,7 +392,7 @@ public final class Dcm implements Cdf {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(
-                                new Curve(spaceSplitLine[1], description.toString(), PaCo._T, fonction.toString(), unite, new String[0][0], valeur));
+                                new Curve(spaceSplitLine[1], description.toString(), CURVE_GROUPED, fonction.toString(), unite, new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -497,7 +496,7 @@ public final class Dcm implements Cdf {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(
-                                new Map(spaceSplitLine[1], description.toString(), PaCo._M, fonction.toString(), unite, new String[0][0], valeur));
+                                new Map(spaceSplitLine[1], description.toString(), MAP_INDIVIDUAL, fonction.toString(), unite, new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -600,7 +599,7 @@ public final class Dcm implements Cdf {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(
-                                new Map(spaceSplitLine[1], description.toString(), PaCo._M, fonction.toString(), unite, new String[0][0], valeur));
+                                new Map(spaceSplitLine[1], description.toString(), MAP_GROUPED, fonction.toString(), unite, new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -702,7 +701,7 @@ public final class Dcm implements Cdf {
 
                         // System.out.println(spaceSplitLine[1]);
 
-                        listLabel.add(new Map(spaceSplitLine[1], description.toString(), PaCo._M_FIXED, fonction.toString(), unite, new String[0][0],
+                        listLabel.add(new Map(spaceSplitLine[1], description.toString(), MAP_FIXED, fonction.toString(), unite, new String[0][0],
                                 valeur));
 
                         description.setLength(0);
@@ -760,7 +759,7 @@ public final class Dcm implements Cdf {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(
-                                new Axis(spaceSplitLine[1], description.toString(), PaCo._A, fonction.toString(), unite, new String[0][0], valeur));
+                                new Axis(spaceSplitLine[1], description.toString(), AXIS_VALUES, fonction.toString(), unite, new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -900,7 +899,7 @@ public final class Dcm implements Cdf {
 
                         }
 
-                        listLabel.add(new ValueBlock(spaceSplitLine[1], description.toString(), PaCo._T_CA, fonction.toString(), unite,
+                        listLabel.add(new ValueBlock(spaceSplitLine[1], description.toString(), VALUE_BLOCK, fonction.toString(), unite,
                                 new String[0][0], valeur));
 
                         description.setLength(0);

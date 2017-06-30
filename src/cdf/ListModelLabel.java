@@ -12,6 +12,7 @@ import javax.swing.AbstractListModel;
 public final class ListModelLabel extends AbstractListModel<Variable> {
 
     private static final long serialVersionUID = 1L;
+    
     private static final ArrayList<Variable> listLabel = new ArrayList<Variable>();
     private static final ArrayList<Variable> listLabelFiltre = new ArrayList<Variable>();
 

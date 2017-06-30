@@ -33,16 +33,6 @@ import tools.Utilitaire;
 
 public final class PaCo implements Cdf {
 
-    public static final String ASCII = "ASCII";
-    public static final String _C = "VALUE";
-    public static final String _T = "CURVE_INDIVIDUAL";
-    public static final String _M = "MAP_INDIVIDUAL";
-    public static final String _A = "AXIS_VALUES";
-    public static final String _T_CA = "VALUE_BLOCK";
-    public static final String _T_GROUPED = "CURVE_GROUPED";
-    public static final String _M_GROUPED = "MAP_GROUPED";
-    public static final String _M_FIXED = "MAP_FIXED";
-
     private static Logger logger = Logger.getLogger("MyLogger");
 
     private final String name;
@@ -111,7 +101,7 @@ public final class PaCo implements Cdf {
                     buf.close();
                     bw.close();
 
-                    JOptionPane.showMessageDialog(null, "Le PaCo a ete enregistre à l'adresse suivante :\n" + fileBis.getPath());
+                    JOptionPane.showMessageDialog(null, "Le PaCo a ete enregistre a l'adresse suivante :\n" + fileBis.getPath());
 
                 } catch (IOException e1) {
                     e1.printStackTrace();
@@ -180,55 +170,55 @@ public final class PaCo implements Cdf {
                 swCsEntry = label.getElementsByTagName("SW-CS-ENTRY");
 
                 switch (label.getElementsByTagName("CATEGORY").item(0).getTextContent()) {
-                case PaCo.ASCII:
+                case ASCII:
                     listLabel.add(new Scalaire(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
                             readValue(swAxisCont)));
                     break;
-                case PaCo._C:
+                case VALUE:
                     listLabel.add(new Scalaire(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
                             readValue(swAxisCont)));
                     break;
-                case PaCo._T:
+                case CURVE_INDIVIDUAL:
                     listLabel.add(new Curve(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
                             readCurve(swAxisCont)));
                     break;
-                case PaCo._A:
+                case AXIS_VALUES:
                     listLabel.add(new Axis(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
                             readAxis(swAxisCont)));
                     break;
-                case PaCo._T_GROUPED:
+                case CURVE_GROUPED:
                     listLabel.add(new Curve(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
                             readCurve(swAxisCont)));
                     break;
-                case PaCo._T_CA:
+                case VALUE_BLOCK:
                     listLabel.add(new ValueBlock(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
                             readValueBlock(splitAttributAxe, swAxisCont)));
                     break;
-                case PaCo._M:
+                case MAP_INDIVIDUAL:
                     listLabel.add(new Map(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
                             readMap(swAxisCont)));
                     break;
-                case PaCo._M_GROUPED:
+                case MAP_GROUPED:
                     listLabel.add(new Map(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
                             readMap(swAxisCont)));
                     break;
-                case PaCo._M_FIXED:
+                case MAP_FIXED:
                     listLabel.add(new Map(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),

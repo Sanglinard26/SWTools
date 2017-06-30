@@ -72,7 +72,7 @@ public final class FramePreferences extends JFrame {
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         panPaco.add(txtPath, gbc);
 
-        final JLabel path = new JLabel(Preference.getPreference(Preference.KEY_OPEN_PACO));
+        final JLabel path = new JLabel(Preference.getPreference(Preference.KEY_OPEN_CDF));
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -89,9 +89,9 @@ public final class FramePreferences extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                final String pathFolder = getFolder("Choix du chemin d'import", Preference.getPreference(Preference.KEY_OPEN_PACO));
-                if (!Preference.KEY_OPEN_PACO.equals(pathFolder)) {
-                    Preference.setPreference(Preference.KEY_OPEN_PACO, pathFolder);
+                final String pathFolder = getFolder("Choix du chemin d'import", Preference.getPreference(Preference.KEY_OPEN_CDF));
+                if (!Preference.KEY_OPEN_CDF.equals(pathFolder)) {
+                    Preference.setPreference(Preference.KEY_OPEN_CDF, pathFolder);
                     path.setText(pathFolder);
 
                 }
