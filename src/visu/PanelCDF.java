@@ -28,6 +28,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
+import cdf.Cdf;
 import cdf.ListModelCdf;
 import cdf.ListModelLabel;
 import dcm.Dcm;
@@ -35,7 +36,7 @@ import paco.PaCo;
 import tools.Preference;
 import tools.Utilitaire;
 
-public final class PanelCDF extends JPanel {
+public final class PanelCDF extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;
 
@@ -269,8 +270,7 @@ public final class PanelCDF extends JPanel {
 
 		private final File[] filesCDF;
 		private int cnt = 0;
-		private PaCo paco;
-		private Dcm dcm;
+		private Cdf cdf;
 
 		public TaskCharging(File[] filesPaco) {
 			this.filesCDF = filesPaco;
@@ -287,16 +287,16 @@ public final class PanelCDF extends JPanel {
 
 						switch (Utilitaire.getExtension(file)) {
 						case "xml":
-							paco = new PaCo(file);
-
-							if (paco.isValid()) {
-								listCDF.getModel().addCdf(paco);
+							cdf = new PaCo(file, PanelCDF.this);
+							
+							if (((PaCo)cdf).isValid()) {
+								listCDF.getModel().addCdf(cdf);
 							}
 							break;
 						case "dcm":
-							dcm = new Dcm(file);
-
-							listCDF.getModel().addCdf(dcm);
+							cdf = new Dcm(file);
+							
+							listCDF.getModel().addCdf(cdf);
 							break;
 						}
 
@@ -308,7 +308,7 @@ public final class PanelCDF extends JPanel {
 				}
 				cnt += 1;
 				pm.setProgress(cnt);
-				pm.setNote(file.getName().substring(0, file.getName().length() - 4));
+				//pm.setNote(file.getName().substring(0, file.getName().length() - 4));
 			}
 
 			if (listCDF.getSelectedIndices().length > 0)
@@ -336,6 +336,11 @@ public final class PanelCDF extends JPanel {
 			panGraph.getPanCard().repaint();
 		}
 
+	}
+
+	@Override
+	public void update(String cdf, String variable, int nbLabel, int nLabel) {
+		pm.setNote(cdf + " : " + (((double)nLabel/(double)(nbLabel-1))*100) + "%");	
 	}
 
 }

@@ -26,12 +26,15 @@ import cdf.Cdf;
 import cdf.Curve;
 import cdf.ExportUtils;
 import cdf.Map;
+import cdf.Observable;
 import cdf.Scalaire;
 import cdf.ValueBlock;
 import cdf.Variable;
 import tools.Utilitaire;
+import visu.Observer;
+import visu.PanelCDF;
 
-public final class PaCo implements Cdf {
+public final class PaCo implements Cdf, Observable {
 
     private static Logger logger = Logger.getLogger("MyLogger");
 
@@ -44,8 +47,12 @@ public final class PaCo implements Cdf {
     private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
     private int minScore = Byte.MAX_VALUE;
     private int maxScore = Byte.MIN_VALUE;
+    
+    private ArrayList<Observer> listObserver = new ArrayList<Observer>();
 
-    public PaCo(final File file) {
+    public PaCo(final File file, PanelCDF panCdf) {
+    	
+    	addObserver(panCdf);
 
         this.name = file.getName().substring(0, file.getName().length() - 4);
 
@@ -225,6 +232,8 @@ public final class PaCo implements Cdf {
                             readMap(swAxisCont)));
                     break;
                 }
+                
+                notifyObserver(this.name, label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(), this.nbLabel, i);
             }
 
             getScores();
@@ -522,5 +531,19 @@ public final class PaCo implements Cdf {
     public Boolean exportToM(File file) {
         return ExportUtils.toM(this, file);
     }
+
+	@Override
+	public void addObserver(Observer obs) {
+		listObserver.add(obs);		
+	}
+
+	@Override
+	public void notifyObserver(String cdf, String variable, int nbLabel, int nLabel) {
+		for (Observer obs : listObserver)
+		{
+			obs.update(cdf, variable, nbLabel, nLabel);
+		}
+		
+	}
 
 }
