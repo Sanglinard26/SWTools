@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,12 +16,15 @@ import cdf.Cdf;
 import cdf.Curve;
 import cdf.ExportUtils;
 import cdf.Map;
+import cdf.Observable;
 import cdf.Scalaire;
 import cdf.ValueBlock;
 import cdf.Variable;
 import tools.Utilitaire;
+import visu.Observer;
+import visu.PanelCDF;
 
-public final class Dcm implements Cdf {
+public final class Dcm implements Cdf, Observable {
 
     // Mot cle global
     public static final String COMMENTAIRE = "*";
@@ -54,11 +58,24 @@ public final class Dcm implements Cdf {
     public static final String AXE_PARTAGE_X = "*SSTX";
     public static final String AXE_PARTAGE_Y = "*SSTY";
 
+    private BufferedReader buf = null;
+    private String line;
+
+    private int numLine = 0;
+
     private final String name;
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
     private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1);
 
-    public Dcm(final File file) {
+    private ArrayList<Observer> listObserver = new ArrayList<Observer>();
+
+    private static final NumberFormat nbf = NumberFormat.getInstance();
+
+    public Dcm(final File file, PanelCDF panCdf) {
+
+        addObserver(panCdf);
+
+        nbf.setMaximumFractionDigits(1);
 
         this.name = file.getName().substring(0, file.getName().length() - 4);
 
@@ -68,7 +85,7 @@ public final class Dcm implements Cdf {
 
     private final void parse(File file) {
 
-        BufferedReader buf = null;
+        // BufferedReader buf = null;
         final StringBuilder description = new StringBuilder();
         final StringBuilder fonction = new StringBuilder();
         String[] unite;
@@ -77,7 +94,14 @@ public final class Dcm implements Cdf {
         try {
 
             buf = new BufferedReader(new FileReader(file));
-            String line;
+
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            int nbLines = 0;
+            while (reader.readLine() != null)
+                nbLines++;
+            reader.close();
+
+            // String line;
             String[] spaceSplitLine;
             String[] spaceSplitLine2;
             String[] quotesSplitLine;
@@ -91,7 +115,11 @@ public final class Dcm implements Cdf {
             int cnt;
             ArrayList<String> axeTmp = new ArrayList<String>();
 
-            while ((line = buf.readLine()) != null) {
+            while (readLineDcm() != null) {
+
+                ;
+
+                notifyObserver(this.name, "", nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
 
                 spaceSplitLine = line.split(" ");
 
@@ -104,7 +132,9 @@ public final class Dcm implements Cdf {
                         unite = new String[1];
                         valeur = new String[1][1];
 
-                        while (!(line = buf.readLine()).equals(END)) {
+                        while (!readLineDcm().equals(END)) {
+
+                            ;
 
                             spaceSplitLine2 = line.split(" ");
                             quotesSplitLine = line.split("\"");
@@ -133,8 +163,8 @@ public final class Dcm implements Cdf {
 
                         // System.out.println(spaceSplitLine[1]);
 
-                        listLabel.add(new Scalaire(spaceSplitLine[1], description.toString(), VALUE, fonction.toString(), unite, new String[0][0],
-                                valeur));
+                        listLabel.add(
+                                new Scalaire(spaceSplitLine[1], description.toString(), VALUE, fonction.toString(), unite, new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -146,7 +176,9 @@ public final class Dcm implements Cdf {
                         unite = new String[] { " " };
                         valeur = new String[1][1];
 
-                        while (!(line = buf.readLine()).equals(END)) {
+                        while (!readLineDcm().equals(END)) {
+
+                            ;
 
                             spaceSplitLine2 = line.split(" ");
                             quotesSplitLine = line.split("\"");
@@ -166,8 +198,8 @@ public final class Dcm implements Cdf {
 
                         // System.out.println(spaceSplitLine[1]);
 
-                        listLabel.add(new Scalaire(spaceSplitLine[1], description.toString(), ASCII, fonction.toString(), unite,
-                                new String[0][0], valeur));
+                        listLabel.add(
+                                new Scalaire(spaceSplitLine[1], description.toString(), ASCII, fonction.toString(), unite, new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -179,7 +211,9 @@ public final class Dcm implements Cdf {
                         unite = new String[2];
                         valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
 
-                        while (!(line = buf.readLine()).equals(END)) {
+                        while (!readLineDcm().equals(END)) {
+
+                            ;
 
                             spaceSplitLine2 = line.split(" ");
                             quotesSplitLine = line.split("\"");
@@ -239,8 +273,8 @@ public final class Dcm implements Cdf {
 
                         // System.out.println(spaceSplitLine[1]);
 
-                        listLabel.add(
-                                new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL, fonction.toString(), unite, new String[0][0], valeur));
+                        listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL, fonction.toString(), unite,
+                                new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -255,7 +289,9 @@ public final class Dcm implements Cdf {
                         unite = new String[2];
                         valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
 
-                        while (!(line = buf.readLine()).equals(END)) {
+                        while (!readLineDcm().equals(END)) {
+
+                            ;
 
                             spaceSplitLine2 = line.split(" ");
                             quotesSplitLine = line.split("\"");
@@ -315,8 +351,8 @@ public final class Dcm implements Cdf {
 
                         // System.out.println(spaceSplitLine[1]);
 
-                        listLabel.add(
-                                new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL, fonction.toString(), unite, new String[0][0], valeur));
+                        listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL, fonction.toString(), unite,
+                                new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -331,7 +367,9 @@ public final class Dcm implements Cdf {
                         unite = new String[2];
                         valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
 
-                        while (!(line = buf.readLine()).equals(END)) {
+                        while (!readLineDcm().equals(END)) {
+
+                            ;
 
                             spaceSplitLine2 = line.split(" ");
                             quotesSplitLine = line.split("\"");
@@ -391,8 +429,8 @@ public final class Dcm implements Cdf {
 
                         // System.out.println(spaceSplitLine[1]);
 
-                        listLabel.add(
-                                new Curve(spaceSplitLine[1], description.toString(), CURVE_GROUPED, fonction.toString(), unite, new String[0][0], valeur));
+                        listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_GROUPED, fonction.toString(), unite,
+                                new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -412,7 +450,9 @@ public final class Dcm implements Cdf {
 
                         axeTmp.add("Y \\ X");
 
-                        while (!(line = buf.readLine()).equals(END)) {
+                        while (!readLineDcm().equals(END)) {
+
+                            ;
 
                             spaceSplitLine2 = line.split(" ");
                             quotesSplitLine = line.split("\"");
@@ -495,8 +535,8 @@ public final class Dcm implements Cdf {
 
                         // System.out.println(spaceSplitLine[1]);
 
-                        listLabel.add(
-                                new Map(spaceSplitLine[1], description.toString(), MAP_INDIVIDUAL, fonction.toString(), unite, new String[0][0], valeur));
+                        listLabel.add(new Map(spaceSplitLine[1], description.toString(), MAP_INDIVIDUAL, fonction.toString(), unite, new String[0][0],
+                                valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -515,7 +555,114 @@ public final class Dcm implements Cdf {
 
                         axeTmp.add("Y \\ X");
 
-                        while (!(line = buf.readLine()).equals(END)) {
+                        while (!readLineDcm().equals(END)) {
+
+                            ;
+
+                            spaceSplitLine2 = line.split(" ");
+                            quotesSplitLine = line.split("\"");
+
+                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                                description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+                            }
+
+                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                                fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+                            }
+
+                            if (line.trim().startsWith(UNITE_X)) {
+
+                                if (quotesSplitLine.length > 1) {
+                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                } else {
+                                    unite[0] = " ";
+                                }
+                            }
+
+                            if (line.trim().startsWith(UNITE_Y)) {
+
+                                if (quotesSplitLine.length > 1) {
+                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+                                } else {
+                                    unite[1] = " ";
+                                }
+                            }
+
+                            if (line.trim().startsWith(UNITE_W)) {
+
+                                if (quotesSplitLine.length > 1) {
+                                    unite[2] = quotesSplitLine[quotesSplitLine.length - 1];
+                                } else {
+                                    unite[2] = " ";
+                                }
+                            }
+
+                            if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
+
+                                threeSpaceSplitLine = line.split("   ");
+
+                                for (String s : threeSpaceSplitLine) {
+                                    if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
+                                        axeTmp.add(Utilitaire.cutNumber(s));
+                                    }
+                                }
+
+                                if (axeTmp.size() == valeur[0].length) {
+                                    valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
+
+                                    axeTmp.clear();
+                                }
+                            }
+
+                            if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
+                                    | line.trim().startsWith(VALEUR_TEXT)) {
+
+                                threeSpaceSplitLine = line.split("   ");
+
+                                for (String s : threeSpaceSplitLine) {
+                                    if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) & !s.equals(VALEUR_NOMBRE)
+                                            & !s.equals(VALEUR_TEXT)) {
+                                        axeTmp.add(Utilitaire.cutNumber(s));
+                                    }
+                                }
+
+                                if (axeTmp.size() == valeur[0].length) {
+                                    valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
+
+                                    cnt++;
+
+                                    axeTmp.clear();
+                                }
+
+                            }
+
+                        }
+
+                        // System.out.println(spaceSplitLine[1]);
+
+                        listLabel.add(new Map(spaceSplitLine[1], description.toString(), MAP_GROUPED, fonction.toString(), unite, new String[0][0],
+                                valeur));
+
+                        description.setLength(0);
+                        fonction.setLength(0);
+
+                        axeTmp.clear();
+
+                        break;
+
+                    case FIXED_MAP:
+
+                        cnt = 1;
+
+                        unite = new String[3];
+                        valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
+                                + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1];
+
+                        axeTmp.add("Y \\ X");
+
+                        while (!readLineDcm().equals(END)) {
+
+                            ;
 
                             spaceSplitLine2 = line.split(" ");
                             quotesSplitLine = line.split("\"");
@@ -599,110 +746,7 @@ public final class Dcm implements Cdf {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(
-                                new Map(spaceSplitLine[1], description.toString(), MAP_GROUPED, fonction.toString(), unite, new String[0][0], valeur));
-
-                        description.setLength(0);
-                        fonction.setLength(0);
-
-                        axeTmp.clear();
-
-                        break;
-
-                    case FIXED_MAP:
-
-                        cnt = 1;
-
-                        unite = new String[3];
-                        valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
-                                + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1];
-
-                        axeTmp.add("Y \\ X");
-
-                        while (!(line = buf.readLine()).equals(END)) {
-
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
-
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                            }
-
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                            }
-
-                            if (line.trim().startsWith(UNITE_X)) {
-
-                                if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[0] = " ";
-                                }
-                            }
-
-                            if (line.trim().startsWith(UNITE_Y)) {
-
-                                if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[1] = " ";
-                                }
-                            }
-
-                            if (line.trim().startsWith(UNITE_W)) {
-
-                                if (quotesSplitLine.length > 1) {
-                                    unite[2] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[2] = " ";
-                                }
-                            }
-
-                            if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
-
-                                threeSpaceSplitLine = line.split("   ");
-
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
-
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
-
-                                    axeTmp.clear();
-                                }
-                            }
-
-                            if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
-                                    | line.trim().startsWith(VALEUR_TEXT)) {
-
-                                threeSpaceSplitLine = line.split("   ");
-
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) & !s.equals(VALEUR_NOMBRE)
-                                            & !s.equals(VALEUR_TEXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
-
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
-
-                                    cnt++;
-
-                                    axeTmp.clear();
-                                }
-
-                            }
-
-                        }
-
-                        // System.out.println(spaceSplitLine[1]);
-
-                        listLabel.add(new Map(spaceSplitLine[1], description.toString(), MAP_FIXED, fonction.toString(), unite, new String[0][0],
-                                valeur));
+                                new Map(spaceSplitLine[1], description.toString(), MAP_FIXED, fonction.toString(), unite, new String[0][0], valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -719,7 +763,9 @@ public final class Dcm implements Cdf {
 
                         ArrayList<String> distribution = new ArrayList<String>();
 
-                        while (!(line = buf.readLine()).equals(END)) {
+                        while (!readLineDcm().equals(END)) {
+
+                            ;
 
                             spaceSplitLine2 = line.split(" ");
                             quotesSplitLine = line.split("\"");
@@ -758,8 +804,8 @@ public final class Dcm implements Cdf {
 
                         // System.out.println(spaceSplitLine[1]);
 
-                        listLabel.add(
-                                new Axis(spaceSplitLine[1], description.toString(), AXIS_VALUES, fonction.toString(), unite, new String[0][0], valeur));
+                        listLabel.add(new Axis(spaceSplitLine[1], description.toString(), AXIS_VALUES, fonction.toString(), unite, new String[0][0],
+                                valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -784,7 +830,9 @@ public final class Dcm implements Cdf {
 
                             axeTmp.clear();
 
-                            while (!(line = buf.readLine()).equals(END)) {
+                            while (!readLineDcm().equals(END)) {
+
+                                ;
 
                                 spaceSplitLine2 = line.split(" ");
                                 quotesSplitLine = line.split("\"");
@@ -850,7 +898,7 @@ public final class Dcm implements Cdf {
 
                             axeTmp.add("Z");
 
-                            while (!(line = buf.readLine()).equals(END)) {
+                            while (!readLineDcm().equals(END)) {
 
                                 spaceSplitLine2 = line.split(" ");
                                 quotesSplitLine = line.split("\"");
@@ -911,7 +959,6 @@ public final class Dcm implements Cdf {
                     }
                 }
             }
-
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -923,6 +970,17 @@ public final class Dcm implements Cdf {
                 e.printStackTrace();
             }
         }
+    }
+
+    private String readLineDcm() {
+        try {
+            numLine++;
+            return line = buf.readLine();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -978,6 +1036,19 @@ public final class Dcm implements Cdf {
     @Override
     public Boolean exportToM(File file) {
         return ExportUtils.toM(this, file);
+    }
+
+    @Override
+    public void addObserver(Observer obs) {
+        listObserver.add(obs);
+    }
+
+    @Override
+    public void notifyObserver(String cdf, String variable, String rate) {
+        for (Observer obs : listObserver) {
+            obs.update(cdf, variable, rate);
+        }
+
     }
 
 }

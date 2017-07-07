@@ -56,6 +56,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
         {
             this.getModel().removeCdf(this.getSelectedIndex());
             this.clearSelection();
+            PanelCDF.razUI();
         }
 
     }

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -47,12 +48,16 @@ public final class PaCo implements Cdf, Observable {
     private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
     private int minScore = Byte.MAX_VALUE;
     private int maxScore = Byte.MIN_VALUE;
-    
+
     private ArrayList<Observer> listObserver = new ArrayList<Observer>();
 
+    private static final NumberFormat nbf = NumberFormat.getInstance();
+
     public PaCo(final File file, PanelCDF panCdf) {
-    	
-    	addObserver(panCdf);
+
+        addObserver(panCdf);
+
+        nbf.setMaximumFractionDigits(1);
 
         this.name = file.getName().substring(0, file.getName().length() - 4);
 
@@ -232,8 +237,9 @@ public final class PaCo implements Cdf, Observable {
                             readMap(swAxisCont)));
                     break;
                 }
-                
-                notifyObserver(this.name, label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(), this.nbLabel, i);
+
+                notifyObserver(this.name, label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
+                        nbf.format(((double) i / (double) (this.nbLabel - 1)) * 100) + "%");
             }
 
             getScores();
@@ -532,18 +538,17 @@ public final class PaCo implements Cdf, Observable {
         return ExportUtils.toM(this, file);
     }
 
-	@Override
-	public void addObserver(Observer obs) {
-		listObserver.add(obs);		
-	}
+    @Override
+    public void addObserver(Observer obs) {
+        listObserver.add(obs);
+    }
 
-	@Override
-	public void notifyObserver(String cdf, String variable, int nbLabel, int nLabel) {
-		for (Observer obs : listObserver)
-		{
-			obs.update(cdf, variable, nbLabel, nLabel);
-		}
-		
-	}
+    @Override
+    public void notifyObserver(String cdf, String variable, String rate) {
+        for (Observer obs : listObserver) {
+            obs.update(cdf, variable, rate);
+        }
+
+    }
 
 }

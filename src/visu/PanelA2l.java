@@ -3,68 +3,86 @@
  */
 package visu;
 
-import java.awt.Color;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
-
-public final class PanelA2l extends JPanel {
+public final class PanelA2l extends JPanel implements ActionListener {
 
     private static final long serialVersionUID = 1L;
 
-    private static final GridBagConstraints gbc = new GridBagConstraints();
+    private Rectangle2D r2d = new Rectangle2D.Float(20, 500, 50, 50);
+
+    private Timer timer;
+    private Boolean backX = false;
+
+    private static final int nbSample = 500;
+    private double sinusX[] = new double[nbSample];
+    private double sinusY[] = new double[nbSample];
+    int cnt = 0;
 
     // GUI
-    private final MyButton btOpen = new MyButton("Ouvrir A2l");
+    private final JButton btOpen = new JButton("Start");
+    private final JButton btStop = new JButton("Stop");
 
     public PanelA2l() {
 
-        this.setLayout(new GridBagLayout());
-
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 1;
-        gbc.weighty = 0;
-        gbc.insets = new Insets(0, 0, 0, 0);
-        gbc.anchor = GridBagConstraints.CENTER;
         btOpen.addActionListener(new OpenA2l());
-        this.add(btOpen, gbc);
+        this.add(btOpen);
+
+        btStop.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timer.stop();
+
+            }
+        });
+
+        this.add(btStop);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-
-        Rectangle2D tr = new Rectangle2D.Double(0, 0, 100, 100);
-        GradientPaint gp = new GradientPaint(0, 0, Color.LIGHT_GRAY, 1, 1, Color.BLACK, true);
-        BufferedImage bi = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-        Graphics2D big2d = bi.createGraphics();
-        big2d.setPaint(gp);
-        big2d.fill(tr);
-        g2d.setPaint(new TexturePaint(bi, tr));
-        g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+        g2d.fill(r2d);
     }
+
+    // @Override
+    // protected void paintComponent(Graphics g) {
+    // super.paintComponent(g);
+    //
+    // Graphics2D g2d = (Graphics2D) g;
+    //
+    // Rectangle2D tr = new Rectangle2D.Double(0, 0, 100, 100);
+    // GradientPaint gp = new GradientPaint(0, 0, Color.LIGHT_GRAY, 1, 1, Color.BLACK, true);
+    // BufferedImage bi = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+    // Graphics2D big2d = bi.createGraphics();
+    // big2d.setPaint(gp);
+    // big2d.fill(tr);
+    // g2d.setPaint(new TexturePaint(bi, tr));
+    // g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+    // }
 
     private final class OpenA2l implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+
+            for (int i = 0; i < sinusX.length; i++) {
+                sinusX[i] = i * (PanelA2l.this.getWidth() / (sinusX.length - 1));
+                sinusY[i] = 500 + Math.sin((i % 2) * (-1)) * (nbSample - i);
+            }
+
+            timer = new Timer(100, PanelA2l.this);
+            timer.start();
 
             // final JFileChooser jFileChooser = new JFileChooser();
             // jFileChooser.setMultiSelectionEnabled(false);
@@ -97,14 +115,17 @@ public final class PanelA2l extends JPanel {
         }
     }
 
-    private final class MyButton extends JButton {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (r2d.getFrame().getX() - r2d.getFrame().getWidth() > this.getWidth())
+            backX = true;
+        if (r2d.getFrame().getX() < 0)
+            backX = false;
 
-        private static final long serialVersionUID = 1L;
+        r2d.setFrame(sinusX[cnt % nbSample], sinusY[cnt % nbSample], r2d.getFrame().getWidth(), r2d.getFrame().getHeight());
+        repaint();
 
-        public MyButton(String s) {
-            super(s);
-            setOpaque(false);
-        }
+        cnt++;
 
     }
 
