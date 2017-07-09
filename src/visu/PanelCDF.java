@@ -56,9 +56,9 @@ public final class PanelCDF extends JPanel implements Observer {
     private static final JTabbedPane tabPan = new JTabbedPane();
     private static final JPanel panCDF = new JPanel(new GridBagLayout());
     private static final JPanel panLabel = new JPanel(new GridBagLayout());
-    private static final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panCDF, panLabel);
-    private static final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(panVisu), tabPan);
-    private static final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPaneLeft, splitPaneRight);
+    private static final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panCDF, panLabel);
+    private static final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, new JScrollPane(panVisu), tabPan);
+    private static final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneLeft, splitPaneRight);
     private static final PanelHistory panelHistory = new PanelHistory();
 
     private ProgressMonitor pm;

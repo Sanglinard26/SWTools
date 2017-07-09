@@ -3,130 +3,172 @@
  */
 package visu;
 
+import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.awt.geom.Rectangle2D;
+
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.Timer;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 public final class PanelA2l extends JPanel implements ActionListener {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private Rectangle2D r2d = new Rectangle2D.Float(20, 500, 50, 50);
+	private Rectangle2D r2d;
 
-    private Timer timer;
-    private Boolean backX = false;
+	private Timer timer;
+	private long tps;
+	private static final double nbSample = 1000;
 
-    private static final int nbSample = 500;
-    private double sinusX[] = new double[nbSample];
-    private double sinusY[] = new double[nbSample];
-    int cnt = 0;
+	int cnt;
 
-    // GUI
-    private final JButton btOpen = new JButton("Start");
-    private final JButton btStop = new JButton("Stop");
 
-    public PanelA2l() {
+	// GUI
+	private final JButton btOpen = new JButton("Start");
+	private final JButton btStop = new JButton("Stop");
+	private final JPanel panUp = new JPanel(new GridLayout(1, 1));
+	private final JPanel panDown = new JPanel(new GridLayout(1, 1));
+	private final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false, panUp, panDown);
 
-        btOpen.addActionListener(new OpenA2l());
-        this.add(btOpen);
+	public PanelA2l() {
+		
+		setLayout(new BorderLayout());
 
-        btStop.addActionListener(new ActionListener() {
+		btOpen.addActionListener(new OpenA2l());
+		panUp.add(btOpen);
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                timer.stop();
+		btStop.addActionListener(new ActionListener() {
 
-            }
-        });
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (timer != null)
+				timer.stop();
 
-        this.add(btStop);
-    }
+			}
+		});
+		panDown.add(btStop);
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.fill(r2d);
-    }
+		
+		splitPane.setUI(new MySplitPaneUI());
+		
+		this.add(splitPane,BorderLayout.CENTER);
+	}
 
-    // @Override
-    // protected void paintComponent(Graphics g) {
-    // super.paintComponent(g);
-    //
-    // Graphics2D g2d = (Graphics2D) g;
-    //
-    // Rectangle2D tr = new Rectangle2D.Double(0, 0, 100, 100);
-    // GradientPaint gp = new GradientPaint(0, 0, Color.LIGHT_GRAY, 1, 1, Color.BLACK, true);
-    // BufferedImage bi = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-    // Graphics2D big2d = bi.createGraphics();
-    // big2d.setPaint(gp);
-    // big2d.fill(tr);
-    // g2d.setPaint(new TexturePaint(bi, tr));
-    // g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
-    // }
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.fill(r2d);
+	}
 
-    private final class OpenA2l implements ActionListener {
+	private final class OpenA2l implements ActionListener {
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
+		@Override
+		public void actionPerformed(ActionEvent e) {
 
-            for (int i = 0; i < sinusX.length; i++) {
-                sinusX[i] = i * (PanelA2l.this.getWidth() / (sinusX.length - 1));
-                sinusY[i] = 500 + Math.sin((i % 2) * (-1)) * (nbSample - i);
-            }
+			// final JFileChooser jFileChooser = new JFileChooser();
+			// jFileChooser.setMultiSelectionEnabled(false);
+			// jFileChooser.setFileFilter(new FileFilter() {
+			//
+			// @Override
+			// public String getDescription() {
+			// return "A2l *.a2l";
+			// }
+			//
+			// @Override
+			// public boolean accept(File f) {
+			//
+			// if (f.isDirectory())
+			// return true;
+			//
+			// String extension = Utilitaire.getExtension(f);
+			// if (extension.equals(Utilitaire.a2l)) {
+			// return true;
+			// }
+			// return false;
+			// }
+			// });
+			//
+			// final int reponse = jFileChooser.showOpenDialog(PanelA2l.this);
+			// if (reponse == JFileChooser.APPROVE_OPTION) {
+			// A2LParser.parse(jFileChooser.getSelectedFile());
+			// }
 
-            timer = new Timer(100, PanelA2l.this);
-            timer.start();
+		}
+	}
 
-            // final JFileChooser jFileChooser = new JFileChooser();
-            // jFileChooser.setMultiSelectionEnabled(false);
-            // jFileChooser.setFileFilter(new FileFilter() {
-            //
-            // @Override
-            // public String getDescription() {
-            // return "A2l *.a2l";
-            // }
-            //
-            // @Override
-            // public boolean accept(File f) {
-            //
-            // if (f.isDirectory())
-            // return true;
-            //
-            // String extension = Utilitaire.getExtension(f);
-            // if (extension.equals(Utilitaire.a2l)) {
-            // return true;
-            // }
-            // return false;
-            // }
-            // });
-            //
-            // final int reponse = jFileChooser.showOpenDialog(PanelA2l.this);
-            // if (reponse == JFileChooser.APPROVE_OPTION) {
-            // A2LParser.parse(jFileChooser.getSelectedFile());
-            // }
+	@Override
+	public void actionPerformed(ActionEvent e) {
 
-        }
-    }
+		if (splitPane.getRightComponent().getHeight()!=0)
+		{
+			splitPane.setDividerLocation((int)premOrdre(PanelA2l.this.getHeight(),tps=tps+timer.getDelay()));
+		}else{
+			timer.stop();
+		}
+	}
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (r2d.getFrame().getX() - r2d.getFrame().getWidth() > this.getWidth())
-            backX = true;
-        if (r2d.getFrame().getX() < 0)
-            backX = false;
+	private double premOrdre(int height, double t)
+	{
+		final double tau = timer.getDelay()/((nbSample/10)/nbSample);
+		return height*(1 - (Math.exp(-t/tau)));
+	}
+	
+	private final class MySplitPaneUI extends BasicSplitPaneUI
+	{
+		final MyBt bt = new MyBt();
+		
+		@Override
+		public BasicSplitPaneDivider createDefaultDivider() {
+			BasicSplitPaneDivider divider = new BasicSplitPaneDivider(this)
+					{
+						@Override
+						public void setDividerSize(int paramInt) {
+							super.setDividerSize(bt.getPreferredSize().height);
+						}
+					};
+			divider.setLayout(new BorderLayout());
+			divider.add(bt, BorderLayout.WEST);
+			
+			return divider;
+		}
+		
+		
+	}
+	
+	private final class MyBt extends JButton implements ActionListener
+	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
-        r2d.setFrame(sinusX[cnt % nbSample], sinusY[cnt % nbSample], r2d.getFrame().getWidth(), r2d.getFrame().getHeight());
-        repaint();
+		public MyBt() {
+			super("Down");
+			addActionListener(this);
+		}
 
-        cnt++;
+		@Override
+		public void actionPerformed(ActionEvent paramActionEvent) {
+			if(timer == null)
+				timer = new Timer(1, PanelA2l.this);
 
-    }
+				repaint();
+				cnt = 0;
+				tps = 0;
+
+				timer.start();
+		}
+	}
 
 }
