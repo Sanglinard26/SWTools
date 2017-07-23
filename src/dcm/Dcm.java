@@ -58,20 +58,22 @@ public final class Dcm implements Cdf, Observable {
     public static final String AXE_PARTAGE_X = "*SSTX";
     public static final String AXE_PARTAGE_Y = "*SSTY";
 
-    private BufferedReader buf = null;
-    private String line;
+    private static BufferedReader buf = null;
+    private static String line;
 
-    private int numLine = 0;
+    private static int numLine;
 
     private final String name;
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
-    private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1);
+    private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1);
 
-    private ArrayList<Observer> listObserver = new ArrayList<Observer>();
+    private final ArrayList<Observer> listObserver = new ArrayList<Observer>();
 
     private static final NumberFormat nbf = NumberFormat.getInstance();
 
     public Dcm(final File file, PanelCDF panCdf) {
+    	
+    	numLine = 0;
 
         addObserver(panCdf);
 
@@ -85,7 +87,6 @@ public final class Dcm implements Cdf, Observable {
 
     private final void parse(File file) {
 
-        // BufferedReader buf = null;
         final StringBuilder description = new StringBuilder();
         final StringBuilder fonction = new StringBuilder();
         String[] unite;
@@ -95,7 +96,7 @@ public final class Dcm implements Cdf, Observable {
 
             buf = new BufferedReader(new FileReader(file));
 
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            final BufferedReader reader = new BufferedReader(new FileReader(file));
             int nbLines = 0;
             while (reader.readLine() != null)
                 nbLines++;
@@ -108,16 +109,14 @@ public final class Dcm implements Cdf, Observable {
             String[] threeSpaceSplitLine;
 
             // Pour les LINE
-            ArrayList<String> axeX = new ArrayList<String>();
-            ArrayList<String> axeY = new ArrayList<String>();
+            final ArrayList<String> axeX = new ArrayList<String>();
+            final ArrayList<String> axeY = new ArrayList<String>();
 
             // Pour les MAP
             int cnt;
-            ArrayList<String> axeTmp = new ArrayList<String>();
+            final ArrayList<String> axeTmp = new ArrayList<String>();
 
             while (readLineDcm() != null) {
-
-                ;
 
                 notifyObserver(this.name, "", nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
 
@@ -965,6 +964,7 @@ public final class Dcm implements Cdf, Observable {
 
         } finally {
             try {
+            	numLine = 0;
                 buf.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -972,7 +972,7 @@ public final class Dcm implements Cdf, Observable {
         }
     }
 
-    private String readLineDcm() {
+    private final String readLineDcm() {
         try {
             numLine++;
             return line = buf.readLine();
@@ -1030,7 +1030,7 @@ public final class Dcm implements Cdf, Observable {
 
     @Override
     public HashMap<Integer, Integer> getRepartitionScore() {
-        return this.repartitionScore;
+        return repartitionScore;
     }
 
     @Override

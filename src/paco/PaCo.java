@@ -49,7 +49,7 @@ public final class PaCo implements Cdf, Observable {
     private int minScore = Byte.MAX_VALUE;
     private int maxScore = Byte.MIN_VALUE;
 
-    private ArrayList<Observer> listObserver = new ArrayList<Observer>();
+    private final ArrayList<Observer> listObserver = new ArrayList<Observer>();
 
     private static final NumberFormat nbf = NumberFormat.getInstance();
 
@@ -256,6 +256,7 @@ public final class PaCo implements Cdf, Observable {
 
     }
 
+    @Override
     public final String getName() {
         return this.name;
     }
@@ -264,10 +265,12 @@ public final class PaCo implements Cdf, Observable {
         return valid;
     }
 
+    @Override
     public final int getNbLabel() {
         return this.nbLabel;
     }
 
+    @Override
     public final ArrayList<Variable> getListLabel() {
         return this.listLabel;
     }
@@ -491,23 +494,28 @@ public final class PaCo implements Cdf, Observable {
         return val;
     }
 
-    public Boolean exportToExcel(final File file) {
+    @Override
+    public final Boolean exportToExcel(final File file) {
         return ExportUtils.toExcel(this, file);
     }
 
+    @Override
     public final Boolean exportToTxt(File file) {
         return ExportUtils.toText(this, file);
     }
 
+    @Override
     public final float getAvgScore() {
         return (float) (repartitionScore.get(0) * 0 + repartitionScore.get(25) * 25 + repartitionScore.get(50) * 50 + repartitionScore.get(75) * 75
                 + repartitionScore.get(100) * 100) / listLabel.size();
     }
 
+    @Override
     public final int getMinScore() {
         return this.minScore;
     }
 
+    @Override
     public final int getMaxScore() {
         return this.maxScore;
     }

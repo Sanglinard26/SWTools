@@ -9,13 +9,13 @@ public final class Map extends Variable {
     private final int dimX;
     private final int dimY;
 
-    private Double minZValue = Double.POSITIVE_INFINITY;
-    private Double maxZValue = Double.NEGATIVE_INFINITY;
+    private float minZValue = Float.POSITIVE_INFINITY;
+    private float maxZValue = Float.NEGATIVE_INFINITY;
 
     public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
             String[][] values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
-
+        
         this.values = values;
         this.dimX = values[0].length;
         this.dimY = values.length;
@@ -36,14 +36,14 @@ public final class Map extends Variable {
                 zValues[y][x] = values[y + 1][x + 1];
 
                 try {
-                    if (Double.parseDouble(values[y + 1][x + 1]) < minZValue)
-                        minZValue = Double.parseDouble(values[y + 1][x + 1]);
+                    if (Float.parseFloat(values[y + 1][x + 1]) < minZValue)
+                        minZValue = Float.parseFloat(values[y + 1][x + 1]);
 
-                    if (Double.parseDouble(values[y + 1][x + 1]) > maxZValue)
-                        maxZValue = Double.parseDouble(values[y + 1][x + 1]);
+                    if (Float.parseFloat(values[y + 1][x + 1]) > maxZValue)
+                        maxZValue = Float.parseFloat(values[y + 1][x + 1]);
                 } catch (NumberFormatException e) {
-                    minZValue = Double.NaN;
-                    maxZValue = Double.NaN;
+                    minZValue = Float.NaN;
+                    maxZValue = Float.NaN;
                 }
 
             }
@@ -89,11 +89,11 @@ public final class Map extends Variable {
         return zValues[col][row];
     }
 
-    public final Double getMaxZValue() {
+    public final float getMaxZValue() {
         return maxZValue;
     }
 
-    public final Double getMinZValue() {
+    public final float getMinZValue() {
         return minZValue;
     }
 

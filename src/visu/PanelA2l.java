@@ -120,7 +120,7 @@ public final class PanelA2l extends JPanel implements ActionListener {
 
 	private double premOrdre(int height, double t)
 	{
-		final double tau = timer.getDelay()/((nbSample/10)/nbSample);
+		final double tau = timer.getDelay()/((nbSample/20)/nbSample);
 		return height*(1 - (Math.exp(-t/tau)));
 	}
 	

@@ -35,7 +35,7 @@ public final class FrameLog extends JFrame {
         try {
             String line;
             final StringBuilder sLog = new StringBuilder("");
-            brLog = new BufferedReader(new FileReader(Main.getLogFile()));
+            brLog = new BufferedReader(new FileReader(SWToolsMain.getLogFile()));
             while ((line = brLog.readLine()) != null) {
                 sLog.append("\n" + line);
             }

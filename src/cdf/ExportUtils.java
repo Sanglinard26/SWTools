@@ -24,7 +24,7 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
-import visu.Main;
+import visu.SWToolsMain;
 
 public final class ExportUtils {
 
@@ -184,9 +184,9 @@ public final class ExportUtils {
             workbook.close();
 
         } catch (IOException e) {
-            Main.getLogger().severe(e.getMessage());
+            SWToolsMain.getLogger().severe(e.getMessage());
         } catch (WriteException e) {
-            Main.getLogger().severe(e.getMessage());
+            SWToolsMain.getLogger().severe(e.getMessage());
             if (e instanceof RowsExceededException) {
                 JOptionPane.showMessageDialog(null, "Trop de variables à exporter !", "ERREUR", JOptionPane.ERROR_MESSAGE);
                 if (workbook != null)
@@ -244,7 +244,7 @@ public final class ExportUtils {
             printWriter.println("Fichier cree par SWTools, " + new Date().toString());
 
         } catch (FileNotFoundException e) {
-            Main.getLogger().severe(e.getMessage());
+            SWToolsMain.getLogger().severe(e.getMessage());
             return false;
         }
         finally {
@@ -275,7 +275,7 @@ public final class ExportUtils {
                 printWriter.println(var.toMFormat());
             }
         } catch (FileNotFoundException e) {
-            Main.getLogger().severe(e.getMessage());
+            SWToolsMain.getLogger().severe(e.getMessage());
             return false;
         }
         finally {

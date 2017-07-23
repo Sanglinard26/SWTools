@@ -11,7 +11,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-public class Main {
+public class SWToolsMain {
 
     private static File logFile = null;
     private static Logger logger = Logger.getLogger("MyLogger");
