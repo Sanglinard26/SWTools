@@ -64,6 +64,9 @@ public final class ListLabelRenderer extends JPanel implements ListCellRenderer<
         case Cdf.CURVE_GROUPED:
             variableName.setIcon(new ImageIcon(getClass().getResource(CURVE)));
             break;
+        case Cdf.CURVE_FIXED:
+            variableName.setIcon(new ImageIcon(getClass().getResource(CURVE)));
+            break;
         case Cdf.MAP_INDIVIDUAL:
             variableName.setIcon(new ImageIcon(getClass().getResource(MAP)));
             break;

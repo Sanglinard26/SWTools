@@ -199,6 +199,11 @@ public final class PaCo implements Cdf, Observable {
                             label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
                             label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
                             readCurve(swAxisCont)));
+                case CURVE_FIXED: // Modif
+                    listLabel.add(new Curve(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
+                            label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
+                            label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
+                            readCurve(swAxisCont)));
                     break;
                 case AXIS_VALUES:
                     listLabel.add(new Axis(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
