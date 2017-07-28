@@ -5,7 +5,6 @@ package cdf;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.AbstractListModel;
 
@@ -13,7 +12,7 @@ public final class ListModelCdf extends AbstractListModel<Cdf> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Vector<Cdf> listCdf = new Vector<Cdf>(); // Remplacement de l'arraylist par un vector car thread safe
+    private static final List<Cdf> listCdf = new ArrayList<Cdf>();
 
     @Override
     public int getSize() {

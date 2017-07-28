@@ -3,9 +3,6 @@ package cdf;
 public final class Map extends Variable {
 
     private final String[][] values;
-    // private final String[] xValues;
-    // private final String[] yValues;
-    // private final String[][] zValues;
     private final int dimX;
     private final int dimY;
 
@@ -14,27 +11,15 @@ public final class Map extends Variable {
 
     public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
             String[][] values) {
+
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 
         this.values = values;
         this.dimX = values[0].length;
         this.dimY = values.length;
 
-        // xValues = new String[dimX - 1];
-        // for (short i = 0; i < xValues.length; i++) {
-        // xValues[i] = values[0][i + 1];
-        // }
-        //
-        // yValues = new String[dimY - 1];
-        // for (short i = 0; i < yValues.length; i++) {
-        // yValues[i] = values[i + 1][0];
-        // }
-
-        // zValues = new String[yValues.length][xValues.length];
         for (short x = 1; x < values[0].length; x++) {
             for (short y = 1; y < values.length; y++) {
-                // zValues[y][x] = values[y + 1][x + 1];
-
                 try {
                     if (Float.parseFloat(values[y][x]) < minZValue)
                         minZValue = Float.parseFloat(values[y][x]);
@@ -75,18 +60,6 @@ public final class Map extends Variable {
     public final String getUnitZ() {
         return super.getSwUnitRef()[2];
     }
-
-    // public final String[] getxValues() {
-    // return xValues;
-    // }
-    //
-    // public final String[] getyValues() {
-    // return yValues;
-    // }
-    //
-    // public final String getzValue(int col, int row) {
-    // return zValues[col][row];
-    // }
 
     public final float getMaxZValue() {
         return maxZValue;

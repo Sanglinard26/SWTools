@@ -305,7 +305,6 @@ public final class PanelCDF extends JPanel implements Observer {
                 }
                 cnt += 1;
                 pm.setProgress(cnt);
-                // pm.setNote(file.getName().substring(0, file.getName().length() - 4));
             }
 
             if (listCDF.getSelectedIndices().length > 0)

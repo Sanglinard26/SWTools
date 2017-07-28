@@ -40,10 +40,10 @@ public final class SurfaceChart extends JPanel {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public double getValue(double x, double z) {
-                    if (x != 0 & z != 0) {
+                public double getValue(double x, double y) {
+                    if (x != 0 & y != 0) {
                         try {
-                            return Double.valueOf(((Map) variable).getValue((int) z, (int) x));
+                            return Double.valueOf(((Map) variable).getValue((int) y, (int) x));
                         } catch (NumberFormatException nbfEx) {
                             return Double.NaN;
                         }
@@ -57,19 +57,22 @@ public final class SurfaceChart extends JPanel {
                     "Z [" + ((Map) variable).getUnitZ() + "]", "Y [" + ((Map) variable).getUnitY() + "]");
             final XYZPlot plot = (XYZPlot) chart.getPlot();
             plot.setDimensions(new Dimension3D(20, 10, 20));
+
             final ValueAxis3D xAxis = plot.getXAxis();
             xAxis.setRange(1, ((Map) variable).getValues()[0].length - 1);
+
             final ValueAxis3D zAxis = plot.getZAxis();
             zAxis.setRange(1, ((Map) variable).getValues().length - 1);
             final SurfaceRenderer renderer = (SurfaceRenderer) plot.getRenderer();
             if (((Map) variable).getMaxZValue() - ((Map) variable).getMinZValue() != 0)
                 renderer.setColorScale(new RainbowScale(new Range(((Map) variable).getMinZValue(), ((Map) variable).getMaxZValue())));
             renderer.setDrawFaceOutlines(false);
-            renderer.setXSamples(((Map) variable).getValues()[0].length - 1);
-            renderer.setZSamples(((Map) variable).getValues().length - 1);
+            renderer.setXSamples(((Map) variable).getDimX() - 1);
+            renderer.setZSamples(((Map) variable).getDimY() - 1);
             chart.setLegendPosition(LegendAnchor.BOTTOM_CENTER, Orientation.HORIZONTAL);
 
             final Chart3DPanel chartPanel = new Chart3DPanel(chart);
+
             this.add(new DisplayPanel3D(chartPanel));
         } else {
             this.setLayout(new BorderLayout());

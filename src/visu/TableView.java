@@ -22,23 +22,6 @@ public final class TableView extends JTable {
         this.setDefaultRenderer(Object.class, new TableViewRenderer(var));
         this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         this.setCellSelectionEnabled(true);
-        // ListSelectionModel listSelectionModel = this.getSelectionModel();
-        // listSelectionModel.addListSelectionListener(new ListSelectionListener() {
-        //
-        // @Override
-        // public void valueChanged(ListSelectionEvent e) {
-        // int[] selCol = TableView.this.getSelectedColumns();
-        // int[] selRow = TableView.this.getSelectedRows();
-        //
-        // for (int c : selCol)
-        // {
-        // for (int r : selRow)
-        // {
-        // System.out.println(TableView.this.getValueAt(r, c));
-        // }
-        // }
-        // }
-        // });
     }
 
     @Override
