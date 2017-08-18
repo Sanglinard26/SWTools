@@ -11,22 +11,25 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import cdf.Cdf;
 import cdf.ListModelLabel;
 import cdf.Variable;
 
@@ -34,6 +37,8 @@ public final class ListLabel extends JList<Variable> {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String ICON_TEXT = "/text_icon_16.png";
+    private static final String ICON_IMAGE = "/image_icon_16.png";
     private static final String ICON_OLD_SEARCH = "/oldsearch_24.png";
 
     private final FilterField filterField;
@@ -42,6 +47,7 @@ public final class ListLabel extends JList<Variable> {
         super(dataModel);
         setCellRenderer(new ListLabelRenderer());
         filterField = new FilterField();
+        addMouseListener(new ListMouseListener());
     }
 
     @Override
@@ -49,12 +55,41 @@ public final class ListLabel extends JList<Variable> {
         return (ListModelLabel) super.getModel();
     }
 
-    private class FilterField extends JComponent implements DocumentListener, ActionListener {
+    private final class ListMouseListener extends MouseAdapter {
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (e.isPopupTrigger() & ListLabel.this.getSelectedValue() != null
+                    & ListLabel.this.locationToIndex(e.getPoint()) == ListLabel.this.getSelectedIndex()) {
+                final JPopupMenu menu = new JPopupMenu();
+                final JMenu menuCopy = new JMenu("Copier dans le presse-papier");
+                JMenuItem subMenu = new JMenuItem("Format image", new ImageIcon(getClass().getResource(ICON_IMAGE)));
+                subMenu.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ListLabel.this.getSelectedValue().copyImgToClipboard();
+                    }
+                });
+                menuCopy.add(subMenu);
+                menuCopy.addSeparator();
+                subMenu = new JMenuItem("Format texte", new ImageIcon(getClass().getResource(ICON_TEXT)));
+                subMenu.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ListLabel.this.getSelectedValue().copyTxtToClipboard();
+                    }
+                });
+                menuCopy.add(subMenu);
+                menu.add(menuCopy);
+                menu.show(e.getComponent(), e.getX(), e.getY());
+            }
+        }
+    }
+
+    class FilterField extends JComponent implements DocumentListener, ActionListener {
 
         private static final long serialVersionUID = 1L;
-
-        private final String[] nameFilter = { "TOUT TYPE", Cdf.AXIS_VALUES, Cdf.VALUE, Cdf.MAP_INDIVIDUAL, Cdf.MAP_FIXED, Cdf.MAP_GROUPED, Cdf.CURVE_INDIVIDUAL, Cdf.VALUE_BLOCK,
-        		Cdf.CURVE_GROUPED, Cdf.ASCII };
 
         private final JComboBox<String> typeFilter;
         private final JTextField txtFiltre;
@@ -66,7 +101,8 @@ public final class ListLabel extends JList<Variable> {
             super();
             setLayout(new BorderLayout());
 
-            typeFilter = new JComboBox<>(nameFilter);
+            typeFilter = new JComboBox<String>(new ModelCombo());
+            populateFilter(null);
             ((JLabel) typeFilter.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
             typeFilter.addActionListener(this);
 
@@ -91,7 +127,29 @@ public final class ListLabel extends JList<Variable> {
             oldSearchItem = new LinkedList<String>();
         }
 
-        public void popMenu(int x, int y) {
+        private class ModelCombo extends DefaultComboBoxModel<String> {
+
+            private static final long serialVersionUID = 1L;
+
+            public ModelCombo() {
+                super();
+            }
+        }
+
+        public final void populateFilter(Vector<String> list) {
+
+            if (typeFilter.getModel().getSize() > 0)
+                ((ModelCombo) typeFilter.getModel()).removeAllElements();
+            ((ModelCombo) typeFilter.getModel()).addElement("ALL");
+
+            if (list != null)
+                for (int i = 0; i < list.size(); i++) {
+                    ((ModelCombo) typeFilter.getModel()).addElement(list.get(i));
+                }
+
+        }
+
+        public final void popMenu(int x, int y) {
             oldSearchMenu = new JPopupMenu();
             Iterator<String> it = oldSearchItem.iterator();
             while (it.hasNext()) {
@@ -110,7 +168,8 @@ public final class ListLabel extends JList<Variable> {
             }
             if (e.getSource() == typeFilter) {
                 clearSelection();
-                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+                if (typeFilter.getSelectedItem() != null)
+                    getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
             }
         }
 
@@ -134,7 +193,7 @@ public final class ListLabel extends JList<Variable> {
 
     }
 
-    private class OldSearchAct extends AbstractAction {
+    private final class OldSearchAct extends AbstractAction {
 
         private static final long serialVersionUID = 1L;
 
@@ -164,6 +223,6 @@ public final class ListLabel extends JList<Variable> {
 
     public final void clearFilter() {
         getFilterField().txtFiltre.setText("");
-        getFilterField().typeFilter.getModel().setSelectedItem("TOUT TYPE");
+        getFilterField().typeFilter.getModel().setSelectedItem("ALL");
     }
 }

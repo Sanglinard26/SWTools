@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
@@ -48,6 +49,8 @@ public final class PaCo implements Cdf, Observable {
     private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
     private int minScore = Byte.MAX_VALUE;
     private int maxScore = Byte.MIN_VALUE;
+
+    private final Vector<String> listCategory = new Vector<String>();
 
     private final ArrayList<Observer> listObserver = new ArrayList<Observer>();
 
@@ -243,6 +246,9 @@ public final class PaCo implements Cdf, Observable {
                             readMap(swAxisCont)));
                     break;
                 }
+
+                if (!listCategory.contains(label.getElementsByTagName("CATEGORY").item(0).getTextContent()))
+                    listCategory.add(label.getElementsByTagName("CATEGORY").item(0).getTextContent());
 
                 notifyObserver(this.name, label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                         nbf.format(((double) i / (double) (this.nbLabel - 1)) * 100) + "%");
@@ -563,6 +569,11 @@ public final class PaCo implements Cdf, Observable {
             obs.update(cdf, variable, rate);
         }
 
+    }
+
+    @Override
+    public Vector<String> getCategoryList() {
+        return listCategory;
     }
 
 }

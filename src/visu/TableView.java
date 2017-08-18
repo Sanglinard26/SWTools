@@ -29,7 +29,7 @@ public final class TableView extends JTable {
         return (TableModelView) super.getModel();
     }
 
-    public static void adjustCells(JTable table) {
+    public static final void adjustCells(JTable table) {
 
         TableColumnModel columnModel = table.getColumnModel();
 

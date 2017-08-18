@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 import cdf.Axis;
 import cdf.Cdf;
@@ -71,9 +72,11 @@ public final class Dcm implements Cdf, Observable {
 
     private static final NumberFormat nbf = NumberFormat.getInstance();
 
+    private final Vector<String> listCategory = new Vector<String>();
+
     public Dcm(final File file, PanelCDF panCdf) {
-    	
-    	numLine = 0;
+
+        numLine = 0;
 
         addObserver(panCdf);
 
@@ -168,6 +171,9 @@ public final class Dcm implements Cdf, Observable {
                         description.setLength(0);
                         fonction.setLength(0);
 
+                        if (!listCategory.contains(Cdf.VALUE))
+                            listCategory.add(Cdf.VALUE);
+
                         break;
 
                     case TEXTSTRING:
@@ -202,6 +208,9 @@ public final class Dcm implements Cdf, Observable {
 
                         description.setLength(0);
                         fonction.setLength(0);
+
+                        if (!listCategory.contains(Cdf.ASCII))
+                            listCategory.add(Cdf.ASCII);
 
                         break;
 
@@ -281,6 +290,9 @@ public final class Dcm implements Cdf, Observable {
                         axeX.clear();
                         axeY.clear();
 
+                        if (!listCategory.contains(Cdf.CURVE_INDIVIDUAL))
+                            listCategory.add(Cdf.CURVE_INDIVIDUAL);
+
                         break;
 
                     case FIXED_LINE:
@@ -359,6 +371,9 @@ public final class Dcm implements Cdf, Observable {
                         axeX.clear();
                         axeY.clear();
 
+                        if (!listCategory.contains(Cdf.CURVE_FIXED))
+                            listCategory.add(Cdf.CURVE_FIXED);
+
                         break;
 
                     case GROUP_LINE:
@@ -436,6 +451,9 @@ public final class Dcm implements Cdf, Observable {
 
                         axeX.clear();
                         axeY.clear();
+
+                        if (!listCategory.contains(Cdf.CURVE_GROUPED))
+                            listCategory.add(Cdf.CURVE_GROUPED);
 
                         break;
 
@@ -542,6 +560,9 @@ public final class Dcm implements Cdf, Observable {
 
                         axeTmp.clear();
 
+                        if (!listCategory.contains(Cdf.MAP_INDIVIDUAL))
+                            listCategory.add(Cdf.MAP_INDIVIDUAL);
+
                         break;
 
                     case GROUP_MAP:
@@ -646,6 +667,9 @@ public final class Dcm implements Cdf, Observable {
                         fonction.setLength(0);
 
                         axeTmp.clear();
+
+                        if (!listCategory.contains(Cdf.MAP_GROUPED))
+                            listCategory.add(Cdf.MAP_GROUPED);
 
                         break;
 
@@ -752,6 +776,9 @@ public final class Dcm implements Cdf, Observable {
 
                         axeTmp.clear();
 
+                        if (!listCategory.contains(Cdf.MAP_FIXED))
+                            listCategory.add(Cdf.MAP_FIXED);
+
                         break;
 
                     case DISTRIBUTION:
@@ -808,6 +835,9 @@ public final class Dcm implements Cdf, Observable {
 
                         description.setLength(0);
                         fonction.setLength(0);
+
+                        if (!listCategory.contains(Cdf.AXIS_VALUES))
+                            listCategory.add(Cdf.AXIS_VALUES);
 
                         break;
 
@@ -954,17 +984,21 @@ public final class Dcm implements Cdf, Observable {
 
                         axeTmp.clear();
 
+                        if (!listCategory.contains(Cdf.VALUE_BLOCK))
+                            listCategory.add(Cdf.VALUE_BLOCK);
+
                         break;
                     }
                 }
             }
+
         } catch (Exception e) {
 
             e.printStackTrace();
 
         } finally {
             try {
-            	numLine = 0;
+                numLine = 0;
                 buf.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -1049,6 +1083,11 @@ public final class Dcm implements Cdf, Observable {
             obs.update(cdf, variable, rate);
         }
 
+    }
+
+    @Override
+    public Vector<String> getCategoryList() {
+        return listCategory;
     }
 
 }

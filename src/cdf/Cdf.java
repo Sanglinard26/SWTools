@@ -6,6 +6,7 @@ package cdf;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 public interface Cdf {
 
@@ -23,6 +24,8 @@ public interface Cdf {
     public String getName();
 
     public int getNbLabel();
+
+    public Vector<String> getCategoryList();
 
     public ArrayList<Variable> getListLabel();
 

@@ -12,7 +12,7 @@ import javax.swing.AbstractListModel;
 public final class ListModelLabel extends AbstractListModel<Variable> {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final ArrayList<Variable> listLabel = new ArrayList<Variable>();
     private static final ArrayList<Variable> listLabelFiltre = new ArrayList<Variable>();
 
@@ -29,21 +29,19 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
             listLabel.clear();
         }
         listLabel.addAll(list);
-        setFilter("","");
+        setFilter("", "");
     }
 
     public void setFilter(String type, String filter) {
         listLabelFiltre.clear();
         for (Variable label : listLabel) {
             if (label.getShortName().toLowerCase().indexOf(filter) > -1) {
-            	if (type.equals("TOUT TYPE") | type.equals(""))
-            	{
-            		listLabelFiltre.add(label);
-            	}
-				if (label.getCategory().equals(type))
-				{
-					listLabelFiltre.add(label);
-				}
+                if (type.equals("ALL") | type.equals("")) {
+                    listLabelFiltre.add(label);
+                }
+                if (label.getCategory().equals(type)) {
+                    listLabelFiltre.add(label);
+                }
             }
         }
         this.fireContentsChanged(this, 0, getSize());
@@ -51,7 +49,7 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
 
     public void clearList() {
         listLabel.clear();
-        setFilter("","");
+        setFilter("", "");
     }
 
     @Override

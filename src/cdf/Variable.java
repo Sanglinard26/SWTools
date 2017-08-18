@@ -111,7 +111,7 @@ public abstract class Variable {
     }
 
     private final class TxtTransfert implements Transferable {
-        private String s;
+        private final String s;
 
         public TxtTransfert(String s) {
             this.s = s;
@@ -145,7 +145,7 @@ public abstract class Variable {
     }
 
     private final class ImgTransfert implements Transferable {
-        private Image img;
+        private final Image img;
 
         public ImgTransfert(Image img) {
             this.img = img;

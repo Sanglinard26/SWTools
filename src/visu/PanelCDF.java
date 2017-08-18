@@ -101,6 +101,7 @@ public final class PanelCDF extends JPanel implements Observer {
                     razUI();
                     listLabel.getModel().setList(listCDF.getSelectedValue().getListLabel());
                     listLabel.ensureIndexIsVisible(0);
+                    listLabel.getFilterField().populateFilter(listCDF.getSelectedValue().getCategoryList());
                 }
             }
         });
@@ -320,6 +321,7 @@ public final class PanelCDF extends JPanel implements Observer {
             listLabel.clearFilter();
             listLabel.clearSelection();
             listLabel.getModel().clearList();
+            listLabel.getFilterField().populateFilter(null);
 
             panelHistory.removeDatas();
 
