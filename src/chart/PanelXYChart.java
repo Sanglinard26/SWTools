@@ -2,11 +2,26 @@ package chart;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Dimension2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.orsoncharts.Resources;
 
 public final class PanelXYChart extends JPanel {
 
@@ -48,6 +63,17 @@ public final class PanelXYChart extends JPanel {
             }
         }
 
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    final JPopupMenu menu = new JPopupMenu();
+                    menu.add(new JPEGExport());
+                    menu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
+
     }
 
     private final class ListEvent implements ListSelectionListener {
@@ -58,14 +84,13 @@ public final class PanelXYChart extends JPanel {
         public void valueChanged(ListSelectionEvent e) {
 
             if (!e.getValueIsAdjusting() & !legendList.isSelectionEmpty()) {
-            	
-            	if (serieCollection != null)
-            	{
-            		serieCollection.removeAllSeries();
-            	}else{
-            		serieCollection = new SeriesCollection();
-            	}
-            	
+
+                if (serieCollection != null) {
+                    serieCollection.removeAllSeries();
+                } else {
+                    serieCollection = new SeriesCollection();
+                }
+
                 for (int i = 0; i < legendList.getSelectedValuesList().size(); i++) {
                     serieCollection.addSerie(legendList.getSelectedValuesList().get(i));
                 }
@@ -73,4 +98,45 @@ public final class PanelXYChart extends JPanel {
             }
         }
     }
+
+    private final class JPEGExport extends AbstractAction {
+
+        private static final long serialVersionUID = 1L;
+
+        public JPEGExport() {
+            super("Export JPEG");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(Resources.localString("JPG_FILE_FILTER_DESCRIPTION"),
+                    new String[] { "jpg" });
+            fileChooser.addChoosableFileFilter(filter);
+            fileChooser.setFileFilter(filter);
+
+            int option = fileChooser.showSaveDialog(PanelXYChart.this);
+            if (option == 0) {
+                String filename = fileChooser.getSelectedFile().getPath();
+                if (!filename.endsWith(".jpg")) {
+                    filename = filename + ".jpg";
+                }
+                Dimension2D size = PanelXYChart.this.getSize();
+                int w = (int) size.getWidth();
+                int h = (int) size.getHeight();
+                BufferedImage image = new BufferedImage(w, h, 1);
+
+                Graphics2D g2 = image.createGraphics();
+                PanelXYChart.this.printAll(g2);
+                try {
+                    ImageIO.write(image, "jpeg", new File(filename));
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+
+    }
+
 }
