@@ -13,7 +13,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -26,6 +28,8 @@ import com.orsoncharts.Resources;
 public final class PanelXYChart extends JPanel {
 
     private static final long serialVersionUID = 1L;
+
+    private static final String ICON_IMAGE = "/image_icon_16.png";
 
     public static final int LEFT_POSITION = 0;
     public static final int RIGHT_POSITION = 1;
@@ -68,7 +72,9 @@ public final class PanelXYChart extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     final JPopupMenu menu = new JPopupMenu();
-                    menu.add(new JPEGExport());
+                    final JMenuItem menuExpJpg = new JMenuItem("Export JPEG", new ImageIcon(getClass().getResource(ICON_IMAGE)));
+                    menuExpJpg.addActionListener(new JPEGExport());
+                    menu.add(menuExpJpg);
                     menu.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
