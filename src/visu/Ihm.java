@@ -110,7 +110,7 @@ public final class Ihm extends JFrame {
 
         // Onglet lecteur A2l
         // ongletA2l.add(new PanelA2l());
-        onglets.addTab("Lecture A2l", ongletA2l);
+        // onglets.addTab("Lecture A2l", ongletA2l);
 
         onglets.addChangeListener(new ChangeListener() {
 

@@ -13,13 +13,15 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
 
-public final class PanelXYPlot extends JComponent {
+public final class PanelXYPlot extends JComponent implements MouseMotionListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,6 +51,8 @@ public final class PanelXYPlot extends JComponent {
         this.xAxisLabel = xAxisLabel;
         this.yAxisLabel = yAxisLabel;
         this.seriesCollection = seriesCollection;
+        this.addMouseMotionListener(this);
+        ;
 
         setPreferredSize(new Dimension(500, 500));
 
@@ -298,6 +302,18 @@ public final class PanelXYPlot extends JComponent {
             this.serieColor = serieColor;
             seriesCollection.getSerie(index).setColor(serieColor);
         }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        // Non utilise
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        System.out.println(e.getX() + "/" + e.getY());
+
     }
 
 }
