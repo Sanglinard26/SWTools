@@ -13,15 +13,14 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.ToolTipManager;
 
-public final class PanelXYPlot extends JComponent implements MouseMotionListener {
+public final class PanelXYPlot extends JComponent {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,8 +50,8 @@ public final class PanelXYPlot extends JComponent implements MouseMotionListener
         this.xAxisLabel = xAxisLabel;
         this.yAxisLabel = yAxisLabel;
         this.seriesCollection = seriesCollection;
-        this.addMouseMotionListener(this);
-        ;
+
+        ToolTipManager.sharedInstance().setInitialDelay(0);
 
         setPreferredSize(new Dimension(500, 500));
 
@@ -216,8 +215,10 @@ public final class PanelXYPlot extends JComponent implements MouseMotionListener
     public void markPoint(Graphics g, Point p) {
         Graphics2D g2 = (Graphics2D) g;
 
-        if (clip != null)
-            repaint(clip);
+        if (clip != null) {
+            if ((p.x - 10 / 2) != clip.x | (p.y - 10 / 2) != clip.y)
+                repaint(clip);
+        }
 
         g2.setColor(Color.RED);
         int x = p.x - 10 / 2;
@@ -227,6 +228,8 @@ public final class PanelXYPlot extends JComponent implements MouseMotionListener
         g2.fillOval(x, y, ovalW, ovalH);
 
         g2.dispose();
+
+        clip = new Rectangle(x, y, 10, 10);
     }
 
     public int getNbXPoints() {
@@ -305,15 +308,20 @@ public final class PanelXYPlot extends JComponent implements MouseMotionListener
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
-        // Non utilise
+    public boolean contains(int x, int y) {
 
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        System.out.println(e.getX() + "/" + e.getY());
-
+        for (int idxSerie = 0; idxSerie < listSeries.size(); idxSerie++) {
+            for (int idxPoint = 0; idxPoint < listSeries.get(idxSerie).size(); idxPoint++) {
+                if (Math.abs(x - listSeries.get(idxSerie).get(idxPoint).getX()) < 4
+                        & Math.abs(y - listSeries.get(idxSerie).get(idxPoint).getY()) < 4) {
+                    markPoint(this.getGraphics(), listSeries.get(idxSerie).get(idxPoint));
+                    setToolTipText(seriesCollection.getSerie(idxSerie).getPoints().get(idxPoint).toString());
+                    return super.contains(x, y);
+                }
+            }
+        }
+        setToolTipText(null);
+        return super.contains(x, y);
     }
 
 }
