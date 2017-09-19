@@ -227,9 +227,9 @@ public final class PanelXYPlot extends JComponent {
         int ovalH = 10;
         g2.fillOval(x, y, ovalW, ovalH);
 
-        g2.dispose();
-
         clip = new Rectangle(x, y, 10, 10);
+
+        g2.dispose();
     }
 
     public int getNbXPoints() {
@@ -316,12 +316,16 @@ public final class PanelXYPlot extends JComponent {
                         & Math.abs(y - listSeries.get(idxSerie).get(idxPoint).getY()) < 4) {
                     markPoint(this.getGraphics(), listSeries.get(idxSerie).get(idxPoint));
                     setToolTipText(seriesCollection.getSerie(idxSerie).getPoints().get(idxPoint).toString());
-                    return super.contains(x, y);
+                    return super.contains(x, y); // ==> Permet d'afficher la ToolTip mais plus le menu contextuel
+                    // return false; ==> Permet de garder le menu contextuel d'export mais n'affiche plus la ToolTip
                 }
             }
         }
         setToolTipText(null);
-        return super.contains(x, y);
+        if (clip != null) {
+            repaint(clip);
+        }
+        return false;
     }
 
 }
