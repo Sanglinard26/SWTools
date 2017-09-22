@@ -3,6 +3,12 @@ package chart;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -72,9 +78,16 @@ public final class PanelXYChart extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     final JPopupMenu menu = new JPopupMenu();
+
                     final JMenuItem menuExpJpg = new JMenuItem("Export JPEG", new ImageIcon(getClass().getResource(ICON_IMAGE)));
                     menuExpJpg.addActionListener(new JPEGExport());
                     menu.add(menuExpJpg);
+
+                    final JMenuItem menuCopyClipboard = new JMenuItem("Copier dans le presse-papier",
+                            new ImageIcon(getClass().getResource(ICON_IMAGE)));
+                    menuCopyClipboard.addActionListener(new ChartToClipboard());
+                    menu.add(menuCopyClipboard);
+
                     menu.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
@@ -102,6 +115,45 @@ public final class PanelXYChart extends JPanel {
                 }
                 xyPlot.setSeriesCollection(serieCollection);
             }
+        }
+    }
+
+    private final class ChartToClipboard extends AbstractAction {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            final BufferedImage img = new BufferedImage(PanelXYChart.this.getWidth(), PanelXYChart.this.getHeight(), BufferedImage.TYPE_INT_RGB);
+            final Graphics2D g = img.createGraphics();
+            PanelXYChart.this.printAll(g);
+            g.dispose();
+            clipboard.setContents(new ImgTransfert(img), null);
+        }
+
+        private final class ImgTransfert implements Transferable {
+            private final Image img;
+
+            public ImgTransfert(Image img) {
+                this.img = img;
+            }
+
+            @Override
+            public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+                return img;
+            }
+
+            @Override
+            public DataFlavor[] getTransferDataFlavors() {
+                return new DataFlavor[] { DataFlavor.imageFlavor };
+            }
+
+            @Override
+            public boolean isDataFlavorSupported(DataFlavor flavor) {
+                return DataFlavor.imageFlavor.equals(flavor);
+            }
+
         }
     }
 
