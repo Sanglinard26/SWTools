@@ -25,10 +25,10 @@ public final class Ihm extends JFrame {
     private static final JToolBar toolBar = new JToolBar("Option");
     private static final JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
     private static final JPanel ongletLab = new JPanel(new GridLayout(1, 1));
-    private static final JPanel ongletA2l = new JPanel(new GridLayout(1, 1));
+    private static final JPanel ongletBdd = new JPanel(new GridLayout(1, 1));
 
     private static PanelLab panelLab = null;
-    private static PanelA2l panelA2l = null;
+    private static PanelBdd panelBdd = null;
 
     private static FramePreferences fp = null;
     private static FrameInfo fi = null;
@@ -105,12 +105,10 @@ public final class Ihm extends JFrame {
         onglets.addTab("Lecteur PaCo", ongletPaCo);
 
         // Onglet comparaison de Lab
-        // ongletLab.add(new PanelLab());
         onglets.addTab("Comparaison lab", ongletLab);
 
         // Onglet lecteur A2l
-        // ongletA2l.add(new PanelA2l());
-        // onglets.addTab("Lecture A2l", ongletA2l);
+        onglets.addTab("Gestion BDD", ongletBdd);
 
         onglets.addChangeListener(new ChangeListener() {
 
@@ -123,9 +121,9 @@ public final class Ihm extends JFrame {
                     ongletLab.add(panelLab);
                     break;
                 case 2:
-                    if (panelA2l == null)
-                        panelA2l = new PanelA2l();
-                    ongletA2l.add(panelA2l);
+                    if (panelBdd == null)
+                        panelBdd = new PanelBdd();
+                    ongletBdd.add(panelBdd);
                     break;
 
                 }
