@@ -9,26 +9,30 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import bdd.BddManager;
+import bdd.BddConnexion;
 
 public final class PanelBdd extends JPanel {
 
     private static final long serialVersionUID = 1L;
-    
-    private static final JButton btNew = new JButton("Créer une nouvelle BDD");
-    
+
+    private static final JButton btNew = new JButton("Creer une nouvelle BDD");
+
+    private BddConnexion bdConnection = null;
+
     public PanelBdd() {
-    	
-    	btNew.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				BddManager.createBdd("toto.db");
-				
-			}
-		});
-    	add(btNew);
-    	
-	}
+
+        btNew.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                bdConnection = new BddConnexion("myDbTest.db");
+                bdConnection.connectBdd();
+
+                bdConnection.closeBdd();
+            }
+        });
+        add(btNew);
+
+    }
 
 }
