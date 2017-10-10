@@ -21,22 +21,22 @@ public final class BddConnexion {
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:C:/" + dbPath);
+            // connection.setAutoCommit(false);
             statement = connection.createStatement();
             System.out.println("Connexion a " + dbPath + " avec succès");
 
-            createTable();
-
         } catch (ClassNotFoundException notFoundException) {
             notFoundException.printStackTrace();
-            System.out.println("Erreur de connecxion");
+            System.out.println("Erreur de connection");
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
-            System.out.println("Erreur de connecxion");
+            System.out.println("Erreur de connection");
         }
     }
 
     public final void createTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS paco (\n" + " id integer PRIMARY KEY,\n" + " name text NOT NULL,\n" + " capacity real\n" + ");";
+        String sql = "CREATE TABLE IF NOT EXISTS paco" + "(id INTEGER PRIMARY KEY AUTOINCREMENT," + " name TEXT NOT NULL," + " nblabel INTEGER,"
+                + " listlabel TEXT," + " minscore REAL," + " maxscore REAL)";
 
         try {
             statement.execute(sql);
@@ -72,6 +72,17 @@ public final class BddConnexion {
 
     public final void addPaCo() {
 
+        String sql = "INSERT INTO paco (name,nblabel,listlabel,minscore, maxscore)" + " VALUES ('" + PaCoFictif.name + "','" + PaCoFictif.nbLabel
+                + "','" + PaCoFictif.listLabel.toString() + "','" + PaCoFictif.minScore + "','" + PaCoFictif.maxScore + "')";
+
+        try {
+            int res = statement.executeUpdate(sql);
+            System.out.println("Resultat insert = " + res);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
     public final void deletePaCo() {
@@ -80,7 +91,7 @@ public final class BddConnexion {
 
     private static final class PaCoFictif {
 
-        private static final String name = "PaCo_Test";
+        private static final String name = "PaCo_TestBis";
         private static final int nbLabel = 3;
         private static final ArrayList<String> listLabel = new ArrayList<String>() {
             {
@@ -89,8 +100,8 @@ public final class BddConnexion {
                 add("Map");
             }
         };
-        private static final int minScore = 25;
-        private static final int maxScore = 93;
+        private static final float minScore = 25;
+        private static final float maxScore = 93.7f;
 
     }
 
