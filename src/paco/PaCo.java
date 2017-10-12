@@ -58,7 +58,8 @@ public final class PaCo implements Cdf, Observable {
 
     public PaCo(final File file, PanelCDF panCdf) {
 
-        addObserver(panCdf);
+        if (panCdf != null)
+            addObserver(panCdf);
 
         nbf.setMaximumFractionDigits(1);
 

@@ -7,11 +7,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import cdf.Cdf;
+
 public final class BddConnexion {
 
     private final String dbPath;
     private Connection connection = null;
     private Statement statement = null;
+
+    private static final Boolean DBH2 = false;
 
     public BddConnexion(String dbPath) {
         this.dbPath = dbPath;
@@ -19,8 +23,14 @@ public final class BddConnexion {
 
     public final void connectBdd() {
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:/" + dbPath);
+            if (DBH2) {
+                Class.forName("org.sqlite.JDBC");
+                connection = DriverManager.getConnection("jdbc:sqlite:C:/" + dbPath);
+            } else {
+                Class.forName("org.h2.Driver");
+                connection = DriverManager.getConnection("jdbc:h2:C:/" + "testDbH2");
+            }
+
             // connection.setAutoCommit(false);
             statement = connection.createStatement();
             System.out.println("Connexion a " + dbPath + " avec succès");
@@ -35,13 +45,20 @@ public final class BddConnexion {
     }
 
     public final void createTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS paco" + "(id INTEGER PRIMARY KEY AUTOINCREMENT," + " name TEXT NOT NULL," + " nblabel INTEGER,"
-                + " listlabel TEXT," + " minscore REAL," + " maxscore REAL)";
+
+        String sql;
+
+        if (DBH2) {
+            sql = "CREATE TABLE IF NOT EXISTS paco" + "(id INTEGER PRIMARY KEY AUTOINCREMENT," + " name TEXT NOT NULL," + " nblabel INTEGER,"
+                    + " listlabel TEXT," + " minscore REAL," + " maxscore REAL)";
+        } else {
+            sql = "CREATE TABLE IF NOT EXISTS paco" + "(id INTEGER PRIMARY KEY AUTO_INCREMENT," + " name TEXT NOT NULL," + " nblabel INTEGER,"
+                    + " listlabel TEXT," + " minscore REAL," + " maxscore REAL)";
+        }
 
         try {
             statement.execute(sql);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -70,16 +87,22 @@ public final class BddConnexion {
 
     }
 
-    public final void addPaCo() {
+    public final void addPaCo(Cdf cdf) {
 
-        String sql = "INSERT INTO paco (name,nblabel,listlabel,minscore, maxscore)" + " VALUES ('" + PaCoFictif.name + "','" + PaCoFictif.nbLabel
-                + "','" + PaCoFictif.listLabel.toString() + "','" + PaCoFictif.minScore + "','" + PaCoFictif.maxScore + "')";
+        String sql;
+
+        if (cdf != null) {
+            sql = "INSERT INTO paco (name,nblabel,listlabel,minscore, maxscore)" + " VALUES ('" + cdf.getName() + "','" + cdf.getNbLabel() + "','"
+                    + "..." + "','" + cdf.getMinScore() + "','" + cdf.getMaxScore() + "')";
+        } else {
+            sql = "INSERT INTO paco (name,nblabel,listlabel,minscore, maxscore)" + " VALUES ('" + PaCoFictif.name + "','" + PaCoFictif.nbLabel + "','"
+                    + PaCoFictif.listLabel.toString() + "','" + PaCoFictif.minScore + "','" + PaCoFictif.maxScore + "')";
+        }
 
         try {
             int res = statement.executeUpdate(sql);
             System.out.println("Resultat insert = " + res);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -94,6 +117,8 @@ public final class BddConnexion {
         private static final String name = "PaCo_TestBis";
         private static final int nbLabel = 3;
         private static final ArrayList<String> listLabel = new ArrayList<String>() {
+            private static final long serialVersionUID = 1L;
+
             {
                 add("Scalaire");
                 add("Curve");

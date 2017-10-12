@@ -78,7 +78,8 @@ public final class Dcm implements Cdf, Observable {
 
         numLine = 0;
 
-        addObserver(panCdf);
+        if (panCdf != null)
+            addObserver(panCdf);
 
         nbf.setMaximumFractionDigits(1);
 
