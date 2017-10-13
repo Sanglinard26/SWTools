@@ -15,21 +15,19 @@ public final class BddConnexion {
     private Connection connection = null;
     private Statement statement = null;
 
-    private static final Boolean DBH2 = false;
-
     public BddConnexion(String dbPath) {
         this.dbPath = dbPath;
     }
 
     public final void connectBdd() {
         try {
-            if (DBH2) {
-                Class.forName("org.sqlite.JDBC");
-                connection = DriverManager.getConnection("jdbc:sqlite:C:/" + dbPath);
-            } else {
-                Class.forName("org.h2.Driver");
-                connection = DriverManager.getConnection("jdbc:h2:C:/" + "testDbH2");
-            }
+
+            Class.forName("org.h2.Driver");
+            connection = DriverManager.getConnection("jdbc:h2:C:/" + "testDbH2");
+
+            ResultSet rs = connection.getMetaData().getTables(null, null, "PACO", null);
+
+            System.out.println(rs.next());
 
             // connection.setAutoCommit(false);
             statement = connection.createStatement();
@@ -44,32 +42,41 @@ public final class BddConnexion {
         }
     }
 
-    public final void createTable() {
+    public final Boolean createTable() {
 
-        String sql;
-
-        if (DBH2) {
-            sql = "CREATE TABLE IF NOT EXISTS paco" + "(id INTEGER PRIMARY KEY AUTOINCREMENT," + " name TEXT NOT NULL," + " nblabel INTEGER,"
-                    + " listlabel TEXT," + " minscore REAL," + " maxscore REAL)";
-        } else {
-            sql = "CREATE TABLE IF NOT EXISTS paco" + "(id INTEGER PRIMARY KEY AUTO_INCREMENT," + " name TEXT NOT NULL," + " nblabel INTEGER,"
-                    + " listlabel TEXT," + " minscore REAL," + " maxscore REAL)";
-        }
+        String sql = "CREATE TABLE IF NOT EXISTS paco" + "(id INTEGER PRIMARY KEY AUTO_INCREMENT," + " name TEXT NOT NULL," + " nblabel INTEGER,"
+                + " listlabel TEXT," + " minscore REAL," + " maxscore REAL)";
 
         try {
-            statement.execute(sql);
+            return statement.execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return false;
+    }
+
+    public final int emptyTable() {
+        String sql;
+
+        sql = "TRUNCATE TABLE paco";
+
+        try {
+            return statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 
-    public final void closeBdd() {
+    public final Boolean closeBdd() {
         try {
             statement.close();
             connection.close();
+            return true;
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -87,7 +94,7 @@ public final class BddConnexion {
 
     }
 
-    public final void addPaCo(Cdf cdf) {
+    public final int addPaCo(Cdf cdf) {
 
         String sql;
 
@@ -100,15 +107,40 @@ public final class BddConnexion {
         }
 
         try {
-            int res = statement.executeUpdate(sql);
-            System.out.println("Resultat insert = " + res);
+            return statement.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();
+            return 0;
         }
 
     }
 
-    public final void deletePaCo() {
+    public final int modifPaCo(int id) {
+
+        String sql;
+
+        sql = "UPDATE paco SET name=" + "'toto'" + " WHERE id=" + id;
+
+        try {
+            return statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public final int deletePaCo(int id) {
+
+        String sql;
+
+        sql = "DELETE paco" + " WHERE id=" + id;
+
+        try {
+            return statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
 
     }
 

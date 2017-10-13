@@ -3,6 +3,7 @@
  */
 package visu;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -37,7 +38,9 @@ public final class PanelBdd extends JPanel {
 
     private static final JButton btNewBdd = new JButton("Creer une nouvelle BDD");
     private static final JButton btNewTable = new JButton("Creer une nouvelle table dans la BDD");
+    private static final JButton btEmptyTable = new JButton("Vider la table");
     private static final JButton btAddPaco = new JButton("Ajouter un PaCo");
+    private static final JButton btModPaco = new JButton("Modifier un PaCo");
     private static final JButton btDelPaco = new JButton("Supprimer un PaCo");
     private static final JButton btVisu = new JButton("Visualiser la BDD");
     private static final JButton btCloseBdd = new JButton("Fermer la BDD");
@@ -59,24 +62,19 @@ public final class PanelBdd extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 bdConnection = new BddConnexion("myDbTest.db");
                 bdConnection.connectBdd();
-
-                ResultSet rs = bdConnection.query("SELECT * FROM paco");
-                try {
-                    int nbCol = rs.getMetaData().getColumnCount();
-                    StringBuilder colName = new StringBuilder("Nom des colonnes : ");
-                    for (int i = 1; i <= nbCol; i++) {
-                        colName.append(rs.getMetaData().getColumnLabel(i) + " | ");
-                    }
-                    System.out.println(colName);
-                } catch (SQLException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-
             }
         });
-
         add(btNewBdd);
+
+        btEmptyTable.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                bdConnection.emptyTable();
+                new VisuTable().actionPerformed(null);
+            }
+        });
+        add(btEmptyTable);
 
         btNewTable.addActionListener(new ActionListener() {
 
@@ -91,6 +89,26 @@ public final class PanelBdd extends JPanel {
         btAddPaco.addActionListener(new OpenCDF());
         add(btAddPaco);
 
+        btModPaco.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                bdConnection.modifPaCo(2);
+                new VisuTable().actionPerformed(null);
+
+            }
+        });
+        add(btModPaco);
+
+        btDelPaco.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                bdConnection.deletePaCo(1);
+                new VisuTable().actionPerformed(null);
+
+            }
+        });
         add(btDelPaco);
 
         btVisu.addActionListener(new VisuTable());
@@ -109,6 +127,7 @@ public final class PanelBdd extends JPanel {
         tabVisu = new JTable(new DefaultTableModel(data, columnNames));
         model = (DefaultTableModel) tabVisu.getModel();
         JScrollPane scrollPane = new JScrollPane(tabVisu);
+        scrollPane.setPreferredSize(new Dimension(1000, 500));
         add(scrollPane);
 
     }
