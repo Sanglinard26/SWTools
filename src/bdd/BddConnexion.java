@@ -23,7 +23,7 @@ public final class BddConnexion {
         try {
 
             Class.forName("org.h2.Driver");
-            connection = DriverManager.getConnection("jdbc:h2:C:/" + "testDbH2");
+            connection = DriverManager.getConnection("jdbc:h2:D:/" + "testDbH2");
 
             ResultSet rs = connection.getMetaData().getTables(null, null, "PACO", null);
 

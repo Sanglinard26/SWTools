@@ -93,7 +93,7 @@ public final class PanelBdd extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bdConnection.modifPaCo(2);
+                bdConnection.modifPaCo(Integer.parseInt(tabVisu.getValueAt(tabVisu.getSelectedRow(), 0).toString()));
                 new VisuTable().actionPerformed(null);
 
             }
@@ -104,7 +104,12 @@ public final class PanelBdd extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bdConnection.deletePaCo(1);
+            	for (int row = 0; row<tabVisu.getSelectedRows().length; row++)
+            	{
+            		System.out.println("id = " + tabVisu.getValueAt(tabVisu.getSelectedRows()[row], 0));
+            		bdConnection.deletePaCo(Integer.parseInt(tabVisu.getValueAt(tabVisu.getSelectedRows()[row], 0).toString()));
+            	}
+                
                 new VisuTable().actionPerformed(null);
 
             }
