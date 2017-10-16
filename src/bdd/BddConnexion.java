@@ -15,21 +15,30 @@ public final class BddConnexion {
     private Connection connection = null;
     private Statement statement = null;
 
+    private ArrayList<String> listTable = new ArrayList<String>();
+
     public BddConnexion(String dbPath) {
         this.dbPath = dbPath;
+    }
+
+    public ArrayList<String> getListTable() {
+        return listTable;
     }
 
     public final void connectBdd() {
         try {
 
             Class.forName("org.h2.Driver");
-            connection = DriverManager.getConnection("jdbc:h2:D:/" + "testDbH2");
+            connection = DriverManager.getConnection(dbPath);
 
-            ResultSet rs = connection.getMetaData().getTables(null, null, "PACO", null);
+            ResultSet rs = connection.getMetaData().getTables(null, null, null, new String[] { "TABLE" });
 
-            System.out.println(rs.next());
+            while (rs.next()) {
+                listTable.add(rs.getString("TABLE_NAME"));
+            }
 
-            // connection.setAutoCommit(false);
+            System.out.println(listTable);
+
             statement = connection.createStatement();
             System.out.println("Connexion a " + dbPath + " avec succès");
 
@@ -42,10 +51,10 @@ public final class BddConnexion {
         }
     }
 
-    public final Boolean createTable() {
+    public final Boolean createTable(String tableName) {
 
-        String sql = "CREATE TABLE IF NOT EXISTS paco" + "(id INTEGER PRIMARY KEY AUTO_INCREMENT," + " name TEXT NOT NULL," + " nblabel INTEGER,"
-                + " listlabel TEXT," + " minscore REAL," + " maxscore REAL)";
+        String sql = "CREATE TABLE IF NOT EXISTS " + tableName + "(id INTEGER PRIMARY KEY AUTO_INCREMENT," + " name TEXT NOT NULL,"
+                + " nblabel INTEGER," + " listlabel TEXT," + " minscore REAL," + " maxscore REAL)";
 
         try {
             return statement.execute(sql);
@@ -55,10 +64,10 @@ public final class BddConnexion {
         return false;
     }
 
-    public final int emptyTable() {
+    public final int emptyTable(String tableName) {
         String sql;
 
-        sql = "TRUNCATE TABLE paco";
+        sql = "TRUNCATE TABLE " + tableName;
 
         try {
             return statement.executeUpdate(sql);
@@ -94,16 +103,16 @@ public final class BddConnexion {
 
     }
 
-    public final int addPaCo(Cdf cdf) {
+    public final int addPaCo(String tableName, Cdf cdf) {
 
         String sql;
 
         if (cdf != null) {
-            sql = "INSERT INTO paco (name,nblabel,listlabel,minscore, maxscore)" + " VALUES ('" + cdf.getName() + "','" + cdf.getNbLabel() + "','"
-                    + "..." + "','" + cdf.getMinScore() + "','" + cdf.getMaxScore() + "')";
+            sql = "INSERT INTO " + tableName + "(name,nblabel,listlabel,minscore, maxscore)" + " VALUES ('" + cdf.getName() + "','" + cdf.getNbLabel()
+                    + "','" + "..." + "','" + cdf.getMinScore() + "','" + cdf.getMaxScore() + "')";
         } else {
-            sql = "INSERT INTO paco (name,nblabel,listlabel,minscore, maxscore)" + " VALUES ('" + PaCoFictif.name + "','" + PaCoFictif.nbLabel + "','"
-                    + PaCoFictif.listLabel.toString() + "','" + PaCoFictif.minScore + "','" + PaCoFictif.maxScore + "')";
+            sql = "INSERT INTO " + tableName + "(name,nblabel,listlabel,minscore, maxscore)" + " VALUES ('" + PaCoFictif.name + "','"
+                    + PaCoFictif.nbLabel + "','" + PaCoFictif.listLabel.toString() + "','" + PaCoFictif.minScore + "','" + PaCoFictif.maxScore + "')";
         }
 
         try {
@@ -115,11 +124,11 @@ public final class BddConnexion {
 
     }
 
-    public final int modifPaCo(int id) {
+    public final int modifPaCo(String tableName, int id) {
 
         String sql;
 
-        sql = "UPDATE paco SET name=" + "'toto'" + " WHERE id=" + id;
+        sql = "UPDATE " + tableName + " SET name=" + "'changement nom'" + " WHERE id=" + id;
 
         try {
             return statement.executeUpdate(sql);
@@ -129,11 +138,11 @@ public final class BddConnexion {
         }
     }
 
-    public final int deletePaCo(int id) {
+    public final int deletePaCo(String tableName, int id) {
 
         String sql;
 
-        sql = "DELETE paco" + " WHERE id=" + id;
+        sql = "DELETE " + tableName + " WHERE id=" + id;
 
         try {
             return statement.executeUpdate(sql);

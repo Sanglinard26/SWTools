@@ -6,6 +6,8 @@ package visu;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,7 +16,9 @@ import java.io.OutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -44,6 +48,8 @@ public final class PanelBdd extends JPanel {
     private static final JButton btDelPaco = new JButton("Supprimer un PaCo");
     private static final JButton btVisu = new JButton("Visualiser la BDD");
     private static final JButton btCloseBdd = new JButton("Fermer la BDD");
+    private static final DefaultComboBoxModel<String> modelCombo = new DefaultComboBoxModel<String>();
+    private static final JComboBox<String> comboTable = new JComboBox<String>(modelCombo);
 
     private static final String[] columnNames = { "ID", "NOM", "NB LABELS", "LISTE LABELS", "SCORE MINI", "SCORE MAXI" };
     private String[][] data = new String[0][0];
@@ -60,8 +66,14 @@ public final class PanelBdd extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bdConnection = new BddConnexion("myDbTest.db");
+                bdConnection = new BddConnexion("jdbc:h2:C:/" + "testDbH2");
                 bdConnection.connectBdd();
+
+                modelCombo.removeAllElements();
+                for (String tab : bdConnection.getListTable()) {
+                    modelCombo.addElement(tab);
+                }
+
             }
         });
         add(btNewBdd);
@@ -70,7 +82,7 @@ public final class PanelBdd extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bdConnection.emptyTable();
+                bdConnection.emptyTable(comboTable.getSelectedItem().toString());
                 new VisuTable().actionPerformed(null);
             }
         });
@@ -80,7 +92,7 @@ public final class PanelBdd extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bdConnection.createTable();
+                bdConnection.createTable("PACO_" + Long.toString(Math.round(Math.random() * 100)));
 
             }
         });
@@ -93,7 +105,8 @@ public final class PanelBdd extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bdConnection.modifPaCo(Integer.parseInt(tabVisu.getValueAt(tabVisu.getSelectedRow(), 0).toString()));
+                bdConnection.modifPaCo(comboTable.getSelectedItem().toString(),
+                        Integer.parseInt(tabVisu.getValueAt(tabVisu.getSelectedRow(), 0).toString()));
                 new VisuTable().actionPerformed(null);
 
             }
@@ -104,12 +117,12 @@ public final class PanelBdd extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-            	for (int row = 0; row<tabVisu.getSelectedRows().length; row++)
-            	{
-            		System.out.println("id = " + tabVisu.getValueAt(tabVisu.getSelectedRows()[row], 0));
-            		bdConnection.deletePaCo(Integer.parseInt(tabVisu.getValueAt(tabVisu.getSelectedRows()[row], 0).toString()));
-            	}
-                
+                for (int row = 0; row < tabVisu.getSelectedRows().length; row++) {
+                    System.out.println("id = " + tabVisu.getValueAt(tabVisu.getSelectedRows()[row], 0));
+                    bdConnection.deletePaCo(comboTable.getSelectedItem().toString(),
+                            Integer.parseInt(tabVisu.getValueAt(tabVisu.getSelectedRows()[row], 0).toString()));
+                }
+
                 new VisuTable().actionPerformed(null);
 
             }
@@ -128,6 +141,16 @@ public final class PanelBdd extends JPanel {
             }
         });
         add(btCloseBdd);
+
+        comboTable.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                new VisuTable().actionPerformed(null);
+
+            }
+        });
+        add(comboTable);
 
         tabVisu = new JTable(new DefaultTableModel(data, columnNames));
         model = (DefaultTableModel) tabVisu.getModel();
@@ -228,7 +251,7 @@ public final class PanelBdd extends JPanel {
                     cdf = new Dcm(file, null);
                     break;
                 }
-                bdConnection.addPaCo(cdf);
+                bdConnection.addPaCo(comboTable.getSelectedItem().toString(), cdf);
             }
 
             new VisuTable().actionPerformed(null);
@@ -242,35 +265,37 @@ public final class PanelBdd extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            ResultSet rs = bdConnection.query("SELECT * FROM paco");
+            if (modelCombo.getSize() > 0) {
+                ResultSet rs = bdConnection.query("SELECT * FROM " + comboTable.getSelectedItem().toString());
 
-            model.setRowCount(0);
+                model.setRowCount(0);
 
-            String[] rowData = new String[6];
+                String[] rowData = new String[6];
 
-            try {
-                while (rs.next()) {
+                try {
+                    while (rs.next()) {
 
-                    int id = rs.getInt("id");
-                    String name = rs.getString("name");
-                    int nblabel = rs.getInt("nblabel");
-                    String listlabel = rs.getString("listlabel");
-                    float minscore = rs.getFloat("minscore");
-                    float maxscore = rs.getFloat("maxscore");
+                        int id = rs.getInt("id");
+                        String name = rs.getString("name");
+                        int nblabel = rs.getInt("nblabel");
+                        String listlabel = rs.getString("listlabel");
+                        float minscore = rs.getFloat("minscore");
+                        float maxscore = rs.getFloat("maxscore");
 
-                    rowData[0] = Integer.toString(id);
-                    rowData[1] = name;
-                    rowData[2] = Integer.toString(nblabel);
-                    rowData[3] = listlabel;
-                    rowData[4] = Float.toString(minscore);
-                    rowData[5] = Float.toString(maxscore);
+                        rowData[0] = Integer.toString(id);
+                        rowData[1] = name;
+                        rowData[2] = Integer.toString(nblabel);
+                        rowData[3] = listlabel;
+                        rowData[4] = Float.toString(minscore);
+                        rowData[5] = Float.toString(maxscore);
 
-                    model.addRow(rowData);
+                        model.addRow(rowData);
 
+                    }
+                    rs.close();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
                 }
-                rs.close();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
             }
 
         }
