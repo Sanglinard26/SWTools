@@ -25,7 +25,7 @@ public final class BddConnexion {
         return listTable;
     }
 
-    public final void connectBdd() {
+    public final Boolean connectBdd() {
         try {
 
             Class.forName("org.h2.Driver");
@@ -41,6 +41,7 @@ public final class BddConnexion {
 
             statement = connection.createStatement();
             System.out.println("Connexion a " + dbPath + " avec succès");
+            return true;
 
         } catch (ClassNotFoundException notFoundException) {
             notFoundException.printStackTrace();
@@ -49,6 +50,7 @@ public final class BddConnexion {
             sqlException.printStackTrace();
             System.out.println("Erreur de connection");
         }
+        return false;
     }
 
     public final Boolean createTable(String tableName) {
@@ -103,16 +105,35 @@ public final class BddConnexion {
 
     }
 
-    public final int addPaCo(String tableName, Cdf cdf) {
+    public final int addPaCo(Cdf cdf, Boolean autoImport) {
 
         String sql;
+        String[] splitNameCdf = null;
+        String nomTable = null;
+
+        if (autoImport) {
+            System.out.println("Auto import");
+            splitNameCdf = cdf.getName().split("_");
+            System.out.println(splitNameCdf.length);
+            if (splitNameCdf.length == 9) {
+                nomTable = splitNameCdf[1];
+            } else {
+                nomTable = "PACO_" + Long.toString(Math.round(Math.random() * 100));
+            }
+        } else {
+            nomTable = "PACO_" + Long.toString(Math.round(Math.random() * 100));
+        }
+
+        if (!listTable.contains(nomTable)) {
+            createTable(nomTable);
+        }
 
         if (cdf != null) {
-            sql = "INSERT INTO " + tableName + "(name,nblabel,listlabel,minscore, maxscore)" + " VALUES ('" + cdf.getName() + "','" + cdf.getNbLabel()
-                    + "','" + "..." + "','" + cdf.getMinScore() + "','" + cdf.getMaxScore() + "')";
+            sql = "INSERT INTO " + nomTable + "(name,nblabel,minscore, maxscore)" + " VALUES ('" + cdf.getName() + "','" + cdf.getNbLabel() + "','"
+                    + cdf.getMinScore() + "','" + cdf.getMaxScore() + "')";
         } else {
-            sql = "INSERT INTO " + tableName + "(name,nblabel,listlabel,minscore, maxscore)" + " VALUES ('" + PaCoFictif.name + "','"
-                    + PaCoFictif.nbLabel + "','" + PaCoFictif.listLabel.toString() + "','" + PaCoFictif.minScore + "','" + PaCoFictif.maxScore + "')";
+            sql = "INSERT INTO " + nomTable + "(name,nblabel,minscore, maxscore)" + " VALUES ('" + PaCoFictif.name + "','" + PaCoFictif.nbLabel
+                    + "','" + PaCoFictif.listLabel.toString() + "','" + PaCoFictif.minScore + "','" + PaCoFictif.maxScore + "')";
         }
 
         try {

@@ -3,6 +3,7 @@
  */
 package visu;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
+import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
@@ -40,8 +42,10 @@ public final class PanelBdd extends JPanel {
 
     private static final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
 
-    private static final JButton btNewBdd = new JButton("Creer une nouvelle BDD");
+    private static final JButton btNewBdd = new JButton("Creer/Connecter la BDD");
+
     private static final JButton btNewTable = new JButton("Creer une nouvelle table dans la BDD");
+    private static final JPanel voyant = new JPanel();
     private static final JButton btEmptyTable = new JButton("Vider la table");
     private static final JButton btAddPaco = new JButton("Ajouter un PaCo");
     private static final JButton btModPaco = new JButton("Modifier un PaCo");
@@ -51,7 +55,7 @@ public final class PanelBdd extends JPanel {
     private static final DefaultComboBoxModel<String> modelCombo = new DefaultComboBoxModel<String>();
     private static final JComboBox<String> comboTable = new JComboBox<String>(modelCombo);
 
-    private static final String[] columnNames = { "ID", "NOM", "NB LABELS", "LISTE LABELS", "SCORE MINI", "SCORE MAXI" };
+    private static final String[] columnNames = { "ID", "NOM", "NB LABELS", "SCORE MINI", "SCORE MAXI" };
     private String[][] data = new String[0][0];
     private static JTable tabVisu;
     private static DefaultTableModel model;
@@ -60,14 +64,19 @@ public final class PanelBdd extends JPanel {
 
     private File dtd;
 
+    private static final Boolean AUTO_IMPORT = true;
+
     public PanelBdd() {
 
         btNewBdd.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bdConnection = new BddConnexion("jdbc:h2:C:/" + "testDbH2");
-                bdConnection.connectBdd();
+                bdConnection = new BddConnexion("jdbc:h2:C:/" + "DV5RC_D-MAP-REGULS");
+                if (bdConnection.connectBdd()) {
+                    voyant.setBackground(Color.GREEN);
+
+                }
 
                 modelCombo.removeAllElements();
                 for (String tab : bdConnection.getListTable()) {
@@ -77,6 +86,11 @@ public final class PanelBdd extends JPanel {
             }
         });
         add(btNewBdd);
+
+        voyant.setPreferredSize(new Dimension(20, 20));
+        voyant.setBorder(new LineBorder(Color.BLACK));
+        voyant.setBackground(Color.RED);
+        add(voyant);
 
         btEmptyTable.addActionListener(new ActionListener() {
 
@@ -136,7 +150,9 @@ public final class PanelBdd extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bdConnection.closeBdd();
+                if (bdConnection.closeBdd()) {
+                    voyant.setBackground(Color.RED);
+                }
 
             }
         });
@@ -251,7 +267,7 @@ public final class PanelBdd extends JPanel {
                     cdf = new Dcm(file, null);
                     break;
                 }
-                bdConnection.addPaCo(comboTable.getSelectedItem().toString(), cdf);
+                bdConnection.addPaCo(cdf, AUTO_IMPORT);
             }
 
             new VisuTable().actionPerformed(null);
@@ -270,7 +286,7 @@ public final class PanelBdd extends JPanel {
 
                 model.setRowCount(0);
 
-                String[] rowData = new String[6];
+                String[] rowData = new String[5];
 
                 try {
                     while (rs.next()) {
@@ -285,9 +301,8 @@ public final class PanelBdd extends JPanel {
                         rowData[0] = Integer.toString(id);
                         rowData[1] = name;
                         rowData[2] = Integer.toString(nblabel);
-                        rowData[3] = listlabel;
-                        rowData[4] = Float.toString(minscore);
-                        rowData[5] = Float.toString(maxscore);
+                        rowData[3] = Float.toString(minscore);
+                        rowData[4] = Float.toString(maxscore);
 
                         model.addRow(rowData);
 
