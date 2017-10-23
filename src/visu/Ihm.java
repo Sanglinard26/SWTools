@@ -35,6 +35,8 @@ public final class Ihm extends JFrame {
     private static FrameLog fl = null;
     private static FrameAide fa = null;
 
+    private static final Boolean debugBDD = false;
+
     public Ihm() {
 
         setTitle("SW Tools");
@@ -107,8 +109,9 @@ public final class Ihm extends JFrame {
         // Onglet comparaison de Lab
         onglets.addTab("Comparaison lab", ongletLab);
 
-        // Onglet lecteur A2l
+        // Onglet BDD
         onglets.addTab("Gestion BDD", ongletBdd);
+        onglets.setEnabledAt(2, debugBDD);
 
         onglets.addChangeListener(new ChangeListener() {
 

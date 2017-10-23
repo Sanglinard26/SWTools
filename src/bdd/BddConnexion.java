@@ -37,8 +37,6 @@ public final class BddConnexion {
                 listTable.add(rs.getString("TABLE_NAME"));
             }
 
-            System.out.println(listTable);
-
             statement = connection.createStatement();
             System.out.println("Connexion a " + dbPath + " avec succès");
             return true;

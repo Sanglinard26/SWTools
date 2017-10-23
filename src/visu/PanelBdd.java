@@ -3,6 +3,7 @@
  */
 package visu;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -14,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -24,8 +27,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
@@ -42,8 +47,14 @@ public final class PanelBdd extends JPanel {
 
     private static final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
 
-    private static final JButton btNewBdd = new JButton("Creer/Connecter la BDD");
+    // Panel configuration
+    private static final JPanel panelConfig = new JPanel();
+    private static final JButton btNewFolder = new JButton("Creer un nouveau répertoire de stockage");
+    private static final JTextField fieldDbName = new JTextField("DV5RC_D-MAP-REGULS", 20);
 
+    // Panel table
+    private static final JPanel panelTable = new JPanel();
+    private static final JButton btNewBdd = new JButton("Creer/Connecter la BDD");
     private static final JButton btNewTable = new JButton("Creer une nouvelle table dans la BDD");
     private static final JPanel voyant = new JPanel();
     private static final JButton btEmptyTable = new JButton("Vider la table");
@@ -68,11 +79,41 @@ public final class PanelBdd extends JPanel {
 
     public PanelBdd() {
 
+        setLayout(new BorderLayout());
+
+        panelConfig.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Configuration"));
+        add(panelConfig, BorderLayout.NORTH);
+
+        btNewFolder.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fc = new JFileChooser();
+                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int reponse = fc.showOpenDialog(PanelBdd.this);
+
+                if (reponse == JFileChooser.APPROVE_OPTION)
+                    try {
+                        Preference.setPreference(Preference.KEY_PATH_FOLDER_DB,
+                                Files.createDirectories(Paths.get(fc.getSelectedFile().getAbsolutePath() + "/SWTools/Database")).toString());
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+
+            }
+        });
+        panelConfig.add(btNewFolder);
+
+        panelConfig.add(fieldDbName);
+
+        panelTable.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Base de données"));
+        add(panelTable, BorderLayout.CENTER);
+
         btNewBdd.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bdConnection = new BddConnexion("jdbc:h2:C:/" + "DV5RC_D-MAP-REGULS");
+                bdConnection = new BddConnexion("jdbc:h2:" + Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + fieldDbName.getText());
                 if (bdConnection.connectBdd()) {
                     voyant.setBackground(Color.GREEN);
 
@@ -85,12 +126,12 @@ public final class PanelBdd extends JPanel {
 
             }
         });
-        add(btNewBdd);
+        panelTable.add(btNewBdd);
 
         voyant.setPreferredSize(new Dimension(20, 20));
         voyant.setBorder(new LineBorder(Color.BLACK));
         voyant.setBackground(Color.RED);
-        add(voyant);
+        panelTable.add(voyant);
 
         btEmptyTable.addActionListener(new ActionListener() {
 
@@ -100,7 +141,7 @@ public final class PanelBdd extends JPanel {
                 new VisuTable().actionPerformed(null);
             }
         });
-        add(btEmptyTable);
+        panelTable.add(btEmptyTable);
 
         btNewTable.addActionListener(new ActionListener() {
 
@@ -110,10 +151,10 @@ public final class PanelBdd extends JPanel {
 
             }
         });
-        add(btNewTable);
+        panelTable.add(btNewTable);
 
         btAddPaco.addActionListener(new OpenCDF());
-        add(btAddPaco);
+        panelTable.add(btAddPaco);
 
         btModPaco.addActionListener(new ActionListener() {
 
@@ -125,7 +166,7 @@ public final class PanelBdd extends JPanel {
 
             }
         });
-        add(btModPaco);
+        panelTable.add(btModPaco);
 
         btDelPaco.addActionListener(new ActionListener() {
 
@@ -141,10 +182,10 @@ public final class PanelBdd extends JPanel {
 
             }
         });
-        add(btDelPaco);
+        panelTable.add(btDelPaco);
 
         btVisu.addActionListener(new VisuTable());
-        add(btVisu);
+        panelTable.add(btVisu);
 
         btCloseBdd.addActionListener(new ActionListener() {
 
@@ -156,7 +197,7 @@ public final class PanelBdd extends JPanel {
 
             }
         });
-        add(btCloseBdd);
+        panelTable.add(btCloseBdd);
 
         comboTable.addItemListener(new ItemListener() {
 
@@ -166,13 +207,13 @@ public final class PanelBdd extends JPanel {
 
             }
         });
-        add(comboTable);
+        panelTable.add(comboTable);
 
         tabVisu = new JTable(new DefaultTableModel(data, columnNames));
         model = (DefaultTableModel) tabVisu.getModel();
         JScrollPane scrollPane = new JScrollPane(tabVisu);
         scrollPane.setPreferredSize(new Dimension(1000, 500));
-        add(scrollPane);
+        panelTable.add(scrollPane);
 
     }
 
@@ -294,7 +335,6 @@ public final class PanelBdd extends JPanel {
                         int id = rs.getInt("id");
                         String name = rs.getString("name");
                         int nblabel = rs.getInt("nblabel");
-                        String listlabel = rs.getString("listlabel");
                         float minscore = rs.getFloat("minscore");
                         float maxscore = rs.getFloat("maxscore");
 
