@@ -35,7 +35,7 @@ public final class Ihm extends JFrame {
     private static FrameLog fl = null;
     private static FrameAide fa = null;
 
-    private static final Boolean debugBDD = false;
+    private static final Boolean debugBDD = true;
 
     public Ihm() {
 
