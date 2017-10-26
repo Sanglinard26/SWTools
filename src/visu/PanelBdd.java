@@ -303,6 +303,7 @@ public final class PanelBdd extends JPanel {
                     break;
                 }
                 // bdConnection.addPaCo(cdf, AUTO_IMPORT);
+
             }
 
             new VisuTable().actionPerformed(null);

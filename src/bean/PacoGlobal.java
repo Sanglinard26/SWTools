@@ -15,7 +15,6 @@ public final class PacoGlobal {
     }
 
     public PacoGlobal(int id, String wp, String swp, String owner, String name) {
-        super();
         this.id = id;
         this.wp = wp;
         this.swp = swp;

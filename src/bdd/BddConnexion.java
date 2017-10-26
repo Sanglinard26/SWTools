@@ -30,6 +30,8 @@ public final class BddConnexion {
 
                 System.out.println("Connexion a " + dbPath + " avec succès");
 
+                createTable();
+
             } catch (ClassNotFoundException notFoundException) {
                 notFoundException.printStackTrace();
                 System.out.println("Erreur de connection");
@@ -42,14 +44,18 @@ public final class BddConnexion {
         return connection;
     }
 
-    /*
-     * public final Boolean createTable(String tableName) {
-     * 
-     * String sql = "CREATE TABLE IF NOT EXISTS " + tableName + "(id INTEGER PRIMARY KEY AUTO_INCREMENT," + " name TEXT NOT NULL," +
-     * " nblabel INTEGER," + " listlabel TEXT," + " minscore REAL," + " maxscore REAL)";
-     * 
-     * try { return statement.execute(sql); } catch (SQLException e) { e.printStackTrace(); } return false; }
-     */
+    public static final Boolean createTable() {
+
+        String sql = "CREATE TABLE IF NOT EXISTS " + "PACO_GLOBAL" + "(id INTEGER PRIMARY KEY AUTO_INCREMENT," + " wp TEXT NOT NULL,"
+                + " swp TEXT NOT NULL," + " owner TEXT NOT NULL," + " name TEXT NOT NULL)";
+
+        try {
+            return getInstance().createStatement().execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     /*
      * public final int emptyTable(String tableName) { String sql;
