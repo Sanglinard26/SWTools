@@ -27,11 +27,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import bdd.BddConnexion;
 import cdf.Cdf;
@@ -53,17 +55,8 @@ public final class PanelBdd extends JPanel {
 
     // Panel table
     private static final JPanel panelTable = new JPanel();
-    private static final JButton btNewBdd = new JButton("Creer/Connecter la BDD");
-    private static final JButton btNewTable = new JButton("Creer une nouvelle table dans la BDD");
-    private static final JPanel voyant = new JPanel();
-    private static final JButton btEmptyTable = new JButton("Vider la table");
-    private static final JButton btAddPaco = new JButton("Ajouter un PaCo");
-    private static final JButton btModPaco = new JButton("Modifier un PaCo");
-    private static final JButton btDelPaco = new JButton("Supprimer un PaCo");
-    private static final JButton btVisu = new JButton("Visualiser la BDD");
-    private static final JButton btCloseBdd = new JButton("Fermer la BDD");
-    private static final DefaultComboBoxModel<String> modelCombo = new DefaultComboBoxModel<String>();
-    private static final JComboBox<String> comboTable = new JComboBox<String>(modelCombo);
+    private static final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("");
+    private static final JTree treeBdd = new JTree(rootNode);
 
     private static final String[] columnNames = { "ID", "NOM", "NB LABELS", "SCORE MINI", "SCORE MAXI" };
     private String[][] data = new String[0][0];
@@ -108,101 +101,19 @@ public final class PanelBdd extends JPanel {
         panelTable.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Base de données"));
         add(panelTable, BorderLayout.CENTER);
 
-        btNewBdd.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + fieldDbName.getText());
-                bdConnection = BddConnexion.getInstance();
-                if (bdConnection != null) {
-                    voyant.setBackground(Color.GREEN);
-
-                }
-
-            }
-        });
-        panelTable.add(btNewBdd);
-
-        voyant.setPreferredSize(new Dimension(20, 20));
-        voyant.setBorder(new LineBorder(Color.BLACK));
-        voyant.setBackground(Color.RED);
-        panelTable.add(voyant);
-
-        btEmptyTable.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // bdConnection.emptyTable(comboTable.getSelectedItem().toString());
-                new VisuTable().actionPerformed(null);
-            }
-        });
-        panelTable.add(btEmptyTable);
-
-        btNewTable.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // bdConnection.createTable("PACO_" + Long.toString(Math.round(Math.random() * 100)));
-
-            }
-        });
-        panelTable.add(btNewTable);
-
-        btAddPaco.addActionListener(new OpenCDF());
-        panelTable.add(btAddPaco);
-
-        btModPaco.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // bdConnection.modifPaCo(comboTable.getSelectedItem().toString(),
-                // Integer.parseInt(tabVisu.getValueAt(tabVisu.getSelectedRow(), 0).toString()));
-                new VisuTable().actionPerformed(null);
-
-            }
-        });
-        panelTable.add(btModPaco);
-
-        btDelPaco.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (int row = 0; row < tabVisu.getSelectedRows().length; row++) {
-                    System.out.println("id = " + tabVisu.getValueAt(tabVisu.getSelectedRows()[row], 0));
-                    // bdConnection.deletePaCo(comboTable.getSelectedItem().toString(),Integer.parseInt(tabVisu.getValueAt(tabVisu.getSelectedRows()[row],
-                    // 0).toString()));
-                }
-
-                new VisuTable().actionPerformed(null);
-
-            }
-        });
-        panelTable.add(btDelPaco);
-
-        btVisu.addActionListener(new VisuTable());
-        panelTable.add(btVisu);
-
-        btCloseBdd.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (bdConnection != null)
-                    voyant.setBackground(Color.RED);
-
-            }
-        });
-        panelTable.add(btCloseBdd);
-
-        comboTable.addItemListener(new ItemListener() {
-
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                new VisuTable().actionPerformed(null);
-
-            }
-        });
-        panelTable.add(comboTable);
-
+        JScrollPane scrollPaneTree = new JScrollPane(treeBdd);
+        scrollPaneTree.setPreferredSize(new Dimension(200, 800));
+        panelTable.add(scrollPaneTree);
+        
+        DefaultMutableTreeNode dbParent = new DefaultMutableTreeNode("Database");
+        DefaultMutableTreeNode swpParent = new DefaultMutableTreeNode("Sub workpackage");
+        
+        
+        rootNode.add(dbParent);
+        dbParent.add(swpParent);
+        
+        swpParent.add(new DefaultMutableTreeNode("swp"));
+        
         tabVisu = new JTable(new DefaultTableModel(data, columnNames));
         model = (DefaultTableModel) tabVisu.getModel();
         JScrollPane scrollPane = new JScrollPane(tabVisu);
