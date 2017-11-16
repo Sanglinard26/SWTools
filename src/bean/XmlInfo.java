@@ -3,7 +3,7 @@
  */
 package bean;
 
-public final class PacoInfo {
+public final class XmlInfo {
 
     private int id;
     private String name;
@@ -13,10 +13,10 @@ public final class PacoInfo {
     private String state;
     private String path;
 
-    public PacoInfo() {
+    public XmlInfo() {
     }
 
-    public PacoInfo(int id, String name, int nbLabel, float meanScore, String com, String state, String path) {
+    public XmlInfo(int id, String name, int nbLabel, float meanScore, String com, String state, String path) {
         this.id = id;
         this.name = name;
         this.nbLabel = nbLabel;
@@ -80,6 +80,11 @@ public final class PacoInfo {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 
 }

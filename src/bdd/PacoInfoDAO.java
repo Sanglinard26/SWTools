@@ -5,34 +5,65 @@ package bdd;
 
 import java.sql.Connection;
 
-import bean.PacoInfo;
+import bean.XmlInfo;
 
-public final class PacoInfoDAO extends DAO<PacoInfo> {
+public final class PacoInfoDAO extends DAO<XmlInfo> {
 
     public PacoInfoDAO(Connection conn) {
         super(conn);
     }
 
     @Override
-    public Boolean create(PacoInfo obj) {
-        // TODO Auto-generated method stub
+    public Boolean create(XmlInfo obj) {
+
+        /*
+         * String sql = null; String[] splitNameCdf = null; String nomTable = null;
+         * 
+         * if (autoImport) { System.out.println("Auto import"); splitNameCdf = cdf.getName().split("_"); System.out.println(splitNameCdf.length); if
+         * (splitNameCdf.length == 9) { nomTable = splitNameCdf[1]; } else { nomTable = "PACO_" + Long.toString(Math.round(Math.random() * 100)); } }
+         * else { nomTable = "PACO_" + Long.toString(Math.round(Math.random() * 100)); }
+         * 
+         * if (!listTable.contains(nomTable)) { createTable(nomTable); }
+         * 
+         * if (cdf != null) { sql = "INSERT INTO " + nomTable + "(name,nblabel,minscore, maxscore)" + " VALUES ('" + cdf.getName() + "','" +
+         * cdf.getNbLabel() + "','" + cdf.getMinScore() + "','" + cdf.getMaxScore() + "')"; }
+         * 
+         * try { return statement.executeUpdate(sql); } catch (SQLException e) { e.printStackTrace(); return 0; }
+         */
+
         return null;
     }
 
     @Override
-    public Boolean delete(PacoInfo obj) {
-        // TODO Auto-generated method stub
+    public Boolean delete(XmlInfo obj) {
+
+        /*
+         * String sql;
+         * 
+         * sql = "DELETE " + tableName + " WHERE id=" + id;
+         * 
+         * try { return statement.executeUpdate(sql); } catch (SQLException e) { e.printStackTrace(); return 0; }
+         */
+
         return null;
     }
 
     @Override
-    public Boolean update(PacoInfo obj) {
-        // TODO Auto-generated method stub
+    public Boolean update(XmlInfo obj) {
+
+        /*
+         * String sql;
+         * 
+         * sql = "UPDATE " + tableName + " SET name=" + "'changement nom'" + " WHERE id=" + id;
+         * 
+         * try { return statement.executeUpdate(sql); } catch (SQLException e) { e.printStackTrace(); return 0; }
+         */
+
         return null;
     }
 
     @Override
-    public PacoInfo find(int i) {
+    public XmlInfo find(int i) {
         // TODO Auto-generated method stub
         return null;
     }

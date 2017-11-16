@@ -8,8 +8,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,17 +15,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Connection;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JTree;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -35,7 +30,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import bdd.BddConnexion;
 import cdf.Cdf;
 import dcm.Dcm;
 import paco.PaCo;
@@ -55,19 +49,14 @@ public final class PanelBdd extends JPanel {
 
     // Panel table
     private static final JPanel panelTable = new JPanel();
-    private static final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("");
-    private static final JTree treeBdd = new JTree(rootNode);
+    private static final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Database");
+    private static final TreeBdd treeBdd = new TreeBdd(rootNode);
 
     private static final String[] columnNames = { "ID", "NOM", "NB LABELS", "SCORE MINI", "SCORE MAXI" };
     private String[][] data = new String[0][0];
     private static JTable tabVisu;
-    private static DefaultTableModel model;
-
-    private Connection bdConnection = null;
 
     private File dtd;
-
-    private static final Boolean AUTO_IMPORT = true;
 
     public PanelBdd() {
 
@@ -88,6 +77,8 @@ public final class PanelBdd extends JPanel {
                     try {
                         Preference.setPreference(Preference.KEY_PATH_FOLDER_DB,
                                 Files.createDirectories(Paths.get(fc.getSelectedFile().getAbsolutePath() + "/SWTools/Database")).toString());
+                        JOptionPane.showMessageDialog(PanelBdd.this,
+                                "Nouveau répertoire cree :\n" + fc.getSelectedFile().getAbsolutePath() + "/SWTools/Database");
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -101,21 +92,14 @@ public final class PanelBdd extends JPanel {
         panelTable.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Base de données"));
         add(panelTable, BorderLayout.CENTER);
 
+        treeBdd.setRootVisible(true);
         JScrollPane scrollPaneTree = new JScrollPane(treeBdd);
         scrollPaneTree.setPreferredSize(new Dimension(200, 800));
         panelTable.add(scrollPaneTree);
-        
-        DefaultMutableTreeNode dbParent = new DefaultMutableTreeNode("Database");
-        DefaultMutableTreeNode swpParent = new DefaultMutableTreeNode("Sub workpackage");
-        
-        
-        rootNode.add(dbParent);
-        dbParent.add(swpParent);
-        
-        swpParent.add(new DefaultMutableTreeNode("swp"));
-        
+
         tabVisu = new JTable(new DefaultTableModel(data, columnNames));
-        model = (DefaultTableModel) tabVisu.getModel();
+        // model = (DefaultTableModel) tabVisu.getModel();
+
         JScrollPane scrollPane = new JScrollPane(tabVisu);
         scrollPane.setPreferredSize(new Dimension(1000, 500));
         panelTable.add(scrollPane);

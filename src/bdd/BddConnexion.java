@@ -11,9 +11,6 @@ public final class BddConnexion {
     private static Connection connection = null;
     private static String dbPath = null;
 
-    // Une table globale : WP, SWP, Owner, Nom PaCo
-    // Une table par SWP : Nom PaCo, Nb label, Score moy, Commentaire, Etat, Lien
-
     public static final void setDbPath(String dbPath) {
         BddConnexion.dbPath = dbPath;
     }
@@ -25,12 +22,7 @@ public final class BddConnexion {
 
                 Class.forName(DRIVER_CLASS);
                 connection = DriverManager.getConnection(DRIVER + BddConnexion.dbPath);
-
-                // ResultSet rs = connection.getMetaData().getTables(null, null, null, new String[] { "TABLE" });
-
                 System.out.println("Connexion a " + dbPath + " avec succès");
-
-                createTable();
 
             } catch (ClassNotFoundException notFoundException) {
                 notFoundException.printStackTrace();
@@ -44,14 +36,31 @@ public final class BddConnexion {
         return connection;
     }
 
-    public static final Boolean createTable() {
+    public static final void close() {
+        if (connection != null) {
+            try {
+                connection.close();
+                connection = null;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-        String sql = "CREATE TABLE IF NOT EXISTS " + "PACO_GLOBAL" + "(id INTEGER PRIMARY KEY AUTO_INCREMENT," + " wp TEXT NOT NULL,"
-                + " swp TEXT NOT NULL," + " owner TEXT NOT NULL," + " name TEXT NOT NULL)";
+    public static final Boolean createTable(Connection connection, String tableName) {
+
+        // XmlInfo(int id, String name, int nbLabel, float meanScore, String com, String state, String path)
+
+        String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (id INTEGER PRIMARY KEY AUTO_INCREMENT," + " name TEXT NOT NULL,"
+                + " nblabel INTEGER NOT NULL," + " meanscore FLOAT NOT NULL," + " com TEXT," + " state TEXT," + " path TEXT NOT NULL)";
+
+        // String sql = "CREATE TABLE IF NOT EXISTS TOTO (id INT, name TEXT)";
 
         try {
-            return getInstance().createStatement().execute(sql);
+            // return getInstance().createStatement().execute(sql);
+            return connection.createStatement().execute(sql);
         } catch (SQLException e) {
+            System.out.println(e);
             e.printStackTrace();
         }
         return false;
