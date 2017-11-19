@@ -6,6 +6,8 @@ package bdd;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -34,8 +36,6 @@ public final class TreeModelBdd extends DefaultTreeModel {
             }
         };
 
-        listBdd = new ArrayList<>();
-
         for (String db : pathDb.list(fnamefilter)) {
             this.root.add(new DefaultMutableTreeNode(new Bdd(db.replace(".mv.db", ""))));
         }
@@ -43,8 +43,37 @@ public final class TreeModelBdd extends DefaultTreeModel {
 
     }
 
-    public final void populateTree(Connection connection) {
-
+    public final void populateFromBdd(Connection bddConnexion, DefaultMutableTreeNode bddNode) {
+    	try {
+            ResultSet rs = bddConnexion.getMetaData().getTables(null, null, null, new String[] { "TABLE" });
+            while (rs.next()) {
+            	insertNodeInto(new DefaultMutableTreeNode(new XmlFolder(rs.getString("TABLE_NAME").toLowerCase())), bddNode, bddNode.getChildCount());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+    
+    public final int removeXmlFolder(Connection bddConnexion, DefaultMutableTreeNode xmlFolderNode)
+    {
+    	String sql = "DROP TABLE " + xmlFolderNode.getUserObject();
+    	
+    	try {
+            return bddConnexion.createStatement().executeUpdate(sql);
+        } catch (SQLException e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
+    	
+		return 0;
+    }
+
+	public File getPathDb() {
+		return pathDb;
+	}
+
+	public static ArrayList<Bdd> getListBdd() {
+		return listBdd;
+	}
 
 }

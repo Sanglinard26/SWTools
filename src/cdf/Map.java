@@ -2,152 +2,173 @@ package cdf;
 
 public final class Map extends Variable {
 
-    private final String[][] values;
-    private final int dimX;
-    private final int dimY;
+	private final String[][] values;
+	private final int dimX;
+	private final int dimY;
 
-    private float minZValue = Float.POSITIVE_INFINITY;
-    private float maxZValue = Float.NEGATIVE_INFINITY;
+	private float minZValue = Float.POSITIVE_INFINITY;
+	private float maxZValue = Float.NEGATIVE_INFINITY;
 
-    public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
-            String[][] values) {
+	public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
+			String[][] values) {
 
-        super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
+		super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 
-        this.values = values;
-        this.dimX = values[0].length;
-        this.dimY = values.length;
+		this.values = values;
+		this.dimX = values[0].length;
+		this.dimY = values.length;
 
-        for (short x = 1; x < values[0].length; x++) {
-            for (short y = 1; y < values.length; y++) {
-                try {
-                    if (Float.parseFloat(values[y][x]) < minZValue)
-                        minZValue = Float.parseFloat(values[y][x]);
+		for (short x = 1; x < values[0].length; x++) {
+			for (short y = 1; y < values.length; y++) {
+				if (values[y][x]!= null)
+				{
+					try {
+						if (Float.parseFloat(values[y][x]) < minZValue)
+							minZValue = Float.parseFloat(values[y][x]);
 
-                    if (Float.parseFloat(values[y][x]) > maxZValue)
-                        maxZValue = Float.parseFloat(values[y][x]);
-                } catch (NumberFormatException e) {
-                    minZValue = Float.NaN;
-                    maxZValue = Float.NaN;
-                }
+						if (Float.parseFloat(values[y][x]) > maxZValue)
+							maxZValue = Float.parseFloat(values[y][x]);
+					} catch (NumberFormatException e) {
+						minZValue = Float.NaN;
+						maxZValue = Float.NaN;
+					}
+				}else{
+					minZValue = Float.NaN;
+					maxZValue = Float.NaN;
+				}
 
-            }
-        }
-    }
 
-    @Override
-    public final String toString() {
-        StringBuilder sb = new StringBuilder("\n");
+			}
+		}
+	}
 
-        for (short y = 0; y < dimY; y++) {
-            for (short x = 0; x < dimX; x++) {
-                sb.append(this.getValue(y, x) + "\t");
-            }
-            sb.append("\n");
-        }
+	@Override
+	public final String toString() {
+		StringBuilder sb = new StringBuilder("\n");
 
-        return super.toString() + "Valeurs :" + sb.toString();
-    }
+		for (short y = 0; y < dimY; y++) {
+			for (short x = 0; x < dimX; x++) {
+				sb.append(this.getValue(y, x) + "\t");
+			}
+			sb.append("\n");
+		}
 
-    public final String getUnitX() {
-        return super.getSwUnitRef()[0];
-    }
+		return super.toString() + "Valeurs :" + sb.toString();
+	}
 
-    public final String getUnitY() {
-        return super.getSwUnitRef()[1];
-    }
+	public final String getUnitX() {
+		return super.getSwUnitRef()[0];
+	}
 
-    public final String getUnitZ() {
-        return super.getSwUnitRef()[2];
-    }
+	public final String getUnitY() {
+		return super.getSwUnitRef()[1];
+	}
 
-    public final float getMaxZValue() {
-        return maxZValue;
-    }
+	public final String getUnitZ() {
+		return super.getSwUnitRef()[2];
+	}
 
-    public final float getMinZValue() {
-        return minZValue;
-    }
+	public final float getMaxZValue() {
+		return maxZValue;
+	}
 
-    @Override
-    public final String[][] getValues() {
-        return values;
-    }
+	public final float getMinZValue() {
+		return minZValue;
+	}
 
-    public final String getValue(int col, int row) {
-        return values[col][row];
-    }
+	@Override
+	public final String[][] getValues() {
+		return values;
+	}
 
-    public final int getDimX() {
-        return dimX;
-    }
+	public final String getValue(int col, int row) {
+		return values[col][row];
+	}
 
-    public final int getDimY() {
-        return dimY;
-    }
+	public final int getDimX() {
+		return dimX;
+	}
 
-    @Override
-    public String toMFormat() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("% " + getShortName());
-        sb.append("\n");
+	public final int getDimY() {
+		return dimY;
+	}
 
-        // valeur x
-        sb.append(getShortName().substring(0, getShortName().length() - 2) + "X_A" + " = ");
-        sb.append("[");
-        for (int x = 1; x < values[0].length; x++) {
-            if (x > 1) {
-                sb.append(" " + getValue(0, x));
-            } else {
-                sb.append(getValue(0, x));
-            }
-        }
-        sb.append("];");
-        // unite x
-        sb.append("\t\t\t" + "%" + "(" + getUnitX() + ")");
+	@Override
+	public String toMFormat() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("% " + getShortName());
+		sb.append("\n");
 
-        // valeur y
-        sb.append("\n");
-        sb.append(getShortName().substring(0, getShortName().length() - 2) + "Y_A" + " = ");
-        sb.append("[");
-        for (int x = 1; x < values.length; x++) {
-            if (x > 1) {
-                sb.append(" " + getValue(x, 0));
-            } else {
-                sb.append(getValue(x, 0));
-            }
-        }
-        sb.append("];");
+		// valeur x
+		sb.append(getShortName().substring(0, getShortName().length() - 2) + "X_A" + " = ");
+		sb.append("[");
+		for (int x = 1; x < values[0].length; x++) {
+			if (x > 1) {
+				sb.append(" " + getValue(0, x));
+			} else {
+				sb.append(getValue(0, x));
+			}
+		}
+		sb.append("];");
+		// unite x
+		sb.append("\t\t\t" + "%" + "(" + getUnitX() + ")");
 
-        // unite y
-        sb.append("\t\t\t" + "%" + "(" + getUnitY() + ")");
+		// valeur y
+		sb.append("\n");
+		sb.append(getShortName().substring(0, getShortName().length() - 2) + "Y_A" + " = ");
+		sb.append("[");
+		for (int x = 1; x < values.length; x++) {
+			if (x > 1) {
+				sb.append(" " + getValue(x, 0));
+			} else {
+				sb.append(getValue(x, 0));
+			}
+		}
+		sb.append("];");
 
-        // valeur z
-        sb.append("\n");
-        sb.append(getShortName() + " = ");
-        sb.append("[");
-        for (int x = 1; x < values[0].length; x++) {
-            for (int y = 1; y < values.length; y++) {
-                if (y > 1) {
-                    sb.append(" " + getValue(y, x));
-                } else {
-                    sb.append(getValue(y, x));
-                }
+		// unite y
+		sb.append("\t\t\t" + "%" + "(" + getUnitY() + ")");
 
-            }
-            if (x != values[0].length - 1) {
-                sb.append(";");
-                sb.append("\n");
-            } else {
-                sb.append("];");
-            }
+		// valeur z
+		sb.append("\n");
+		sb.append(getShortName() + " = ");
+		sb.append("[");
+		for (int x = 1; x < values[0].length; x++) {
+			for (int y = 1; y < values.length; y++) {
+				if (y > 1) {
+					sb.append(" " + getValue(y, x));
+				} else {
+					sb.append(getValue(y, x));
+				}
 
-        }
+			}
+			if (x != values[0].length - 1) {
+				sb.append(";");
+				sb.append("\n");
+			} else {
+				sb.append("];");
+			}
 
-        // unite z
-        sb.append("\t\t\t" + "%" + "(" + getUnitZ() + ")" + getLongName());
+		}
 
-        return sb.toString();
-    }
+		// unite z
+		sb.append("\t\t\t" + "%" + "(" + getUnitZ() + ")" + getLongName());
+
+		return sb.toString();
+	}
+
+	@Override
+	public double getChecksum() {
+
+		double valCheck = 0;
+
+		for (short x = 0; x < values[0].length; x++) {
+			for (short y = 0; y < values.length; y++) {
+				valCheck += values[y][x].hashCode();
+			}
+		}
+
+		return valCheck;
+	}
 
 }

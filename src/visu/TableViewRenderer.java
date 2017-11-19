@@ -62,6 +62,13 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
             component.setBackground(Color.LIGHT_GRAY);
             component.setForeground(Color.WHITE);
         }
+        
+        if (value.toString().indexOf("***")>-1) // Comparaison
+        {
+        	component.setBackground(Color.BLUE);
+            component.setForeground(Color.YELLOW);
+            component.setFont(new Font(null, Font.BOLD, component.getFont().getSize()+2));
+        }
 
         if (table.getColumnCount() * table.getRowCount() == 1)
             return component;
@@ -76,6 +83,8 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
             component.setFont(new Font(null, Font.BOLD, component.getFont().getSize()));
             return component;
         }
+        
+        
 
         return component;
     }

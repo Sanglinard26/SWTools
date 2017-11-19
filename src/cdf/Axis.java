@@ -61,4 +61,16 @@ public final class Axis extends Variable {
         sb.append("\t\t\t" + "%" + "(" + getUnit() + ")" + getLongName());
         return sb.toString();
     }
+
+	@Override
+	public double getChecksum() {
+		
+		double valCheck = 0;
+		
+		for (short x = 0; x < zValues[0].length; x++)
+		{
+			valCheck += getzValues(x).hashCode();
+		}
+		return valCheck;
+	}
 }

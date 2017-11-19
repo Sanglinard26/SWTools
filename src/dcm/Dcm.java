@@ -61,6 +61,8 @@ public final class Dcm implements Cdf, Observable {
 
     private static BufferedReader buf = null;
     private static String line;
+    
+    private double checkSum = 0;
 
     private static int numLine;
 
@@ -174,6 +176,8 @@ public final class Dcm implements Cdf, Observable {
 
                         if (!listCategory.contains(Cdf.VALUE))
                             listCategory.add(Cdf.VALUE);
+                        
+                        checkSum += listLabel.get(listLabel.size()-1).getChecksum();
 
                         break;
 
@@ -212,6 +216,8 @@ public final class Dcm implements Cdf, Observable {
 
                         if (!listCategory.contains(Cdf.ASCII))
                             listCategory.add(Cdf.ASCII);
+                        
+                        checkSum += listLabel.get(listLabel.size()-1).getChecksum();
 
                         break;
 
@@ -293,6 +299,8 @@ public final class Dcm implements Cdf, Observable {
 
                         if (!listCategory.contains(Cdf.CURVE_INDIVIDUAL))
                             listCategory.add(Cdf.CURVE_INDIVIDUAL);
+                        
+                        checkSum += listLabel.get(listLabel.size()-1).getChecksum();
 
                         break;
 
@@ -374,6 +382,8 @@ public final class Dcm implements Cdf, Observable {
 
                         if (!listCategory.contains(Cdf.CURVE_FIXED))
                             listCategory.add(Cdf.CURVE_FIXED);
+                        
+                        checkSum += listLabel.get(listLabel.size()-1).getChecksum();
 
                         break;
 
@@ -455,6 +465,8 @@ public final class Dcm implements Cdf, Observable {
 
                         if (!listCategory.contains(Cdf.CURVE_GROUPED))
                             listCategory.add(Cdf.CURVE_GROUPED);
+                        
+                        checkSum += listLabel.get(listLabel.size()-1).getChecksum();
 
                         break;
 
@@ -563,6 +575,8 @@ public final class Dcm implements Cdf, Observable {
 
                         if (!listCategory.contains(Cdf.MAP_INDIVIDUAL))
                             listCategory.add(Cdf.MAP_INDIVIDUAL);
+                        
+                        checkSum += listLabel.get(listLabel.size()-1).getChecksum();
 
                         break;
 
@@ -671,6 +685,8 @@ public final class Dcm implements Cdf, Observable {
 
                         if (!listCategory.contains(Cdf.MAP_GROUPED))
                             listCategory.add(Cdf.MAP_GROUPED);
+                        
+                        checkSum += listLabel.get(listLabel.size()-1).getChecksum();
 
                         break;
 
@@ -779,6 +795,8 @@ public final class Dcm implements Cdf, Observable {
 
                         if (!listCategory.contains(Cdf.MAP_FIXED))
                             listCategory.add(Cdf.MAP_FIXED);
+                        
+                        checkSum += listLabel.get(listLabel.size()-1).getChecksum();
 
                         break;
 
@@ -839,6 +857,8 @@ public final class Dcm implements Cdf, Observable {
 
                         if (!listCategory.contains(Cdf.AXIS_VALUES))
                             listCategory.add(Cdf.AXIS_VALUES);
+                        
+                        checkSum += listLabel.get(listLabel.size()-1).getChecksum();
 
                         break;
 
@@ -987,6 +1007,8 @@ public final class Dcm implements Cdf, Observable {
 
                         if (!listCategory.contains(Cdf.VALUE_BLOCK))
                             listCategory.add(Cdf.VALUE_BLOCK);
+                        
+                        checkSum += listLabel.get(listLabel.size()-1).getChecksum();
 
                         break;
                     }
@@ -1090,5 +1112,19 @@ public final class Dcm implements Cdf, Observable {
     public Vector<String> getCategoryList() {
         return listCategory;
     }
+
+	@Override
+	public double getCheckSum() {
+		return checkSum;
+	}
+
+	@Override
+	public Dcm comparCdf(Cdf cdf) {
+		if(this.getCheckSum() == cdf.getCheckSum())
+		{
+			return null;
+		}
+		return new Dcm(null, null);
+	}
 
 }

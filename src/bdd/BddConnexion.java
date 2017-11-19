@@ -12,7 +12,12 @@ public final class BddConnexion {
     private static String dbPath = null;
 
     public static final void setDbPath(String dbPath) {
-        BddConnexion.dbPath = dbPath;
+    	String oldDbPath = BddConnexion.dbPath;
+    	if(!dbPath.equals(oldDbPath) & connection != null)
+    	{
+    		connection = null;
+    	}
+    	BddConnexion.dbPath = dbPath;
     }
 
     public static final Connection getInstance() {
@@ -22,7 +27,8 @@ public final class BddConnexion {
 
                 Class.forName(DRIVER_CLASS);
                 connection = DriverManager.getConnection(DRIVER + BddConnexion.dbPath);
-                System.out.println("Connexion a " + dbPath + " avec succès");
+                
+                System.out.println("Connexion a " + dbPath + " avec succes");
 
             } catch (ClassNotFoundException notFoundException) {
                 notFoundException.printStackTrace();
@@ -53,8 +59,6 @@ public final class BddConnexion {
 
         String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (id INTEGER PRIMARY KEY AUTO_INCREMENT," + " name TEXT NOT NULL,"
                 + " nblabel INTEGER NOT NULL," + " meanscore FLOAT NOT NULL," + " com TEXT," + " state TEXT," + " path TEXT NOT NULL)";
-
-        // String sql = "CREATE TABLE IF NOT EXISTS TOTO (id INT, name TEXT)";
 
         try {
             // return getInstance().createStatement().execute(sql);

@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import paco.TableModelView;
 import visu.TableView;
 
-public abstract class Variable {
+public abstract class Variable implements Cloneable {
 
     private final String longName;
     private final String shortName;
@@ -78,6 +78,21 @@ public abstract class Variable {
             return maturite.get(swCsHistory[swCsHistory.length - 1][2].toLowerCase());
         return 0;
     }
+    
+    @Override
+    public Variable clone() throws CloneNotSupportedException {
+    	
+    	Variable var = null;
+    	
+    	var = (Variable) super.clone();
+    	
+    	return var;
+    }
+    
+    @Override
+    public boolean equals(Object paramObject) {
+    	return this.getShortName().equals(((Variable) paramObject).getShortName());
+    }
 
     @Override
     public String toString() {
@@ -87,6 +102,8 @@ public abstract class Variable {
         sb.append("Fonction : " + this.swFeatureRef + "\n");
         return sb.toString();
     }
+    
+    public abstract double getChecksum();
 
     public abstract String toMFormat();
 

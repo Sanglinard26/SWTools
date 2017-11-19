@@ -48,6 +48,10 @@ public final class ValueBlock extends Variable {
     public final int getDimX() {
         return dimX;
     }
+    
+    public int getDimY() {
+		return dimY;
+	}
 
     @Override
     public String toMFormat() {
@@ -90,5 +94,19 @@ public final class ValueBlock extends Variable {
 
         return sb.toString();
     }
+
+	@Override
+	public double getChecksum() {
+		
+		double valCheck = 0;
+		
+		for (byte y = 0; y < dimY; y++) {
+            for (short x = 0; x < dimX; x++) {
+                valCheck += getValue(y, x).hashCode();
+            }
+        }
+		
+		return valCheck;
+	}
 
 }

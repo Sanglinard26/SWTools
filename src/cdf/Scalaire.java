@@ -38,4 +38,9 @@ public final class Scalaire extends Variable {
         return value;
     }
 
+	@Override
+	public double getChecksum() {
+		return getValue().hashCode();
+	}
+
 }

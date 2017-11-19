@@ -36,11 +36,14 @@ public interface Cdf {
     public int getMinScore();
 
     public int getMaxScore();
+    
+    public double getCheckSum();
 
     public Boolean exportToExcel(final File file);
 
     public Boolean exportToTxt(File file);
 
     public Boolean exportToM(File file);
-
+    
+    public Cdf comparCdf(Cdf cdf);
 }
