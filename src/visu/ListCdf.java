@@ -56,7 +56,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
         {
             this.getModel().removeCdf(this.getSelectedIndex());
             this.clearSelection();
-            PanelCDF.razUI();
+            PanelCDF.razUI(null);
         }
 
     }
@@ -81,7 +81,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                         public void actionPerformed(ActionEvent e) {
                             ListCdf.this.getModel().removeCdf(ListCdf.this.getSelectedIndex());
                             ListCdf.this.clearSelection();
-                            PanelCDF.razUI();
+                            PanelCDF.razUI(null);
                         }
                     });
                     menu.add(menuItem);
@@ -177,7 +177,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                         public void actionPerformed(ActionEvent e) {
                             ListCdf.this.getModel().clearList();
                             ListCdf.this.clearSelection();
-                            PanelCDF.razUI();
+                            PanelCDF.razUI(null);
                         }
                     });
                     menu.add(menuItem);

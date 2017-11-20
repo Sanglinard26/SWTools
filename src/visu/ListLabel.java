@@ -26,6 +26,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -46,6 +47,7 @@ public final class ListLabel extends JList<Variable> {
     public ListLabel(ListModelLabel dataModel) {
         super(dataModel);
         setCellRenderer(new ListLabelRenderer());
+        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         filterField = new FilterField();
         addMouseListener(new ListMouseListener());
     }
