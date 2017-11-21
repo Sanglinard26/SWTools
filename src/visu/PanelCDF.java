@@ -8,18 +8,22 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -52,6 +56,9 @@ public final class PanelCDF extends JPanel implements Observer {
     // GUI
     private static final JButton btOpen = new JButton("Ajouter fichier(s) de donnees de calibration");
     private static final JCheckBox checkCompar = new JCheckBox("Mode comparaison");
+    private static final ButtonGroup btGroup = new ButtonGroup();
+    private static final JRadioButton radioBtVal = new JRadioButton("Affichage des valeurs", true);
+    private static final JRadioButton radioBtDiff = new JRadioButton("Affichage des différences (travail-reference)");
     private static final ListCdf listCDF = new ListCdf(new ListModelCdf());
     private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
     private static final JPanel panVisu = new JPanel(new GridBagLayout());
@@ -97,13 +104,58 @@ public final class PanelCDF extends JPanel implements Observer {
         gbc.weighty = 0;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
-        checkCompar.setToolTipText("Permet de comparer deux fichiers en les ouvrant simultanement");
+        checkCompar.setToolTipText("Permet de comparer deux fichiers (uniquement) en les ouvrant simultanement");
+        checkCompar.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == 1) {
+                    radioBtVal.setEnabled(true);
+                    radioBtDiff.setEnabled(true);
+                } else {
+                    radioBtVal.setEnabled(false);
+                    radioBtDiff.setEnabled(false);
+                }
+
+            }
+        });
         panCDF.add(checkCompar, gbc);
+        //
+
+        btGroup.add(radioBtVal);
+        btGroup.add(radioBtDiff);
+
+        // Bouton radio pour mode de comparaison avec valeurs
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 1;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.CENTER;
+        radioBtVal.setEnabled(false);
+        panCDF.add(radioBtVal, gbc);
+        //
+
+        // Bouton radio pour mode de comparaison avec differences
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 1;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.CENTER;
+        radioBtDiff.setEnabled(false);
+        panCDF.add(radioBtDiff, gbc);
         //
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 4;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 1;
@@ -116,20 +168,18 @@ public final class PanelCDF extends JPanel implements Observer {
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() == false & !listCDF.isSelectionEmpty()) {
 
-                    razUI(listLabel.getSelectedValue());
+                    Variable oldVar = listLabel.getSelectedValue();
+
+                    razUI();
 
                     listLabel.getModel().setList(listCDF.getSelectedValue().getListLabel());
                     listLabel.ensureIndexIsVisible(0);
-
-                    if (listLabel.getSelectedValue() != null) {
-
-                    } else {
-
-                    }
                     listLabel.getFilterField().populateFilter(listCDF.getSelectedValue().getCategoryList());
 
-                    // checksum
-                    System.out.println("Checksum : " + listCDF.getSelectedValue().getCheckSum());
+                    if (oldVar != null & listLabel.getModel().getList().contains(oldVar)) {
+                        listLabel.setSelectedIndex(0);
+                        listLabel.setSelectedValue(oldVar, true);
+                    }
                 }
             }
         });
@@ -279,7 +329,7 @@ public final class PanelCDF extends JPanel implements Observer {
                     }
                 }
 
-                razUI(null);
+                razUI();
 
                 pm = new ProgressMonitor(PanelCDF.this, "Fichier :", "...", 0, 0);
                 pm.setMillisToDecideToPopup(0);
@@ -337,9 +387,12 @@ public final class PanelCDF extends JPanel implements Observer {
 
             // Implementation comparaison
             if (checkCompar.isSelected() & filesCDF.length == 2) {
-                Cdf cdfCompar = listCDF.getModel().getElementAt(0).comparCdf(listCDF.getModel().getElementAt(1));
+                Cdf cdfCompar = listCDF.getModel().getElementAt(0).comparCdf(listCDF.getModel().getElementAt(1), radioBtVal.isSelected());
                 if (cdfCompar != null)
                     listCDF.getModel().addCdf(cdfCompar);
+            } else if (checkCompar.isSelected() & filesCDF.length != 2) {
+                JOptionPane.showMessageDialog(null, "La comparaison ne fonctionne qu'avec deux fichiers uniquement.", "ATTENTION",
+                        JOptionPane.WARNING_MESSAGE);
             }
 
             if (listCDF.getSelectedIndices().length > 0)
@@ -349,45 +402,24 @@ public final class PanelCDF extends JPanel implements Observer {
         }
     }
 
-    public final static void razUI(Variable selectedVar) {
+    public final static void razUI() {
 
         if (listLabel.getModel().getSize() > 0) {
-            if (selectedVar != null) {
-                System.out.println("Variable sel : " + selectedVar.getShortName());
 
-                // listLabel.clearFilter(); On garde le filtre d'un cdf � l'autre
-                listLabel.clearSelection();
-                listLabel.getModel().clearList();
-                listLabel.getFilterField().populateFilter(null);
+            // listLabel.clearFilter(); On garde le filtre d'un cdf � l'autre
+            listLabel.clearSelection();
+            listLabel.getModel().clearList();
+            listLabel.getFilterField().populateFilter(null);
 
-                panelHistory.removeDatas();
+            panelHistory.removeDatas();
 
-                panVisu.removeAll();
-                panVisu.revalidate();
-                panVisu.repaint();
+            panVisu.removeAll();
+            panVisu.revalidate();
+            panVisu.repaint();
 
-                panGraph.getPanCard().removeAll();
-                panGraph.getPanCard().revalidate();
-                panGraph.getPanCard().repaint();
-
-            } else {
-
-                // listLabel.clearFilter(); On garde le filtre d'un cdf � l'autre
-                listLabel.clearSelection();
-                listLabel.getModel().clearList();
-                listLabel.getFilterField().populateFilter(null);
-
-                panelHistory.removeDatas();
-
-                panVisu.removeAll();
-                panVisu.revalidate();
-                panVisu.repaint();
-
-                panGraph.getPanCard().removeAll();
-                panGraph.getPanCard().revalidate();
-                panGraph.getPanCard().repaint();
-
-            }
+            panGraph.getPanCard().removeAll();
+            panGraph.getPanCard().revalidate();
+            panGraph.getPanCard().repaint();
 
         }
 

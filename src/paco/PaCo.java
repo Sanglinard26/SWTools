@@ -589,7 +589,7 @@ public final class PaCo implements Cdf, Observable {
     }
 
     @Override
-    public PaCo comparCdf(Cdf cdf) {
+    public PaCo comparCdf(Cdf cdf, Boolean modeValeur) {
         ArrayList<Variable> listCompa;
         if (this.getCheckSum() != cdf.getCheckSum()) {
             listCompa = new ArrayList<Variable>();
@@ -651,7 +651,18 @@ public final class PaCo implements Cdf, Observable {
                             for (short y = 0; y < var.getValues().length; y++) {
                                 if (!var.getValues()[y][x].equals(varCompar.getValues()[y][x]))
 
-                                    varBase.getValues()[y][x] = var.getValues()[y][x] + " || " + varCompar.getValues()[y][x];
+                                    if (modeValeur) {
+                                        varBase.getValues()[y][x] = var.getValues()[y][x] + " => " + varCompar.getValues()[y][x];
+                                    } else {
+                                        if (Utilitaire.isNumber(var.getValues()[y][x]) & Utilitaire.isNumber(varCompar.getValues()[y][x])) {
+                                            varBase.getValues()[y][x] = Float.toString(
+                                                    Float.parseFloat(varCompar.getValues()[y][x]) - Float.parseFloat(var.getValues()[y][x]));
+                                        } else {
+                                            varBase.getValues()[y][x] = var.getValues()[y][x] + " => " + varCompar.getValues()[y][x];
+                                        }
+
+                                    }
+
                             }
                         }
 

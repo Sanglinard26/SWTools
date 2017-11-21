@@ -7,6 +7,7 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import com.orsoncharts.Range;
@@ -63,10 +64,11 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
             component.setForeground(Color.WHITE);
         }
 
-        if (value.toString().indexOf(" || ") > -1) // Comparaison
+        if (value.toString().indexOf(" => ") > -1) // Comparaison
         {
-            component.setBackground(Color.BLUE);
-            component.setForeground(Color.YELLOW);
+            component.setBorder(new LineBorder(Color.BLACK, 1));
+            component.setBackground(Color.WHITE);
+            component.setForeground(Color.BLACK);
             component.setFont(new Font(null, Font.BOLD, component.getFont().getSize() + 2));
         }
 
