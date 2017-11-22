@@ -27,6 +27,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
@@ -112,9 +113,11 @@ public final class PanelCDF extends JPanel implements Observer {
                 if (e.getStateChange() == 1) {
                     radioBtVal.setEnabled(true);
                     radioBtDiff.setEnabled(true);
+                    listCDF.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 } else {
                     radioBtVal.setEnabled(false);
                     radioBtDiff.setEnabled(false);
+                    listCDF.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 }
 
             }
@@ -329,7 +332,7 @@ public final class PanelCDF extends JPanel implements Observer {
                     }
                 }
 
-                razUI();
+                //razUI();
 
                 pm = new ProgressMonitor(PanelCDF.this, "Fichier :", "...", 0, 0);
                 pm.setMillisToDecideToPopup(0);
@@ -395,8 +398,8 @@ public final class PanelCDF extends JPanel implements Observer {
                         JOptionPane.WARNING_MESSAGE);
             }
 
-            if (listCDF.getSelectedIndices().length > 0)
-                listCDF.clearSelection();
+            //if (listCDF.getSelectedIndices().length > 0)
+                //listCDF.clearSelection();
 
             return cnt;
         }

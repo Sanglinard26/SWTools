@@ -32,6 +32,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     private static final String ICON_TEXT = "/text_icon_16.png";
     private static final String ICON_MATLAB = "/matlab_icon_16.png";
     private static final String ICON_TRASH = "/corbeille_icon_16.png";
+    private static final String ICON_COMPARAISON = "/comparaison_icon_16.png";
 
     public ListCdf(ListModelCdf dataModel) {
         super(dataModel);
@@ -68,7 +69,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     private final class ListMouseListener extends MouseAdapter {
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger() & ListCdf.this.getModel().getSize() > 0) {
+            if (e.isPopupTrigger() & ListCdf.this.getModel().getSize() > 0 & ListCdf.this.getSelectedIndices().length <=1) {
                 final JPopupMenu menu = new JPopupMenu();
                 final JMenu menuExport = new JMenu("Export");
                 JMenuItem menuItem;
@@ -183,6 +184,24 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     menu.add(menuItem);
                 }
 
+                menu.show(e.getComponent(), e.getX(), e.getY());
+            }else if (e.isPopupTrigger() & ListCdf.this.getModel().getSize() > 0 & ListCdf.this.getSelectedIndices().length == 2)
+            {
+            	final JPopupMenu menu = new JPopupMenu();
+                JMenuItem menuItem;
+                
+                menuItem = new JMenuItem("Comparer les deux fichiers", new ImageIcon(getClass().getResource(ICON_COMPARAISON)));
+                menuItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    	Cdf cdfCompar = ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0]).comparCdf(ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[1]), true);
+                        if (cdfCompar != null)
+                            ListCdf.this.getModel().addCdf(cdfCompar);
+                    }
+                });
+                menu.add(menuItem);
+                
                 menu.show(e.getComponent(), e.getX(), e.getY());
             }
         }
