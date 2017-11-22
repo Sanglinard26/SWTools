@@ -69,7 +69,6 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
             component.setBorder(new LineBorder(Color.BLACK, 1));
             component.setBackground(Color.WHITE);
             component.setForeground(Color.BLACK);
-            component.setFont(new Font(null, Font.BOLD, component.getFont().getSize() + 2));
         }
 
         if (table.getColumnCount() * table.getRowCount() == 1)

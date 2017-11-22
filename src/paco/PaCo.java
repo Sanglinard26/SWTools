@@ -610,42 +610,67 @@ public final class PaCo implements Cdf, Observable {
                         if (var instanceof Axis) {
                             copyVal = new String[1][((Axis) var).getDim()];
                             for (short x = 0; x < var.getValues()[0].length; x++) {
-                                copyVal[0][x] = var.getValues()[0][x];
+                                if (modeValeur) {
+                                    copyVal[0][x] = var.getValues()[0][x];
+                                } else {
+                                    copyVal[0][x] = "0";
+                                }
+
                             }
-                            varBase = new Axis(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), new String[] { "" },
-                                    var.getSwCsHistory(), copyVal);
+                            varBase = new Axis(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
+                                    new String[0][0], copyVal);
                         } else if (var instanceof Curve) {
                             copyVal = new String[2][((Curve) var).getDimX()];
                             for (byte y = 0; y < 2; y++) {
                                 for (short x = 0; x < var.getValues()[0].length; x++) {
-                                    copyVal[y][x] = var.getValues()[y][x];
+                                    if (modeValeur) {
+                                        copyVal[y][x] = var.getValues()[y][x];
+                                    } else {
+                                        copyVal[y][x] = "0";
+                                    }
+
                                 }
                             }
-                            varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
-                                    new String[] { "", "" }, var.getSwCsHistory(), copyVal);
+                            varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
+                                    new String[0][0], copyVal);
                         } else if (var instanceof Map) {
                             copyVal = new String[((Map) var).getDimY()][((Map) var).getDimX()];
                             for (short x = 0; x < var.getValues()[0].length; x++) {
                                 for (short y = 0; y < var.getValues().length; y++) {
-                                    copyVal[y][x] = var.getValues()[y][x];
+                                    if (modeValeur) {
+                                        copyVal[y][x] = var.getValues()[y][x];
+                                    } else {
+                                        copyVal[y][x] = "0";
+                                    }
+
                                 }
                             }
-                            varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
-                                    new String[] { "", "", "" }, var.getSwCsHistory(), copyVal);
+                            varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
+                                    new String[0][0], copyVal);
                         } else if (var instanceof Scalaire) {
-                            copyVal = new String[1][1];
+                            if (modeValeur) {
+                                copyVal = new String[1][1];
+                            } else {
+                                copyVal = new String[][] { { "" } };
+                            }
+
                             varBase = new Scalaire(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
-                                    new String[] { "" }, var.getSwCsHistory(), copyVal);
+                                    var.getSwUnitRef(), new String[0][0], copyVal);
                         } else if (var instanceof ValueBlock) {
                             copyVal = new String[((ValueBlock) var).getDimY()][((ValueBlock) var).getDimX()];
                             for (short x = 0; x < var.getValues()[0].length; x++) {
                                 for (short y = 0; y < var.getValues().length; y++) {
-                                    copyVal[y][x] = var.getValues()[y][x];
+                                    if (modeValeur) {
+                                        copyVal[y][x] = var.getValues()[y][x];
+                                    } else {
+                                        copyVal[y][x] = "0";
+                                    }
+
                                 }
                             }
                             copyVal = new String[((ValueBlock) var).getDimY()][((ValueBlock) var).getDimX()];
                             varBase = new ValueBlock(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
-                                    new String[] { "", "" }, var.getSwCsHistory(), copyVal);
+                                    var.getSwUnitRef(), new String[0][0], copyVal);
                         }
                         for (short x = 0; x < var.getValues()[0].length; x++) {
                             for (short y = 0; y < var.getValues().length; y++) {

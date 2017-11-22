@@ -1,5 +1,7 @@
 package cdf;
 
+import tools.Utilitaire;
+
 public final class Scalaire extends Variable {
 
     private final String[][] value = new String[1][1];
@@ -20,7 +22,17 @@ public final class Scalaire extends Variable {
     public String toMFormat() {
         StringBuilder sb = new StringBuilder();
         sb.append(getShortName() + " = ");
-        sb.append(getValue() + ";");
+
+        if (Utilitaire.isNumber(getValue())) {
+            sb.append(getValue() + ";");
+        } else {
+            if (Boolean.parseBoolean(getValue())) {
+                sb.append("1;");
+            } else {
+                sb.append("0;");
+            }
+        }
+
         sb.append("\t\t\t" + "%" + "(" + getUnit() + ")" + getLongName());
         return sb.toString();
     }
@@ -38,9 +50,9 @@ public final class Scalaire extends Variable {
         return value;
     }
 
-	@Override
-	public double getChecksum() {
-		return getValue().hashCode();
-	}
+    @Override
+    public double getChecksum() {
+        return getValue().hashCode();
+    }
 
 }
