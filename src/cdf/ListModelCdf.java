@@ -31,6 +31,13 @@ public final class ListModelCdf extends AbstractListModel<Cdf> {
         }
     }
 
+    public Cdf set(int index, Cdf element) {
+        Cdf cdf = listCdf.get(index);
+        listCdf.set(index, element);
+        fireContentsChanged(this, index, index);
+        return cdf;
+    }
+
     public final void removeCdf(int index) {
         if (listCdf.remove(index) != null)
             this.fireIntervalRemoved(this, index, index);

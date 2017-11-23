@@ -332,7 +332,7 @@ public final class PanelCDF extends JPanel implements Observer {
                     }
                 }
 
-                //razUI();
+                // razUI();
 
                 pm = new ProgressMonitor(PanelCDF.this, "Fichier :", "...", 0, 0);
                 pm.setMillisToDecideToPopup(0);
@@ -398,8 +398,8 @@ public final class PanelCDF extends JPanel implements Observer {
                         JOptionPane.WARNING_MESSAGE);
             }
 
-            //if (listCDF.getSelectedIndices().length > 0)
-                //listCDF.clearSelection();
+            // if (listCDF.getSelectedIndices().length > 0)
+            // listCDF.clearSelection();
 
             return cnt;
         }

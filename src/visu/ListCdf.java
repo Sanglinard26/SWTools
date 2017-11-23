@@ -5,6 +5,7 @@ package visu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -18,6 +19,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -33,6 +35,8 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     private static final String ICON_MATLAB = "/matlab_icon_16.png";
     private static final String ICON_TRASH = "/corbeille_icon_16.png";
     private static final String ICON_COMPARAISON = "/comparaison_icon_16.png";
+    private static final String ICON_UP = "/up_icon_16.png";
+    private static final String ICON_DOWN = "/down_icon_16.png";
 
     public ListCdf(ListModelCdf dataModel) {
         super(dataModel);
@@ -60,6 +64,28 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
             PanelCDF.razUI();
         }
 
+        int moveMe = ListCdf.this.getSelectedIndex();
+
+        if (e.isControlDown() & e.getKeyCode() == KeyEvent.VK_UP) {
+
+            if (moveMe != 0) {
+                swap(moveMe, moveMe - 1);
+                ListCdf.this.setSelectedIndex(moveMe);
+                ListCdf.this.ensureIndexIsVisible(moveMe);
+            }
+
+        }
+
+        if (e.isControlDown() & e.getKeyCode() == KeyEvent.VK_DOWN) {
+
+            if (moveMe != getModel().getSize() - 1) {
+                swap(moveMe, moveMe + 1);
+                ListCdf.this.setSelectedIndex(moveMe);
+                ListCdf.this.ensureIndexIsVisible(moveMe);
+            }
+
+        }
+
     }
 
     @Override
@@ -69,8 +95,9 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     private final class ListMouseListener extends MouseAdapter {
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger() & ListCdf.this.getModel().getSize() > 0 & ListCdf.this.getSelectedIndices().length <=1) {
+            if (e.isPopupTrigger() & ListCdf.this.getModel().getSize() > 0 & ListCdf.this.getSelectedIndices().length <= 1) {
                 final JPopupMenu menu = new JPopupMenu();
+                final JMenu menuMove = new JMenu("Deplacer");
                 final JMenu menuExport = new JMenu("Export");
                 JMenuItem menuItem;
                 if (ListCdf.this.locationToIndex(e.getPoint()) == ListCdf.this.getSelectedIndex()) {
@@ -87,6 +114,19 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     });
                     menu.add(menuItem);
                     menu.addSeparator();
+
+                    menuItem = new JMenuItem("Monter", new ImageIcon(getClass().getResource(ICON_UP)));
+                    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK));
+                    menuItem.addActionListener(new UpDownListener());
+                    menuMove.add(menuItem);
+
+                    menuMove.addSeparator();
+
+                    menuItem = new JMenuItem("Descendre", new ImageIcon(getClass().getResource(ICON_DOWN)));
+                    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK));
+                    menuItem.addActionListener(new UpDownListener());
+                    menuMove.add(menuItem);
+
                     menuItem = new JMenuItem("Exporter le fichier en txt", new ImageIcon(getClass().getResource(ICON_TEXT)));
                     menuItem.addActionListener(new ActionListener() {
 
@@ -168,6 +208,8 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     });
                     menuExport.add(menuItem);
 
+                    menu.add(menuMove);
+                    menu.addSeparator();
                     menu.add(menuExport);
 
                 } else {
@@ -185,26 +227,55 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                 }
 
                 menu.show(e.getComponent(), e.getX(), e.getY());
-            }else if (e.isPopupTrigger() & ListCdf.this.getModel().getSize() > 0 & ListCdf.this.getSelectedIndices().length == 2)
-            {
-            	final JPopupMenu menu = new JPopupMenu();
+            } else if (e.isPopupTrigger() & ListCdf.this.getModel().getSize() > 0 & ListCdf.this.getSelectedIndices().length == 2) {
+                final JPopupMenu menu = new JPopupMenu();
                 JMenuItem menuItem;
-                
+
                 menuItem = new JMenuItem("Comparer les deux fichiers", new ImageIcon(getClass().getResource(ICON_COMPARAISON)));
                 menuItem.addActionListener(new ActionListener() {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                    	Cdf cdfCompar = ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0]).comparCdf(ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[1]), true);
+                        Cdf cdfCompar = ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0])
+                                .comparCdf(ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[1]), true);
                         if (cdfCompar != null)
                             ListCdf.this.getModel().addCdf(cdfCompar);
                     }
                 });
                 menu.add(menuItem);
-                
+
                 menu.show(e.getComponent(), e.getX(), e.getY());
             }
         }
+    }
+
+    private final class UpDownListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+
+            int moveMe = ListCdf.this.getSelectedIndex();
+
+            if (e.getActionCommand().equals("Monter")) {
+                if (moveMe != 0) {
+                    swap(moveMe, moveMe - 1);
+                    ListCdf.this.setSelectedIndex(moveMe - 1);
+                    ListCdf.this.ensureIndexIsVisible(moveMe - 1);
+                }
+            } else {
+                if (moveMe != ListCdf.this.getModel().getSize() - 1) {
+                    swap(moveMe, moveMe + 1);
+                    ListCdf.this.setSelectedIndex(moveMe + 1);
+                    ListCdf.this.ensureIndexIsVisible(moveMe + 1);
+                }
+            }
+        }
+    }
+
+    private final void swap(int a, int b) {
+        Cdf aObject = getModel().getElementAt(a);
+        Cdf bObject = getModel().getElementAt(b);
+        getModel().set(a, bObject);
+        getModel().set(b, aObject);
     }
 
 }

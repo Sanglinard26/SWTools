@@ -3,8 +3,13 @@
  */
 package visu;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -21,15 +26,18 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JLayer;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.plaf.LayerUI;
 
 import cdf.ListModelLabel;
 import cdf.Variable;
@@ -41,6 +49,7 @@ public final class ListLabel extends JList<Variable> {
     private static final String ICON_TEXT = "/text_icon_16.png";
     private static final String ICON_IMAGE = "/image_icon_16.png";
     private static final String ICON_OLD_SEARCH = "/oldsearch_24.png";
+    private static final String ICON_TRASH = "/corbeille_icon_16.png";
 
     private final FilterField filterField;
 
@@ -95,7 +104,9 @@ public final class ListLabel extends JList<Variable> {
 
         private final JComboBox<String> typeFilter;
         private final JTextField txtFiltre;
+        private final JPanel panelBt;
         private final JButton oldSearchBt;
+        private final JButton delSearchBt;
         private JPopupMenu oldSearchMenu;
         private LinkedList<String> oldSearchItem;
 
@@ -103,14 +114,29 @@ public final class ListLabel extends JList<Variable> {
             super();
             setLayout(new BorderLayout());
 
+            panelBt = new JPanel(new GridLayout(1, 2));
+
             typeFilter = new JComboBox<String>(new ModelCombo());
             populateFilter(null);
             ((JLabel) typeFilter.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
             typeFilter.addActionListener(this);
 
             txtFiltre = new JTextField(20);
+            txtFiltre.setToolTipText("Clicker 'Entrer' pour enregistrer le filtre dans l'historique");
             txtFiltre.getDocument().addDocumentListener(this);
             txtFiltre.addActionListener(this);
+
+            delSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_TRASH)));
+            delSearchBt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            delSearchBt.setToolTipText("Suppression du filtre");
+            delSearchBt.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    txtFiltre.setText("");
+                }
+            });
+            panelBt.add(delSearchBt);
 
             oldSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_OLD_SEARCH)));
             oldSearchBt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -121,10 +147,11 @@ public final class ListLabel extends JList<Variable> {
                     popMenu(e.getX(), e.getY());
                 }
             });
+            panelBt.add(oldSearchBt);
 
             add(typeFilter, BorderLayout.WEST);
-            add(txtFiltre, BorderLayout.CENTER);
-            add(oldSearchBt, BorderLayout.EAST);
+            add(new JLayer<JTextField>(txtFiltre, new ValidationLayerUI()), BorderLayout.CENTER);
+            add(panelBt, BorderLayout.EAST);
 
             oldSearchItem = new LinkedList<String>();
         }
@@ -226,5 +253,36 @@ public final class ListLabel extends JList<Variable> {
     public final void clearFilter() {
         getFilterField().txtFiltre.setText("");
         getFilterField().typeFilter.getModel().setSelectedItem("ALL");
+    }
+
+    final class ValidationLayerUI extends LayerUI<JTextField> {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void paint(Graphics g, JComponent c) {
+            super.paint(g, c);
+
+            if (ListLabel.this.getFilterField().txtFiltre.getText().length() > 0 & ListLabel.this.getModel().getSize() < 1) {
+                Graphics2D g2 = (Graphics2D) g.create();
+
+                // Paint the red X.
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                int w = c.getWidth();
+                int h = c.getHeight();
+                int s = 16;
+                int pad = 4;
+                int x = w - pad - s;
+                int y = (h - s) / 2;
+                g2.setPaint(Color.RED);
+                g2.fillRect(x, y, s + 1, s + 1);
+                g2.setPaint(Color.WHITE);
+                g2.setStroke(new BasicStroke(2f));
+                g2.drawLine(x, y, x + s, y + s);
+                g2.drawLine(x, y + s, x + s, y);
+
+                g2.dispose();
+            }
+        }
     }
 }
