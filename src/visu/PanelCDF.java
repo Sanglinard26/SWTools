@@ -8,8 +8,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,7 +17,6 @@ import java.io.OutputStream;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -27,9 +24,10 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.ListSelectionModel;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -56,7 +54,7 @@ public final class PanelCDF extends JPanel implements Observer {
 
     // GUI
     private static final JButton btOpen = new JButton("Ajouter fichier(s) de donnees de calibration");
-    private static final JCheckBox checkCompar = new JCheckBox("Mode comparaison");
+    private static final JPanel panComparaison = new JPanel();
     private static final ButtonGroup btGroup = new ButtonGroup();
     private static final JRadioButton radioBtVal = new JRadioButton("Affichage des valeurs", true);
     private static final JRadioButton radioBtDiff = new JRadioButton("Affichage des différences (travail-reference)");
@@ -95,7 +93,12 @@ public final class PanelCDF extends JPanel implements Observer {
         btOpen.addActionListener(new OpenCDF());
         panCDF.add(btOpen, gbc);
 
-        // CheckBox pour mode comparaison
+        btGroup.add(radioBtVal);
+        btGroup.add(radioBtDiff);
+        panComparaison.setBorder(new TitledBorder(new LineBorder(Color.GRAY, 1), "Comparaison :", TitledBorder.LEADING, TitledBorder.BELOW_TOP));
+        panComparaison.add(radioBtVal);
+        panComparaison.add(radioBtDiff);
+
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -105,60 +108,11 @@ public final class PanelCDF extends JPanel implements Observer {
         gbc.weighty = 0;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
-        checkCompar.setToolTipText("Permet de comparer deux fichiers (uniquement) en les ouvrant simultanement");
-        checkCompar.addItemListener(new ItemListener() {
+        panCDF.add(panComparaison, gbc);
 
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == 1) {
-                    radioBtVal.setEnabled(true);
-                    radioBtDiff.setEnabled(true);
-                    listCDF.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-                } else {
-                    radioBtVal.setEnabled(false);
-                    radioBtDiff.setEnabled(false);
-                    listCDF.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                }
-
-            }
-        });
-        panCDF.add(checkCompar, gbc);
-        //
-
-        btGroup.add(radioBtVal);
-        btGroup.add(radioBtDiff);
-
-        // Bouton radio pour mode de comparaison avec valeurs
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 1;
-        gbc.weighty = 0;
-        gbc.insets = new Insets(0, 0, 0, 0);
-        gbc.anchor = GridBagConstraints.CENTER;
-        radioBtVal.setEnabled(false);
-        panCDF.add(radioBtVal, gbc);
-        //
-
-        // Bouton radio pour mode de comparaison avec differences
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 1;
-        gbc.weighty = 0;
-        gbc.insets = new Insets(0, 0, 0, 0);
-        gbc.anchor = GridBagConstraints.CENTER;
-        radioBtDiff.setEnabled(false);
-        panCDF.add(radioBtDiff, gbc);
-        //
-
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 0;
-        gbc.gridy = 4;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 1;
@@ -388,19 +342,6 @@ public final class PanelCDF extends JPanel implements Observer {
                 pm.setProgress(cnt);
             }
 
-            // Implementation comparaison
-            if (checkCompar.isSelected() & filesCDF.length == 2) {
-                Cdf cdfCompar = listCDF.getModel().getElementAt(0).comparCdf(listCDF.getModel().getElementAt(1), radioBtVal.isSelected());
-                if (cdfCompar != null)
-                    listCDF.getModel().addCdf(cdfCompar);
-            } else if (checkCompar.isSelected() & filesCDF.length != 2) {
-                JOptionPane.showMessageDialog(null, "La comparaison ne fonctionne qu'avec deux fichiers uniquement.", "ATTENTION",
-                        JOptionPane.WARNING_MESSAGE);
-            }
-
-            // if (listCDF.getSelectedIndices().length > 0)
-            // listCDF.clearSelection();
-
             return cnt;
         }
     }
@@ -426,6 +367,10 @@ public final class PanelCDF extends JPanel implements Observer {
 
         }
 
+    }
+
+    public static JRadioButton getRadiobtval() {
+        return radioBtVal;
     }
 
     @Override

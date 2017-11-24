@@ -50,7 +50,12 @@ public final class XYChart extends JPanel {
             try {
                 serie.addPoint(Double.parseDouble(curve.getValue(0, x)), Double.parseDouble(curve.getValue(1, x)));
             } catch (NumberFormatException nfe) {
-                serie.addPoint(x, Double.parseDouble(curve.getValue(1, x)));
+                if (Utilitaire.isNumber(curve.getValue(1, x))) {
+                    serie.addPoint(x, Double.parseDouble(curve.getValue(1, x)));
+                } else {
+                    serie.addPoint(x, Float.NaN);
+                }
+
             }
         }
 

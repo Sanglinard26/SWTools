@@ -41,7 +41,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     public ListCdf(ListModelCdf dataModel) {
         super(dataModel);
         setCellRenderer(new ListCdfRenderer());
-        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         addKeyListener(this);
         addMouseListener(new ListMouseListener());
     }
@@ -59,7 +59,10 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == 127 & this.getSelectedIndex() > -1) // touche suppr
         {
-            this.getModel().removeCdf(this.getSelectedIndex());
+            for (int idx : this.getSelectedIndices()) {
+                this.getModel().removeCdf(this.getSelectedIndex());
+            }
+
             this.clearSelection();
             PanelCDF.razUI();
         }
@@ -70,8 +73,8 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
             if (moveMe != 0) {
                 swap(moveMe, moveMe - 1);
-                ListCdf.this.setSelectedIndex(moveMe);
-                ListCdf.this.ensureIndexIsVisible(moveMe);
+                ListCdf.this.setSelectedIndex(moveMe - 1);
+                ListCdf.this.ensureIndexIsVisible(moveMe - 1);
             }
 
         }
@@ -80,8 +83,8 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
             if (moveMe != getModel().getSize() - 1) {
                 swap(moveMe, moveMe + 1);
-                ListCdf.this.setSelectedIndex(moveMe);
-                ListCdf.this.ensureIndexIsVisible(moveMe);
+                ListCdf.this.setSelectedIndex(moveMe + 1);
+                ListCdf.this.ensureIndexIsVisible(moveMe + 1);
             }
 
         }
@@ -236,8 +239,8 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Cdf cdfCompar = ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0])
-                                .comparCdf(ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[1]), true);
+                        Cdf cdfCompar = ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0]).comparCdf(
+                                ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[1]), PanelCDF.getRadiobtval().isSelected());
                         if (cdfCompar != null)
                             ListCdf.this.getModel().addCdf(cdfCompar);
                     }

@@ -696,17 +696,20 @@ public final class PaCo implements Cdf, Observable {
                 }
             }
 
-            return new PaCo(listCompa);
+            return new PaCo(this.name + " => " + cdf.getName(), listCompa);
         }
         return null;
     }
 
-    public PaCo(ArrayList<Variable> listComparaison) {
+    public PaCo(String name, ArrayList<Variable> listComparaison) {
 
-        this.name = "Comparaison";
+        this.name = name;
         this.listLabel.addAll(listComparaison);
 
         this.nbLabel = listComparaison.size();
+
+        this.minScore = 0;
+        this.maxScore = 0;
 
         getScores();
     }

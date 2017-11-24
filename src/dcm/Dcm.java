@@ -1226,14 +1226,14 @@ public final class Dcm implements Cdf, Observable {
                 }
             }
 
-            return new Dcm(listCompa);
+            return new Dcm(this.name + " => " + cdf.getName(), listCompa);
         }
         return null;
     }
 
-    public Dcm(ArrayList<Variable> listComparaison) {
+    public Dcm(String name, ArrayList<Variable> listComparaison) {
 
-        this.name = "Comparaison";
+        this.name = name;
         this.listLabel.addAll(listComparaison);
     }
 

@@ -204,20 +204,50 @@ public final class ListLabel extends JList<Variable> {
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-            clearSelection();
-            getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+            Variable selectedVar = null;
+            if (getSelectedIndex() > -1) {
+                selectedVar = getModel().getElementAt(getSelectedIndex());
+            }
+            if (selectedVar != null) {
+                clearSelection();
+                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+                setSelectedIndex(0);
+                setSelectedValue(selectedVar, true);
+            } else {
+                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+            }
         }
 
         @Override
         public void insertUpdate(DocumentEvent e) {
-            clearSelection();
-            getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+            Variable selectedVar = null;
+            if (getSelectedIndex() > -1) {
+                selectedVar = getModel().getElementAt(getSelectedIndex());
+            }
+            if (selectedVar != null) {
+                clearSelection();
+                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+                setSelectedIndex(0);
+                setSelectedValue(selectedVar, true);
+            } else {
+                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+            }
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
-            clearSelection();
-            getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+            Variable selectedVar = null;
+            if (getSelectedIndex() > -1) {
+                selectedVar = getModel().getElementAt(getSelectedIndex());
+            }
+            if (selectedVar != null) {
+                clearSelection();
+                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+                setSelectedIndex(0);
+                setSelectedValue(selectedVar, true);
+            } else {
+                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+            }
         }
 
     }
