@@ -696,7 +696,7 @@ public final class PaCo implements Cdf, Observable {
                 }
             }
 
-            return new PaCo(this.name + " => " + cdf.getName(), listCompa);
+            return new PaCo(this.name + "_vs_" + cdf.getName(), listCompa);
         }
         return null;
     }

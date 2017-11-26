@@ -286,19 +286,13 @@ public final class PanelXYPlot extends JComponent {
 
         private static final long serialVersionUID = 1L;
 
-        private String serieName;
-        private Color serieColor;
+        @SuppressWarnings("unused")
+		private String serieName;
+        @SuppressWarnings("unused")
+		private Color serieColor;
 
         public SerieScale(String serieName) {
             this.serieName = serieName;
-        }
-
-        public String getSerieName() {
-            return serieName;
-        }
-
-        public Color getSerieColor() {
-            return serieColor;
         }
 
         public void setSerieColor(int index, Color serieColor) {

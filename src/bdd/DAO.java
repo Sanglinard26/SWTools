@@ -7,7 +7,8 @@ import java.sql.Connection;
 
 public abstract class DAO<T> {
 
-    private Connection connection = null;
+    @SuppressWarnings("unused")
+	private Connection connection = null;
 
     public DAO(Connection conn) {
         this.connection = conn;

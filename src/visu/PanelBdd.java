@@ -106,7 +106,8 @@ public final class PanelBdd extends JPanel {
 
     }
 
-    private final class OpenCDF implements ActionListener {
+    @SuppressWarnings("unused")
+	private final class OpenCDF implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
@@ -178,7 +179,8 @@ public final class PanelBdd extends JPanel {
     private final class TaskCharging extends SwingWorker<Integer, Integer> {
 
         private final File[] filesCDF;
-        private Cdf cdf;
+        @SuppressWarnings("unused")
+		private Cdf cdf;
 
         public TaskCharging(File[] filesPaco) {
             this.filesCDF = filesPaco;

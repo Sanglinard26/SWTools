@@ -212,7 +212,13 @@ public final class ListLabel extends JList<Variable> {
                 clearSelection();
                 getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
                 setSelectedIndex(0);
-                setSelectedValue(selectedVar, true);
+                if(getModel().getSize()>0)
+                {
+                	setSelectedValue(selectedVar, true);
+                }else{
+                	setSelectedIndex(-1);
+                }
+                
             } else {
                 getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
             }
@@ -228,7 +234,12 @@ public final class ListLabel extends JList<Variable> {
                 clearSelection();
                 getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
                 setSelectedIndex(0);
-                setSelectedValue(selectedVar, true);
+                if(getModel().getSize()>0)
+                {
+                	setSelectedValue(selectedVar, true);
+                }else{
+                	setSelectedIndex(-1);
+                }
             } else {
                 getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
             }
@@ -244,7 +255,12 @@ public final class ListLabel extends JList<Variable> {
                 clearSelection();
                 getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
                 setSelectedIndex(0);
-                setSelectedValue(selectedVar, true);
+                if(getModel().getSize()>0)
+                {
+                	setSelectedValue(selectedVar, true);
+                }else{
+                	setSelectedIndex(-1);
+                }
             } else {
                 getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
             }

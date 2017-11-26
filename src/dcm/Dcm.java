@@ -1226,7 +1226,7 @@ public final class Dcm implements Cdf, Observable {
                 }
             }
 
-            return new Dcm(this.name + " => " + cdf.getName(), listCompa);
+            return new Dcm(this.name + "_vs_" + cdf.getName(), listCompa);
         }
         return null;
     }

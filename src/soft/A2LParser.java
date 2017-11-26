@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+@SuppressWarnings("unused")
 public final class A2LParser {
 
     // Top-Level Keyword

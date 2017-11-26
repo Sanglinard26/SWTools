@@ -6,9 +6,14 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -22,6 +27,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
+import javax.swing.TransferHandler;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -52,7 +58,7 @@ public final class PanelCDF extends JPanel implements Observer {
 	private static final JPanel panComparaison = new JPanel();
 	private static final ButtonGroup btGroup = new ButtonGroup();
 	private static final JRadioButton radioBtVal = new JRadioButton("Affichage des valeurs", true);
-	private static final JRadioButton radioBtDiff = new JRadioButton("Affichage des différences (travail-reference)");
+	private static final JRadioButton radioBtDiff = new JRadioButton("Affichage des differences (Work-Ref)");
 	private static final ListCdf listCDF = new ListCdf(new ListModelCdf());
 	private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
 	private static final JPanel panVisu = new JPanel(new GridBagLayout());
@@ -112,6 +118,7 @@ public final class PanelCDF extends JPanel implements Observer {
 		gbc.weighty = 1;
 		gbc.insets = new Insets(0, 0, 0, 0);
 		gbc.anchor = GridBagConstraints.CENTER;
+		listCDF.setTransferHandler(new ListTransferHandler());
 		listCDF.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
@@ -316,6 +323,65 @@ public final class PanelCDF extends JPanel implements Observer {
 			}
 
 			return cnt;
+		}
+	}
+	
+	private final class ListTransferHandler extends TransferHandler
+	{
+		private static final long serialVersionUID = 1L;
+
+		Boolean needDTD = false;
+		
+		@Override
+		public boolean canImport(TransferSupport info) {
+
+			if (!info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+				return false;
+			}
+
+			return true;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public boolean importData(TransferSupport info) {
+
+			if(!info.isDrop())
+			{
+				return false;
+			}
+
+			Transferable objetTransfer = info.getTransferable();
+
+			List<File> dropFiles;
+			try {
+				dropFiles = (List<File>) objetTransfer.getTransferData(DataFlavor.javaFileListFlavor);
+
+				for(int nFile = 0; nFile<dropFiles.size(); nFile++)
+				{
+					if (Utilitaire.getExtension(dropFiles.get(nFile)).equals("xml")) {
+						needDTD = true;
+						break;
+					}
+				}
+
+				if (needDTD) {
+					Utilitaire.createDtd(dropFiles.get(0).getParent());
+				}
+				
+				pm = new ProgressMonitor(PanelCDF.this, "Fichier :", "...", 0, 0);
+				pm.setMillisToDecideToPopup(0);
+				pm.setMillisToPopup(0);
+				
+				new TaskCharging(dropFiles.toArray(new File[dropFiles.size()])).execute();
+
+			} catch (UnsupportedFlavorException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return true;
 		}
 	}
 
