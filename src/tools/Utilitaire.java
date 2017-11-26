@@ -1,6 +1,10 @@
 package tools;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public final class Utilitaire {
 
@@ -14,6 +18,8 @@ public final class Utilitaire {
     public final static String lab = "lab";
     public final static String a2l = "a2l";
     public final static String dcm = "dcm";
+    
+    private static final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
 
     /*
      * Get the extension of a file.
@@ -44,5 +50,29 @@ public final class Utilitaire {
             return false;
         }
 
+    }
+    
+    public static void createDtd(String pathFolder)
+    {
+    	File dtd = new File(pathFolder + "/" + DTD);
+        dtd.deleteOnExit();
+        if (!dtd.exists()) {
+            final InputStream myDtd = Utilitaire.class.getResourceAsStream("/" + DTD);
+            try {
+                final OutputStream out = new FileOutputStream(pathFolder + "/" + DTD);
+                final byte[] buffer = new byte[1024];
+                int len = myDtd.read(buffer);
+                while (len != -1) {
+                    out.write(buffer, 0, len);
+                    len = myDtd.read(buffer);
+                }
+                myDtd.close();
+                out.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }

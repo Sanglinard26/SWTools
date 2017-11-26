@@ -674,7 +674,7 @@ public final class PaCo implements Cdf, Observable {
                         }
                         for (short x = 0; x < var.getValues()[0].length; x++) {
                             for (short y = 0; y < var.getValues().length; y++) {
-                                if (!var.getValues()[y][x].equals(varCompar.getValues()[y][x]))
+                                if (!var.getValues()[y][x].equals(varCompar.getValues()[y][x])) // Exception possible sur dimmension
 
                                     if (modeValeur) {
                                         varBase.getValues()[y][x] = var.getValues()[y][x] + " => " + varCompar.getValues()[y][x];
