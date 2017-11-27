@@ -18,7 +18,8 @@ public final class Utilitaire {
     public final static String lab = "lab";
     public final static String a2l = "a2l";
     public final static String dcm = "dcm";
-    
+    public final static String m = "m";
+
     private static final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
 
     /*
@@ -51,10 +52,9 @@ public final class Utilitaire {
         }
 
     }
-    
-    public static void createDtd(String pathFolder)
-    {
-    	File dtd = new File(pathFolder + "/" + DTD);
+
+    public static void createDtd(String pathFolder) {
+        File dtd = new File(pathFolder + "/" + DTD);
         dtd.deleteOnExit();
         if (!dtd.exists()) {
             final InputStream myDtd = Utilitaire.class.getResourceAsStream("/" + DTD);

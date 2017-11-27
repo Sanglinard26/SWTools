@@ -4,44 +4,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class SeriesCollection {
-	
-	private List<Serie> series;
+
+    private List<Serie> series;
 
     public SeriesCollection() {
         this(null);
     }
 
     public SeriesCollection(Serie serie) {
-    	series = new ArrayList<>();
-    	
+        series = new ArrayList<>();
+
         if (serie != null) {
-        	series.add(serie);
+            series.add(serie);
         }
     }
 
     public void addSerie(Serie serie) {
-    	if (!series.contains(serie))
-    		series.add(serie);
+        if (!series.contains(serie))
+            series.add(serie);
     }
 
     public void removeAllSeries() {
-    	if (!series.isEmpty())
-    		series.clear();
+        if (!series.isEmpty())
+            series.clear();
     }
 
     public void removeSerie(Serie serie) {
-    	if (series.contains(serie))
-    		series.remove(serie);
+        if (series.contains(serie))
+            series.remove(serie);
     }
-    
-    public Serie getSerie(int index)
-    {
-    	return (Serie) series.get(index);
+
+    public Serie getSerie(int index) {
+        return series.get(index);
     }
-    
-    public int getSeriesCount()
-    {
-    	return series.size();
+
+    public int getSeriesCount() {
+        return series.size();
     }
 
 }

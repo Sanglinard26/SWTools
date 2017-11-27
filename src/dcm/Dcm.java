@@ -1105,7 +1105,6 @@ public final class Dcm implements Cdf, Observable {
         for (Observer obs : listObserver) {
             obs.update(cdf, variable, rate);
         }
-
     }
 
     @Override
