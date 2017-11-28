@@ -71,6 +71,8 @@ public final class M implements Cdf, Observable {
             String category = "";
             String[][] valeur;
 
+            String subString;
+
             while (readLineDcm() != null) {
 
                 notifyObserver(this.name, "", nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
@@ -86,8 +88,9 @@ public final class M implements Cdf, Observable {
 
                             switch (line.substring(shortName.lastIndexOf("_") + 1, line.indexOf("=")).trim()) {
                             case "C":
-                                listLabel.add(new Scalaire(shortName, "", VALUE, noFonction, new String[]{""}, new String[0][0],
-                                        new String[][] { { line.substring(line.lastIndexOf("=") + 1, line.indexOf(";")).trim() } }));
+
+                                listLabel.add(new Scalaire(shortName, "", VALUE, noFonction, new String[] { "" }, new String[0][0],
+                                        new String[][] { { line.substring(line.indexOf("=") + 1, line.indexOf(";")).trim() } }));
 
                                 if (!listCategory.contains(Cdf.VALUE))
                                     listCategory.add(Cdf.VALUE);
@@ -95,38 +98,48 @@ public final class M implements Cdf, Observable {
                                 break;
                             case "T":
 
-                                valeur = new String[2][line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s").length];
+                                subString = line.substring(line.indexOf("["), line.indexOf("]") + 1).replace("[ ", "[").replace(" ]", "]");
+                                subString = subString.replace("[", "");
+                                subString = subString.replace("]", "");
+
+                                valeur = new String[2][subString.split("\\s").length];
 
                                 for (int x = 0; x < valeur[0].length; x++) {
                                     valeur[0][x] = Integer.toString(x);
-                                    valeur[1][x] = line.substring(line.indexOf("[") + 1, line.indexOf("]")).split(" ")[x].trim();
+                                    valeur[1][x] = subString.split("\\s")[x].trim();
 
                                 }
 
-                                listLabel.add(new Curve(shortName, "", CURVE_INDIVIDUAL, noFonction, new String[]{"",""}, new String[0][0], valeur));
+                                listLabel.add(
+                                        new Curve(shortName, "", CURVE_INDIVIDUAL, noFonction, new String[] { "", "" }, new String[0][0], valeur));
 
                                 if (!listCategory.contains(Cdf.CURVE_INDIVIDUAL))
                                     listCategory.add(Cdf.CURVE_INDIVIDUAL);
 
                                 break;
                             case "CUR":
-                            	
-                            	valeur = new String[2][line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s").length];
+
+                                subString = line.substring(line.indexOf("["), line.indexOf("]") + 1).replace("[ ", "[").replace(" ]", "]");
+                                subString = subString.replace("[", "");
+                                subString = subString.replace("]", "");
+
+                                valeur = new String[2][subString.split("\\s").length];
 
                                 for (int x = 0; x < valeur[0].length; x++) {
                                     valeur[0][x] = Integer.toString(x);
-                                    valeur[1][x] = line.substring(line.indexOf("[") + 1, line.indexOf("]")).split(" ")[x].trim();
+                                    valeur[1][x] = subString.split("\\s")[x].trim();
 
                                 }
-                            	
-                                listLabel.add(new Curve(shortName, "", CURVE_INDIVIDUAL, noFonction, new String[]{"",""}, new String[0][0], valeur));
+
+                                listLabel.add(
+                                        new Curve(shortName, "", CURVE_INDIVIDUAL, noFonction, new String[] { "", "" }, new String[0][0], valeur));
 
                                 if (!listCategory.contains(Cdf.CURVE_INDIVIDUAL))
                                     listCategory.add(Cdf.CURVE_INDIVIDUAL);
 
                                 break;
                             case "M":
-                                listLabel.add(new Map(shortName, "", MAP_INDIVIDUAL, noFonction, new String[]{"","",""}, new String[0][0],
+                                listLabel.add(new Map(shortName, "", MAP_INDIVIDUAL, noFonction, new String[] { "", "", "" }, new String[0][0],
                                         new String[][] { { "0" } }));
 
                                 if (!listCategory.contains(Cdf.MAP_INDIVIDUAL))
@@ -134,22 +147,22 @@ public final class M implements Cdf, Observable {
 
                                 break;
                             case "A":
-                            	
-                            	valeur = new String[1][line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s").length];
+
+                                valeur = new String[1][line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s").length];
 
                                 for (int x = 0; x < valeur[0].length; x++) {
-                                    valeur[0][x] = line.substring(line.indexOf("[") + 1, line.indexOf("]")).split(" ")[x].trim();
+                                    valeur[0][x] = line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s")[x].trim();
 
                                 }
-                                
-                                listLabel.add(new Axis(shortName, "", AXIS_VALUES, noFonction, new String[]{""}, new String[0][0], valeur));
+
+                                listLabel.add(new Axis(shortName, "", AXIS_VALUES, noFonction, new String[] { "" }, new String[0][0], valeur));
 
                                 if (!listCategory.contains(Cdf.AXIS_VALUES))
                                     listCategory.add(Cdf.AXIS_VALUES);
 
                                 break;
                             case "CA":
-                                listLabel.add(new ValueBlock(shortName, "", VALUE_BLOCK, noFonction, new String[]{""}, new String[0][0],
+                                listLabel.add(new ValueBlock(shortName, "", VALUE_BLOCK, noFonction, new String[] { "" }, new String[0][0],
                                         new String[][] { { "0" } }));
 
                                 if (!listCategory.contains(Cdf.VALUE_BLOCK))
@@ -157,7 +170,7 @@ public final class M implements Cdf, Observable {
 
                                 break;
                             default:
-                                listLabel.add(new Scalaire(shortName, "", category, noFonction, new String[]{""}, new String[0][0],
+                                listLabel.add(new Scalaire(shortName, "", category, noFonction, new String[] { "" }, new String[0][0],
                                         new String[][] { { "0" } }));
                                 break;
                             }

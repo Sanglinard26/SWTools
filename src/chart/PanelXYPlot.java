@@ -87,7 +87,14 @@ public final class PanelXYPlot extends JComponent {
 
                 int x1 = (int) ((seriesCollection.getSerie(nSerie).getPoints().get(nPoint).getX() - getMinXValue()) * xScale + padding
                         + labelPadding);
-                int y1 = (int) ((getMaxYValue() - seriesCollection.getSerie(nSerie).getPoints().get(nPoint).getY()) * yScale + padding);
+
+                int y1;
+
+                if (seriesCollection.getSerie(nSerie).getMaxYValue() != Float.NaN) {
+                    y1 = (int) ((getMaxYValue() - seriesCollection.getSerie(nSerie).getPoints().get(nPoint).getY()) * yScale + padding);
+                } else {
+                    y1 = getHeight() / 2;
+                }
 
                 serieScale.add(new Point(x1, y1));
             }
@@ -287,9 +294,9 @@ public final class PanelXYPlot extends JComponent {
         private static final long serialVersionUID = 1L;
 
         @SuppressWarnings("unused")
-		private String serieName;
+        private String serieName;
         @SuppressWarnings("unused")
-		private Color serieColor;
+        private Color serieColor;
 
         public SerieScale(String serieName) {
             this.serieName = serieName;

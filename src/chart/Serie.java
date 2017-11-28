@@ -32,7 +32,10 @@ public final class Serie {
         for (int i = 0; i < points.size(); i++) {
             maxValue = Math.max(maxValue, points.get(i).getY());
         }
-        return maxValue;
+        if (maxValue != Double.NEGATIVE_INFINITY) {
+            return maxValue;
+        }
+        return Float.NaN;
     }
 
     public double getMaxXValue() {
@@ -44,19 +47,22 @@ public final class Serie {
     }
 
     public double getMinYValue() {
-        double MinValue = Double.POSITIVE_INFINITY;
+        double minValue = Double.POSITIVE_INFINITY;
         for (int i = 0; i < points.size(); i++) {
-            MinValue = Math.min(MinValue, points.get(i).getY());
+            minValue = Math.min(minValue, points.get(i).getY());
         }
-        return MinValue;
+        if (minValue != Double.POSITIVE_INFINITY) {
+            return minValue;
+        }
+        return Float.NaN;
     }
 
     public double getMinXValue() {
-        double MinValue = Double.POSITIVE_INFINITY;
+        double minValue = Double.POSITIVE_INFINITY;
         for (int i = 0; i < points.size(); i++) {
-            MinValue = Math.min(MinValue, points.get(i).getX());
+            minValue = Math.min(minValue, points.get(i).getX());
         }
-        return MinValue;
+        return minValue;
     }
 
     public Color getColor() {

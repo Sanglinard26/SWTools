@@ -36,44 +36,45 @@ public final class TreeModelBdd extends DefaultTreeModel {
             }
         };
 
-        for (String db : pathDb.list(fnamefilter)) {
-            this.root.add(new DefaultMutableTreeNode(new Bdd(db.replace(".mv.db", ""))));
+        if (pathDb.list(fnamefilter) != null) {
+            for (String db : pathDb.list(fnamefilter)) {
+                this.root.add(new DefaultMutableTreeNode(new Bdd(db.replace(".mv.db", ""))));
+            }
+            reload();
         }
-        reload();
 
     }
 
     public final void populateFromBdd(Connection bddConnexion, DefaultMutableTreeNode bddNode) {
-    	try {
+        try {
             ResultSet rs = bddConnexion.getMetaData().getTables(null, null, null, new String[] { "TABLE" });
             while (rs.next()) {
-            	insertNodeInto(new DefaultMutableTreeNode(new XmlFolder(rs.getString("TABLE_NAME").toLowerCase())), bddNode, bddNode.getChildCount());
+                insertNodeInto(new DefaultMutableTreeNode(new XmlFolder(rs.getString("TABLE_NAME").toLowerCase())), bddNode, bddNode.getChildCount());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
-    public final int removeXmlFolder(Connection bddConnexion, DefaultMutableTreeNode xmlFolderNode)
-    {
-    	String sql = "DROP TABLE " + xmlFolderNode.getUserObject();
-    	
-    	try {
+
+    public final int removeXmlFolder(Connection bddConnexion, DefaultMutableTreeNode xmlFolderNode) {
+        String sql = "DROP TABLE " + xmlFolderNode.getUserObject();
+
+        try {
             return bddConnexion.createStatement().executeUpdate(sql);
         } catch (SQLException e) {
             System.out.println(e);
             e.printStackTrace();
         }
-    	
-		return 0;
+
+        return 0;
     }
 
-	public File getPathDb() {
-		return pathDb;
-	}
+    public File getPathDb() {
+        return pathDb;
+    }
 
-	public static ArrayList<Bdd> getListBdd() {
-		return listBdd;
-	}
+    public static ArrayList<Bdd> getListBdd() {
+        return listBdd;
+    }
 
 }

@@ -21,6 +21,7 @@ public final class PanelInfoVariable extends JPanel {
         this.setBackground(Color.WHITE);
 
         infoVariable.append("Nom : " + variable.getShortName() + "\n");
+        infoVariable.append("Description : " + variable.getLongName() + "\n");
         infoVariable.append("Fonction : " + variable.getSwFeatureRef() + "\n");
 
         final StringBuilder unite = new StringBuilder();
