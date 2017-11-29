@@ -24,11 +24,11 @@ public final class PanelXYPlot extends JComponent {
 
     private static final long serialVersionUID = 1L;
 
-    private int padding = 25; // Espace par rapport au bord de la fenetre
-    private int labelPadding = 25; // Espace pour les etiquettes
-    private Color gridColor = new Color(200, 200, 200, 200);
+    private static final int padding = 25; // Espace par rapport au bord de la fenetre
+    private static final int labelPadding = 25; // Espace pour les etiquettes
+    private static final Color gridColor = new Color(200, 200, 200, 200);
     private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
-    private int pointWidth = 4;
+    private static final int pointWidth = 4;
     private int numberYDivisions;
     private int numberXDivisions;
 
@@ -79,27 +79,26 @@ public final class PanelXYPlot extends JComponent {
 
         listSeries = new ArrayList<>();
 
+        int x0, y0, x1, y1, x2, y2; // Point de coordonnees
+
         for (int nSerie = 0; nSerie < seriesCollection.getSeriesCount(); nSerie++) {
 
-            serieScale = new SerieScale(seriesCollection.getSerie(nSerie).getName());
+            if (!Double.isNaN(yScale)) {
 
-            for (int nPoint = 0; nPoint < seriesCollection.getSerie(nSerie).getPointsCount(); nPoint++) {
+                serieScale = new SerieScale(seriesCollection.getSerie(nSerie).getName());
 
-                int x1 = (int) ((seriesCollection.getSerie(nSerie).getPoints().get(nPoint).getX() - getMinXValue()) * xScale + padding
-                        + labelPadding);
+                for (int nPoint = 0; nPoint < seriesCollection.getSerie(nSerie).getPointsCount(); nPoint++) {
 
-                int y1;
+                    x1 = (int) ((seriesCollection.getSerie(nSerie).getPoints().get(nPoint).getX() - getMinXValue()) * xScale + padding
+                            + labelPadding);
 
-                if (seriesCollection.getSerie(nSerie).getMaxYValue() != Float.NaN) {
                     y1 = (int) ((getMaxYValue() - seriesCollection.getSerie(nSerie).getPoints().get(nPoint).getY()) * yScale + padding);
-                } else {
-                    y1 = getHeight() / 2;
-                }
 
-                serieScale.add(new Point(x1, y1));
+                    serieScale.add(new Point(x1, y1));
+                }
+                listSeries.add(serieScale);
             }
 
-            listSeries.add(serieScale);
         }
 
         // draw title
@@ -146,19 +145,23 @@ public final class PanelXYPlot extends JComponent {
         g2.fillRect(padding + labelPadding, padding, getWidth() - (2 * padding) - labelPadding, getHeight() - 2 * padding - labelPadding);
         g2.setColor(Color.BLACK);
 
+        String xLabel, yLabel;
+        FontMetrics metrics;
+        int labelWidth;
+
         // create hatch marks and grid lines for y axis.
         for (int i = 0; i < numberYDivisions + 1; i++) {
-            int x0 = padding + labelPadding;
-            int x1 = pointWidth + padding + labelPadding;
-            int y0 = getHeight() - ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
-            int y1 = y0;
+            x0 = padding + labelPadding;
+            x1 = pointWidth + padding + labelPadding;
+            y0 = getHeight() - ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
+            y1 = y0;
             if (getNbXPoints() > 0) {
                 g2.setColor(gridColor);
                 g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1); // Dessin de la grille
                 g2.setColor(Color.BLACK);
-                String yLabel = ((int) ((getMinYValue() + (getMaxYValue() - getMinYValue()) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
-                FontMetrics metrics = g2.getFontMetrics();
-                int labelWidth = metrics.stringWidth(yLabel);
+                yLabel = ((int) ((getMinYValue() + (getMaxYValue() - getMinYValue()) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
+                metrics = g2.getFontMetrics();
+                labelWidth = metrics.stringWidth(yLabel);
                 g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
             }
             g2.drawLine(x0, y0, x1, y1);
@@ -166,17 +169,17 @@ public final class PanelXYPlot extends JComponent {
 
         // create hatch marks and grid lines for x axis.
         for (int i = 0; i < numberXDivisions + 1; i++) {
-            int x0 = i * (getWidth() - padding * 2 - labelPadding) / numberXDivisions + padding + labelPadding;
-            int x1 = x0;
-            int y0 = getHeight() - padding - labelPadding;
-            int y1 = y0 - pointWidth;
+            x0 = i * (getWidth() - padding * 2 - labelPadding) / numberXDivisions + padding + labelPadding;
+            x1 = x0;
+            y0 = getHeight() - padding - labelPadding;
+            y1 = y0 - pointWidth;
             if (getNbXPoints() > 0) {
                 g2.setColor(gridColor);
                 g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding); // Dessin de la grille
                 g2.setColor(Color.BLACK);
-                String xLabel = ((int) ((getMinXValue() + (getMaxXValue() - getMinXValue()) * ((i * 1.0) / numberXDivisions)) * 100)) / 100.0 + "";
-                FontMetrics metrics = g2.getFontMetrics();
-                int labelWidth = metrics.stringWidth(xLabel);
+                xLabel = ((int) ((getMinXValue() + (getMaxXValue() - getMinXValue()) * ((i * 1.0) / numberXDivisions)) * 100)) / 100.0 + "";
+                metrics = g2.getFontMetrics();
+                labelWidth = metrics.stringWidth(xLabel);
                 g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
             }
             g2.drawLine(x0, y0, x1, y1);
@@ -187,6 +190,8 @@ public final class PanelXYPlot extends JComponent {
         g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, getWidth() - padding, getHeight() - padding - labelPadding);
 
         float hue = 0;
+        int xMark, yMark;
+        int ovalW, ovalH;
 
         for (int nSerie = 0; nSerie < listSeries.size(); nSerie++) {
 
@@ -198,20 +203,20 @@ public final class PanelXYPlot extends JComponent {
 
             g2.setStroke(GRAPH_STROKE);
             for (int i = 0; i < listSeries.get(nSerie).size() - 1; i++) {
-                int x1 = listSeries.get(nSerie).get(i).x;
-                int y1 = listSeries.get(nSerie).get(i).y;
-                int x2 = listSeries.get(nSerie).get(i + 1).x;
-                int y2 = listSeries.get(nSerie).get(i + 1).y;
+                x1 = listSeries.get(nSerie).get(i).x;
+                y1 = listSeries.get(nSerie).get(i).y;
+                x2 = listSeries.get(nSerie).get(i + 1).x;
+                y2 = listSeries.get(nSerie).get(i + 1).y;
                 g2.drawLine(x1, y1, x2, y2);
             }
 
             g2.setColor(Color.BLACK);
             for (int i = 0; i < listSeries.get(nSerie).size(); i++) {
-                int x = listSeries.get(nSerie).get(i).x - pointWidth / 2;
-                int y = listSeries.get(nSerie).get(i).y - pointWidth / 2;
-                int ovalW = pointWidth;
-                int ovalH = pointWidth;
-                g2.fillOval(x, y, ovalW, ovalH);
+                xMark = listSeries.get(nSerie).get(i).x - pointWidth / 2;
+                yMark = listSeries.get(nSerie).get(i).y - pointWidth / 2;
+                ovalW = pointWidth;
+                ovalH = pointWidth;
+                g2.fillOval(xMark, yMark, ovalW, ovalH);
             }
         }
 

@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -31,6 +32,7 @@ import javax.swing.filechooser.FileFilter;
 import lab.Lab;
 import lab.ListModelLab;
 import lab.ListModelVar;
+import lab.Variable;
 import tools.Preference;
 import tools.Utilitaire;
 
@@ -79,15 +81,33 @@ public final class PanelLab extends JPanel implements ListDataListener {
 
                 if (listLabRef.getModel().getSize() == listLabWk.getModel().getSize()) {
 
-                    final Lab multiLabRef = Lab.compilLab(listLabRef.getModel().getList());
-                    final Lab multiLabWk = Lab.compilLab(listLabWk.getModel().getList());
+                    final Thread thread = new Thread(new Runnable() { // Implementer une animation pour les taches longues
 
-                    if (multiLabRef.getDiffLab(multiLabWk).size() != 0 | multiLabWk.getDiffLab(multiLabRef).size() != 0) {
-                        listVarMoins.getModel().setList(new Lab(multiLabRef.getDiffLab(multiLabWk)));
-                        listVarPlus.getModel().setList(new Lab(multiLabWk.getDiffLab(multiLabRef)));
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Les fichiers Lab sont identiques !", "RESULTAT", JOptionPane.INFORMATION_MESSAGE);
-                    }
+                        @Override
+                        public void run() {
+
+                            final Lab multiLabRef = Lab.compilLab(listLabRef.getModel().getList());
+                            final Lab multiLabWk = Lab.compilLab(listLabWk.getModel().getList());
+
+                            final ArrayList<Variable> listSup = new ArrayList<Variable>(
+                                    Math.max(multiLabRef.getListVariable().size(), multiLabWk.getListVariable().size()));
+                            final ArrayList<Variable> listInf = new ArrayList<Variable>(
+                                    Math.max(multiLabRef.getListVariable().size(), multiLabWk.getListVariable().size()));
+
+                            listSup.addAll(multiLabWk.getDiffLab(multiLabRef));
+                            listInf.addAll(multiLabRef.getDiffLab(multiLabWk));
+
+                            if (listInf.size() != 0 | listSup.size() != 0) {
+                                listVarMoins.getModel().setList(new Lab(listInf));
+                                listVarPlus.getModel().setList(new Lab(listSup));
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Les fichiers Lab sont identiques !", "RESULTAT",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                            }
+                        }
+                    });
+
+                    thread.start();
 
                 } else {
                     JOptionPane.showMessageDialog(null, "Le nombre de fichier a comparer est different !");
@@ -103,7 +123,10 @@ public final class PanelLab extends JPanel implements ListDataListener {
         btExport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Lab.ecrireRapport(Lab.compilLab(listLabRef.getModel().getList()), Lab.compilLab(listLabWk.getModel().getList()));
+                Lab.ecrireRapport(Lab.compilLab(listLabRef.getModel().getList()), Lab.compilLab(listLabWk.getModel().getList())); // Implementer une
+                // animation pour
+                // les taches
+                // longues
             }
         });
         setGbc(GridBagConstraints.HORIZONTAL, 3, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);

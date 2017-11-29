@@ -102,11 +102,11 @@ public final class M implements Cdf, Observable {
                                 subString = subString.replace("[", "");
                                 subString = subString.replace("]", "");
 
-                                valeur = new String[2][subString.split("\\s").length];
+                                valeur = new String[2][subString.split("\\s+").length];
 
                                 for (int x = 0; x < valeur[0].length; x++) {
                                     valeur[0][x] = Integer.toString(x);
-                                    valeur[1][x] = subString.split("\\s")[x].trim();
+                                    valeur[1][x] = subString.split("\\s+")[x].trim();
 
                                 }
 
@@ -123,11 +123,11 @@ public final class M implements Cdf, Observable {
                                 subString = subString.replace("[", "");
                                 subString = subString.replace("]", "");
 
-                                valeur = new String[2][subString.split("\\s").length];
+                                valeur = new String[2][subString.split("\\s+").length];
 
                                 for (int x = 0; x < valeur[0].length; x++) {
                                     valeur[0][x] = Integer.toString(x);
-                                    valeur[1][x] = subString.split("\\s")[x].trim();
+                                    valeur[1][x] = subString.split("\\s+")[x].trim();
 
                                 }
 

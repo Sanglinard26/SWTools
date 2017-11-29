@@ -35,7 +35,7 @@ public final class Serie {
         if (maxValue != Double.NEGATIVE_INFINITY) {
             return maxValue;
         }
-        return Float.NaN;
+        return Double.NaN;
     }
 
     public double getMaxXValue() {
@@ -54,7 +54,7 @@ public final class Serie {
         if (minValue != Double.POSITIVE_INFINITY) {
             return minValue;
         }
-        return Float.NaN;
+        return Double.NaN;
     }
 
     public double getMinXValue() {
