@@ -52,7 +52,7 @@ public final class Ihm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (fp == null) {
-                    fp = new FramePreferences();
+                    fp = new FramePreferences(Ihm.this);
                 } else {
                     fp.setVisible(true);
                 }

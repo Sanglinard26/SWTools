@@ -17,12 +17,17 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import tools.Preference;
 
@@ -31,13 +36,17 @@ public final class FramePreferences extends JFrame {
     private static final long serialVersionUID = 1L;
     private static final String FENETRE_ICON = "/preferences_32.png";
 
+    private final JFrame parent;
     private final JTabbedPane onglets = new JTabbedPane(SwingConstants.TOP);
     private final JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
     private final JPanel ongletLab = new JPanel(new GridLayout(1, 1));
+    private final JPanel ongletTheme = new JPanel(new GridLayout(1, 1));
 
     private static final GridBagConstraints gbc = new GridBagConstraints();
 
-    public FramePreferences() {
+    public FramePreferences(JFrame parent) {
+
+        this.parent = parent;
         this.setTitle("Preferences utilisateur");
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(FENETRE_ICON)));
         this.setMinimumSize(new Dimension(300, 300));
@@ -47,6 +56,9 @@ public final class FramePreferences extends JFrame {
 
         ongletLab.add(createPanPrefLab());
         onglets.addTab("Comparaison lab", ongletLab);
+
+        ongletTheme.add(createPanPrefTheme());
+        onglets.addTab("Apparence", ongletTheme);
 
         onglets.setOpaque(true);
         getContentPane().add(onglets, BorderLayout.CENTER);
@@ -235,6 +247,68 @@ public final class FramePreferences extends JFrame {
         panLab.add(btPathResLab, gbc);
 
         return panLab;
+    }
+
+    private final JPanel createPanPrefTheme() {
+
+        final JPanel panTheme = new JPanel();
+        panTheme.setLayout(new GridBagLayout());
+
+        final JLabel txtPath = new JLabel("Choix d'un theme d'apparence : ");
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(10, 5, 0, 5);
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        panTheme.add(txtPath, gbc);
+
+        final String[] themes = new String[] { "Windows", "Metal", "Nimbus" };
+
+        final JComboBox<String> comboTheme = new JComboBox<String>(themes);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(10, 5, 0, 5);
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        comboTheme.setSelectedItem(Preference.getPreference(Preference.KEY_NOM_LF));
+        comboTheme.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == comboTheme) {
+                    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if (comboTheme.getSelectedItem().toString().equals(info.getName())) {
+                            try {
+                                UIManager.setLookAndFeel(info.getClassName());
+                                SwingUtilities.updateComponentTreeUI(FramePreferences.this);
+                                SwingUtilities.updateComponentTreeUI(parent);
+                                Preference.setPreference(Preference.KEY_NOM_LF, comboTheme.getSelectedItem().toString());
+                            } catch (ClassNotFoundException e1) {
+                                e1.printStackTrace();
+                            } catch (InstantiationException e1) {
+                                e1.printStackTrace();
+                            } catch (IllegalAccessException e1) {
+                                e1.printStackTrace();
+                            } catch (UnsupportedLookAndFeelException e1) {
+                                e1.printStackTrace();
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+        panTheme.add(comboTheme, gbc);
+
+        return panTheme;
     }
 
     private final String getFolder(String title, String defautPath) {

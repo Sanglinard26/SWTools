@@ -12,12 +12,14 @@ public final class Preference {
     private static final String DEF_PATH_CDF = "C:/User";
     private static final String DEF_ETAT_COLOR_MAP = "false";
     private static final String DEF_PATH_FOLDER_DB = "C:/User/SWTools/Database";
+    private static final String DEF_LF = "Windows";
 
     public static final String KEY_ADD_LAB = "pathLab";
     public static final String KEY_RESULT_LAB = "pathExportLabResult";
     public static final String KEY_OPEN_CDF = "pathCdf";
     public static final String KEY_ETAT_COLOR_MAP = "flagColorMap";
     public static final String KEY_PATH_FOLDER_DB = "pathFolderDb";
+    public static final String KEY_NOM_LF = "nomLF";
 
     private static final Preferences preferences = Preferences.userRoot().node("swtools");
 
@@ -38,6 +40,9 @@ public final class Preference {
             break;
         case KEY_PATH_FOLDER_DB:
             defValue = DEF_PATH_FOLDER_DB;
+            break;
+        case KEY_NOM_LF:
+            defValue = DEF_LF;
             break;
         default:
             defValue = "";

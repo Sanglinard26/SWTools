@@ -9,6 +9,10 @@ import java.util.logging.SimpleFormatter;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import tools.Preference;
 
 public class SWToolsMain {
 
@@ -19,8 +23,24 @@ public class SWToolsMain {
     public static void main(String[] args) {
 
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            // MetalLookAndFeel.setCurrentTheme(new DarkTheme());
+
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if (Preference.getPreference(Preference.KEY_NOM_LF).equals(info.getName())) {
+                    try {
+                        UIManager.setLookAndFeel(info.getClassName());
+                    } catch (ClassNotFoundException e1) {
+                        e1.printStackTrace();
+                    } catch (InstantiationException e1) {
+                        e1.printStackTrace();
+                    } catch (IllegalAccessException e1) {
+                        e1.printStackTrace();
+                    } catch (UnsupportedLookAndFeelException e1) {
+                        e1.printStackTrace();
+                    }
+                    break;
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

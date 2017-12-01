@@ -143,6 +143,7 @@ public final class PaCo implements Cdf, Observable {
             Element label;
 
             final int nbUnit = listSwUnit.getLength();
+            int nbAxe;
 
             // Remplissage de la HashMap des unites
             for (short u = 0; u < nbUnit; u++) {
@@ -150,6 +151,10 @@ public final class PaCo implements Cdf, Observable {
                 unit.put(eUnit.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
                         eUnit.getElementsByTagName("SW-UNIT-DISPLAY").item(0).getTextContent());
             }
+
+            String fullAttributAxe;
+            String attributAxe;
+            String[] splitAttributAxe;
 
             for (int i = 0; i < nbLabel; i++) {
                 label = (Element) listSwInstance.item(i);
@@ -163,13 +168,11 @@ public final class PaCo implements Cdf, Observable {
                 }
 
                 swAxisCont = label.getElementsByTagName("SW-AXIS-CONT");
-                final int nbAxe = swAxisCont.getLength();
+                nbAxe = swAxisCont.getLength();
                 swUnitRef = new String[swAxisCont.getLength()];
 
                 // A finir d'implementer pour les ValueBlock
-                String fullAttributAxe;
-                String attributAxe;
-                String[] splitAttributAxe = null; // Le tableau est cense avoir trois elements
+                splitAttributAxe = null; // Le tableau est cense avoir trois elements
                 for (byte n = 0; n < nbAxe; n++) {
                     if (swAxisCont.item(n).hasAttributes()) {
                         fullAttributAxe = swAxisCont.item(n).getAttributes().getNamedItem("SI").getTextContent();
@@ -414,14 +417,20 @@ public final class PaCo implements Cdf, Observable {
 
         final String val[][] = new String[2][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength()];
 
+        Element eAxisCont;
+        Node indexAxis;
+        Node swValuesPhys;
+        NodeList value;
+        int nbVal;
+
         for (byte n = 0; n < 2; n++) {
 
-            final Element eAxisCont = (Element) swAxisCont.item(n);
-            final Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
-            final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
-            final NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
+            eAxisCont = (Element) swAxisCont.item(n);
+            indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
+            swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+            value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
 
-            final int nbVal = value.getLength();
+            nbVal = value.getLength();
 
             switch (indexAxis.getTextContent()) {
             case "1":
@@ -447,13 +456,20 @@ public final class PaCo implements Cdf, Observable {
 
         val[0][0] = "Y \\ X";
 
-        for (byte n = 0; n < 3; n++) {
-            final Element eAxisCont = (Element) swAxisCont.item(n);
-            final Node indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
-            final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
-            final NodeList nodeListV = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
+        Element eAxisCont;
+        Node indexAxis;
+        Node swValuesPhys;
+        NodeList nodeListV;
+        int nbAxeVal;
 
-            final int nbAxeVal = nodeListV.getLength();
+        for (byte n = 0; n < 3; n++) {
+
+            eAxisCont = (Element) swAxisCont.item(n);
+            indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
+            swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+            nodeListV = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
+
+            nbAxeVal = nodeListV.getLength();
 
             switch (indexAxis.getTextContent()) {
             case "1": // Axe X
@@ -488,9 +504,11 @@ public final class PaCo implements Cdf, Observable {
             case "0": // Valeur Z
 
                 final NodeList vg = ((Element) swValuesPhys).getElementsByTagName("VG");
+                NodeList nodeV;
 
                 for (short nVG = 1; nVG < vg.getLength() + 1; nVG++) {
-                    NodeList nodeV = ((Element) vg.item(nVG - 1)).getElementsByTagName("V");
+
+                    nodeV = ((Element) vg.item(nVG - 1)).getElementsByTagName("V");
 
                     if (nodeV.getLength() > 0) {
                         for (short nV = 1; nV < nodeV.getLength() + 1; nV++) {

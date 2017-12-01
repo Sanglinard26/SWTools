@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import paco.TableModelView;
 import visu.TableView;
 
-public abstract class Variable implements Cloneable {
+public abstract class Variable {
 
     private final String longName;
     private final String shortName;
@@ -29,9 +29,21 @@ public abstract class Variable implements Cloneable {
     private final String[] swUnitRef;
     private final String[][] swCsHistory;
 
-    private JPanel panel;
+    private static TableView tableView;
+    private static JPanel panel;
 
-    private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6);
+    private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6) {
+
+        private static final long serialVersionUID = 1L;
+        {
+            put("---", 0);
+            put("changed", 0);
+            put("prelimcalibrated", 25);
+            put("calibrated", 50);
+            put("checked", 75);
+            put("completed", 100);
+        }
+    };
 
     public Variable(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory) {
         this.shortName = shortName;
@@ -40,13 +52,6 @@ public abstract class Variable implements Cloneable {
         this.swFeatureRef = swFeatureRef;
         this.swUnitRef = swUnitRef;
         this.swCsHistory = swCsHistory;
-
-        maturite.put("---", 0);
-        maturite.put("changed", 0);
-        maturite.put("prelimcalibrated", 25);
-        maturite.put("calibrated", 50);
-        maturite.put("checked", 75);
-        maturite.put("completed", 100);
     }
 
     public final String getShortName() {
@@ -78,20 +83,10 @@ public abstract class Variable implements Cloneable {
             return maturite.get(swCsHistory[swCsHistory.length - 1][2].toLowerCase());
         return 0;
     }
-    
-    @Override
-    public Variable clone() throws CloneNotSupportedException {
-    	
-    	Variable var = null;
-    	
-    	var = (Variable) super.clone();
-    	
-    	return var;
-    }
-    
+
     @Override
     public boolean equals(Object paramObject) {
-    	return this.getShortName().equals(((Variable) paramObject).getShortName());
+        return this.getShortName().equals(((Variable) paramObject).getShortName());
     }
 
     @Override
@@ -102,7 +97,7 @@ public abstract class Variable implements Cloneable {
         sb.append("Fonction : " + this.swFeatureRef + "\n");
         return sb.toString();
     }
-    
+
     public abstract double getChecksum();
 
     public abstract String toMFormat();
@@ -110,14 +105,19 @@ public abstract class Variable implements Cloneable {
     public abstract String[][] getValues();
 
     public final Component showValues() {
-        panel = new JPanel(new GridLayout(1, 1));
-        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        final TableView tableView = new TableView(new TableModelView(), this);
+        if (tableView == null) {
+            tableView = new TableView(new TableModelView(), this);
+        }
+
         tableView.getModel().setData(getValues());
         TableView.adjustCells(tableView);
 
-        panel.add(tableView);
+        if (panel == null) {
+            panel = new JPanel(new GridLayout(1, 1));
+            panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            panel.add(tableView);
+        }
 
         return panel;
     }
