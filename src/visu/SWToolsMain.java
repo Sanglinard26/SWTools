@@ -11,6 +11,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import javax.swing.plaf.nimbus.NimbusStyle;
+import javax.swing.plaf.synth.SynthLookAndFeel;
 
 import tools.Preference;
 
@@ -23,6 +26,10 @@ public class SWToolsMain {
     public static void main(String[] args) {
 
         try {
+        	
+        	//SynthLookAndFeel synth = new SynthLookAndFeel();
+        	//synth.load(SWToolsMain.class.getResourceAsStream("/synthDemo.xml"), SWToolsMain.class);
+        	//UIManager.setLookAndFeel(synth);
 
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if (Preference.getPreference(Preference.KEY_NOM_LF).equals(info.getName())) {

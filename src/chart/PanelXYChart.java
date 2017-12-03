@@ -35,7 +35,8 @@ public final class PanelXYChart extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String ICON_IMAGE = "/image_icon_16.png";
+    private static final String ICON_IMAGE = "/image_icon_24.png";
+    private static final String ICON_COPY = "/copy_icon_24.png";
 
     public static final int LEFT_POSITION = 0;
     public static final int RIGHT_POSITION = 1;
@@ -84,7 +85,7 @@ public final class PanelXYChart extends JPanel {
                     menu.add(menuExpJpg);
 
                     final JMenuItem menuCopyClipboard = new JMenuItem("Copier dans le presse-papier",
-                            new ImageIcon(getClass().getResource(ICON_IMAGE)));
+                            new ImageIcon(getClass().getResource(ICON_COPY)));
                     menuCopyClipboard.addActionListener(new ChartToClipboard());
                     menu.add(menuCopyClipboard);
 

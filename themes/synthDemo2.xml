@@ -1,0 +1,15 @@
+<synth>
+
+ <!-- Style that all regions will use -->
+<style id="textfield">
+   // describe colors, fonts, and states
+</style>
+<bind style="textfield" type="region" key="Textfield"/>
+ 
+<style id="button">
+   // describe colors, fonts, and states
+</style>
+<bind style="button" type="region" key="Button"/>
+
+  
+</synth>

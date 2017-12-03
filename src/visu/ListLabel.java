@@ -46,10 +46,10 @@ public final class ListLabel extends JList<Variable> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String ICON_TEXT = "/text_icon_16.png";
-    private static final String ICON_IMAGE = "/image_icon_16.png";
+    private static final String ICON_TEXT = "/text_icon_24.png";
+    private static final String ICON_IMAGE = "/image_icon_24.png";
     private static final String ICON_OLD_SEARCH = "/oldsearch_24.png";
-    private static final String ICON_TRASH = "/corbeille_icon_16.png";
+    private static final String ICON_CLEAR = "/clear_icon_24.png";
 
     private final FilterField filterField;
 
@@ -126,7 +126,7 @@ public final class ListLabel extends JList<Variable> {
             txtFiltre.getDocument().addDocumentListener(this);
             txtFiltre.addActionListener(this);
 
-            delSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_TRASH)));
+            delSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_CLEAR)));
             delSearchBt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             delSearchBt.setToolTipText("Suppression du filtre");
             delSearchBt.addActionListener(new ActionListener() {

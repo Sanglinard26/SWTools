@@ -5,6 +5,7 @@ package visu;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -21,6 +22,7 @@ import javax.swing.JTextPane;
 public final class FrameLog extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    private static final String FENETRE_ICON = "/log_32.png";
     private static final String ADRESSE_MAIL = "kevin.raillon1@mpsa.com";
 
     private final JTextPane txtLog = new JTextPane();
@@ -31,6 +33,7 @@ public final class FrameLog extends JFrame {
         this.setTitle("Log");
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(FENETRE_ICON)));
 
         try {
             String line;

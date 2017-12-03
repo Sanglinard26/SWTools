@@ -36,13 +36,13 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String ICON_EXCEL = "/excel_icon_16.png";
-    private static final String ICON_TEXT = "/text_icon_16.png";
-    private static final String ICON_MATLAB = "/matlab_icon_16.png";
-    private static final String ICON_TRASH = "/corbeille_icon_16.png";
-    private static final String ICON_COMPARAISON = "/comparaison_icon_16.png";
-    private static final String ICON_UP = "/up_icon_16.png";
-    private static final String ICON_DOWN = "/down_icon_16.png";
+    private static final String ICON_EXCEL = "/excel_icon_24.png";
+    private static final String ICON_TEXT = "/text_icon_24.png";
+    private static final String ICON_MATLAB = "/matlab_icon_24.png";
+    private static final String ICON_TRASH = "/corbeille_icon_24.png";
+    private static final String ICON_COMPARAISON = "/comparaison_icon_24.png";
+    private static final String ICON_UP = "/up_icon_24.png";
+    private static final String ICON_DOWN = "/down_icon_24.png";
 
     public ListCdf(ListModelCdf dataModel) {
         super(dataModel);

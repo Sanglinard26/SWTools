@@ -4,19 +4,42 @@
   <style id="backingStyle">
     <!-- Make all the regions opaque-->
     <opaque value="TRUE"/>
-    <font name="Dialog" size="14"/>
+    <font name="Arial" size="12" style="BOLD"/>
     <state>
-      <color value="BLACK" type="BACKGROUND"/>
+      <color value="DARK_GRAY" type="BACKGROUND"/>
       <color value="WHITE" type="FOREGROUND"/>
+    </state>
+    <state value ="MOUSE_OVER">
+      <color value="GRAY" type="BACKGROUND"/>
     </state>
   </style>
   <bind style="backingStyle" type="region" key=".*"/>
   
+  <style id="label">
+  	<opaque value="TRUE"/>
+  	<state>
+  		<color value="LIGHT_GRAY" type="BACKGROUND"/>
+  	</state>
+  </style>
+  <bind style="label" type="region" key="Label"/>
+  
+  <style id="tabpantab">
+  	<insets top="5" left="5" bottom="5" right="5"/>
+  	<state>
+  		<imagePainter method="tabbedPaneTabBackground" paintCenter="true" sourceInsets="1 1 1 1" path="/theme/tabpantab.png" stretch="true"/>
+  		<color value="WHITE" type="TEXT_FOREGROUND"/>
+  	</state>
+  	<state value="MOUSE_OVER">
+  		<imagePainter method="tabbedPaneTabBackground" paintCenter="true" sourceInsets="1 1 1 1" path="/theme/tabpantab_on.png" stretch="true"/>
+  	</state>
+  </style>
+  <bind style="tabpantab" type="region" key="TabbedPaneTab"/>
+  
   <style id="textfield">
     <insets top="4" left="6" bottom="4" right="6"/>
     <state>
-       <font name="Verdana" size="14"/>
-       <color value="RED" type="BACKGROUND"/>       
+       <font name="Arial" size="12" style="BOLD"/>
+       <color value="GRAY" type="BACKGROUND"/>       
        <color value="WHITE" type="TEXT_FOREGROUND"/>
     </state>
   </style>
@@ -24,18 +47,32 @@
     
   <style id="button">
   	<!-- Shift the text one pixel when pressed -->
-    <property key="Button.textShiftOffset" type="integer" value="1"/>
+    <property key="Button.textShiftOffset" type="integer" value="2"/>
 	  <!-- set size of buttons -->
-	  <insets top="15" left="20" bottom="15" right="20"/>
+	  <insets top="5" left="5" bottom="5" right="5"/>
     <state>
-	    <font name="Dialog" size="16"/>
-	    <color type="TEXT_FOREGROUND" value="#000000"/>
+    	<imagePainter method="buttonBackground" paintCenter="true" sourceInsets="0 0 0 0" path="/theme/button.png" stretch="true"/>
+	    <font name="Arial" size="12" style="BOLD"/>
+	    <color type="TEXT_FOREGROUND" value="BLACK"/>
+    </state>
+    <state value ="MOUSE_OVER">
+    	<imagePainter method="buttonBackground" paintCenter="true" sourceInsets="0 0 0 0" path="/theme/button_on.png" stretch="true"/>
     </state>
   </style>
-  <bind style="button" type="region" key="Button"/>
+  <bind style="button" type="region" key="Button"/> 
+  
       
-  <style id="checkbox">
+  <style id="radiobutton">
+  	<imageIcon id="radio_off" path="/theme/radio_off.png"/>
+    <imageIcon id="radio_on" path="/theme/radio_on.png"/>
+    <property key="RadioButton.icon" value="radio_off"/>
+    <state>
+      <color value="GRAY" type="BACKGROUND"/>
+    </state>
+    <state value="SELECTED">  
+    	<property key="RadioButton.icon" value="radio_on"/>
+	</state>
   </style>
-  <bind style="checkbox" type="region" key="Checkbox"/>	 
+  <bind style="radiobutton" type="region" key="RadioButton"/>	 
   
 </synth>
