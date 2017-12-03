@@ -287,6 +287,7 @@ public final class FramePreferences extends JFrame {
                     for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                         if (comboTheme.getSelectedItem().toString().equals(info.getName())) {
                             try {
+                            	SWToolsMain.paramUI(info.getName());
                                 UIManager.setLookAndFeel(info.getClassName());
                                 SwingUtilities.updateComponentTreeUI(FramePreferences.this);
                                 SwingUtilities.updateComponentTreeUI(parent);

@@ -275,7 +275,7 @@ public final class PanelLab extends JPanel implements ListDataListener {
 
                 @Override
                 public String getDescription() {
-                    return "Fichier *.lab";
+                    return "Fichier (*.lab), (*.xml)";
                 }
 
                 @Override
@@ -286,7 +286,7 @@ public final class PanelLab extends JPanel implements ListDataListener {
 
                     String extension = Utilitaire.getExtension(f);
                     // Solutionner le NPE
-                    if (extension.equals(Utilitaire.lab)) {
+                    if (extension.equals(Utilitaire.lab) | extension.equals(Utilitaire.xml)) {
                         return true;
                     }
                     return false;
@@ -295,11 +295,39 @@ public final class PanelLab extends JPanel implements ListDataListener {
 
             final int reponse = jFileChooser.showOpenDialog(PanelLab.this);
             if (reponse == JFileChooser.APPROVE_OPTION) {
+            	
+            	Boolean needDTD = false;
+
+                for (File f : jFileChooser.getSelectedFiles()) {
+                    if (Utilitaire.getExtension(f).equals("xml")) {
+                        needDTD = true;
+                        break;
+                    }
+                }
+
+                if (needDTD) {
+                    Utilitaire.createDtd(jFileChooser.getSelectedFile().getParent());
+                }
+            	
                 for (File file : jFileChooser.getSelectedFiles()) {
                     if (e.getActionCommand().equals(BT_ADD_LAB_REF)) {
-                        listLabRef.getModel().addLab(new Lab(file.getPath()));
+                    	switch (Utilitaire.getExtension(file)) {
+						case "lab":
+							listLabRef.getModel().addLab(new Lab(file.getPath()));
+							break;
+						case "xml":
+							listLabRef.getModel().addLab(new Lab(file));
+							break;
+						}
                     } else {
-                        listLabWk.getModel().addLab(new Lab(file.getPath()));
+                    	switch (Utilitaire.getExtension(file)) {
+						case "lab":
+							listLabWk.getModel().addLab(new Lab(file.getPath()));
+							break;
+						case "xml":
+							listLabWk.getModel().addLab(new Lab(file));
+							break;
+						}
                     }
                 }
             }

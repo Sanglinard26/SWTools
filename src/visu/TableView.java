@@ -14,12 +14,14 @@ import paco.TableModelView;
 public final class TableView extends JTable {
 
     private static final long serialVersionUID = 1L;
+    private final TableViewRenderer renderer;
 
     public TableView(TableModelView model, final Variable var) {
         super(model);
         this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         this.setTableHeader(null);
-        this.setDefaultRenderer(Object.class, new TableViewRenderer(var));
+        renderer = new TableViewRenderer();
+        this.setDefaultRenderer(Object.class, renderer);
         this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         this.setCellSelectionEnabled(true);
     }
@@ -27,6 +29,11 @@ public final class TableView extends JTable {
     @Override
     public TableModelView getModel() {
         return (TableModelView) super.getModel();
+    }
+    
+    @Override
+    public TableViewRenderer getDefaultRenderer(Class<?> paramClass) {
+    	return renderer;
     }
 
     public static final void adjustCells(JTable table) {

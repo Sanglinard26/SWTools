@@ -112,6 +112,7 @@ public abstract class Variable {
 
         tableView.getModel().setData(getValues());
         TableView.adjustCells(tableView);
+        tableView.getDefaultRenderer(Object.class).colorMap(this);
 
         if (panel == null) {
             panel = new JPanel(new GridLayout(1, 1));
