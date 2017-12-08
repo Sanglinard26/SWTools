@@ -35,6 +35,7 @@ import cdf.Variable;
 import tools.Utilitaire;
 import visu.Observer;
 import visu.PanelCDF;
+import visu.SWToolsMain;
 
 public final class PaCo implements Cdf, Observable {
 
@@ -615,6 +616,7 @@ public final class PaCo implements Cdf, Observable {
             Variable varBase = null;
             String[][] copyVal = null;
             String[][] nullHistory = new String[1][4];
+            int checkDim = 0;
 
             for (int i = 0; i < 4; i++) {
                 nullHistory[0][i] = "0";
@@ -624,6 +626,8 @@ public final class PaCo implements Cdf, Observable {
                 if (cdf.getListLabel().contains(var)) {
                     varCompar = cdf.getListLabel().get(cdf.getListLabel().indexOf(var));
                     if (var.getChecksum() != varCompar.getChecksum()) {
+
+                        checkDim = 0;
 
                         if (var instanceof Axis) {
                             copyVal = new String[1][((Axis) var).getDim()];
@@ -692,20 +696,28 @@ public final class PaCo implements Cdf, Observable {
                         }
                         for (short x = 0; x < var.getValues()[0].length; x++) {
                             for (short y = 0; y < var.getValues().length; y++) {
-                                if (!var.getValues()[y][x].equals(varCompar.getValues()[y][x])) // Exception possible sur dimmension
-
-                                    if (modeValeur) {
-                                        varBase.getValues()[y][x] = var.getValues()[y][x] + " => " + varCompar.getValues()[y][x];
-                                    } else {
-                                        if (Utilitaire.isNumber(var.getValues()[y][x]) & Utilitaire.isNumber(varCompar.getValues()[y][x])) {
-                                            varBase.getValues()[y][x] = Float.toString(
-                                                    Float.parseFloat(varCompar.getValues()[y][x]) - Float.parseFloat(var.getValues()[y][x]));
-                                        } else {
+                                try {
+                                    if (!var.getValues()[y][x].equals(varCompar.getValues()[y][x])) // Exception possible sur dimmension
+                                    {
+                                        if (modeValeur) {
                                             varBase.getValues()[y][x] = var.getValues()[y][x] + " => " + varCompar.getValues()[y][x];
+                                        } else {
+                                            if (Utilitaire.isNumber(var.getValues()[y][x]) & Utilitaire.isNumber(varCompar.getValues()[y][x])) {
+                                                varBase.getValues()[y][x] = Float.toString(
+                                                        Float.parseFloat(varCompar.getValues()[y][x]) - Float.parseFloat(var.getValues()[y][x]));
+                                            } else {
+                                                varBase.getValues()[y][x] = var.getValues()[y][x] + " => " + varCompar.getValues()[y][x];
+                                            }
+
                                         }
-
                                     }
-
+                                } catch (ArrayIndexOutOfBoundsException e) {
+                                    if (checkDim != 1) {
+                                        SWToolsMain.getLogger()
+                                                .info(var.getShortName() + " / " + varCompar.getShortName() + " => Dimension differente");
+                                        checkDim = 1;
+                                    }
+                                }
                             }
                         }
 

@@ -30,10 +30,9 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
     public TableViewRenderer() {
 
     }
-    
-    public void colorMap(Variable var)
-    {
-    	if (Preference.getPreference(Preference.KEY_ETAT_COLOR_MAP).equals("true")) {
+
+    public void colorMap(Variable var) {
+        if (Preference.getPreference(Preference.KEY_ETAT_COLOR_MAP).equals("true")) {
             if (var instanceof Map) {
                 map = (Map) var;
                 if (map.getMinZValue() - map.getMaxZValue() != 0) {
@@ -43,9 +42,11 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
                 } else {
                     setMapColor = false;
                 }
-            }else{
-            	setMapColor = false;
+            } else {
+                setMapColor = false;
             }
+        } else {
+            setMapColor = false;
         }
     }
 

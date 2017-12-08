@@ -8,7 +8,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import cdf.Variable;
 import paco.TableModelView;
 
 public final class TableView extends JTable {
@@ -16,7 +15,7 @@ public final class TableView extends JTable {
     private static final long serialVersionUID = 1L;
     private final TableViewRenderer renderer;
 
-    public TableView(TableModelView model, final Variable var) {
+    public TableView(TableModelView model) {
         super(model);
         this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         this.setTableHeader(null);
@@ -30,10 +29,10 @@ public final class TableView extends JTable {
     public TableModelView getModel() {
         return (TableModelView) super.getModel();
     }
-    
+
     @Override
     public TableViewRenderer getDefaultRenderer(Class<?> paramClass) {
-    	return renderer;
+        return renderer;
     }
 
     public static final void adjustCells(JTable table) {

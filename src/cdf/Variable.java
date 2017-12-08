@@ -107,12 +107,12 @@ public abstract class Variable {
     public final Component showValues() {
 
         if (tableView == null) {
-            tableView = new TableView(new TableModelView(), this);
+            tableView = new TableView(new TableModelView());
         }
 
         tableView.getModel().setData(getValues());
-        TableView.adjustCells(tableView);
         tableView.getDefaultRenderer(Object.class).colorMap(this);
+        TableView.adjustCells(tableView);
 
         if (panel == null) {
             panel = new JPanel(new GridLayout(1, 1));
