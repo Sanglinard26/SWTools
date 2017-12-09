@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,7 +24,7 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
-public final class PanelHistory extends JPanel {
+public final class PanelHistory extends JComponent {
 
 	private static final long serialVersionUID = 1L;
 	private static final JPanel header = new Header();

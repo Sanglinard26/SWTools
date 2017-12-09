@@ -3,8 +3,8 @@ package graph;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import cdf.Curve;
@@ -16,7 +16,7 @@ import chart.Serie;
 import chart.SeriesCollection;
 import tools.Utilitaire;
 
-public final class XYChart extends JPanel {
+public final class XYChart extends JComponent {
 
     private static final long serialVersionUID = 1L;
 

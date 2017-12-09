@@ -6,14 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.swing.JFileChooser;
+
 public final class Utilitaire {
 
-    public final static String jpeg = "jpeg";
-    public final static String jpg = "jpg";
-    public final static String gif = "gif";
-    public final static String tiff = "tiff";
-    public final static String tif = "tif";
-    public final static String png = "png";
     public final static String xml = "xml";
     public final static String lab = "lab";
     public final static String a2l = "a2l";
@@ -25,7 +21,7 @@ public final class Utilitaire {
     /*
      * Get the extension of a file.
      */
-    public static String getExtension(File f) {
+    public static final String getExtension(File f) {
         String ext = null;
         String s = f.getName();
 
@@ -43,7 +39,7 @@ public final class Utilitaire {
         return number.indexOf(".") < 0 ? number : number.replaceAll("0*$", "").replaceAll("\\.$", "");
     } // Fin methode
 
-    public static Boolean isNumber(String s) {
+    public static final Boolean isNumber(String s) {
         try {
             Double.parseDouble(s);
             return true;
@@ -53,7 +49,7 @@ public final class Utilitaire {
 
     }
 
-    public static void createDtd(String pathFolder) {
+    public static final void createDtd(String pathFolder) {
         File dtd = new File(pathFolder + "/" + DTD);
         dtd.deleteOnExit();
         if (!dtd.exists()) {
@@ -74,5 +70,17 @@ public final class Utilitaire {
             }
 
         }
+    }
+    
+    public static final String getFolder(String title, String defautPath) {
+        final JFileChooser fileChooser = new JFileChooser(defautPath);
+        fileChooser.setDialogTitle(title);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setMultiSelectionEnabled(false);
+        final int reponse = fileChooser.showDialog(null, "Select");
+        if (reponse == JFileChooser.APPROVE_OPTION) {
+            return fileChooser.getSelectedFile().getPath();
+        }
+        return defautPath;
     }
 }

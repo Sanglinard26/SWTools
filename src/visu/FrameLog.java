@@ -22,7 +22,7 @@ import javax.swing.JTextPane;
 public final class FrameLog extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private static final String FENETRE_ICON = "/log_32.png";
+    private static final String FENETRE_ICON = "/log_icon_16.png";
     private static final String ADRESSE_MAIL = "kevin.raillon1@mpsa.com";
 
     private final JTextPane txtLog = new JTextPane();

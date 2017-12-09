@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -36,7 +37,7 @@ import paco.PaCo;
 import tools.Preference;
 import tools.Utilitaire;
 
-public final class PanelBdd extends JPanel {
+public final class PanelBdd extends JComponent {
 
     private static final long serialVersionUID = 1L;
 

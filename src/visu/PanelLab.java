@@ -42,8 +42,8 @@ public final class PanelLab extends JPanel implements ListDataListener {
     // Constante
     private static final String BT_COMPAR_LAB = "Comparer";
     private static final String BT_EXPORT = "Exporter";
-    private static final String BT_ADD_LAB_REF = "Ajout lab(s) de reference";
-    private static final String BT_ADD_LAB_WK = "Ajout lab(s) de travail";
+    private static final String BT_ADD_LAB_REF = "Ajout fichier(s) de reference";
+    private static final String BT_ADD_LAB_WK = "Ajout fichier(s) de travail";
     private static final String TXT_FILTRAGE = "Entrer une partie du mot pour filtrer";
 
     // GUI

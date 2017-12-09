@@ -20,9 +20,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
@@ -31,7 +31,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.orsoncharts.Resources;
 
-public final class PanelXYChart extends JPanel {
+public final class PanelXYChart extends JComponent {
 
     private static final long serialVersionUID = 1L;
 

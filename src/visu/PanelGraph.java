@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.LineBorder;
@@ -14,7 +15,7 @@ import cdf.Variable;
 import graph.SurfaceChart;
 import graph.XYChart;
 
-public final class PanelGraph extends JPanel {
+public final class PanelGraph extends JComponent {
 
     private static final long serialVersionUID = 1L;
 

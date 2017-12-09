@@ -18,6 +18,7 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -44,7 +45,7 @@ import paco.PaCo;
 import tools.Preference;
 import tools.Utilitaire;
 
-public final class PanelCDF extends JPanel implements Observer {
+public final class PanelCDF extends JComponent implements Observer {
 
     private static final long serialVersionUID = 1L;
 

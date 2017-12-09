@@ -13,16 +13,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-public final class FrameInfo extends JFrame {
+public final class FrameContact extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private static final String FENETRE_ICON = "/info_32.png";
+    private static final String FENETRE_ICON = "/contact_icon_16.png";
     private static final String ADRESSE_MAIL = "kevin.raillon1@mpsa.com";
 
     private final JTextPane txtContact = new JTextPane();
 
-    public FrameInfo() {
-        this.setTitle("Info");
+    public FrameContact() {
+        this.setTitle("Contact");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(FENETRE_ICON)));
         this.setLayout(new BorderLayout());
@@ -36,7 +36,7 @@ public final class FrameInfo extends JFrame {
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     sendMail();
-                    FrameInfo.this.dispose();
+                    FrameContact.this.dispose();
                 }
             }
         });

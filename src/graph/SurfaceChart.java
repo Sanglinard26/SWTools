@@ -2,8 +2,8 @@ package graph;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.orsoncharts.Chart3D;
@@ -23,7 +23,7 @@ import com.orsoncharts.util.Orientation;
 import cdf.Map;
 import cdf.Variable;
 
-public final class SurfaceChart extends JPanel {
+public final class SurfaceChart extends JComponent {
 
     private static final long serialVersionUID = 1L;
 

@@ -4,12 +4,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 import javax.swing.JTextArea;
 
 import cdf.Variable;
 
-public final class PanelInfoVariable extends JPanel {
+public final class PanelInfoVariable extends JComponent {
 
     private static final long serialVersionUID = 1L;
 

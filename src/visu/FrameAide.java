@@ -15,7 +15,7 @@ import javax.swing.event.HyperlinkListener;
 public final class FrameAide extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static final String FENETRE_ICON = "/aide_32.png";
+	private static final String FENETRE_ICON = "/manuel_icon_16.png";
 	private static Logger logger = Logger.getLogger("MyLogger");
 	private static final JEditorPane txtPane = new JEditorPane();
 	
