@@ -42,10 +42,9 @@ public final class XYChart extends JComponent {
 
     private void createXYLine(Curve curve) {
 
-        SeriesCollection seriesCollection = new SeriesCollection();
-        Serie serie;
+        final SeriesCollection seriesCollection = new SeriesCollection();
+        final Serie serie = new Serie("Serie");
 
-        serie = new Serie("Serie");
         for (short x = 0; x < curve.getDimX(); x++) {
             try {
                 serie.addPoint(Double.parseDouble(curve.getValue(0, x)), Double.parseDouble(curve.getValue(1, x)));
@@ -67,7 +66,7 @@ public final class XYChart extends JComponent {
 
     private void createIsoX(Map map) {
 
-        SeriesCollection seriesCollection = new SeriesCollection();
+        final SeriesCollection seriesCollection = new SeriesCollection();
         Serie serie;
 
         for (short x = 1; x < map.getDimX(); x++) {
@@ -97,7 +96,7 @@ public final class XYChart extends JComponent {
 
     private void createIsoY(Map map) {
 
-        SeriesCollection seriesCollection = new SeriesCollection();
+        final SeriesCollection seriesCollection = new SeriesCollection();
         Serie serie;
 
         for (short y = 1; y < map.getDimY(); y++) {

@@ -27,20 +27,24 @@ import javax.swing.border.LineBorder;
 public final class PanelHistory extends JComponent {
 
 	private static final long serialVersionUID = 1L;
-	private static final JPanel header = new Header();
+	private static final JComponent header = new Header();
 	private static final JPanel panData = new JPanel();
 	private static FrameComment fc = null;
 
-	private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6);
+	private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6) {
+
+        private static final long serialVersionUID = 1L;
+        {
+            put("---", 0);
+            put("changed", 0);
+            put("prelimcalibrated", 25);
+            put("calibrated", 50);
+            put("checked", 75);
+            put("completed", 100);
+        }
+    };
 
 	public PanelHistory() {
-
-		maturite.put("---", 0);
-		maturite.put("changed", 0);
-		maturite.put("prelimcalibrated", 25);
-		maturite.put("calibrated", 50);
-		maturite.put("checked", 75);
-		maturite.put("completed", 100);
 
 		setLayout(new BorderLayout());
 		add(header, BorderLayout.NORTH);
@@ -51,7 +55,7 @@ public final class PanelHistory extends JComponent {
 
 	}
 
-	private static final class Header extends JPanel {
+	private static final class Header extends JComponent {
 
 		private static final long serialVersionUID = 1L;
 
@@ -136,7 +140,7 @@ public final class PanelHistory extends JComponent {
 		}
 	}
 
-	private final class Data extends JPanel {
+	private final class Data extends JComponent {
 
 		private static final long serialVersionUID = 1L;
 
@@ -192,30 +196,20 @@ public final class PanelHistory extends JComponent {
 					}
 				}
 			});
-
-			for (byte i = 0; i < data.length; i++) {
-
-				switch (i) {
-				case 0:
-					textDate.setText(data[i]);
-					add(textDate);
-					break;
-				case 1:
-					textAuteur.setText(data[i]);
-					add(textAuteur);
-					break;
-				case 2:
-					bar.setValue(maturite.get(data[i].toLowerCase()));
-					bar.setString(String.valueOf(maturite.get(data[i].toLowerCase())) + "%");
-					add(bar);
-					break;
-				case 3:
-					textPane.setText(data[i]);
-					textPane.setCaretPosition(0);
-					add(scrollPane);
-					break;
-				}
-			}
+			
+			textDate.setText(data[0]);
+			add(textDate);
+			
+			textAuteur.setText(data[1]);
+			add(textAuteur);
+			
+			bar.setValue(maturite.get(data[2].toLowerCase()));
+			bar.setString(String.valueOf(maturite.get(data[2].toLowerCase())) + "%");
+			add(bar);
+			
+			textPane.setText(data[3]);
+			textPane.setCaretPosition(0);
+			add(scrollPane);
 		}
 	}
 }

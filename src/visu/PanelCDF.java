@@ -54,6 +54,8 @@ public final class PanelCDF extends JComponent implements Observer {
     private static final String ICON_CHART = "/graph_32.png";
 
     private static final GridBagConstraints gbc = new GridBagConstraints();
+    
+    private Variable selVariable;
 
     // GUI
     private static final JButton btOpen = new JButton("Ajouter fichier(s) de donnees de calibration");
@@ -169,8 +171,8 @@ public final class PanelCDF extends JComponent implements Observer {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() & !listLabel.isSelectionEmpty()) {
-
-                    panelHistory.setDatas(listLabel.getSelectedValue().getSwCsHistory());
+                	
+                	selVariable = listLabel.getSelectedValue();
 
                     panVisu.removeAll();
 
@@ -183,7 +185,7 @@ public final class PanelCDF extends JComponent implements Observer {
                     gbc.weighty = 0;
                     gbc.insets = new Insets(10, 10, 10, 0);
                     gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-                    panVisu.add(new PanelInfoVariable(listLabel.getSelectedValue()), gbc);
+                    panVisu.add(new PanelInfoVariable(selVariable), gbc);
 
                     gbc.fill = GridBagConstraints.NONE;
                     gbc.gridx = 0;
@@ -195,12 +197,14 @@ public final class PanelCDF extends JComponent implements Observer {
                     gbc.insets = new Insets(0, 10, 0, 0);
                     gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 
-                    panVisu.add(listLabel.getSelectedValue().showValues(), gbc);
+                    panVisu.add(selVariable.showValues(), gbc);
                     panVisu.revalidate();
                     panVisu.repaint();
-
+                    
+                    panelHistory.setDatas(selVariable.getSwCsHistory());
+                    
                     panGraph.getPanCard().removeAll();
-                    panGraph.createChart(listLabel.getSelectedValue());
+                    panGraph.createChart(selVariable);
                     panGraph.getPanCard().revalidate();
                     panGraph.getPanCard().repaint();
                 }

@@ -57,6 +57,7 @@ public final class PieChart extends JComponent {
 
         double curValue = 25.0D;
         int startAngle = 0;
+        int arcAngle;
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -65,7 +66,7 @@ public final class PieChart extends JComponent {
 
         for (int i = 0; i < 2; i++) {
             startAngle = (int) (curValue * 360 / 100);
-            int arcAngle = (int) (slices[i].value * 360 / 100);
+            arcAngle = (int) (slices[i].value * 360 / 100);
 
             g.setColor(slices[i].color);
             g.fillArc(area.x + padding + 1, area.y + padding + 1, area.width - (padding * 2) - 1, area.height - (padding * 2) - 1, startAngle,

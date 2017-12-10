@@ -14,10 +14,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
@@ -36,7 +36,7 @@ import lab.Variable;
 import tools.Preference;
 import tools.Utilitaire;
 
-public final class PanelLab extends JPanel implements ListDataListener {
+public final class PanelLab extends JComponent implements ListDataListener {
 
     private static final long serialVersionUID = 1L;
     // Constante

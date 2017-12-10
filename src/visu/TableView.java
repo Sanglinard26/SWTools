@@ -38,16 +38,21 @@ public final class TableView extends JTable {
     public static final void adjustCells(JTable table) {
 
         TableColumnModel columnModel = table.getColumnModel();
+        int maxWidth;
+        TableCellRenderer cellRenderer;
+        Object value;
+        Component component;
+        TableColumn column;
 
         for (int col = 0; col < columnModel.getColumnCount(); col++) {
-            int maxWidth = 0;
+            maxWidth = 0;
             for (int row = 0; row < table.getRowCount(); row++) {
-                TableCellRenderer cellRenderer = table.getCellRenderer(row, col);
-                Object value = table.getValueAt(row, col);
-                Component component = cellRenderer.getTableCellRendererComponent(table, value, false, false, row, col);
+                cellRenderer = table.getCellRenderer(row, col);
+                value = table.getValueAt(row, col);
+                component = cellRenderer.getTableCellRendererComponent(table, value, false, false, row, col);
                 maxWidth = Math.max(component.getPreferredSize().width, maxWidth);
             }
-            TableColumn column = columnModel.getColumn(col);
+            column = columnModel.getColumn(col);
             column.setPreferredWidth(maxWidth + 10);
         }
 
