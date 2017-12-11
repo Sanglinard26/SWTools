@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 
 import cdf.Axis;
 import cdf.Cdf;
@@ -36,7 +35,7 @@ public final class M implements Cdf, Observable {
 
     private final String name;
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
-    private final Vector<String> listCategory = new Vector<String>();
+    private final ArrayList<String> listCategory = new ArrayList<String>();
     private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1);
 
     private final ArrayList<Observer> listObserver = new ArrayList<Observer>();
@@ -174,6 +173,8 @@ public final class M implements Cdf, Observable {
                                         new String[][] { { "0" } }));
                                 break;
                             }
+
+                            checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
                         }
 
                     }
@@ -240,7 +241,7 @@ public final class M implements Cdf, Observable {
     }
 
     @Override
-    public Vector<String> getCategoryList() {
+    public ArrayList<String> getCategoryList() {
         return listCategory;
     }
 
@@ -271,7 +272,7 @@ public final class M implements Cdf, Observable {
 
     @Override
     public double getCheckSum() {
-        return 0;
+        return checkSum;
     }
 
     @Override

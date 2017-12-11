@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
@@ -46,14 +45,14 @@ public final class PaCo implements Cdf, Observable {
     private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     private int nbLabel = 0;
     private final HashMap<String, String> unit = new HashMap<String, String>();
-    private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
+    private ArrayList<Variable> listLabel;
     private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
     private int minScore = Byte.MAX_VALUE;
     private int maxScore = Byte.MIN_VALUE;
 
     private double checkSum = 0;
 
-    private final Vector<String> listCategory = new Vector<String>();
+    private final ArrayList<String> listCategory = new ArrayList<String>();
 
     private final ArrayList<Observer> listObserver = new ArrayList<Observer>();
 
@@ -74,8 +73,8 @@ public final class PaCo implements Cdf, Observable {
         Document document = null;
         try {
             builder = factory.newDocumentBuilder();
-            document = builder.parse(new File(file.toURI())); // Permet de virer l'exception <java.net.malformedurlexception unknown
-            // protocol c>
+
+            document = builder.parse(new File(file.toURI())); // Permet de virer l'exception <java.net.malformedurlexception unknown protocol c>
             if (document.getDoctype() != null) {
                 valid = Boolean.TRUE;
             } else {
@@ -142,6 +141,9 @@ public final class PaCo implements Cdf, Observable {
             NodeList swCsEntry, swAxisCont;
             nbLabel = listSwInstance.getLength();
             Element label;
+            String shortName, longName, category;
+
+            listLabel = new ArrayList<Variable>(nbLabel);
 
             final int nbUnit = listSwUnit.getLength();
             int nbAxe;
@@ -191,74 +193,48 @@ public final class PaCo implements Cdf, Observable {
 
                 swCsEntry = label.getElementsByTagName("SW-CS-ENTRY");
 
-                switch (label.getElementsByTagName("CATEGORY").item(0).getTextContent()) {
+                shortName = label.getElementsByTagName("SHORT-NAME").item(0).getTextContent();
+                longName = label.getElementsByTagName("LONG-NAME").item(0).getTextContent();
+                category = label.getElementsByTagName("CATEGORY").item(0).getTextContent();
+
+                switch (category) {
                 case ASCII:
-                    listLabel.add(new Scalaire(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                            readValue(swAxisCont)));
+                    listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readValue(swAxisCont)));
                     break;
                 case VALUE:
-                    listLabel.add(new Scalaire(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                            readValue(swAxisCont)));
+                    listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readValue(swAxisCont)));
                     break;
                 case CURVE_INDIVIDUAL:
-                    listLabel.add(new Curve(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                            readCurve(swAxisCont)));
+                    listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont)));
                     break;
                 case CURVE_FIXED: // Modif
-                    listLabel.add(new Curve(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                            readCurve(swAxisCont)));
+                    listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont)));
                     break;
                 case AXIS_VALUES:
-                    listLabel.add(new Axis(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                            readAxis(swAxisCont)));
+                    listLabel.add(new Axis(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readAxis(swAxisCont)));
                     break;
                 case CURVE_GROUPED:
-                    listLabel.add(new Curve(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                            readCurve(swAxisCont)));
+                    listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont)));
                     break;
                 case VALUE_BLOCK:
-                    listLabel.add(new ValueBlock(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
+                    listLabel.add(new ValueBlock(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry),
                             readValueBlock(splitAttributAxe, swAxisCont)));
                     break;
                 case MAP_INDIVIDUAL:
-                    listLabel.add(new Map(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                            readMap(swAxisCont)));
+                    listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
                     break;
                 case MAP_GROUPED:
-                    listLabel.add(new Map(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                            readMap(swAxisCont)));
+                    listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
                     break;
                 case MAP_FIXED:
-                    listLabel.add(new Map(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("LONG-NAME").item(0).getTextContent(),
-                            label.getElementsByTagName("CATEGORY").item(0).getTextContent(), swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                            readMap(swAxisCont)));
+                    listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
                     break;
                 }
 
-                if (!listCategory.contains(label.getElementsByTagName("CATEGORY").item(0).getTextContent()))
-                    listCategory.add(label.getElementsByTagName("CATEGORY").item(0).getTextContent());
+                if (!listCategory.contains(category))
+                    listCategory.add(category);
 
-                notifyObserver(this.name, label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-                        nbf.format(((double) i / (double) (this.nbLabel - 1)) * 100) + "%");
+                notifyObserver(this.name, shortName, nbf.format(((double) i / (double) (this.nbLabel - 1)) * 100) + "%");
 
                 // checksum
                 checkSum += listLabel.get(i).getChecksum();
@@ -275,7 +251,6 @@ public final class PaCo implements Cdf, Observable {
                 }
             }
         }
-
     }
 
     @Override
@@ -312,6 +287,7 @@ public final class PaCo implements Cdf, Observable {
         final int nbEntry = swCsEntry.getLength();
         final String[][] entry = new String[nbEntry][4];
         Element aEntry;
+        Node nodeRemark;
 
         for (byte n = 0; n < nbEntry; n++) {
             aEntry = (Element) swCsEntry.item(n);
@@ -321,17 +297,19 @@ public final class PaCo implements Cdf, Observable {
                 entry[n][1] = aEntry.getElementsByTagName("SW-CS-PERFORMED-BY").item(0).getTextContent();
                 entry[n][2] = aEntry.getElementsByTagName("SW-CS-STATE").item(0).getTextContent();
 
-                if (aEntry.getElementsByTagName("REMARK").item(0).hasChildNodes()) {
-                    final StringBuilder sb = new StringBuilder();
-                    for (byte x = 0; x < aEntry.getElementsByTagName("REMARK").item(0).getChildNodes().getLength(); x++) {
-                        sb.append(aEntry.getElementsByTagName("REMARK").item(0).getChildNodes().item(x).getTextContent());
+                nodeRemark = aEntry.getElementsByTagName("REMARK").item(0);
 
-                        if (x < aEntry.getElementsByTagName("REMARK").item(0).getChildNodes().getLength() - 1)
+                if (nodeRemark.hasChildNodes()) {
+                    final StringBuilder sb = new StringBuilder();
+                    for (byte x = 0; x < nodeRemark.getChildNodes().getLength(); x++) {
+                        sb.append(nodeRemark.getChildNodes().item(x).getTextContent());
+
+                        if (x < nodeRemark.getChildNodes().getLength() - 1)
                             sb.append("\n");
                     }
                     entry[n][3] = sb.toString();
                 } else {
-                    entry[n][3] = aEntry.getElementsByTagName("REMARK").item(0).getTextContent();
+                    entry[n][3] = nodeRemark.getTextContent();
                 }
             } catch (NullPointerException npe) {
                 for (int i = 0; i < 4; i++) {
@@ -598,7 +576,7 @@ public final class PaCo implements Cdf, Observable {
     }
 
     @Override
-    public Vector<String> getCategoryList() {
+    public ArrayList<String> getCategoryList() {
         return listCategory;
     }
 
@@ -610,6 +588,7 @@ public final class PaCo implements Cdf, Observable {
     @Override
     public PaCo comparCdf(Cdf cdf, Boolean modeValeur) {
         ArrayList<Variable> listCompa;
+
         if (this.getCheckSum() != cdf.getCheckSum()) {
             listCompa = new ArrayList<Variable>();
             Variable varCompar;
@@ -725,7 +704,6 @@ public final class PaCo implements Cdf, Observable {
                     }
                 }
             }
-
             return new PaCo(this.name + "_vs_" + cdf.getName(), listCompa);
         }
         return null;
@@ -734,6 +712,7 @@ public final class PaCo implements Cdf, Observable {
     public PaCo(String name, ArrayList<Variable> listComparaison) {
 
         this.name = name;
+        this.listLabel = new ArrayList<Variable>(listComparaison.size());
         this.listLabel.addAll(listComparaison);
 
         this.nbLabel = listComparaison.size();

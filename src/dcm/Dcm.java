@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 
 import cdf.Axis;
 import cdf.Cdf;
@@ -74,7 +73,7 @@ public final class Dcm implements Cdf, Observable {
 
     private static final NumberFormat nbf = NumberFormat.getInstance();
 
-    private final Vector<String> listCategory = new Vector<String>();
+    private final ArrayList<String> listCategory = new ArrayList<String>();
 
     public Dcm(final File file, PanelCDF panCdf) {
 
@@ -1108,7 +1107,7 @@ public final class Dcm implements Cdf, Observable {
     }
 
     @Override
-    public Vector<String> getCategoryList() {
+    public ArrayList<String> getCategoryList() {
         return listCategory;
     }
 
