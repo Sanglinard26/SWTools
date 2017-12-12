@@ -31,6 +31,8 @@ import javax.swing.SwingWorker;
 import javax.swing.TransferHandler;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -54,8 +56,8 @@ public final class PanelCDF extends JComponent implements Observer {
     private static final String ICON_CHART = "/graph_32.png";
 
     private static final GridBagConstraints gbc = new GridBagConstraints();
-    
-    private Variable selVariable;
+
+    private static Variable selVariable;
 
     // GUI
     private static final JButton btOpen = new JButton("Ajouter fichier(s) de donnees de calibration");
@@ -171,8 +173,8 @@ public final class PanelCDF extends JComponent implements Observer {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() & !listLabel.isSelectionEmpty()) {
-                	
-                	selVariable = listLabel.getSelectedValue();
+
+                    selVariable = listLabel.getSelectedValue();
 
                     panVisu.removeAll();
 
@@ -200,13 +202,16 @@ public final class PanelCDF extends JComponent implements Observer {
                     panVisu.add(selVariable.showValues(), gbc);
                     panVisu.revalidate();
                     panVisu.repaint();
-                    
-                    panelHistory.setDatas(selVariable.getSwCsHistory());
-                    
-                    panGraph.getPanCard().removeAll();
-                    panGraph.createChart(selVariable);
-                    panGraph.getPanCard().revalidate();
-                    panGraph.getPanCard().repaint();
+
+                    if (tabPan.getSelectedIndex() == 0) {
+                        panelHistory.setDatas(selVariable.getSwCsHistory());
+                    } else {
+                        panGraph.getPanCard().removeAll();
+                        panGraph.createChart(selVariable);
+                        panGraph.getPanCard().revalidate();
+                        panGraph.getPanCard().repaint();
+                    }
+
                 }
             }
         });
@@ -223,6 +228,22 @@ public final class PanelCDF extends JComponent implements Observer {
         tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(panelHistory));
 
         tabPan.addTab("Graphique", new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
+
+        tabPan.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+
+                if (((JTabbedPane) e.getSource()).getSelectedIndex() == 0) {
+                    panelHistory.setDatas(selVariable.getSwCsHistory());
+                } else {
+                    panGraph.getPanCard().removeAll();
+                    panGraph.createChart(selVariable);
+                    panGraph.getPanCard().revalidate();
+                    panGraph.getPanCard().repaint();
+                }
+            }
+        });
 
         splitPaneGlobal.setDividerSize(10);
         splitPaneGlobal.setDividerLocation(500);

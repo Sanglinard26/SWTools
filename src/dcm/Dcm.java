@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 import cdf.Axis;
 import cdf.Cdf;
+import cdf.CdfComparable;
 import cdf.Curve;
 import cdf.ExportUtils;
 import cdf.Map;
@@ -24,7 +25,7 @@ import tools.Utilitaire;
 import visu.Observer;
 import visu.PanelCDF;
 
-public final class Dcm implements Cdf, Observable {
+public final class Dcm extends CdfComparable implements Cdf, Observable {
 
     // Mot cle global
     public static final String COMMENTAIRE = "*";
@@ -1114,6 +1115,11 @@ public final class Dcm implements Cdf, Observable {
     @Override
     public double getCheckSum() {
         return checkSum;
+    }
+
+    @Override
+    public Cdf comparCdf(Cdf cdfRef, Cdf cdfWork, Boolean modeValeur) {
+        return super.comparCdf(cdfRef, cdfWork, modeValeur);
     }
 
     @Override

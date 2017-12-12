@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import cdf.Axis;
 import cdf.Cdf;
+import cdf.CdfComparable;
 import cdf.Curve;
 import cdf.ExportUtils;
 import cdf.Map;
@@ -36,7 +37,7 @@ import visu.Observer;
 import visu.PanelCDF;
 import visu.SWToolsMain;
 
-public final class PaCo implements Cdf, Observable {
+public final class PaCo extends CdfComparable implements Cdf, Observable {
 
     private static Logger logger = Logger.getLogger("MyLogger");
 
@@ -74,7 +75,11 @@ public final class PaCo implements Cdf, Observable {
         try {
             builder = factory.newDocumentBuilder();
 
+            // BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(file.toURI())));
+            // document = builder.parse(bis);
+
             document = builder.parse(new File(file.toURI())); // Permet de virer l'exception <java.net.malformedurlexception unknown protocol c>
+
             if (document.getDoctype() != null) {
                 valid = Boolean.TRUE;
             } else {
@@ -583,6 +588,11 @@ public final class PaCo implements Cdf, Observable {
     @Override
     public double getCheckSum() {
         return checkSum;
+    }
+
+    @Override
+    public Cdf comparCdf(Cdf cdfRef, Cdf cdfWork, Boolean modeValeur) {
+        return super.comparCdf(cdfRef, cdfWork, modeValeur);
     }
 
     @Override

@@ -68,7 +68,7 @@ public final class FrameLog extends JFrame {
         if (Desktop.isDesktopSupported()) {
             if (Desktop.getDesktop().isSupported(Desktop.Action.MAIL)) {
 
-                final String adresse = ADRESSE_MAIL + "?subject=[SW Tools] Bugs ou ameliorations" + "&body=Bonjour,\n\nVoici mon log :\n" + texteLog;
+                final String adresse = ADRESSE_MAIL + "?subject=[SW Tools] Envoi du log" + "&body=Bonjour,\n\nVoici mon log :\n" + texteLog;
 
                 try {
                     Desktop.getDesktop().mail(new URI("mailto", adresse, null));

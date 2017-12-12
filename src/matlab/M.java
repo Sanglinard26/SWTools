@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 import cdf.Axis;
 import cdf.Cdf;
+import cdf.CdfComparable;
 import cdf.Curve;
 import cdf.ExportUtils;
 import cdf.Map;
@@ -23,7 +24,7 @@ import cdf.Variable;
 import visu.Observer;
 import visu.PanelCDF;
 
-public final class M implements Cdf, Observable {
+public final class M extends CdfComparable implements Cdf, Observable {
 
     private static BufferedReader buf = null;
     private static String line;
@@ -31,7 +32,7 @@ public final class M implements Cdf, Observable {
     private static final NumberFormat nbf = NumberFormat.getInstance();
 
     private double checkSum = 0;
-    private final String noFonction = "Pas de fonction definie";
+    private static final String NO_FUNCTION = "Pas de fonction definie";
 
     private final String name;
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
@@ -88,7 +89,7 @@ public final class M implements Cdf, Observable {
                             switch (line.substring(shortName.lastIndexOf("_") + 1, line.indexOf("=")).trim()) {
                             case "C":
 
-                                listLabel.add(new Scalaire(shortName, "", VALUE, noFonction, new String[] { "" }, new String[0][0],
+                                listLabel.add(new Scalaire(shortName, "", VALUE, NO_FUNCTION, new String[] { "" }, new String[0][0],
                                         new String[][] { { line.substring(line.indexOf("=") + 1, line.indexOf(";")).trim() } }));
 
                                 if (!listCategory.contains(Cdf.VALUE))
@@ -110,7 +111,7 @@ public final class M implements Cdf, Observable {
                                 }
 
                                 listLabel.add(
-                                        new Curve(shortName, "", CURVE_INDIVIDUAL, noFonction, new String[] { "", "" }, new String[0][0], valeur));
+                                        new Curve(shortName, "", CURVE_INDIVIDUAL, NO_FUNCTION, new String[] { "", "" }, new String[0][0], valeur));
 
                                 if (!listCategory.contains(Cdf.CURVE_INDIVIDUAL))
                                     listCategory.add(Cdf.CURVE_INDIVIDUAL);
@@ -131,14 +132,14 @@ public final class M implements Cdf, Observable {
                                 }
 
                                 listLabel.add(
-                                        new Curve(shortName, "", CURVE_INDIVIDUAL, noFonction, new String[] { "", "" }, new String[0][0], valeur));
+                                        new Curve(shortName, "", CURVE_INDIVIDUAL, NO_FUNCTION, new String[] { "", "" }, new String[0][0], valeur));
 
                                 if (!listCategory.contains(Cdf.CURVE_INDIVIDUAL))
                                     listCategory.add(Cdf.CURVE_INDIVIDUAL);
 
                                 break;
                             case "M":
-                                listLabel.add(new Map(shortName, "", MAP_INDIVIDUAL, noFonction, new String[] { "", "", "" }, new String[0][0],
+                                listLabel.add(new Map(shortName, "", MAP_INDIVIDUAL, NO_FUNCTION, new String[] { "", "", "" }, new String[0][0],
                                         new String[][] { { "0" } }));
 
                                 if (!listCategory.contains(Cdf.MAP_INDIVIDUAL))
@@ -154,14 +155,14 @@ public final class M implements Cdf, Observable {
 
                                 }
 
-                                listLabel.add(new Axis(shortName, "", AXIS_VALUES, noFonction, new String[] { "" }, new String[0][0], valeur));
+                                listLabel.add(new Axis(shortName, "", AXIS_VALUES, NO_FUNCTION, new String[] { "" }, new String[0][0], valeur));
 
                                 if (!listCategory.contains(Cdf.AXIS_VALUES))
                                     listCategory.add(Cdf.AXIS_VALUES);
 
                                 break;
                             case "CA":
-                                listLabel.add(new ValueBlock(shortName, "", VALUE_BLOCK, noFonction, new String[] { "" }, new String[0][0],
+                                listLabel.add(new ValueBlock(shortName, "", VALUE_BLOCK, NO_FUNCTION, new String[] { "" }, new String[0][0],
                                         new String[][] { { "0" } }));
 
                                 if (!listCategory.contains(Cdf.VALUE_BLOCK))
@@ -169,7 +170,7 @@ public final class M implements Cdf, Observable {
 
                                 break;
                             default:
-                                listLabel.add(new Scalaire(shortName, "", category, noFonction, new String[] { "" }, new String[0][0],
+                                listLabel.add(new Scalaire(shortName, "", category, NO_FUNCTION, new String[] { "" }, new String[0][0],
                                         new String[][] { { "0" } }));
                                 break;
                             }
@@ -288,6 +289,11 @@ public final class M implements Cdf, Observable {
     @Override
     public Boolean exportToM(File file) {
         return ExportUtils.toM(this, file);
+    }
+
+    @Override
+    public Cdf comparCdf(Cdf cdfRef, Cdf cdfWork, Boolean modeValeur) {
+        return super.comparCdf(cdfRef, cdfWork, modeValeur);
     }
 
     @Override
