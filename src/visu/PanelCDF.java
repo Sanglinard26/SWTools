@@ -234,13 +234,15 @@ public final class PanelCDF extends JComponent implements Observer {
             @Override
             public void stateChanged(ChangeEvent e) {
 
-                if (((JTabbedPane) e.getSource()).getSelectedIndex() == 0) {
-                    panelHistory.setDatas(selVariable.getSwCsHistory());
-                } else {
-                    panGraph.getPanCard().removeAll();
-                    panGraph.createChart(selVariable);
-                    panGraph.getPanCard().revalidate();
-                    panGraph.getPanCard().repaint();
+                if (selVariable != null) {
+                    if (((JTabbedPane) e.getSource()).getSelectedIndex() == 0) {
+                        panelHistory.setDatas(selVariable.getSwCsHistory());
+                    } else {
+                        panGraph.getPanCard().removeAll();
+                        panGraph.createChart(selVariable);
+                        panGraph.getPanCard().revalidate();
+                        panGraph.getPanCard().repaint();
+                    }
                 }
             }
         });

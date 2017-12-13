@@ -29,6 +29,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cdf.Cdf;
+import cdf.CdfUtils;
 import cdf.ListModelCdf;
 import tools.Preference;
 
@@ -263,8 +264,10 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Cdf cdfCompar = ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0]).comparCdf(
+
+                        Cdf cdfCompar = CdfUtils.comparCdf(ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0]),
                                 ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[1]), PanelCDF.getRadiobtval().isSelected());
+
                         if (cdfCompar != null) {
                             ListCdf.this.getModel().addCdf(cdfCompar);
                         } else {

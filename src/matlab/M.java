@@ -13,7 +13,6 @@ import java.util.HashMap;
 
 import cdf.Axis;
 import cdf.Cdf;
-import cdf.CdfComparable;
 import cdf.Curve;
 import cdf.ExportUtils;
 import cdf.Map;
@@ -24,7 +23,7 @@ import cdf.Variable;
 import visu.Observer;
 import visu.PanelCDF;
 
-public final class M extends CdfComparable implements Cdf, Observable {
+public final class M implements Cdf, Observable {
 
     private static BufferedReader buf = null;
     private static String line;
@@ -289,17 +288,6 @@ public final class M extends CdfComparable implements Cdf, Observable {
     @Override
     public Boolean exportToM(File file) {
         return ExportUtils.toM(this, file);
-    }
-
-    @Override
-    public Cdf comparCdf(Cdf cdfRef, Cdf cdfWork, Boolean modeValeur) {
-        return super.comparCdf(cdfRef, cdfWork, modeValeur);
-    }
-
-    @Override
-    public Cdf comparCdf(Cdf cdf, Boolean modeValeur) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

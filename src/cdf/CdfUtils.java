@@ -9,9 +9,9 @@ import paco.PaCo;
 import tools.Utilitaire;
 import visu.SWToolsMain;
 
-public abstract class CdfComparable {
+public final class CdfUtils {
 
-    public Cdf comparCdf(Cdf cdfRef, Cdf cdfWork, Boolean modeValeur) {
+    public static final Cdf comparCdf(Cdf cdfRef, Cdf cdfWork, Boolean modeValeur) {
         ArrayList<Variable> listCompa;
 
         if (cdfRef.getCheckSum() != cdfWork.getCheckSum()) {

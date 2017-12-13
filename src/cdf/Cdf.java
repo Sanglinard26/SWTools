@@ -43,6 +43,4 @@ public interface Cdf {
     public Boolean exportToTxt(File file);
 
     public Boolean exportToM(File file);
-
-    public Cdf comparCdf(Cdf cdf, Boolean modeValeur);
 }
