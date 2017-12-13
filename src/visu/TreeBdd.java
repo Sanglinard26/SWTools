@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -90,18 +91,22 @@ public final class TreeBdd extends JTree {
 
 				if(TreeBdd.this.getPathForLocation(e.getX(), e.getY()) != null)
 				{
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent();
-					int niveau = node.getLevel();
-
-					if (niveau == 1 & node.getChildCount()<1)
+					if (TreeBdd.this.getSelectionPath() != null)
 					{
-						if(e.getClickCount()>1)
+						DefaultMutableTreeNode node = (DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent();
+						int niveau = node.getLevel();
+
+						if (niveau == 1 & node.getChildCount()<1)
 						{
-							BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + node);
-							bddConnexion = BddConnexion.getInstance();
-							((TreeModelBdd) TreeBdd.this.getModel()).populateFromBdd(bddConnexion, node);
+							if(e.getClickCount()>1)
+							{
+								BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + node);
+								bddConnexion = BddConnexion.getInstance();
+								((TreeModelBdd) TreeBdd.this.getModel()).populateFromBdd(bddConnexion, node);
+							}
 						}
 					}
+
 				}
 			}
 
@@ -146,41 +151,87 @@ public final class TreeBdd extends JTree {
 							popupMenu.add(menuItem);
 							break;
 						case 1:
-							menuItem = new JMenuItem(new AbstractAction("Nouveau dossier") {
+
+							if(bddConnexion != null)
+							{
+								menuItem = new JMenuItem(new AbstractAction("Nouveau dossier") {
+
+									private static final long serialVersionUID = 1L;
+
+									@Override
+									public void actionPerformed(ActionEvent e) {
+
+										String FolderName = JOptionPane.showInputDialog("Nom du dossier :", "");
+
+										if (FolderName != null) {
+											if (!FolderName.equals("")) {
+
+												BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/"
+														+ TreeBdd.this.getSelectionPath().getLastPathComponent()); // C:/Users/U354706/Desktop/Tmp/
+												bddConnexion = BddConnexion.getInstance();
+												BddConnexion.createTable(bddConnexion, FolderName);
+												((DefaultTreeModel) TreeBdd.this.getModel()).insertNodeInto(new DefaultMutableTreeNode(FolderName, true),
+														(DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent(),
+														((DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent())
+														.getChildCount());
+
+											}
+										}
+									}
+								});
+								popupMenu.add(menuItem);
+							}
+							
+							menuItem = new JMenuItem(new AbstractAction("Supprimer BDD") {
 
 								private static final long serialVersionUID = 1L;
 
 								@Override
 								public void actionPerformed(ActionEvent e) {
-
-									String FolderName = JOptionPane.showInputDialog("Nom du dossier :", "");
-
-									if (FolderName != null) {
-										if (!FolderName.equals("")) {
-
-											BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/"
-													+ TreeBdd.this.getSelectionPath().getLastPathComponent()); // C:/Users/U354706/Desktop/Tmp/
-											bddConnexion = BddConnexion.getInstance();
-											BddConnexion.createTable(bddConnexion, FolderName);
-											((DefaultTreeModel) TreeBdd.this.getModel()).insertNodeInto(new DefaultMutableTreeNode(FolderName, true),
-													(DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent(),
-													((DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent())
-													.getChildCount());
-
+									
+									if (TreeBdd.this.getSelectionPath() != null)
+									{
+										File fSup = new File(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + TreeBdd.this.getSelectionPath().getLastPathComponent() + ".mv.db");
+										
+										if (fSup.exists())
+										{
+											if (bddConnexion != null)
+											{
+												try {
+													bddConnexion.close();
+												} catch (SQLException e1) {
+													e1.printStackTrace();
+												}
+											}
+											
+											File fSupTrace = new File(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + TreeBdd.this.getSelectionPath().getLastPathComponent() + ".trace.db");
+											if(fSup.delete())
+											{
+												((DefaultTreeModel) TreeBdd.this.getModel()).removeNodeFromParent((DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent());
+												
+												JOptionPane.showMessageDialog(null, "Bdd supprimee");
+												if (fSupTrace.exists())
+												{
+													fSupTrace.delete();
+												}
+											}
 										}
 									}
+									
 								}
 							});
 							popupMenu.add(menuItem);
+
+
 							break;
 						case 2:
 							menuItem = new JMenuItem(new AbstractAction("Supprimer dossier") {
 
 								private static final long serialVersionUID = 1L;
-								
+
 								@Override
 								public void actionPerformed(ActionEvent e) {
-									
+
 									BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + ((DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent()).getParent());
 									bddConnexion = BddConnexion.getInstance();
 									System.out.println(((TreeModelBdd) TreeBdd.this.getModel()).removeXmlFolder(bddConnexion, (DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent()));
@@ -192,15 +243,15 @@ public final class TreeBdd extends JTree {
 							menuItem = new JMenuItem(new AbstractAction("Nouveau XML") {
 
 								private static final long serialVersionUID = 1L;
-								
+
 								private XmlInfo xmlInfo;
 
 								@Override
 								public void actionPerformed(ActionEvent e) {
-									
+
 									xmlInfo = new XmlInfo();
 									xmlInfo.setName("Xml");
-									
+
 									((DefaultTreeModel) TreeBdd.this.getModel()).insertNodeInto(new DefaultMutableTreeNode(xmlInfo, false),
 											(DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent(),
 											((DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent()).getChildCount());
