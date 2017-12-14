@@ -12,12 +12,11 @@ public final class BddConnexion {
     private static String dbPath = null;
 
     public static final void setDbPath(String dbPath) {
-    	String oldDbPath = BddConnexion.dbPath;
-    	if(!dbPath.equals(oldDbPath) & connection != null)
-    	{
-    		connection = null;
-    	}
-    	BddConnexion.dbPath = dbPath;
+        String oldDbPath = BddConnexion.dbPath;
+        if (!dbPath.equals(oldDbPath) & connection != null) {
+            close();
+        }
+        BddConnexion.dbPath = dbPath;
     }
 
     public static final Connection getInstance() {
@@ -27,7 +26,7 @@ public final class BddConnexion {
 
                 Class.forName(DRIVER_CLASS);
                 connection = DriverManager.getConnection(DRIVER + BddConnexion.dbPath);
-                
+
                 System.out.println("Connexion a " + dbPath + " avec succes");
 
             } catch (ClassNotFoundException notFoundException) {
@@ -47,6 +46,7 @@ public final class BddConnexion {
             try {
                 connection.close();
                 connection = null;
+                System.out.println("Fermeture de la connection : " + BddConnexion.dbPath);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
