@@ -98,7 +98,7 @@ public final class ListLabel extends JList<Variable> {
         }
     }
 
-    class FilterField extends JComponent implements DocumentListener, ActionListener {
+    protected class FilterField extends JComponent implements DocumentListener, ActionListener {
 
         private static final long serialVersionUID = 1L;
 

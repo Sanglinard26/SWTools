@@ -40,7 +40,7 @@ public final class PaCo implements Cdf, Observable {
     private static Logger logger = Logger.getLogger("MyLogger");
 
     private final String name;
-    private Boolean valid;
+    private boolean valid;
     private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     private int nbLabel = 0;
     private final HashMap<String, String> unit = new HashMap<String, String>();
@@ -73,16 +73,13 @@ public final class PaCo implements Cdf, Observable {
         try {
             builder = factory.newDocumentBuilder();
 
-            // BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(file.toURI())));
-            // document = builder.parse(bis);
-
             document = builder.parse(new File(file.toURI())); // Permet de virer l'exception <java.net.malformedurlexception unknown protocol c>
 
             if (document.getDoctype() != null) {
-                valid = Boolean.TRUE;
+                valid = true;
             } else {
                 JOptionPane.showMessageDialog(null, "Format de PaCo non valide !" + "\nNom : " + this.name, "ERREUR", JOptionPane.ERROR_MESSAGE);
-                valid = Boolean.FALSE;
+                valid = false;
                 return;
             }
         } catch (ParserConfigurationException e) {
@@ -237,7 +234,7 @@ public final class PaCo implements Cdf, Observable {
                 if (!listCategory.contains(category))
                     listCategory.add(category);
 
-                notifyObserver(this.name, shortName, nbf.format(((double) i / (double) (this.nbLabel - 1)) * 100) + "%");
+                notifyObserver(this.name, nbf.format(((double) i / (double) (this.nbLabel - 1)) * 100) + "%");
 
                 // checksum
                 checkSum += listLabel.get(i).getChecksum();
@@ -254,6 +251,8 @@ public final class PaCo implements Cdf, Observable {
                 }
             }
         }
+
+        document = null;
     }
 
     @Override
@@ -261,7 +260,7 @@ public final class PaCo implements Cdf, Observable {
         return this.name;
     }
 
-    public final Boolean isValid() {
+    public final boolean isValid() {
         return valid;
     }
 
@@ -315,7 +314,7 @@ public final class PaCo implements Cdf, Observable {
                     entry[n][3] = nodeRemark.getTextContent();
                 }
             } catch (NullPointerException npe) {
-                for (int i = 0; i < 4; i++) {
+                for (byte i = 0; i < 4; i++) {
                     if (entry[n][i] == null)
                         entry[n][i] = "";
                 }
@@ -370,7 +369,7 @@ public final class PaCo implements Cdf, Observable {
         final NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(0).getNodeName());
         NodeList valueVg = null;
 
-        for (int i = 0; i < value.getLength(); i++) {
+        for (short i = 0; i < value.getLength(); i++) {
             switch (value.item(i).getNodeName()) {
             case "V":
                 val[0][i + 1] = Integer.toString(i);
@@ -379,7 +378,7 @@ public final class PaCo implements Cdf, Observable {
             case "VG":
                 valueVg = value.item(i).getChildNodes();
                 val[i + 1][0] = Integer.toString(i);
-                for (int j = 0; j < valueVg.getLength(); j++) {
+                for (short j = 0; j < valueVg.getLength(); j++) {
                     if (valueVg.item(j).getNodeName().equals("V")) {
                         val[0][j] = Integer.toString(j - 1);
                         val[i + 1][j] = valueVg.item(j).getTextContent();
@@ -513,12 +512,12 @@ public final class PaCo implements Cdf, Observable {
     }
 
     @Override
-    public final Boolean exportToExcel(final File file) {
+    public final boolean exportToExcel(final File file) {
         return ExportUtils.toExcel(this, file);
     }
 
     @Override
-    public final Boolean exportToTxt(File file) {
+    public final boolean exportToTxt(File file) {
         return ExportUtils.toText(this, file);
     }
 
@@ -548,9 +547,14 @@ public final class PaCo implements Cdf, Observable {
 
         if (!listLabel.isEmpty()) {
 
+            int lastScore;
+
             for (Variable v : listLabel) {
-                if (repartitionScore.get(v.getLastScore()) != null)
-                    repartitionScore.put(v.getLastScore(), repartitionScore.get(v.getLastScore()) + 1);
+
+                lastScore = v.getLastScore();
+
+                if (repartitionScore.get(lastScore) != null)
+                    repartitionScore.put(lastScore, repartitionScore.get(lastScore) + 1);
             }
         }
     }
@@ -561,7 +565,7 @@ public final class PaCo implements Cdf, Observable {
     }
 
     @Override
-    public Boolean exportToM(File file) {
+    public boolean exportToM(File file) {
         return ExportUtils.toM(this, file);
     }
 
@@ -571,9 +575,9 @@ public final class PaCo implements Cdf, Observable {
     }
 
     @Override
-    public void notifyObserver(String cdf, String variable, String rate) {
+    public void notifyObserver(String cdf, String rate) {
         for (Observer obs : listObserver) {
-            obs.update(cdf, variable, rate);
+            obs.update(cdf, rate);
         }
 
     }

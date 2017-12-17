@@ -271,7 +271,7 @@ public final class PanelCDF extends JComponent implements Observer {
                     if (f.isDirectory())
                         return true;
 
-                    String extension = Utilitaire.getExtension(f);
+                    final String extension = Utilitaire.getExtension(f);
                     if (extension.equals(Utilitaire.xml) | extension.equals(Utilitaire.dcm) | extension.equals(Utilitaire.m)) {
                         return true;
                     }
@@ -282,7 +282,7 @@ public final class PanelCDF extends JComponent implements Observer {
             final int reponse = jFileChooser.showOpenDialog(PanelCDF.this);
             if (reponse == JFileChooser.APPROVE_OPTION) {
 
-                Boolean needDTD = false;
+                boolean needDTD = false;
 
                 for (File f : jFileChooser.getSelectedFiles()) {
                     if (Utilitaire.getExtension(f).equals("xml")) {
@@ -294,8 +294,6 @@ public final class PanelCDF extends JComponent implements Observer {
                 if (needDTD) {
                     Utilitaire.createDtd(jFileChooser.getSelectedFile().getParent());
                 }
-
-                // razUI();
 
                 pm = new ProgressMonitor(PanelCDF.this, "Fichier :", "...", 0, 0);
                 pm.setMillisToDecideToPopup(0);
@@ -309,9 +307,10 @@ public final class PanelCDF extends JComponent implements Observer {
 
     private final class TaskCharging extends SwingWorker<Integer, Integer> {
 
-        private final File[] filesCDF;
+        private File[] filesCDF;
         private int cnt = 0;
         private Cdf cdf;
+        private final StringBuilder cdfName = new StringBuilder();
 
         public TaskCharging(File[] filesPaco) {
             this.filesCDF = filesPaco;
@@ -324,7 +323,11 @@ public final class PanelCDF extends JComponent implements Observer {
             pm.setProgress(cnt);
 
             for (File file : filesCDF) {
-                if (!(listCDF.getModel().getList().contains(file.getName().substring(0, file.getName().length() - 4)))) {
+
+                cdfName.setLength(0);
+                cdfName.append(file.getName().substring(0, file.getName().length() - 4));
+
+                if (!(ListModelCdf.getListcdfname().contains(cdfName))) {
                     if (!pm.isCanceled()) {
 
                         switch (Utilitaire.getExtension(file)) {
@@ -347,16 +350,19 @@ public final class PanelCDF extends JComponent implements Observer {
                         }
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null,
-                            "Fichier deja present dans la liste !" + "\nNom : " + file.getName().substring(0, file.getName().length() - 4), "INFO",
+                    JOptionPane.showMessageDialog(null, "Fichier deja present dans la liste !" + "\nNom : " + cdfName, "INFO",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
                 cnt += 1;
                 pm.setProgress(cnt);
             }
 
+            filesCDF = null;
+            cdf = null;
+
             return cnt;
         }
+
     }
 
     private final class ListTransferHandler extends TransferHandler {
@@ -419,7 +425,8 @@ public final class PanelCDF extends JComponent implements Observer {
 
         if (listLabel.getModel().getSize() > 0) {
 
-            // listLabel.clearFilter(); On garde le filtre d'un cdf � l'autre
+            selVariable = null;
+
             listLabel.clearSelection();
             listLabel.getModel().clearList();
             listLabel.getFilterField().populateFilter(null);
@@ -438,12 +445,12 @@ public final class PanelCDF extends JComponent implements Observer {
 
     }
 
-    public static JRadioButton getRadiobtval() {
+    public final static JRadioButton getRadiobtval() {
         return radioBtVal;
     }
 
     @Override
-    public void update(String cdf, String variable, String rate) {
+    public final void update(String cdf, String rate) {
         pm.setNote(cdf + " : " + rate);
     }
 

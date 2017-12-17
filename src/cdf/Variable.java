@@ -1,7 +1,6 @@
 package cdf;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import paco.TableModelView;
@@ -104,7 +104,7 @@ public abstract class Variable {
 
     public abstract String[][] getValues();
 
-    public final Component showValues() {
+    public final JComponent showValues() {
 
         if (tableView == null) {
             tableView = new TableView(new TableModelView());

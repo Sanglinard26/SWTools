@@ -74,7 +74,7 @@ public final class M implements Cdf, Observable {
 
             while (readLineDcm() != null) {
 
-                notifyObserver(this.name, "", nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
+                notifyObserver(this.name, nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
 
                 if (!line.startsWith("%")) {
                     if (line.indexOf("=") > 0) {
@@ -219,9 +219,9 @@ public final class M implements Cdf, Observable {
     }
 
     @Override
-    public void notifyObserver(String cdf, String variable, String rate) {
+    public void notifyObserver(String cdf, String rate) {
         for (Observer obs : listObserver) {
-            obs.update(cdf, variable, rate);
+            obs.update(cdf, rate);
         }
     }
 
@@ -276,17 +276,17 @@ public final class M implements Cdf, Observable {
     }
 
     @Override
-    public Boolean exportToExcel(File file) {
+    public boolean exportToExcel(File file) {
         return ExportUtils.toExcel(this, file);
     }
 
     @Override
-    public Boolean exportToTxt(File file) {
+    public boolean exportToTxt(File file) {
         return ExportUtils.toText(this, file);
     }
 
     @Override
-    public Boolean exportToM(File file) {
+    public boolean exportToM(File file) {
         return ExportUtils.toM(this, file);
     }
 

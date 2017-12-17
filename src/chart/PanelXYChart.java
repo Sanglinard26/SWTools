@@ -56,7 +56,7 @@ public final class PanelXYChart extends JComponent {
         if (legend) {
             listSerieName = new Serie[xyPlot.getSeriesCollection().getSeriesCount()];
 
-            for (int i = 0; i < xyPlot.getSeriesCollection().getSeriesCount(); i++) {
+            for (short i = 0; i < xyPlot.getSeriesCollection().getSeriesCount(); i++) {
                 listSerieName[i] = xyPlot.getSeriesCollection().getSerie(i);
             }
 
@@ -111,7 +111,7 @@ public final class PanelXYChart extends JComponent {
                     serieCollection = new SeriesCollection();
                 }
 
-                for (int i = 0; i < legendList.getSelectedValuesList().size(); i++) {
+                for (short i = 0; i < legendList.getSelectedValuesList().size(); i++) {
                     serieCollection.addSerie(legendList.getSelectedValuesList().get(i));
                 }
                 xyPlot.setSeriesCollection(serieCollection);

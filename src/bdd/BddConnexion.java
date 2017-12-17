@@ -1,5 +1,6 @@
 package bdd;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -17,6 +18,15 @@ public final class BddConnexion {
             close();
         }
         BddConnexion.dbPath = dbPath;
+    }
+
+    public static String getDbPath() {
+        System.out.println("path Db : " + dbPath);
+        return dbPath;
+    }
+
+    public static String getDbParentFolder() {
+        return new File(getDbPath()).getParent();
     }
 
     public static final Connection getInstance() {

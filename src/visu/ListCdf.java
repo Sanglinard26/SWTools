@@ -61,7 +61,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
         super.paintComponent(g);
 
-        DropLocation loc = getDropLocation();
+        final DropLocation loc = getDropLocation();
         if (loc == null) {
             setBorder(null);
             return;

@@ -77,22 +77,26 @@ public final class PanelXYPlot extends JComponent {
             yScale = (double) getHeight() - (2 * padding) - labelPadding;
         }
 
-        listSeries = new ArrayList<>();
+        final int nbSerie = seriesCollection.getSeriesCount();
+        listSeries = new ArrayList<SerieScale>(nbSerie);
 
         int x0, y0, x1, y1, x2, y2; // Point de coordonnees
 
-        for (int nSerie = 0; nSerie < seriesCollection.getSeriesCount(); nSerie++) {
+        Serie serie;
+
+        for (short nSerie = 0; nSerie < nbSerie; nSerie++) {
 
             if (!Double.isNaN(yScale)) {
 
-                serieScale = new SerieScale(seriesCollection.getSerie(nSerie).getName());
+                serie = seriesCollection.getSerie(nSerie);
 
-                for (int nPoint = 0; nPoint < seriesCollection.getSerie(nSerie).getPointsCount(); nPoint++) {
+                serieScale = new SerieScale(serie.getName());
 
-                    x1 = (int) ((seriesCollection.getSerie(nSerie).getPoints().get(nPoint).getX() - getMinXValue()) * xScale + padding
-                            + labelPadding);
+                for (int nPoint = 0; nPoint < serie.getPointsCount(); nPoint++) {
 
-                    y1 = (int) ((getMaxYValue() - seriesCollection.getSerie(nSerie).getPoints().get(nPoint).getY()) * yScale + padding);
+                    x1 = (int) ((serie.getPoints().get(nPoint).getX() - getMinXValue()) * xScale + padding + labelPadding);
+
+                    y1 = (int) ((getMaxYValue() - serie.getPoints().get(nPoint).getY()) * yScale + padding);
 
                     serieScale.add(new Point(x1, y1));
                 }
@@ -150,7 +154,7 @@ public final class PanelXYPlot extends JComponent {
         int labelWidth;
 
         // create hatch marks and grid lines for y axis.
-        for (int i = 0; i < numberYDivisions + 1; i++) {
+        for (byte i = 0; i < numberYDivisions + 1; i++) {
             x0 = padding + labelPadding;
             x1 = pointWidth + padding + labelPadding;
             y0 = getHeight() - ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
@@ -168,7 +172,7 @@ public final class PanelXYPlot extends JComponent {
         }
 
         // create hatch marks and grid lines for x axis.
-        for (int i = 0; i < numberXDivisions + 1; i++) {
+        for (byte i = 0; i < numberXDivisions + 1; i++) {
             x0 = i * (getWidth() - padding * 2 - labelPadding) / numberXDivisions + padding + labelPadding;
             x1 = x0;
             y0 = getHeight() - padding - labelPadding;
@@ -193,7 +197,7 @@ public final class PanelXYPlot extends JComponent {
         int xMark, yMark;
         int ovalW, ovalH;
 
-        for (int nSerie = 0; nSerie < listSeries.size(); nSerie++) {
+        for (short nSerie = 0; nSerie < nbSerie; nSerie++) {
 
             hue = (float) (nSerie) / (float) (listSeries.size());
 
@@ -202,7 +206,7 @@ public final class PanelXYPlot extends JComponent {
             listSeries.get(nSerie).setSerieColor(nSerie, Color.getHSBColor(hue, 1, 1));
 
             g2.setStroke(GRAPH_STROKE);
-            for (int i = 0; i < listSeries.get(nSerie).size() - 1; i++) {
+            for (short i = 0; i < listSeries.get(nSerie).size() - 1; i++) {
                 x1 = listSeries.get(nSerie).get(i).x;
                 y1 = listSeries.get(nSerie).get(i).y;
                 x2 = listSeries.get(nSerie).get(i + 1).x;
@@ -211,7 +215,7 @@ public final class PanelXYPlot extends JComponent {
             }
 
             g2.setColor(Color.BLACK);
-            for (int i = 0; i < listSeries.get(nSerie).size(); i++) {
+            for (short i = 0; i < listSeries.get(nSerie).size(); i++) {
                 xMark = listSeries.get(nSerie).get(i).x - pointWidth / 2;
                 yMark = listSeries.get(nSerie).get(i).y - pointWidth / 2;
                 ovalW = pointWidth;
@@ -233,10 +237,10 @@ public final class PanelXYPlot extends JComponent {
         }
 
         g2.setColor(Color.RED);
-        int x = p.x - 10 / 2;
-        int y = p.y - 10 / 2;
-        int ovalW = 10;
-        int ovalH = 10;
+        final int x = p.x - 10 / 2;
+        final int y = p.y - 10 / 2;
+        final int ovalW = 10;
+        final int ovalH = 10;
         g2.fillOval(x, y, ovalW, ovalH);
 
         clip = new Rectangle(x, y, 10, 10);
@@ -316,8 +320,8 @@ public final class PanelXYPlot extends JComponent {
     @Override
     public boolean contains(int x, int y) {
 
-        for (int idxSerie = 0; idxSerie < listSeries.size(); idxSerie++) {
-            for (int idxPoint = 0; idxPoint < listSeries.get(idxSerie).size(); idxPoint++) {
+        for (short idxSerie = 0; idxSerie < listSeries.size(); idxSerie++) {
+            for (short idxPoint = 0; idxPoint < listSeries.get(idxSerie).size(); idxPoint++) {
                 if (Math.abs(x - listSeries.get(idxSerie).get(idxPoint).getX()) < 4
                         & Math.abs(y - listSeries.get(idxSerie).get(idxPoint).getY()) < 4) {
                     markPoint(this.getGraphics(), listSeries.get(idxSerie).get(idxPoint));

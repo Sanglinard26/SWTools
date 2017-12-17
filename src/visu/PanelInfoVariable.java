@@ -13,12 +13,19 @@ public final class PanelInfoVariable extends JComponent {
 
     private static final long serialVersionUID = 1L;
 
-    private final JTextArea infoVariable = new JTextArea();
+    private static final JTextArea infoVariable = new JTextArea();
+
+    static {
+        infoVariable.setEditable(false);
+        infoVariable.setFont(new Font(null, Font.PLAIN, 12));
+    }
 
     public PanelInfoVariable(final Variable variable) {
 
         this.setLayout(new GridLayout(1, 1));
         this.setBackground(Color.WHITE);
+
+        infoVariable.setText(null);
 
         infoVariable.append("Nom : " + variable.getShortName() + "\n");
         infoVariable.append("Description : " + variable.getLongName() + "\n");
@@ -31,8 +38,6 @@ public final class PanelInfoVariable extends JComponent {
         infoVariable.append("Unite(s) : " + unite + "\n");
         infoVariable.append("Valeur(s) :");
 
-        infoVariable.setEditable(false);
-        infoVariable.setFont(new Font(null, Font.PLAIN, 12));
         this.add(infoVariable);
     }
 

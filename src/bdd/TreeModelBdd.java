@@ -36,10 +36,18 @@ public final class TreeModelBdd extends DefaultTreeModel {
             }
         };
 
-        if (pathDb.list(fnamefilter) != null) {
-            for (String db : pathDb.list(fnamefilter)) {
-                this.root.add(new DefaultMutableTreeNode(new Bdd(db.replace(".mv.db", ""))));
+        File[] listFiles = pathDb.listFiles();
+
+        if (listFiles != null) {
+
+            for (File folder : listFiles) {
+                if (folder.isDirectory()) {
+                    for (File db : folder.listFiles(fnamefilter)) {
+                        this.root.add(new DefaultMutableTreeNode(new Bdd(db.getName().replace(".mv.db", ""))));
+                    }
+                }
             }
+
             reload();
         }
 

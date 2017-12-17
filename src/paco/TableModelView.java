@@ -31,16 +31,22 @@ public final class TableModelView extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        if (values[row][col] != null) {
-            return values[row][col];
+
+        final Object value = values[row][col];
+
+        if (value != null) {
+            return value;
         }
         return "";
     }
 
     public void setData(String[][] data) {
         this.values = data;
-        this.entete = new String[values[0].length];
-        for (int i = 0; i < values[0].length; i++)
+
+        final int nbCol = values[0].length;
+
+        this.entete = new String[nbCol];
+        for (short i = 0; i < nbCol; i++)
             this.entete[i] = "";
         fireTableStructureChanged();
     }

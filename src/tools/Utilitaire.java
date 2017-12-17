@@ -39,7 +39,7 @@ public final class Utilitaire {
         return number.indexOf(".") < 0 ? number : number.replaceAll("0*$", "").replaceAll("\\.$", "");
     } // Fin methode
 
-    public static final Boolean isNumber(String s) {
+    public static final boolean isNumber(String s) {
         try {
             Double.parseDouble(s);
             return true;
@@ -71,7 +71,7 @@ public final class Utilitaire {
 
         }
     }
-    
+
     public static final String getFolder(String title, String defautPath) {
         final JFileChooser fileChooser = new JFileChooser(defautPath);
         fileChooser.setDialogTitle(title);

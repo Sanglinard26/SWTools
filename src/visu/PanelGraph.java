@@ -26,6 +26,11 @@ public final class PanelGraph extends JComponent {
     private static final JRadioButton radioBt2D = new JRadioButton("2D");
     private static final JRadioButton radioBt3D = new JRadioButton("3D", true);
 
+    static {
+        panBtRadio.setBorder(LineBorder.createBlackLineBorder());
+        panCard.setBorder(LineBorder.createBlackLineBorder());
+    }
+
     public PanelGraph() {
 
         this.setLayout(new BorderLayout());
@@ -35,9 +40,6 @@ public final class PanelGraph extends JComponent {
 
         buttonGroup.add(radioBt2D);
         buttonGroup.add(radioBt3D);
-
-        panBtRadio.setBorder(LineBorder.createBlackLineBorder());
-        panCard.setBorder(LineBorder.createBlackLineBorder());
 
         panBtRadio.add(radioBt2D);
         panBtRadio.add(radioBt3D);

@@ -15,19 +15,19 @@ public final class Serie {
         points = new ArrayList<>();
     }
 
-    public void addPoint(double x, double y) {
+    public final void addPoint(double x, double y) {
         points.add(new XYPoint(x, y));
     }
 
-    public int getPointsCount() {
+    public final int getPointsCount() {
         return points.size();
     }
 
-    public List<XYPoint> getPoints() {
+    public final List<XYPoint> getPoints() {
         return points;
     }
 
-    public double getMaxYValue() {
+    public final double getMaxYValue() {
         double maxValue = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < points.size(); i++) {
             maxValue = Math.max(maxValue, points.get(i).getY());
@@ -38,7 +38,7 @@ public final class Serie {
         return Double.NaN;
     }
 
-    public double getMaxXValue() {
+    public final double getMaxXValue() {
         double maxValue = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < points.size(); i++) {
             maxValue = Math.max(maxValue, points.get(i).getX());
@@ -46,7 +46,7 @@ public final class Serie {
         return maxValue;
     }
 
-    public double getMinYValue() {
+    public final double getMinYValue() {
         double minValue = Double.POSITIVE_INFINITY;
         for (int i = 0; i < points.size(); i++) {
             minValue = Math.min(minValue, points.get(i).getY());
@@ -57,7 +57,7 @@ public final class Serie {
         return Double.NaN;
     }
 
-    public double getMinXValue() {
+    public final double getMinXValue() {
         double minValue = Double.POSITIVE_INFINITY;
         for (int i = 0; i < points.size(); i++) {
             minValue = Math.min(minValue, points.get(i).getX());
@@ -65,15 +65,15 @@ public final class Serie {
         return minValue;
     }
 
-    public Color getColor() {
+    public final Color getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public final void setColor(Color color) {
         this.color = color;
     }
 
-    public String getName() {
+    public final String getName() {
         return this.serieName;
     }
 

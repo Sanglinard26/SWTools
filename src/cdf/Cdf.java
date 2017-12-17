@@ -38,9 +38,9 @@ public interface Cdf {
 
     public double getCheckSum();
 
-    public Boolean exportToExcel(final File file);
+    public boolean exportToExcel(final File file);
 
-    public Boolean exportToTxt(File file);
+    public boolean exportToTxt(File file);
 
-    public Boolean exportToM(File file);
+    public boolean exportToM(File file);
 }

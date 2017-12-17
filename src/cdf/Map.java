@@ -2,173 +2,176 @@ package cdf;
 
 public final class Map extends Variable {
 
-	private final String[][] values;
-	private final int dimX;
-	private final int dimY;
+    private final String[][] values;
+    private final int dimX;
+    private final int dimY;
 
-	private float minZValue = Float.POSITIVE_INFINITY;
-	private float maxZValue = Float.NEGATIVE_INFINITY;
+    private float minZValue = Float.POSITIVE_INFINITY;
+    private float maxZValue = Float.NEGATIVE_INFINITY;
 
-	public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
-			String[][] values) {
+    public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
+            String[][] values) {
 
-		super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
+        super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 
-		this.values = values;
-		this.dimX = values[0].length;
-		this.dimY = values.length;
+        this.values = values;
+        this.dimX = values[0].length;
+        this.dimY = values.length;
 
-		for (short x = 1; x < values[0].length; x++) {
-			for (short y = 1; y < values.length; y++) {
-				if (values[y][x]!= null)
-				{
-					try {
-						if (Float.parseFloat(values[y][x]) < minZValue)
-							minZValue = Float.parseFloat(values[y][x]);
+        float value;
 
-						if (Float.parseFloat(values[y][x]) > maxZValue)
-							maxZValue = Float.parseFloat(values[y][x]);
-					} catch (NumberFormatException e) {
-						minZValue = Float.NaN;
-						maxZValue = Float.NaN;
-					}
-				}else{
-					minZValue = Float.NaN;
-					maxZValue = Float.NaN;
-				}
+        for (short x = 1; x < values[0].length; x++) {
+            for (short y = 1; y < values.length; y++) {
+                if (values[y][x] != null) {
+                    try {
 
+                        value = Float.parseFloat(values[y][x]);
 
-			}
-		}
-	}
+                        if (value < minZValue)
+                            minZValue = value;
 
-	@Override
-	public final String toString() {
-		StringBuilder sb = new StringBuilder("\n");
+                        if (value > maxZValue)
+                            maxZValue = value;
+                    } catch (NumberFormatException e) {
+                        minZValue = Float.NaN;
+                        maxZValue = Float.NaN;
+                    }
+                } else {
+                    minZValue = Float.NaN;
+                    maxZValue = Float.NaN;
+                }
 
-		for (short y = 0; y < dimY; y++) {
-			for (short x = 0; x < dimX; x++) {
-				sb.append(this.getValue(y, x) + "\t");
-			}
-			sb.append("\n");
-		}
+            }
+        }
+    }
 
-		return super.toString() + "Valeurs :" + sb.toString();
-	}
+    @Override
+    public final String toString() {
+        StringBuilder sb = new StringBuilder("\n");
 
-	public final String getUnitX() {
-		return super.getSwUnitRef()[0];
-	}
+        for (short y = 0; y < dimY; y++) {
+            for (short x = 0; x < dimX; x++) {
+                sb.append(this.getValue(y, x) + "\t");
+            }
+            sb.append("\n");
+        }
 
-	public final String getUnitY() {
-		return super.getSwUnitRef()[1];
-	}
+        return super.toString() + "Valeurs :" + sb.toString();
+    }
 
-	public final String getUnitZ() {
-		return super.getSwUnitRef()[2];
-	}
+    public final String getUnitX() {
+        return super.getSwUnitRef()[0];
+    }
 
-	public final float getMaxZValue() {
-		return maxZValue;
-	}
+    public final String getUnitY() {
+        return super.getSwUnitRef()[1];
+    }
 
-	public final float getMinZValue() {
-		return minZValue;
-	}
+    public final String getUnitZ() {
+        return super.getSwUnitRef()[2];
+    }
 
-	@Override
-	public final String[][] getValues() {
-		return values;
-	}
+    public final float getMaxZValue() {
+        return maxZValue;
+    }
 
-	public final String getValue(int col, int row) {
-		return values[col][row];
-	}
+    public final float getMinZValue() {
+        return minZValue;
+    }
 
-	public final int getDimX() {
-		return dimX;
-	}
+    @Override
+    public final String[][] getValues() {
+        return values;
+    }
 
-	public final int getDimY() {
-		return dimY;
-	}
+    public final String getValue(int col, int row) {
+        return values[col][row];
+    }
 
-	@Override
-	public String toMFormat() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("% " + getShortName());
-		sb.append("\n");
+    public final int getDimX() {
+        return dimX;
+    }
 
-		// valeur x
-		sb.append(getShortName().substring(0, getShortName().length() - 2) + "X_A" + " = ");
-		sb.append("[");
-		for (int x = 1; x < values[0].length; x++) {
-			if (x > 1) {
-				sb.append(" " + getValue(0, x));
-			} else {
-				sb.append(getValue(0, x));
-			}
-		}
-		sb.append("];");
-		// unite x
-		sb.append("\t\t\t" + "%" + "(" + getUnitX() + ")");
+    public final int getDimY() {
+        return dimY;
+    }
 
-		// valeur y
-		sb.append("\n");
-		sb.append(getShortName().substring(0, getShortName().length() - 2) + "Y_A" + " = ");
-		sb.append("[");
-		for (int x = 1; x < values.length; x++) {
-			if (x > 1) {
-				sb.append(" " + getValue(x, 0));
-			} else {
-				sb.append(getValue(x, 0));
-			}
-		}
-		sb.append("];");
+    @Override
+    public String toMFormat() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("% " + getShortName());
+        sb.append("\n");
 
-		// unite y
-		sb.append("\t\t\t" + "%" + "(" + getUnitY() + ")");
+        // valeur x
+        sb.append(getShortName().substring(0, getShortName().length() - 2) + "X_A" + " = ");
+        sb.append("[");
+        for (int x = 1; x < values[0].length; x++) {
+            if (x > 1) {
+                sb.append(" " + getValue(0, x));
+            } else {
+                sb.append(getValue(0, x));
+            }
+        }
+        sb.append("];");
+        // unite x
+        sb.append("\t\t\t" + "%" + "(" + getUnitX() + ")");
 
-		// valeur z
-		sb.append("\n");
-		sb.append(getShortName() + " = ");
-		sb.append("[");
-		for (int x = 1; x < values[0].length; x++) {
-			for (int y = 1; y < values.length; y++) {
-				if (y > 1) {
-					sb.append(" " + getValue(y, x));
-				} else {
-					sb.append(getValue(y, x));
-				}
+        // valeur y
+        sb.append("\n");
+        sb.append(getShortName().substring(0, getShortName().length() - 2) + "Y_A" + " = ");
+        sb.append("[");
+        for (int x = 1; x < values.length; x++) {
+            if (x > 1) {
+                sb.append(" " + getValue(x, 0));
+            } else {
+                sb.append(getValue(x, 0));
+            }
+        }
+        sb.append("];");
 
-			}
-			if (x != values[0].length - 1) {
-				sb.append(";");
-				sb.append("\n");
-			} else {
-				sb.append("];");
-			}
+        // unite y
+        sb.append("\t\t\t" + "%" + "(" + getUnitY() + ")");
 
-		}
+        // valeur z
+        sb.append("\n");
+        sb.append(getShortName() + " = ");
+        sb.append("[");
+        for (int x = 1; x < values[0].length; x++) {
+            for (int y = 1; y < values.length; y++) {
+                if (y > 1) {
+                    sb.append(" " + getValue(y, x));
+                } else {
+                    sb.append(getValue(y, x));
+                }
 
-		// unite z
-		sb.append("\t\t\t" + "%" + "(" + getUnitZ() + ")" + getLongName());
+            }
+            if (x != values[0].length - 1) {
+                sb.append(";");
+                sb.append("\n");
+            } else {
+                sb.append("];");
+            }
 
-		return sb.toString();
-	}
+        }
 
-	@Override
-	public double getChecksum() {
+        // unite z
+        sb.append("\t\t\t" + "%" + "(" + getUnitZ() + ")" + getLongName());
 
-		double valCheck = 0;
+        return sb.toString();
+    }
 
-		for (short x = 0; x < values[0].length; x++) {
-			for (short y = 0; y < values.length; y++) {
-				valCheck += values[y][x].hashCode();
-			}
-		}
+    @Override
+    public double getChecksum() {
 
-		return valCheck;
-	}
+        double valCheck = 0;
+
+        for (short x = 0; x < values[0].length; x++) {
+            for (short y = 0; y < values.length; y++) {
+                valCheck += values[y][x].hashCode();
+            }
+        }
+
+        return valCheck;
+    }
 
 }

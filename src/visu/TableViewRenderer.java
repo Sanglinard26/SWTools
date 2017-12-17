@@ -25,13 +25,16 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
     private JLabel component;
     private RainbowScale rainbowScale;
     private Map map = null;
-    private Boolean setMapColor = false;
+    private boolean setMapColor;
 
     public TableViewRenderer() {
 
     }
 
     public void colorMap(Variable var) {
+
+        setMapColor = false;
+
         if (Preference.getPreference(Preference.KEY_ETAT_COLOR_MAP).equals("true")) {
             if (var instanceof Map) {
                 map = (Map) var;
@@ -39,14 +42,8 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
                     rainbowScale = new RainbowScale(new Range(map.getMinZValue(), map.getMaxZValue()), (map.getDimX() - 1) * (map.getDimY() - 1),
                             RainbowScale.BLUE_TO_RED_RANGE);
                     setMapColor = true;
-                } else {
-                    setMapColor = false;
                 }
-            } else {
-                setMapColor = false;
             }
-        } else {
-            setMapColor = false;
         }
     }
 

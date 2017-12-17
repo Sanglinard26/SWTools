@@ -40,11 +40,6 @@ public final class TreeBdd extends JTree {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String ICON_DB = "/db_icon_16.png";
-    private static final String ICON_XML = "/xml_icon_16.png";
-    private static final String ICON_WP_FOLDER = "/wpfolder_icon_16.png";
-    private static final String ICON_DB_FOLDER = "/dbfolder_icon_16.png";
-
     private final TreeModelBdd treeModelBdd;
     private static final File pathDb = new File(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB));
 
@@ -63,13 +58,7 @@ public final class TreeBdd extends JTree {
 
             @Override
             public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
-                if (event.getPath().getLastPathComponent() instanceof DefaultMutableTreeNode) {
-                    int niveau = ((DefaultMutableTreeNode) event.getPath().getLastPathComponent()).getLevel();
-                    if (niveau == 1) {
-
-                    }
-                }
-
+                // Non utilise
             }
 
             @Override
@@ -83,7 +72,6 @@ public final class TreeBdd extends JTree {
                         System.out.println("Pas de base de connectee");
                     }
                 }
-
             }
         });
 
@@ -99,7 +87,7 @@ public final class TreeBdd extends JTree {
 
                         if (niveau == 1 & node.getChildCount() < 1) {
                             if (e.getClickCount() > 1) {
-                                BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + node);
+                                BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + node + "/" + node);
                                 bddConnexion = BddConnexion.getInstance();
                                 TreeBdd.this.getModel().populateFromBdd(bddConnexion, node);
                             }
@@ -131,15 +119,26 @@ public final class TreeBdd extends JTree {
 
                                     if (BddName != null) {
                                         if (!BddName.equals("")) {
-                                            BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + BddName); // C:/Users/U354706/Desktop/Tmp/
-                                            bddConnexion = BddConnexion.getInstance();
 
-                                            if (bddConnexion != null) {
-                                                TreeBdd.this.getModel().insertNodeInto(new DefaultMutableTreeNode(new Bdd(BddName), true),
-                                                        (DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent(),
-                                                        ((DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent())
-                                                                .getChildCount());
+                                            // Creation d'un nouveau dossier pour la base
+                                            try {
+                                                Files.createDirectories(
+                                                        Paths.get(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + BddName));
+
+                                                BddConnexion.setDbPath(
+                                                        Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + BddName + "/" + BddName); // C:/Users/U354706/Desktop/Tmp/
+                                                bddConnexion = BddConnexion.getInstance();
+
+                                                if (bddConnexion != null) {
+                                                    TreeBdd.this.getModel().insertNodeInto(new DefaultMutableTreeNode(new Bdd(BddName), true),
+                                                            (DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent(),
+                                                            ((DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent())
+                                                                    .getChildCount());
+                                                }
+                                            } catch (IOException e1) {
+                                                e1.printStackTrace();
                                             }
+
                                         }
 
                                     }
@@ -175,6 +174,7 @@ public final class TreeBdd extends JTree {
                                                 }
 
                                                 BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/"
+                                                        + TreeBdd.this.getSelectionPath().getLastPathComponent() + "/"
                                                         + TreeBdd.this.getSelectionPath().getLastPathComponent()); // C:/Users/U354706/Desktop/Tmp/
                                                 bddConnexion = BddConnexion.getInstance();
                                                 // Creation de la table dans la base
@@ -186,8 +186,7 @@ public final class TreeBdd extends JTree {
                                                                 .getChildCount());
                                                 // Creation d'un nouveau dossier dans le repertoire de la base
                                                 try {
-                                                    Files.createDirectories(
-                                                            Paths.get(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/" + FolderName));
+                                                    Files.createDirectories(Paths.get(BddConnexion.getDbParentFolder() + "/" + FolderName));
                                                 } catch (IOException e1) {
                                                     e1.printStackTrace();
                                                 }
@@ -207,23 +206,26 @@ public final class TreeBdd extends JTree {
                                 public void actionPerformed(ActionEvent e) {
 
                                     if (TreeBdd.this.getSelectionPath() != null) {
-                                        File fSup = new File(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/"
-                                                + TreeBdd.this.getSelectionPath().getLastPathComponent() + ".mv.db");
+                                        File folderSup = new File(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/"
+                                                + TreeBdd.this.getSelectionPath().getLastPathComponent());
 
-                                        if (fSup.exists()) {
+                                        if (folderSup.exists()) {
+                                            System.out.println("Dossier à supprimer : " + folderSup);
                                             if (bddConnexion != null) {
                                                 BddConnexion.close();
+                                                bddConnexion = null;
                                             }
 
-                                            File fSupTrace = new File(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/"
-                                                    + TreeBdd.this.getSelectionPath().getLastPathComponent() + ".trace.db");
-                                            if (fSup.delete()) {
-                                                TreeBdd.this.getModel().removeNodeFromParent(
-                                                        (DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent());
+                                            if (folderSup.isDirectory()) {
+                                                System.out.println("C'est un dossier");
+                                                for (File f : folderSup.listFiles()) {
+                                                    f.delete();
+                                                }
+                                                if (folderSup.delete()) {
+                                                    TreeBdd.this.getModel().removeNodeFromParent(
+                                                            (DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent());
 
-                                                JOptionPane.showMessageDialog(null, "Bdd supprimee");
-                                                if (fSupTrace.exists()) {
-                                                    fSupTrace.delete();
+                                                    JOptionPane.showMessageDialog(null, "Bdd supprimee");
                                                 }
                                             }
                                         }
@@ -242,13 +244,31 @@ public final class TreeBdd extends JTree {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
 
-                                    BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/"
-                                            + ((DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent()).getParent());
-                                    bddConnexion = BddConnexion.getInstance();
-                                    System.out.println(TreeBdd.this.getModel().removeXmlFolder(bddConnexion,
-                                            (DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent()));
-                                    ((DefaultTreeModel) TreeBdd.this.getModel())
-                                            .removeNodeFromParent((DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent());
+                                    if (TreeBdd.this.getSelectionPath() != null) {
+
+                                        File folderSup = new File(
+                                                BddConnexion.getDbParentFolder() + "/" + TreeBdd.this.getSelectionPath().getLastPathComponent());
+
+                                        if (folderSup.isDirectory()) {
+                                            System.out.println("XmlFolder à supprimer : " + folderSup);
+                                            for (File f : folderSup.listFiles()) {
+                                                f.delete();
+                                            }
+                                            if (folderSup.delete()) {
+                                                BddConnexion.setDbPath(Preference.getPreference(Preference.KEY_PATH_FOLDER_DB) + "/"
+                                                        + ((DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent())
+                                                                .getParent()
+                                                        + "/" + ((DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent())
+                                                                .getParent());
+                                                bddConnexion = BddConnexion.getInstance();
+                                                System.out.println(TreeBdd.this.getModel().removeXmlFolder(bddConnexion,
+                                                        (DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent()));
+                                                ((DefaultTreeModel) TreeBdd.this.getModel()).removeNodeFromParent(
+                                                        (DefaultMutableTreeNode) TreeBdd.this.getSelectionPath().getLastPathComponent());
+                                            }
+                                        }
+
+                                    }
 
                                 }
                             });
@@ -305,6 +325,12 @@ public final class TreeBdd extends JTree {
     private final class MyTreeRenderer extends DefaultTreeCellRenderer {
 
         private static final long serialVersionUID = 1L;
+
+        private static final String ICON_DB = "/db_icon_16.png";
+        private static final String ICON_XML = "/xml_icon_16.png";
+        private static final String ICON_WP_FOLDER = "/wpfolder_icon_16.png";
+        private static final String ICON_DB_FOLDER = "/dbfolder_icon_16.png";
+
         private JLabel component;
         private DefaultMutableTreeNode node;
 
