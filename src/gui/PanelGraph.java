@@ -1,4 +1,4 @@
-package visu;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -12,8 +12,8 @@ import javax.swing.JRadioButton;
 import javax.swing.border.LineBorder;
 
 import cdf.Variable;
-import graph.SurfaceChart;
-import graph.XYChart;
+import chart.SurfaceChart;
+import chart.XYChart;
 
 public final class PanelGraph extends JComponent {
 
@@ -28,7 +28,6 @@ public final class PanelGraph extends JComponent {
 
     static {
         panBtRadio.setBorder(LineBorder.createBlackLineBorder());
-        panCard.setBorder(LineBorder.createBlackLineBorder());
     }
 
     public PanelGraph() {
@@ -55,7 +54,6 @@ public final class PanelGraph extends JComponent {
         public void actionPerformed(ActionEvent e) {
             cardLayout.show(panCard, e.getActionCommand());
         }
-
     }
 
     public final JPanel getPanCard() {

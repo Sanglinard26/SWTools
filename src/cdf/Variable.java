@@ -17,8 +17,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import gui.TableView;
 import paco.TableModelView;
-import visu.TableView;
 
 public abstract class Variable {
 

@@ -1,6 +1,5 @@
-package visu;
+package gui;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
@@ -12,9 +11,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
-import javax.swing.plaf.nimbus.NimbusStyle;
-import javax.swing.plaf.synth.SynthLookAndFeel;
 
 import tools.Preference;
 
@@ -28,14 +24,9 @@ public class SWToolsMain {
 
 		try {
 			
-			//SynthLookAndFeel synth = new SynthLookAndFeel();
-			//synth.load(SWToolsMain.class.getResourceAsStream("/synthDemo.xml"), SWToolsMain.class);
-			//UIManager.setLookAndFeel(synth);
-
 			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 				if (Preference.getPreference(Preference.KEY_NOM_LF).equals(info.getName())) {
 					try {
-						paramUI(info.getName());
 						UIManager.setLookAndFeel(info.getClassName());
 					} catch (ClassNotFoundException e1) {
 						e1.printStackTrace();
@@ -87,34 +78,6 @@ public class SWToolsMain {
 
 	public static File getLogFile() {
 		return logFile;
-	}
-
-	public static void paramUI(String lf)
-	{
-		switch (lf) {
-		case "Windows":
-
-			break;
-		case "Metal":
-
-			break;
-		case "Nimbus":
-			//UIManager.put("nimbusBase", Color.GRAY);
-			//UIManager.put("nimbusBlueGrey", Color.GRAY);
-			//UIManager.put("nimbusLightBackground", Color.LIGHT_GRAY);
-			//UIManager.put("control", Color.GRAY);
-			//UIManager.put("text", Color.WHITE);
-			//UIManager.put("nimbusOrange", Color.GRAY);
-			//UIManager.put("nimbusFocus", Color.WHITE);
-			
-			//UIManager.put("info", Color.BLACK);
-			
-			//UIManager.put("Label.foreground", new Color(100,100,100));
-			//UIManager.put("TextField.foreground", Color.BLACK);
-			break;
-
-		}
-
 	}
 
 }

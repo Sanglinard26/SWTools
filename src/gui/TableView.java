@@ -1,4 +1,4 @@
-package visu;
+package gui;
 
 import java.awt.Component;
 

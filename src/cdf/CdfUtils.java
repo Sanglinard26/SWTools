@@ -5,9 +5,9 @@ package cdf;
 
 import java.util.ArrayList;
 
+import gui.SWToolsMain;
 import paco.PaCo;
 import tools.Utilitaire;
-import visu.SWToolsMain;
 
 public final class CdfUtils {
 

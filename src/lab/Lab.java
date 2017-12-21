@@ -22,10 +22,10 @@ import org.xml.sax.SAXException;
 import tools.Preference;
 
 public final class Lab {
+	
 	private String path = "";
 	private String name = "";
 	private File fileLab;
-	private Variable var;
 	private final ArrayList<Variable> listVariable = new ArrayList<Variable>();
 
 	// PaCo
@@ -44,14 +44,13 @@ public final class Lab {
 		this.name = fileLab.getName();
 
 		try {
+			
+			final BufferedReader buf = new BufferedReader(new FileReader(fileLab));
 			String line;
-			BufferedReader buf;
 
-			buf = new BufferedReader(new FileReader(fileLab));
 			while ((line = buf.readLine()) != null) {
 				if (!line.equals("[Label]")) {
-					var = new Variable(line, fileLab.getName());
-					listVariable.add(var);
+					listVariable.add(new Variable(line.toString(), fileLab.getName()));
 				}
 			}
 			buf.close();
@@ -96,8 +95,7 @@ public final class Lab {
 				label = (Element) listSwInstance.item(i);
 				if (!label.getElementsByTagName("CATEGORY").item(0).getTextContent().equals("AXIS_VALUES"))
 				{
-					var = new Variable(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(), fileLab.getName());
-					listVariable.add(var);
+					listVariable.add(new Variable(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(), fileLab.getName()));
 				}
 			}
 		}
@@ -113,21 +111,21 @@ public final class Lab {
 		return this.name.equals(obj.toString());
 	}
 
-	public String getPath() {
+	public final String getPath() {
 		return path;
 	}
 
-	public String getName() {
+	public final String getName() {
 		return name;
 	}
 
-	public ArrayList<Variable> getListVariable() {
+	public final ArrayList<Variable> getListVariable() {
 		return listVariable;
 	}
 
-	public static Lab compilLab(ArrayList<Lab> arrayLab) {
-		Lab multiLab = new Lab();
-		ArrayList<Variable> listVarMultiLab = multiLab.getListVariable();
+	public static final Lab compilLab(ArrayList<Lab> arrayLab) {
+		final Lab multiLab = new Lab();
+		final ArrayList<Variable> listVarMultiLab = multiLab.getListVariable();
 		for (Lab lab : arrayLab) {
 			multiLab.name = multiLab.name + " / " + lab.getName();
 			listVarMultiLab.addAll(lab.getListVariable());
@@ -136,26 +134,26 @@ public final class Lab {
 	}
 
 	// Donne les labels qu'il y a en plus
-	public ArrayList<Variable> getDiffLab(Lab lab) {
-		ArrayList<Variable> diffLab = new ArrayList<Variable>(this.listVariable);
+	public final ArrayList<Variable> getDiffLab(Lab lab) {
+		final ArrayList<Variable> diffLab = new ArrayList<Variable>(this.listVariable);
 		diffLab.removeAll(lab.getListVariable());
 		return diffLab;
 	}
 
-	public static void ecrireRapport(Lab ref, Lab work) {
+	public static final void ecrireRapport(Lab ref, Lab work) {
 		try {
 			final ArrayList<Variable> labelSup = work.getDiffLab(ref);
 			final ArrayList<Variable> labelDisp = ref.getDiffLab(work);
 
-			JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_RESULT_LAB));
+			final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_RESULT_LAB));
 			fileChooser.setDialogTitle("Enregistement du rapport");
 			fileChooser.setSelectedFile(new File(".txt"));
-			int rep = fileChooser.showSaveDialog(null);
+			final int rep = fileChooser.showSaveDialog(null);
 
 			if (rep == JFileChooser.APPROVE_OPTION) {
-				File rapport = fileChooser.getSelectedFile();
+				final File rapport = fileChooser.getSelectedFile();
 
-				PrintWriter printWriter = new PrintWriter(rapport);
+				final PrintWriter printWriter = new PrintWriter(rapport);
 
 				printWriter.println(" -------------------------------");
 				printWriter.println("| RAPPORT DE COMPARAISON DE LAB |");

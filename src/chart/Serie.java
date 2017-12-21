@@ -7,7 +7,7 @@ import java.util.List;
 public final class Serie {
 
     private final String serieName;
-    private List<XYPoint> points;
+    private final List<XYPoint> points;
     private Color color;
 
     public Serie(String serieName) {
@@ -91,11 +91,11 @@ public final class Serie {
             this.y = y;
         }
 
-        public double getX() {
+        public final double getX() {
             return x;
         }
 
-        public double getY() {
+        public final double getY() {
             return y;
         }
 

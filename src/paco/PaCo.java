@@ -31,9 +31,9 @@ import cdf.Observable;
 import cdf.Scalaire;
 import cdf.ValueBlock;
 import cdf.Variable;
+import gui.Observer;
+import gui.PanelCDF;
 import tools.Utilitaire;
-import visu.Observer;
-import visu.PanelCDF;
 
 public final class PaCo implements Cdf, Observable {
 

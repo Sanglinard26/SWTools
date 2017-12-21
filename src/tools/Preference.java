@@ -23,7 +23,7 @@ public final class Preference {
 
     private static final Preferences preferences = Preferences.userRoot().node("swtools");
 
-    public static String getPreference(String key) {
+    public static final String getPreference(String key) {
         String defValue;
         switch (key) {
         case KEY_ADD_LAB:
@@ -51,7 +51,7 @@ public final class Preference {
         return preferences.get(key, defValue);
     }
 
-    public static void setPreference(String key, String value) {
+    public static final void setPreference(String key, String value) {
         preferences.put(key, value);
     }
 

@@ -1,7 +1,7 @@
 /*
  * Creation : 4 mai 2017
  */
-package visu;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

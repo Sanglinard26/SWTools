@@ -1,6 +1,5 @@
-package visu;
+package gui;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 
@@ -23,7 +22,6 @@ public final class PanelInfoVariable extends JComponent {
     public PanelInfoVariable(final Variable variable) {
 
         this.setLayout(new GridLayout(1, 1));
-        this.setBackground(Color.WHITE);
 
         infoVariable.setText(null);
 

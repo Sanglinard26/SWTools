@@ -1,4 +1,4 @@
-package visu;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -44,6 +44,7 @@ public final class Ihm extends JFrame {
 	private static final String ICON_LOG = "/log_icon_16.png";
 	private static final String ICON_CONTACT = "/contact_icon_16.png";
 	private static final String ICON_AIDE = "/manuel_icon_16.png";
+	private static final String ICON_NEWS = "/new_icon_16.png";
 
 	private final JMenuBar menuBar = new JMenuBar();
 	private JMenu menu, subMenu;
@@ -62,8 +63,9 @@ public final class Ihm extends JFrame {
 	private static FrameContact fi = null;
 	private static FrameLog fl = null;
 	private static FrameAide fa = null;
+	private static FrameNews fn = null;
 
-	private static final Boolean debugBDD = true;
+	private static final boolean debugBDD = true;
 
 	public Ihm() {
 
@@ -102,7 +104,7 @@ public final class Ihm extends JFrame {
 		group.add(radioMenuItem);
 		subMenu.add(radioMenuItem);
 
-		Enumeration<AbstractButton> enumAb = group.getElements();
+		final Enumeration<AbstractButton> enumAb = group.getElements();
 		AbstractButton ab;
 		while(enumAb.hasMoreElements())
 		{
@@ -219,8 +221,25 @@ public final class Ihm extends JFrame {
 			}
 		});
 		menu.add(menuItem);
-		menuBar.add(menu);
+		
+		menu.addSeparator();
 
+		menuItem = new JMenuItem(new AbstractAction("Nouveautes", new ImageIcon(getClass().getResource(ICON_NEWS))) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				if (fn == null) {
+					fn = new FrameNews();
+				} else {
+					fn.setVisible(true);
+				}
+			}
+		});
+		menu.add(menuItem);
+		
+		menuBar.add(menu);
 		setJMenuBar(menuBar);
 		//
 
@@ -270,7 +289,6 @@ public final class Ihm extends JFrame {
 			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 				if (action.getActionCommand().equals(info.getName())) {
 					try {
-						SWToolsMain.paramUI(info.getName());
 						UIManager.setLookAndFeel(info.getClassName());
 						SwingUtilities.updateComponentTreeUI(Ihm.this);
 						Preference.setPreference(Preference.KEY_NOM_LF, action.getActionCommand());

@@ -1,4 +1,4 @@
-package graph;
+package chart;
 
 import java.awt.BorderLayout;
 
@@ -32,6 +32,8 @@ public final class SurfaceChart extends JComponent {
     public SurfaceChart(final Variable variable) {
 
         if (variable instanceof Map) {
+        	
+        	final Map map = (Map) variable;
 
             this.setLayout(new BorderLayout());
 
@@ -43,7 +45,7 @@ public final class SurfaceChart extends JComponent {
                 public double getValue(double x, double y) {
                     if (x != 0 & y != 0) {
                         try {
-                            return Double.valueOf(((Map) variable).getValue((int) y, (int) x));
+                            return Double.valueOf(map.getValue((int) y, (int) x));
                         } catch (NumberFormatException nbfEx) {
                             return Double.NaN;
                         }
@@ -53,22 +55,22 @@ public final class SurfaceChart extends JComponent {
             };
 
             // Erreur sur les axes (nom)
-            final Chart3D chart = Chart3DFactory.createSurfaceChart("", "", function, "X [" + ((Map) variable).getUnitX() + "]",
-                    "Z [" + ((Map) variable).getUnitZ() + "]", "Y [" + ((Map) variable).getUnitY() + "]");
+            final Chart3D chart = Chart3DFactory.createSurfaceChart("", "", function, "X [" + map.getUnitX() + "]",
+                    "Z [" + map.getUnitZ() + "]", "Y [" + map.getUnitY() + "]");
             final XYZPlot plot = (XYZPlot) chart.getPlot();
             plot.setDimensions(new Dimension3D(20, 10, 20));
 
             final ValueAxis3D xAxis = plot.getXAxis();
-            xAxis.setRange(1, ((Map) variable).getValues()[0].length - 1);
+            xAxis.setRange(1, map.getValues()[0].length - 1);
 
             final ValueAxis3D zAxis = plot.getZAxis();
-            zAxis.setRange(1, ((Map) variable).getValues().length - 1);
+            zAxis.setRange(1, map.getValues().length - 1);
             final SurfaceRenderer renderer = (SurfaceRenderer) plot.getRenderer();
-            if (((Map) variable).getMaxZValue() - ((Map) variable).getMinZValue() != 0)
-                renderer.setColorScale(new RainbowScale(new Range(((Map) variable).getMinZValue(), ((Map) variable).getMaxZValue())));
+            if (map.getMaxZValue() - map.getMinZValue() != 0)
+                renderer.setColorScale(new RainbowScale(new Range(map.getMinZValue(), map.getMaxZValue())));
             renderer.setDrawFaceOutlines(false);
-            renderer.setXSamples(((Map) variable).getDimX() - 1);
-            renderer.setZSamples(((Map) variable).getDimY() - 1);
+            renderer.setXSamples(map.getDimX() - 1);
+            renderer.setZSamples(map.getDimY() - 1);
             chart.setLegendPosition(LegendAnchor.BOTTOM_CENTER, Orientation.HORIZONTAL);
 
             final Chart3DPanel chartPanel = new Chart3DPanel(chart);

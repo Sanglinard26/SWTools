@@ -1,7 +1,7 @@
 /*
  * Creation : 9 mars 2017
  */
-package visu;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;

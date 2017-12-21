@@ -1,7 +1,7 @@
 /*
  * Creation : 6 avr. 2017
  */
-package visu;
+package gui;
 
 import java.awt.Color;
 import java.awt.Component;

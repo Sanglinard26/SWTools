@@ -11,6 +11,7 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
+import gui.SWToolsMain;
 import jxl.Workbook;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
@@ -24,7 +25,6 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
-import visu.SWToolsMain;
 
 public final class ExportUtils {
 

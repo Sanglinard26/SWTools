@@ -19,26 +19,26 @@ public final class SeriesCollection {
         }
     }
 
-    public void addSerie(Serie serie) {
+    public final void addSerie(Serie serie) {
         if (!series.contains(serie))
             series.add(serie);
     }
 
-    public void removeAllSeries() {
+    public final void removeAllSeries() {
         if (!series.isEmpty())
             series.clear();
     }
 
-    public void removeSerie(Serie serie) {
+    public final void removeSerie(Serie serie) {
         if (series.contains(serie))
             series.remove(serie);
     }
 
-    public Serie getSerie(int index) {
+    public final Serie getSerie(int index) {
         return series.get(index);
     }
 
-    public int getSeriesCount() {
+    public final int getSeriesCount() {
         return series.size();
     }
 

@@ -1,4 +1,4 @@
-package graph;
+package chart;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -10,10 +10,6 @@ import javax.swing.SwingConstants;
 import cdf.Curve;
 import cdf.Map;
 import cdf.Variable;
-import chart.PanelXYChart;
-import chart.PanelXYPlot;
-import chart.Serie;
-import chart.SeriesCollection;
 import tools.Utilitaire;
 
 public final class XYChart extends JComponent {
@@ -60,7 +56,7 @@ public final class XYChart extends JComponent {
 
         seriesCollection.addSerie(serie);
 
-        this.add(new PanelXYChart(new PanelXYPlot("Y = f(X)", "X [" + curve.getUnitX() + "]", "Y [" + curve.getUnitZ() + "]", seriesCollection, true),
+        this.add(new PanelXYChart(new PanelXYPlot("Y = f(X)", "X [" + curve.getUnitX() + "]", "Y [" + curve.getUnitZ() + "]", seriesCollection),
                 PanelXYChart.RIGHT_POSITION, false));
     }
 
@@ -90,7 +86,7 @@ public final class XYChart extends JComponent {
             seriesCollection.addSerie(serie);
         }
 
-        this.add(new PanelXYChart(new PanelXYPlot("Z = f(Y)", "Y [" + map.getUnitY() + "]", "Z [" + map.getUnitZ() + "]", seriesCollection, true),
+        this.add(new PanelXYChart(new PanelXYPlot("Z = f(Y)", "Y [" + map.getUnitY() + "]", "Z [" + map.getUnitZ() + "]", seriesCollection),
                 PanelXYChart.RIGHT_POSITION, true));
     }
 
@@ -119,7 +115,7 @@ public final class XYChart extends JComponent {
             seriesCollection.addSerie(serie);
         }
 
-        this.add(new PanelXYChart(new PanelXYPlot("Z = f(X)", "X [" + map.getUnitX() + "]", "Z [" + map.getUnitZ() + "]", seriesCollection, true),
+        this.add(new PanelXYChart(new PanelXYPlot("Z = f(X)", "X [" + map.getUnitX() + "]", "Z [" + map.getUnitZ() + "]", seriesCollection),
                 PanelXYChart.LEFT_POSITION, true));
     }
 

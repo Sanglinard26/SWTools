@@ -1,7 +1,7 @@
 /*
  * Creation : 6 avr. 2017
  */
-package visu;
+package gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -92,7 +92,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
             PanelCDF.razUI();
         }
 
-        int moveMe = ListCdf.this.getSelectedIndex();
+        final int moveMe = ListCdf.this.getSelectedIndex();
 
         if (e.isControlDown() & e.getKeyCode() == KeyEvent.VK_UP) {
 
@@ -265,16 +265,25 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     @Override
                     public void actionPerformed(ActionEvent e) {
 
-                        Cdf cdfCompar = CdfUtils.comparCdf(ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0]),
-                                ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[1]), PanelCDF.getRadiobtval().isSelected());
-
-                        if (cdfCompar != null) {
-                            ListCdf.this.getModel().addCdf(cdfCompar);
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Pas de différence de valeur entre les deux fichiers", null,
-                                    JOptionPane.INFORMATION_MESSAGE);
-                        }
-
+                    	final Thread thread = new Thread(new Runnable() {
+							
+							@Override
+							public void run() {
+								
+								Cdf cdfCompar = CdfUtils.comparCdf(ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0]),
+		                                ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[1]), PanelCDF.getRadiobtval().isSelected());
+								
+								if (cdfCompar != null) {
+		                            ListCdf.this.getModel().addCdf(cdfCompar);
+		                            JOptionPane.showMessageDialog(null, "Comparaison terminee !", null,
+		                                    JOptionPane.INFORMATION_MESSAGE);
+		                        } else {
+		                            JOptionPane.showMessageDialog(null, "Pas de difference de valeur entre les deux fichiers", null,
+		                                    JOptionPane.INFORMATION_MESSAGE);
+		                        }
+							}
+						});
+                    	thread.start();		
                     }
                 });
                 menu.add(menuItem);
@@ -288,7 +297,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
         public void actionPerformed(ActionEvent e) {
 
-            int moveMe = ListCdf.this.getSelectedIndex();
+            final int moveMe = ListCdf.this.getSelectedIndex();
 
             if (e.getActionCommand().equals("Monter")) {
                 if (moveMe != 0) {
@@ -307,8 +316,8 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     }
 
     private final void swap(int a, int b) {
-        Cdf aObject = getModel().getElementAt(a);
-        Cdf bObject = getModel().getElementAt(b);
+        final Cdf aObject = getModel().getElementAt(a);
+        final Cdf bObject = getModel().getElementAt(b);
         getModel().set(a, bObject);
         getModel().set(b, aObject);
     }

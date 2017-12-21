@@ -175,18 +175,18 @@ public final class PanelXYChart extends JComponent {
             fileChooser.addChoosableFileFilter(filter);
             fileChooser.setFileFilter(filter);
 
-            int option = fileChooser.showSaveDialog(PanelXYChart.this);
+            final int option = fileChooser.showSaveDialog(PanelXYChart.this);
             if (option == 0) {
                 String filename = fileChooser.getSelectedFile().getPath();
                 if (!filename.endsWith(".jpg")) {
                     filename = filename + ".jpg";
                 }
-                Dimension2D size = PanelXYChart.this.getSize();
-                int w = (int) size.getWidth();
-                int h = (int) size.getHeight();
-                BufferedImage image = new BufferedImage(w, h, 1);
+                final Dimension2D size = PanelXYChart.this.getSize();
+                final int w = (int) size.getWidth();
+                final int h = (int) size.getHeight();
+                final BufferedImage image = new BufferedImage(w, h, 1);
 
-                Graphics2D g2 = image.createGraphics();
+                final Graphics2D g2 = image.createGraphics();
                 PanelXYChart.this.printAll(g2);
                 try {
                     ImageIO.write(image, "jpeg", new File(filename));

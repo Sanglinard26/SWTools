@@ -1,4 +1,4 @@
-package graph;
+package chart;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -20,14 +20,6 @@ public final class PieChart extends JComponent {
     private static final Color fullSlice = Color.BLUE;
 
     private static final Slice[] slices = new Slice[2];
-
-    public PieChart(Dimension dim, int value) {
-        this.dim = dim;
-        this.value = value;
-
-        slices[0] = new Slice(100 - value, emptySlice);
-        slices[1] = new Slice(value, fullSlice);
-    }
 
     public PieChart(Dimension dim) {
         this.dim = dim;
@@ -75,8 +67,9 @@ public final class PieChart extends JComponent {
     }
 
     private final class Slice {
-        private int value;
-        private Color color;
+    	
+        private final int value;
+        private final Color color;
 
         public Slice(int value, Color color) {
             this.value = value;

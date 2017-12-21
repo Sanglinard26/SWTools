@@ -3,56 +3,69 @@ package lab;
 import java.util.HashMap;
 
 public final class Variable {
-    private final String nom;
-    private final String nomLab;
-    private final String type;
-    private static final HashMap<String, String> mapTypeVar = new HashMap<String, String>();
+	
+	private final String nom;
+	private final String nomLab;
+	private final String type;
+	private static final HashMap<String, String> mapTypeVar = new HashMap<String, String>(7)
+	{
+		private static final long serialVersionUID = 1L;
+		{	
+			put("C", "SCALAIRE");
+			put("T", "CURVE");
+			put("CUR", "CURVE");
+			put("M", "MAP");
+			put("MAP", "MAP");
+			put("GMAP", "MAP");
+			put("CA", "VALUEBLOCK");
+		}
+	};
 
-    public Variable(String nom, String nomLab) {
-        this.nom = nom;
-        this.nomLab = nomLab;
-        initMapTypeVar();
-        this.type = findType();
-    }
+	public Variable(String nom, String nomLab) {
+		this.nom = nom;
+		this.nomLab = nomLab;
+		this.type = findType();
+	}
 
-    private static void initMapTypeVar() {
-        mapTypeVar.put("C", "SCALAIRE");
-        mapTypeVar.put("T", "CURVE");
-        mapTypeVar.put("M", "MAP");
-        mapTypeVar.put("CA", "VALUEBLOCK");
-    }
+	public final String getNom() {
+		return this.nom;
+	}
 
-    public String getNom() {
-        return this.nom;
-    }
+	public final String getNomLab() {
+		return nomLab;
+	}
 
-    public String getNomLab() {
-        return nomLab;
-    }
+	public final String getType() {
+		return type;
+	}
 
-    public String getType() {
-        return type;
-    }
+	private final String findType() {
+		
+		final StringBuffer stringbuffer = new StringBuffer(this.nom);
+		final int idxUnderscore = stringbuffer.lastIndexOf("_");
+		
+		if(idxUnderscore>-1)
+		{
+			final String lettreType = stringbuffer.substring(idxUnderscore+1, nom.length());
+			final String type = mapTypeVar.get(lettreType);
+			
+			if (type != null) {
+				return type;
+			}
+			return "INCONNU";
+		}else{
+			return "INCONNU";
+		}
+	}
 
-    private String findType() {
-        StringBuffer stringbuffer = new StringBuffer(this.nom);
-        String lettreType = stringbuffer.substring(nom.length() - 2, nom.length());
-        lettreType = lettreType.replace("_", "");
+	@Override
+	public String toString() {
+		return nom;
+	}
 
-        if (mapTypeVar.get(lettreType) != null) {
-            return mapTypeVar.get(lettreType);
-        }
-        return "INCONNU";
-    }
-
-    @Override
-    public String toString() {
-        return nom;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return nom.equals(obj.toString());
-    }
+	@Override
+	public boolean equals(Object obj) {
+		return nom.equals(obj.toString());
+	}
 
 }

@@ -35,7 +35,7 @@ public final class Utilitaire {
         return ext;
     }
 
-    public static String cutNumber(String number) {
+    public static final String cutNumber(String number) {
         return number.indexOf(".") < 0 ? number : number.replaceAll("0*$", "").replaceAll("\\.$", "");
     } // Fin methode
 
@@ -50,7 +50,7 @@ public final class Utilitaire {
     }
 
     public static final void createDtd(String pathFolder) {
-        File dtd = new File(pathFolder + "/" + DTD);
+        final File dtd = new File(pathFolder + "/" + DTD);
         dtd.deleteOnExit();
         if (!dtd.exists()) {
             final InputStream myDtd = Utilitaire.class.getResourceAsStream("/" + DTD);

@@ -1,7 +1,7 @@
 /*
  * Creation : 27 janv. 2017
  */
-package visu;
+package gui;
 
 import javax.swing.JList;
 

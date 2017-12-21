@@ -40,7 +40,7 @@ public final class TableModelView extends AbstractTableModel {
         return "";
     }
 
-    public void setData(String[][] data) {
+    public final void setData(String[][] data) {
         this.values = data;
 
         final int nbCol = values[0].length;

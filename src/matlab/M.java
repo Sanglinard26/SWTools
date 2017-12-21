@@ -20,8 +20,8 @@ import cdf.Observable;
 import cdf.Scalaire;
 import cdf.ValueBlock;
 import cdf.Variable;
-import visu.Observer;
-import visu.PanelCDF;
+import gui.Observer;
+import gui.PanelCDF;
 
 public final class M implements Cdf, Observable {
 

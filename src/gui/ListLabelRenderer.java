@@ -1,4 +1,4 @@
-package visu;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,7 +17,7 @@ import javax.swing.border.LineBorder;
 
 import cdf.Cdf;
 import cdf.Variable;
-import graph.PieChart;
+import chart.PieChart;
 
 public final class ListLabelRenderer extends JPanel implements ListCellRenderer<Variable> {
 

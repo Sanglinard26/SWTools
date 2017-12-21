@@ -1,7 +1,7 @@
 /*
  * Creation : 27 janv. 2017
  */
-package visu;
+package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

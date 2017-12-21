@@ -1,6 +1,6 @@
 package cdf;
 
-import visu.Observer;
+import gui.Observer;
 
 public interface Observable {
 
