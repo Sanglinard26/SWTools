@@ -52,6 +52,8 @@ public final class M implements Cdf, Observable {
         this.name = file.getName().substring(0, file.getName().length() - 2);
 
         this.parse(file);
+        
+        listObserver.clear(); // Plus besoin d'observer
 
     }
 
@@ -72,7 +74,7 @@ public final class M implements Cdf, Observable {
 
             String subString;
 
-            while (readLineDcm() != null) {
+            while (readLineM() != null) {
 
                 notifyObserver(this.name, nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
 
@@ -202,7 +204,7 @@ public final class M implements Cdf, Observable {
         }
     }
 
-    private final String readLineDcm() {
+    private final String readLineM() {
         try {
             numLine++;
             return line = buf.readLine();

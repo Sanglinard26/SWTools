@@ -6,7 +6,7 @@ package cdf;
 import java.util.ArrayList;
 
 import gui.SWToolsMain;
-import paco.PaCo;
+import paco.Paco;
 import tools.Utilitaire;
 
 public final class CdfUtils {
@@ -129,7 +129,7 @@ public final class CdfUtils {
                     }
                 }
             }
-            return new PaCo(cdfRef.getName() + "_vs_" + cdfWork.getName(), listCompa);
+            return new Paco(cdfRef.getName() + "_vs_" + cdfWork.getName(), listCompa);
         }
         return null;
     }

@@ -20,8 +20,8 @@ public final class Map extends Variable {
 
         float value;
 
-        for (short x = 1; x < values[0].length; x++) {
-            for (short y = 1; y < values.length; y++) {
+        for (short x = 1; x < dimX; x++) {
+            for (short y = 1; y < dimY; y++) {
                 if (values[y][x] != null) {
                     try {
 
@@ -165,8 +165,8 @@ public final class Map extends Variable {
 
         double valCheck = 0;
 
-        for (short x = 0; x < values[0].length; x++) {
-            for (short y = 0; y < values.length; y++) {
+        for (short x = 0; x < dimX; x++) {
+            for (short y = 0; y < dimY; y++) {
                 valCheck += values[y][x].hashCode();
             }
         }

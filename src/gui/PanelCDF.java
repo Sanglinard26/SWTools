@@ -43,7 +43,7 @@ import cdf.ListModelLabel;
 import cdf.Variable;
 import dcm.Dcm;
 import matlab.M;
-import paco.PaCo;
+import paco.Paco;
 import tools.Preference;
 import tools.Utilitaire;
 
@@ -131,7 +131,7 @@ public final class PanelCDF extends JComponent implements Observer {
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() == false & !listCDF.isSelectionEmpty()) {
 
-                    Variable oldVar = listLabel.getSelectedValue();
+                    final Variable oldVar = listLabel.getSelectedValue();
 
                     razUI();
 
@@ -282,17 +282,11 @@ public final class PanelCDF extends JComponent implements Observer {
             final int reponse = jFileChooser.showOpenDialog(PanelCDF.this);
             if (reponse == JFileChooser.APPROVE_OPTION) {
 
-                boolean needDTD = false;
-
                 for (File f : jFileChooser.getSelectedFiles()) {
                     if (Utilitaire.getExtension(f).equals("xml")) {
-                        needDTD = true;
+                        Utilitaire.createDtd(jFileChooser.getSelectedFile().getParent());
                         break;
                     }
-                }
-
-                if (needDTD) {
-                    Utilitaire.createDtd(jFileChooser.getSelectedFile().getParent());
                 }
 
                 pm = new ProgressMonitor(PanelCDF.this, "Fichier :", "...", 0, 0);
@@ -332,9 +326,9 @@ public final class PanelCDF extends JComponent implements Observer {
 
                         switch (Utilitaire.getExtension(file)) {
                         case "xml":
-                            cdf = new PaCo(file, PanelCDF.this);
+                            cdf = new Paco(file, PanelCDF.this);
 
-                            if (((PaCo) cdf).isValid()) {
+                            if (((Paco) cdf).isValid()) {
                                 listCDF.getModel().addCdf(cdf);
                             }
                             break;

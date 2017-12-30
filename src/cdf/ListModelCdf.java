@@ -34,7 +34,7 @@ public final class ListModelCdf extends AbstractListModel<Cdf> {
     }
 
     public final Cdf set(int index, Cdf element) {
-        Cdf cdf = listCdf.get(index);
+        final Cdf cdf = listCdf.get(index);
         listCdf.set(index, element);
         listCdfName.set(index, element.getName());
         fireContentsChanged(this, index, index);

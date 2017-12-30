@@ -35,6 +35,7 @@ public final class PanelXYPlot extends JPanel {
 	private final String title;
 	private final String xAxisLabel;
 	private final String yAxisLabel;
+	private final double[][] rangeXY;
 	
 	private List<SerieScale> listSeries;
 	private SeriesCollection seriesCollection;
@@ -52,6 +53,10 @@ public final class PanelXYPlot extends JPanel {
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
 		this.seriesCollection = seriesCollection;
+		
+		this.rangeXY = new double[2][2];
+		
+		fillRangeXY();
 
 		setPreferredSize(new Dimension(500, 500));
 	}
@@ -61,16 +66,26 @@ public final class PanelXYPlot extends JPanel {
 		super.paintComponent(g);
 
 		final Graphics2D g2 = (Graphics2D) g;
+		
+		final int height = getHeight();
+		final int width = getWidth();
 
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		final double minXvalue = this.rangeXY[0][0];
+		final double maxXvalue = this.rangeXY[0][1];
+		final double minYvalue = this.rangeXY[1][0];
+		final double maxYvalue = this.rangeXY[1][1];
+		final double diffXvalue = maxXvalue - minXvalue;
+		final double diffYvalue = maxYvalue - minYvalue;
 
-		final double xScale = ((double) getWidth() - (2 * PADDING) - LABEL_PADDING) / (getMaxXValue() - getMinXValue());
+		final double xScale = ((double) width - (2 * PADDING) - LABEL_PADDING) / (diffXvalue);
 		final double yScale;
 
-		if (getMaxYValue() - getMinYValue() != 0) {
-			yScale = ((double) getHeight() - (2 * PADDING) - LABEL_PADDING) / (getMaxYValue() - getMinYValue());
+		if (diffYvalue != 0) {
+			yScale = ((double) height - (2 * PADDING) - LABEL_PADDING) / (diffYvalue);
 		} else {
-			yScale = (double) getHeight() - (2 * PADDING) - LABEL_PADDING;
+			yScale = (double) height - (2 * PADDING) - LABEL_PADDING;
 		}
 
 		final int nbSerie = seriesCollection.getSeriesCount();
@@ -91,9 +106,9 @@ public final class PanelXYPlot extends JPanel {
 
 				for (int nPoint = 0; nPoint < serie.getPointsCount(); nPoint++) {
 
-					x1 = (int) ((serie.getPoints().get(nPoint).getX() - getMinXValue()) * xScale + PADDING + LABEL_PADDING);
+					x1 = (int) ((serie.getPoints().get(nPoint).getX() - minXvalue) * xScale + PADDING + LABEL_PADDING);
 
-					y1 = (int) ((getMaxYValue() - serie.getPoints().get(nPoint).getY()) * yScale + PADDING);
+					y1 = (int) ((maxYvalue - serie.getPoints().get(nPoint).getY()) * yScale + PADDING);
 
 					serieScale.add(new Point(x1, y1));
 				}
@@ -111,10 +126,10 @@ public final class PanelXYPlot extends JPanel {
 			metrics = g2.getFontMetrics();
 			labelWidth = metrics.stringWidth(title);
 			g2.setColor(Color.WHITE);
-			g2.fillRect(getWidth() / 2 - ((labelWidth + 10) / 2), 2, labelWidth + 10, 20);
+			g2.fillRect(width / 2 - ((labelWidth + 10) / 2), 2, labelWidth + 10, 20);
 			g2.setColor(Color.BLACK);
-			g2.drawRect(getWidth() / 2 - ((labelWidth + 10) / 2), 2, labelWidth + 10, 20);
-			g2.drawString(title, getWidth() / 2 - ((labelWidth) / 2), metrics.getHeight() + 2);
+			g2.drawRect(width / 2 - ((labelWidth + 10) / 2), 2, labelWidth + 10, 20);
+			g2.drawString(title, width / 2 - ((labelWidth) / 2), metrics.getHeight() + 2);
 		}
 
 		// draw xAxislabel
@@ -122,10 +137,10 @@ public final class PanelXYPlot extends JPanel {
 			metrics = g2.getFontMetrics();
 			labelWidth = metrics.stringWidth(xAxisLabel);
 			g2.setColor(Color.WHITE);
-			g2.fillRect(getWidth() / 2 - ((labelWidth + 10) / 2), getHeight() - 20 - 5, labelWidth + 10, 20);
+			g2.fillRect(width / 2 - ((labelWidth + 10) / 2), height - 20 - 5, labelWidth + 10, 20);
 			g2.setColor(Color.BLACK);
-			g2.drawRect(getWidth() / 2 - ((labelWidth + 10) / 2), getHeight() - 20 - 5, labelWidth + 10, 20);
-			g2.drawString(xAxisLabel, getWidth() / 2 - ((labelWidth) / 2), getHeight() - metrics.getHeight() + 2);
+			g2.drawRect(width / 2 - ((labelWidth + 10) / 2), height - 20 - 5, labelWidth + 10, 20);
+			g2.drawString(xAxisLabel, width / 2 - ((labelWidth) / 2), height - metrics.getHeight() + 2);
 		}
 
 		// draw yAxislabel
@@ -134,19 +149,19 @@ public final class PanelXYPlot extends JPanel {
 			labelWidth = metrics.stringWidth(yAxisLabel);
 
 			g2.setColor(Color.WHITE);
-			g2.fillRect(2, getHeight() / 2 - ((labelWidth + 10) / 2), 20, labelWidth + 10);
+			g2.fillRect(2, height / 2 - ((labelWidth + 10) / 2), 20, labelWidth + 10);
 			g2.setColor(Color.BLACK);
-			g2.drawRect(2, getHeight() / 2 - ((labelWidth + 10) / 2), 20, labelWidth + 10);
+			g2.drawRect(2, height / 2 - ((labelWidth + 10) / 2), 20, labelWidth + 10);
 
 			final AffineTransform orig = g2.getTransform();
 			g2.rotate(-Math.PI / 2);
-			g2.drawString(yAxisLabel, -(getHeight() / 2) - (labelWidth / 2), metrics.getHeight() + 2);
+			g2.drawString(yAxisLabel, -(height / 2) - (labelWidth / 2), metrics.getHeight() + 2);
 			g2.setTransform(orig);
 		}
 
 		// draw white background
 		g2.setColor(Color.WHITE);
-		g2.fillRect(PADDING + LABEL_PADDING, PADDING, getWidth() - (2 * PADDING) - LABEL_PADDING, getHeight() - 2 * PADDING - LABEL_PADDING);
+		g2.fillRect(PADDING + LABEL_PADDING, PADDING, width - (2 * PADDING) - LABEL_PADDING, height - 2 * PADDING - LABEL_PADDING);
 		g2.setColor(Color.BLACK);
 
 
@@ -155,13 +170,13 @@ public final class PanelXYPlot extends JPanel {
 		for (byte i = 0; i < NB_X_DIV + 1; i++) {
 			x0 = PADDING + LABEL_PADDING;
 			x1 = POINT_WIDTH + PADDING + LABEL_PADDING;
-			y0 = getHeight() - ((i * (getHeight() - PADDING * 2 - LABEL_PADDING)) / NB_X_DIV + PADDING + LABEL_PADDING);
+			y0 = height - ((i * (height - PADDING * 2 - LABEL_PADDING)) / NB_X_DIV + PADDING + LABEL_PADDING);
 			y1 = y0;
 			if (getNbXPoints() > 0) {
 				g2.setColor(GRID_COLOR);
-				g2.drawLine(PADDING + LABEL_PADDING + 1 + POINT_WIDTH, y0, getWidth() - PADDING, y1); // Dessin de la grille
+				g2.drawLine(PADDING + LABEL_PADDING + 1 + POINT_WIDTH, y0, width - PADDING, y1); // Dessin de la grille
 				g2.setColor(Color.BLACK);
-				yLabel = ((int) ((getMinYValue() + (getMaxYValue() - getMinYValue()) * ((i * 1.0) / NB_X_DIV)) * 100)) / 100.0 + "";
+				yLabel = ((int) ((minYvalue + (diffYvalue) * ((i * 1.0) / NB_X_DIV)) * 100)) / 100.0 + "";
 				metrics = g2.getFontMetrics();
 				labelWidth = metrics.stringWidth(yLabel);
 				g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
@@ -171,15 +186,15 @@ public final class PanelXYPlot extends JPanel {
 
 		// create hatch marks and grid lines for x axis.
 		for (byte i = 0; i < NB_Y_DIV + 1; i++) {
-			x0 = i * (getWidth() - PADDING * 2 - LABEL_PADDING) / NB_Y_DIV + PADDING + LABEL_PADDING;
+			x0 = i * (width - PADDING * 2 - LABEL_PADDING) / NB_Y_DIV + PADDING + LABEL_PADDING;
 			x1 = x0;
-			y0 = getHeight() - PADDING - LABEL_PADDING;
+			y0 = height - PADDING - LABEL_PADDING;
 			y1 = y0 - POINT_WIDTH;
 			if (getNbXPoints() > 0) {
 				g2.setColor(GRID_COLOR);
-				g2.drawLine(x0, getHeight() - PADDING - LABEL_PADDING - 1 - POINT_WIDTH, x1, PADDING); // Dessin de la grille
+				g2.drawLine(x0, height - PADDING - LABEL_PADDING - 1 - POINT_WIDTH, x1, PADDING); // Dessin de la grille
 				g2.setColor(Color.BLACK);
-				xLabel = ((int) ((getMinXValue() + (getMaxXValue() - getMinXValue()) * ((i * 1.0) / NB_Y_DIV)) * 100)) / 100.0 + "";
+				xLabel = ((int) ((minXvalue + (diffXvalue) * ((i * 1.0) / NB_Y_DIV)) * 100)) / 100.0 + "";
 				metrics = g2.getFontMetrics();
 				labelWidth = metrics.stringWidth(xLabel);
 				g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
@@ -188,8 +203,8 @@ public final class PanelXYPlot extends JPanel {
 		}
 
 		// create x and y axes
-		g2.drawLine(PADDING + LABEL_PADDING, getHeight() - PADDING - LABEL_PADDING, PADDING + LABEL_PADDING, PADDING);
-		g2.drawLine(PADDING + LABEL_PADDING, getHeight() - PADDING - LABEL_PADDING, getWidth() - PADDING, getHeight() - PADDING - LABEL_PADDING);
+		g2.drawLine(PADDING + LABEL_PADDING, height - PADDING - LABEL_PADDING, PADDING + LABEL_PADDING, PADDING);
+		g2.drawLine(PADDING + LABEL_PADDING, height - PADDING - LABEL_PADDING, width - PADDING, height - PADDING - LABEL_PADDING);
 
 		float hue = 0;
 		int xMark, yMark;
@@ -226,8 +241,9 @@ public final class PanelXYPlot extends JPanel {
 
 	}
 
-	public void markPoint(Graphics g, Point p) {
-		Graphics2D g2 = (Graphics2D) g;
+	public final void markPoint(Graphics g, Point p) {
+		
+		final Graphics2D g2 = (Graphics2D) g;
 
 		if (clip != null) {
 			if ((p.x - 10 / 2) != clip.x | (p.y - 10 / 2) != clip.y)
@@ -246,51 +262,49 @@ public final class PanelXYPlot extends JPanel {
 		g2.dispose();
 	}
 
-	public int getNbXPoints() {
+	public final int getNbXPoints() {
+		
+		final int nbSerie = seriesCollection.getSeriesCount();
 		int nbMaxXpoints = 0;
-		for (int i = 0; i < seriesCollection.getSeriesCount(); i++) {
+		
+		for (int i = 0; i < nbSerie; i++) {
 			nbMaxXpoints = Math.max(nbMaxXpoints, seriesCollection.getSerie(i).getPointsCount());
 		}
 		return nbMaxXpoints;
 	}
-
-	public double getMaxYValue() {
-		double maxValue = Double.NEGATIVE_INFINITY;
-		for (int i = 0; i < seriesCollection.getSeriesCount(); i++) {
-			maxValue = Math.max(maxValue, seriesCollection.getSerie(i).getMaxYValue());
+	
+	private final void fillRangeXY()
+	{
+		double minXValue = Double.POSITIVE_INFINITY;
+		double maxXValue = Double.NEGATIVE_INFINITY;
+		double minYValue = Double.POSITIVE_INFINITY;
+		double maxYValue = Double.NEGATIVE_INFINITY;
+		
+		double[][] rangeSerie;
+		
+		final int nbSerie = seriesCollection.getSeriesCount();
+		
+		for (int i = 0; i < nbSerie; i++) {
+			
+			rangeSerie = seriesCollection.getSerie(i).getRangeXY();
+			
+			minXValue = Math.min(minXValue, rangeSerie[0][0]);
+			maxXValue = Math.max(maxXValue, rangeSerie[0][1]);
+			minYValue = Math.min(minYValue, rangeSerie[1][0]);
+			maxYValue = Math.max(maxYValue, rangeSerie[1][1]);
 		}
-		return maxValue;
+		
+		this.rangeXY[0][0] = minXValue;
+		this.rangeXY[0][1] = maxXValue;
+		this.rangeXY[1][0] = minYValue;
+		this.rangeXY[1][1] = maxYValue;
 	}
 
-	public double getMaxXValue() {
-		double maxValue = Double.NEGATIVE_INFINITY;
-		for (int i = 0; i < seriesCollection.getSeriesCount(); i++) {
-			maxValue = Math.max(maxValue, seriesCollection.getSerie(i).getMaxXValue());
-		}
-		return maxValue;
-	}
-
-	public double getMinYValue() {
-		double minValue = Double.POSITIVE_INFINITY;
-		for (int i = 0; i < seriesCollection.getSeriesCount(); i++) {
-			minValue = Math.min(minValue, seriesCollection.getSerie(i).getMinYValue());
-		}
-		return minValue;
-	}
-
-	public double getMinXValue() {
-		double minValue = Double.POSITIVE_INFINITY;
-		for (int i = 0; i < seriesCollection.getSeriesCount(); i++) {
-			minValue = Math.min(minValue, seriesCollection.getSerie(i).getMinXValue());
-		}
-		return minValue;
-	}
-
-	public SeriesCollection getSeriesCollection() {
+	public final SeriesCollection getSeriesCollection() {
 		return seriesCollection;
 	}
 
-	public void setSeriesCollection(SeriesCollection seriesCollection) {
+	public final void setSeriesCollection(SeriesCollection seriesCollection) {
 		this.seriesCollection = seriesCollection;
 		invalidate();
 		this.repaint();

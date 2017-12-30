@@ -87,6 +87,8 @@ public final class Dcm implements Cdf, Observable {
         this.name = file.getName().substring(0, file.getName().length() - 4);
 
         this.parse(file);
+        
+        listObserver.clear(); // Plus besoin d'observer
 
     }
 

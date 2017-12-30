@@ -26,43 +26,42 @@ public final class Serie {
     public final List<XYPoint> getPoints() {
         return points;
     }
-
-    public final double getMaxYValue() {
-        double maxValue = Double.NEGATIVE_INFINITY;
-        for (int i = 0; i < points.size(); i++) {
-            maxValue = Math.max(maxValue, points.get(i).getY());
+    
+    public final double[][] getRangeXY()
+    {
+    	final double[][] range = new double[2][2];
+    	
+    	double minXValue = Double.POSITIVE_INFINITY;
+		double maxXValue = Double.NEGATIVE_INFINITY;
+		double minYValue = Double.POSITIVE_INFINITY;
+		double maxYValue = Double.NEGATIVE_INFINITY;
+    	
+		final int nbPoint = points.size();
+		
+		for (int i = 0; i < nbPoint; i++) {
+			minXValue = Math.min(minXValue, points.get(i).getX());
+			maxXValue = Math.max(maxXValue, points.get(i).getX());
+			minYValue = Math.min(minYValue, points.get(i).getY());
+			maxYValue = Math.max(maxYValue, points.get(i).getY());
         }
-        if (maxValue != Double.NEGATIVE_INFINITY) {
-            return maxValue;
+		
+		range[0][0] = minXValue;
+		range[0][1] = maxXValue;
+		
+		if (minYValue != Double.POSITIVE_INFINITY) {
+			range[1][0] = minYValue;
+        }else{
+        	range[1][0] = Double.NaN;
         }
-        return Double.NaN;
-    }
-
-    public final double getMaxXValue() {
-        double maxValue = Double.NEGATIVE_INFINITY;
-        for (int i = 0; i < points.size(); i++) {
-            maxValue = Math.max(maxValue, points.get(i).getX());
+		
+		if (maxYValue != Double.NEGATIVE_INFINITY) {
+			range[1][1] = maxYValue;
+        }else{
+        	range[1][1] = Double.NaN;
         }
-        return maxValue;
-    }
-
-    public final double getMinYValue() {
-        double minValue = Double.POSITIVE_INFINITY;
-        for (int i = 0; i < points.size(); i++) {
-            minValue = Math.min(minValue, points.get(i).getY());
-        }
-        if (minValue != Double.POSITIVE_INFINITY) {
-            return minValue;
-        }
-        return Double.NaN;
-    }
-
-    public final double getMinXValue() {
-        double minValue = Double.POSITIVE_INFINITY;
-        for (int i = 0; i < points.size(); i++) {
-            minValue = Math.min(minValue, points.get(i).getX());
-        }
-        return minValue;
+		
+		return range;
+    	
     }
 
     public final Color getColor() {

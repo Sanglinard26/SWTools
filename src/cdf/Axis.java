@@ -67,7 +67,7 @@ public final class Axis extends Variable {
 		
 		double valCheck = 0;
 		
-		for (short x = 0; x < zValues[0].length; x++)
+		for (short x = 0; x < dim; x++)
 		{
 			valCheck += getzValues(x).hashCode();
 		}

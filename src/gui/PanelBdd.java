@@ -33,7 +33,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import cdf.Cdf;
 import dcm.Dcm;
-import paco.PaCo;
+import paco.Paco;
 import tools.Preference;
 import tools.Utilitaire;
 
@@ -194,7 +194,7 @@ public final class PanelBdd extends JComponent {
 
                 switch (Utilitaire.getExtension(file)) {
                 case "xml":
-                    cdf = new PaCo(file, null);
+                    cdf = new Paco(file, null);
                     break;
                 case "dcm":
                     cdf = new Dcm(file, null);
