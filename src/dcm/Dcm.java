@@ -26,1096 +26,1092 @@ import tools.Utilitaire;
 
 public final class Dcm implements Cdf, Observable {
 
-    // Mot cle global
-    public static final String COMMENTAIRE = "*";
-    public static final String END = "END";
+	private static BufferedReader buf = null;
+	private static String line;
 
-    // Mot cle pour les variables
-    public static final String PARAMETER = "FESTWERT";
-    public static final String ARRAY = "FESTWERTEBLOCK";
-    public static final String MATRIX = "FESTWERTEBLOCK";
-    public static final String LINE = "KENNLINIE";
-    public static final String MAP = "KENNFELD";
-    public static final String FIXED_LINE = "FESTKENNLINIE";
-    public static final String FIXED_MAP = "FESTKENNFELD";
-    public static final String GROUP_LINE = "GRUPPENKENNLINIE";
-    public static final String GROUP_MAP = "GRUPPENKENNFELD";
-    public static final String DISTRIBUTION = "STUETZSTELLENVERTEILUNG";
-    public static final String TEXTSTRING = "TEXTSTRING";
+	private double checkSum = 0;
 
-    // Mot cle dans le bloc d'une variable
-    public static final String DESCRIPTION = "LANGNAME";
-    public static final String FONCTION = "FUNKTION";
-    public static final String UNITE_X = "EINHEIT_X";
-    public static final String UNITE_Y = "EINHEIT_Y";
-    public static final String UNITE_W = "EINHEIT_W";
-    public static final String AXE_X = "ST/X";
-    public static final String AXE_Y = "ST/Y";
-    public static final String AXE_X_TXT = "ST_TX/X";
-    public static final String AXE_Y_TXT = "ST_TX/Y";
-    public static final String VALEUR_NOMBRE = "WERT";
-    public static final String VALEUR_TEXT = "TEXT";
-    public static final String AXE_PARTAGE_X = "*SSTX";
-    public static final String AXE_PARTAGE_Y = "*SSTY";
+	private static int numLine;
 
-    private static BufferedReader buf = null;
-    private static String line;
+	private final String name;
+	private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
+	private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1);
 
-    private double checkSum = 0;
+	private final ArrayList<Observer> listObserver = new ArrayList<Observer>();
 
-    private static int numLine;
+	private static final NumberFormat nbf = NumberFormat.getInstance();
 
-    private final String name;
-    private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
-    private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1);
+	private final ArrayList<String> listCategory = new ArrayList<String>();
 
-    private final ArrayList<Observer> listObserver = new ArrayList<Observer>();
+	public Dcm(final File file, PanelCDF panCdf) {
 
-    private static final NumberFormat nbf = NumberFormat.getInstance();
+		numLine = 0;
 
-    private final ArrayList<String> listCategory = new ArrayList<String>();
+		if (panCdf != null)
+			addObserver(panCdf);
 
-    public Dcm(final File file, PanelCDF panCdf) {
+		nbf.setMaximumFractionDigits(1);
 
-        numLine = 0;
+		this.name = file.getName().substring(0, file.getName().length() - 4);
 
-        if (panCdf != null)
-            addObserver(panCdf);
+		this.parse(file);
 
-        nbf.setMaximumFractionDigits(1);
+		listObserver.clear(); // Plus besoin d'observer
 
-        this.name = file.getName().substring(0, file.getName().length() - 4);
+	}
 
-        this.parse(file);
-        
-        listObserver.clear(); // Plus besoin d'observer
+	private final void parse(File file) {
 
-    }
+		// Mot cle global
+		final String END = "END";
 
-    private final void parse(File file) {
+		// Mot cle pour les variables
+		final String PARAMETER = "FESTWERT";
+		final String MATRIX = "FESTWERTEBLOCK";
+		final String LINE = "KENNLINIE";
+		final String MAP = "KENNFELD";
+		final String FIXED_LINE = "FESTKENNLINIE";
+		final String FIXED_MAP = "FESTKENNFELD";
+		final String GROUP_LINE = "GRUPPENKENNLINIE";
+		final String GROUP_MAP = "GRUPPENKENNFELD";
+		final String DISTRIBUTION = "STUETZSTELLENVERTEILUNG";
+		final String TEXTSTRING = "TEXTSTRING";
 
-        final StringBuilder description = new StringBuilder();
-        final StringBuilder fonction = new StringBuilder();
-        String[] unite;
-        String[][] valeur;
+		// Mot cle dans le bloc d'une variable
+		final String DESCRIPTION = "LANGNAME";
+		final String FONCTION = "FUNKTION";
+		final String UNITE_X = "EINHEIT_X";
+		final String UNITE_Y = "EINHEIT_Y";
+		final String UNITE_W = "EINHEIT_W";
+		final String AXE_X = "ST/X";
+		final String AXE_Y = "ST/Y";
+		final String AXE_X_TXT = "ST_TX/X";
+		final String AXE_Y_TXT = "ST_TX/Y";
+		final String VALEUR_NOMBRE = "WERT";
+		final String VALEUR_TEXT = "TEXT";
 
-        try {
+		final StringBuilder description = new StringBuilder();
+		final StringBuilder fonction = new StringBuilder();
+		String[] unite;
+		String[][] valeur;
 
-            buf = new BufferedReader(new FileReader(file));
+		try {
 
-            final BufferedReader reader = new BufferedReader(new FileReader(file));
-            int nbLines = 0;
-            while (reader.readLine() != null)
-                nbLines++;
-            reader.close();
+			buf = new BufferedReader(new FileReader(file));
 
-            // String line;
-            String[] spaceSplitLine;
-            String[] spaceSplitLine2;
-            String[] quotesSplitLine;
-            String[] threeSpaceSplitLine;
+			final BufferedReader reader = new BufferedReader(new FileReader(file));
+			int nbLines = 0;
+			while (reader.readLine() != null)
+				nbLines++;
+			reader.close();
 
-            // Pour les LINE
-            final ArrayList<String> axeX = new ArrayList<String>();
-            final ArrayList<String> axeY = new ArrayList<String>();
+			// String line;
+			String[] spaceSplitLine;
+			String[] spaceSplitLine2;
+			String[] quotesSplitLine;
+			String[] threeSpaceSplitLine;
 
-            // Pour les MAP
-            int cnt;
-            final ArrayList<String> axeTmp = new ArrayList<String>();
+			// Pour les LINE
+			final ArrayList<String> axeX = new ArrayList<String>();
+			final ArrayList<String> axeY = new ArrayList<String>();
 
-            while (readLineDcm() != null) {
+			// Pour les MAP
+			int cnt;
+			final ArrayList<String> axeTmp = new ArrayList<String>();
 
-                notifyObserver(this.name, nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
+			while (readLineDcm() != null) {
 
-                spaceSplitLine = line.split(" ");
+				notifyObserver(this.name, nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
 
-                if (spaceSplitLine.length > 0) {
+				spaceSplitLine = line.split(" ");
 
-                    switch (spaceSplitLine[0]) {
+				if (spaceSplitLine.length > 0) {
 
-                    case PARAMETER:
+					switch (spaceSplitLine[0]) {
 
-                        unite = new String[1];
-                        valeur = new String[1][1];
+					case PARAMETER:
 
-                        while (!readLineDcm().equals(END)) {
+						unite = new String[1];
+						valeur = new String[1][1];
 
-                            ;
+						while (!readLineDcm().equals(END)) {
 
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+							;
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                            }
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                            }
-                            if (line.trim().startsWith(UNITE_W)) {
+							spaceSplitLine2 = line.split(" ");
+							quotesSplitLine = line.split("\"");
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[0] = " ";
-                                }
+							if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+								description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+							}
+							if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+								fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+							}
+							if (line.trim().startsWith(UNITE_W)) {
 
-                            }
+								if (quotesSplitLine.length > 1) {
+									unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[0] = " ";
+								}
 
-                            if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
-                                valeur[0][0] = Utilitaire.cutNumber(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                            }
+							}
 
-                        }
+							if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
+								valeur[0][0] = Utilitaire.cutNumber(spaceSplitLine2[spaceSplitLine2.length - 1]);
+							}
 
-                        // System.out.println(spaceSplitLine[1]);
+						}
 
-                        listLabel.add(
-                                new Scalaire(spaceSplitLine[1], description.toString(), VALUE, fonction.toString(), unite, new String[0][0], valeur));
+						// System.out.println(spaceSplitLine[1]);
 
-                        description.setLength(0);
-                        fonction.setLength(0);
+						listLabel.add(
+								new Scalaire(spaceSplitLine[1], description.toString(), VALUE.intern(), fonction.toString().intern(), unite, new String[0][0], valeur));
 
-                        if (!listCategory.contains(Cdf.VALUE))
-                            listCategory.add(Cdf.VALUE);
+						description.setLength(0);
+						fonction.setLength(0);
 
-                        checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
+						if (!listCategory.contains(Cdf.VALUE))
+							listCategory.add(Cdf.VALUE);
 
-                        break;
+						checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 
-                    case TEXTSTRING:
+						break;
 
-                        unite = new String[] { " " };
-                        valeur = new String[1][1];
+					case TEXTSTRING:
 
-                        while (!readLineDcm().equals(END)) {
+						unite = new String[] { " " };
+						valeur = new String[1][1];
 
-                            ;
+						while (!readLineDcm().equals(END)) {
 
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+							;
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                            }
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                            }
+							spaceSplitLine2 = line.split(" ");
+							quotesSplitLine = line.split("\"");
 
-                            if (line.trim().startsWith(VALEUR_TEXT)) {
-                                valeur[0][0] = quotesSplitLine[quotesSplitLine.length - 1];
-                            }
+							if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+								description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+							}
+							if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+								fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+							}
 
-                        }
+							if (line.trim().startsWith(VALEUR_TEXT)) {
+								valeur[0][0] = quotesSplitLine[quotesSplitLine.length - 1];
+							}
 
-                        // System.out.println(spaceSplitLine[1]);
+						}
 
-                        listLabel.add(
-                                new Scalaire(spaceSplitLine[1], description.toString(), ASCII, fonction.toString(), unite, new String[0][0], valeur));
+						// System.out.println(spaceSplitLine[1]);
 
-                        description.setLength(0);
-                        fonction.setLength(0);
+						listLabel.add(
+								new Scalaire(spaceSplitLine[1], description.toString(), ASCII.intern(), fonction.toString().intern(), unite, new String[0][0], valeur));
 
-                        if (!listCategory.contains(Cdf.ASCII))
-                            listCategory.add(Cdf.ASCII);
+						description.setLength(0);
+						fonction.setLength(0);
 
-                        checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
+						if (!listCategory.contains(Cdf.ASCII))
+							listCategory.add(Cdf.ASCII);
 
-                        break;
+						checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 
-                    case LINE:
+						break;
 
-                        unite = new String[2];
-                        valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
+					case LINE:
 
-                        while (!readLineDcm().equals(END)) {
+						unite = new String[2];
+						valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
 
-                            ;
+						while (!readLineDcm().equals(END)) {
 
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+							;
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                            }
+							spaceSplitLine2 = line.split(" ");
+							quotesSplitLine = line.split("\"");
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                            }
+							if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+								description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+							}
 
-                            if (line.trim().startsWith(UNITE_X)) {
+							if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+								fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[0] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_X)) {
 
-                            if (line.trim().startsWith(UNITE_W)) {
+								if (quotesSplitLine.length > 1) {
+									unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[0] = " ";
+								}
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[1] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_W)) {
 
-                            if (line.trim().startsWith(AXE_X)) {
+								if (quotesSplitLine.length > 1) {
+									unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[1] = " ";
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(AXE_X)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X)) {
-                                        axeX.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
-                            }
+								threeSpaceSplitLine = line.split("   ");
 
-                            if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(AXE_X)) {
+										axeX.add(Utilitaire.cutNumber(s));
+									}
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
-                                        axeY.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
-                            }
+								threeSpaceSplitLine = line.split("   ");
 
-                        }
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
+										axeY.add(Utilitaire.cutNumber(s));
+									}
+								}
+							}
 
-                        valeur[0] = axeX.toArray(new String[axeX.size()]);
-                        valeur[1] = axeY.toArray(new String[axeY.size()]);
+						}
 
-                        // System.out.println(spaceSplitLine[1]);
+						valeur[0] = axeX.toArray(new String[axeX.size()]);
+						valeur[1] = axeY.toArray(new String[axeY.size()]);
 
-                        listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL, fonction.toString(), unite,
-                                new String[0][0], valeur));
+						// System.out.println(spaceSplitLine[1]);
 
-                        description.setLength(0);
-                        fonction.setLength(0);
+						listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL.intern(), fonction.toString().intern(), unite,
+								new String[0][0], valeur));
 
-                        axeX.clear();
-                        axeY.clear();
+						description.setLength(0);
+						fonction.setLength(0);
 
-                        if (!listCategory.contains(Cdf.CURVE_INDIVIDUAL))
-                            listCategory.add(Cdf.CURVE_INDIVIDUAL);
+						axeX.clear();
+						axeY.clear();
 
-                        checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
+						if (!listCategory.contains(Cdf.CURVE_INDIVIDUAL))
+							listCategory.add(Cdf.CURVE_INDIVIDUAL);
 
-                        break;
+						checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 
-                    case FIXED_LINE:
+						break;
 
-                        unite = new String[2];
-                        valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
+					case FIXED_LINE:
 
-                        while (!readLineDcm().equals(END)) {
+						unite = new String[2];
+						valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
 
-                            ;
+						while (!readLineDcm().equals(END)) {
 
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+							;
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                            }
+							spaceSplitLine2 = line.split(" ");
+							quotesSplitLine = line.split("\"");
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                            }
+							if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+								description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+							}
 
-                            if (line.trim().startsWith(UNITE_X)) {
+							if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+								fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[0] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_X)) {
 
-                            if (line.trim().startsWith(UNITE_W)) {
+								if (quotesSplitLine.length > 1) {
+									unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[0] = " ";
+								}
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[1] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_W)) {
 
-                            if (line.trim().startsWith(AXE_X)) {
+								if (quotesSplitLine.length > 1) {
+									unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[1] = " ";
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(AXE_X)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X)) {
-                                        axeX.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
-                            }
+								threeSpaceSplitLine = line.split("   ");
 
-                            if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(AXE_X)) {
+										axeX.add(Utilitaire.cutNumber(s));
+									}
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
-                                        axeY.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
-                            }
+								threeSpaceSplitLine = line.split("   ");
 
-                        }
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
+										axeY.add(Utilitaire.cutNumber(s));
+									}
+								}
+							}
 
-                        valeur[0] = axeX.toArray(new String[axeX.size()]);
-                        valeur[1] = axeY.toArray(new String[axeY.size()]);
+						}
 
-                        // System.out.println(spaceSplitLine[1]);
+						valeur[0] = axeX.toArray(new String[axeX.size()]);
+						valeur[1] = axeY.toArray(new String[axeY.size()]);
 
-                        listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL, fonction.toString(), unite,
-                                new String[0][0], valeur));
+						// System.out.println(spaceSplitLine[1]);
 
-                        description.setLength(0);
-                        fonction.setLength(0);
+						listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL.intern(), fonction.toString().intern(), unite,
+								new String[0][0], valeur));
 
-                        axeX.clear();
-                        axeY.clear();
+						description.setLength(0);
+						fonction.setLength(0);
 
-                        if (!listCategory.contains(Cdf.CURVE_FIXED))
-                            listCategory.add(Cdf.CURVE_FIXED);
+						axeX.clear();
+						axeY.clear();
 
-                        checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
+						if (!listCategory.contains(Cdf.CURVE_FIXED))
+							listCategory.add(Cdf.CURVE_FIXED);
 
-                        break;
+						checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 
-                    case GROUP_LINE:
+						break;
 
-                        unite = new String[2];
-                        valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
+					case GROUP_LINE:
 
-                        while (!readLineDcm().equals(END)) {
+						unite = new String[2];
+						valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
 
-                            ;
+						while (!readLineDcm().equals(END)) {
 
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+							;
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                            }
+							spaceSplitLine2 = line.split(" ");
+							quotesSplitLine = line.split("\"");
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                            }
+							if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+								description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+							}
 
-                            if (line.trim().startsWith(UNITE_X)) {
+							if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+								fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[0] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_X)) {
 
-                            if (line.trim().startsWith(UNITE_W)) {
+								if (quotesSplitLine.length > 1) {
+									unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[0] = " ";
+								}
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[1] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_W)) {
 
-                            if (line.trim().startsWith(AXE_X)) {
+								if (quotesSplitLine.length > 1) {
+									unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[1] = " ";
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(AXE_X)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X)) {
-                                        axeX.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
-                            }
+								threeSpaceSplitLine = line.split("   ");
 
-                            if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(AXE_X)) {
+										axeX.add(Utilitaire.cutNumber(s));
+									}
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
-                                        axeY.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
-                            }
+								threeSpaceSplitLine = line.split("   ");
 
-                        }
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
+										axeY.add(Utilitaire.cutNumber(s));
+									}
+								}
+							}
 
-                        valeur[0] = axeX.toArray(new String[axeX.size()]);
-                        valeur[1] = axeY.toArray(new String[axeY.size()]);
+						}
 
-                        // System.out.println(spaceSplitLine[1]);
+						valeur[0] = axeX.toArray(new String[axeX.size()]);
+						valeur[1] = axeY.toArray(new String[axeY.size()]);
 
-                        listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_GROUPED, fonction.toString(), unite,
-                                new String[0][0], valeur));
+						// System.out.println(spaceSplitLine[1]);
 
-                        description.setLength(0);
-                        fonction.setLength(0);
+						listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_GROUPED.intern(), fonction.toString().intern(), unite,
+								new String[0][0], valeur));
 
-                        axeX.clear();
-                        axeY.clear();
+						description.setLength(0);
+						fonction.setLength(0);
 
-                        if (!listCategory.contains(Cdf.CURVE_GROUPED))
-                            listCategory.add(Cdf.CURVE_GROUPED);
+						axeX.clear();
+						axeY.clear();
 
-                        checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
+						if (!listCategory.contains(Cdf.CURVE_GROUPED))
+							listCategory.add(Cdf.CURVE_GROUPED);
 
-                        break;
+						checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 
-                    case MAP:
+						break;
 
-                        cnt = 1;
+					case MAP:
 
-                        unite = new String[3];
-                        valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
-                                + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1];
+						cnt = 1;
 
-                        axeTmp.add("Y \\ X");
+						unite = new String[3];
+						valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
+						                    + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1];
 
-                        while (!readLineDcm().equals(END)) {
+						axeTmp.add("Y \\ X");
 
-                            ;
+						while (!readLineDcm().equals(END)) {
 
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+							;
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                            }
+							spaceSplitLine2 = line.split(" ");
+							quotesSplitLine = line.split("\"");
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                            }
+							if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+								description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+							}
 
-                            if (line.trim().startsWith(UNITE_X)) {
+							if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+								fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[0] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_X)) {
 
-                            if (line.trim().startsWith(UNITE_Y)) {
+								if (quotesSplitLine.length > 1) {
+									unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[0] = " ";
+								}
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[1] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_Y)) {
 
-                            if (line.trim().startsWith(UNITE_W)) {
+								if (quotesSplitLine.length > 1) {
+									unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[1] = " ";
+								}
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[2] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[2] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_W)) {
 
-                            if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
+								if (quotesSplitLine.length > 1) {
+									unite[2] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[2] = " ";
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
+								threeSpaceSplitLine = line.split("   ");
 
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
+										axeTmp.add(Utilitaire.cutNumber(s));
+									}
+								}
 
-                                    axeTmp.clear();
-                                }
-                            }
+								if (axeTmp.size() == valeur[0].length) {
+									valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
 
-                            if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
-                                    | line.trim().startsWith(VALEUR_TEXT)) {
+									axeTmp.clear();
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
+									| line.trim().startsWith(VALEUR_TEXT)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) & !s.equals(VALEUR_NOMBRE)
-                                            & !s.equals(VALEUR_TEXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
+								threeSpaceSplitLine = line.split("   ");
 
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) & !s.equals(VALEUR_NOMBRE)
+											& !s.equals(VALEUR_TEXT)) {
+										axeTmp.add(Utilitaire.cutNumber(s));
+									}
+								}
 
-                                    cnt++;
+								if (axeTmp.size() == valeur[0].length) {
+									valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
 
-                                    axeTmp.clear();
-                                }
+									cnt++;
 
-                            }
+									axeTmp.clear();
+								}
 
-                        }
+							}
 
-                        // System.out.println(spaceSplitLine[1]);
+						}
 
-                        listLabel.add(new Map(spaceSplitLine[1], description.toString(), MAP_INDIVIDUAL, fonction.toString(), unite, new String[0][0],
-                                valeur));
+						// System.out.println(spaceSplitLine[1]);
 
-                        description.setLength(0);
-                        fonction.setLength(0);
+						listLabel.add(new Map(spaceSplitLine[1], description.toString(), MAP_INDIVIDUAL.intern(), fonction.toString().intern(), unite, new String[0][0],
+								valeur));
 
-                        axeTmp.clear();
+						description.setLength(0);
+						fonction.setLength(0);
 
-                        if (!listCategory.contains(Cdf.MAP_INDIVIDUAL))
-                            listCategory.add(Cdf.MAP_INDIVIDUAL);
+						axeTmp.clear();
 
-                        checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
+						if (!listCategory.contains(Cdf.MAP_INDIVIDUAL))
+							listCategory.add(Cdf.MAP_INDIVIDUAL);
 
-                        break;
+						checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 
-                    case GROUP_MAP:
+						break;
 
-                        cnt = 1;
+					case GROUP_MAP:
 
-                        unite = new String[3];
-                        valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
-                                + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1];
+						cnt = 1;
 
-                        axeTmp.add("Y \\ X");
+						unite = new String[3];
+						valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
+						                    + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1];
 
-                        while (!readLineDcm().equals(END)) {
+						axeTmp.add("Y \\ X");
 
-                            ;
+						while (!readLineDcm().equals(END)) {
 
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+							;
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                            }
+							spaceSplitLine2 = line.split(" ");
+							quotesSplitLine = line.split("\"");
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                            }
+							if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+								description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+							}
 
-                            if (line.trim().startsWith(UNITE_X)) {
+							if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+								fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[0] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_X)) {
 
-                            if (line.trim().startsWith(UNITE_Y)) {
+								if (quotesSplitLine.length > 1) {
+									unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[0] = " ";
+								}
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[1] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_Y)) {
 
-                            if (line.trim().startsWith(UNITE_W)) {
+								if (quotesSplitLine.length > 1) {
+									unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[1] = " ";
+								}
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[2] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[2] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_W)) {
 
-                            if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
+								if (quotesSplitLine.length > 1) {
+									unite[2] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[2] = " ";
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
+								threeSpaceSplitLine = line.split("   ");
 
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
+										axeTmp.add(Utilitaire.cutNumber(s));
+									}
+								}
 
-                                    axeTmp.clear();
-                                }
-                            }
+								if (axeTmp.size() == valeur[0].length) {
+									valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
 
-                            if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
-                                    | line.trim().startsWith(VALEUR_TEXT)) {
+									axeTmp.clear();
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
+									| line.trim().startsWith(VALEUR_TEXT)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) & !s.equals(VALEUR_NOMBRE)
-                                            & !s.equals(VALEUR_TEXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
+								threeSpaceSplitLine = line.split("   ");
 
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) & !s.equals(VALEUR_NOMBRE)
+											& !s.equals(VALEUR_TEXT)) {
+										axeTmp.add(Utilitaire.cutNumber(s));
+									}
+								}
 
-                                    cnt++;
+								if (axeTmp.size() == valeur[0].length) {
+									valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
 
-                                    axeTmp.clear();
-                                }
+									cnt++;
 
-                            }
+									axeTmp.clear();
+								}
 
-                        }
+							}
 
-                        // System.out.println(spaceSplitLine[1]);
+						}
 
-                        listLabel.add(new Map(spaceSplitLine[1], description.toString(), MAP_GROUPED, fonction.toString(), unite, new String[0][0],
-                                valeur));
+						// System.out.println(spaceSplitLine[1]);
 
-                        description.setLength(0);
-                        fonction.setLength(0);
+						listLabel.add(new Map(spaceSplitLine[1], description.toString(), MAP_GROUPED.intern(), fonction.toString().intern(), unite, new String[0][0],
+								valeur));
 
-                        axeTmp.clear();
+						description.setLength(0);
+						fonction.setLength(0);
 
-                        if (!listCategory.contains(Cdf.MAP_GROUPED))
-                            listCategory.add(Cdf.MAP_GROUPED);
+						axeTmp.clear();
 
-                        checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
+						if (!listCategory.contains(Cdf.MAP_GROUPED))
+							listCategory.add(Cdf.MAP_GROUPED);
 
-                        break;
+						checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 
-                    case FIXED_MAP:
+						break;
 
-                        cnt = 1;
+					case FIXED_MAP:
 
-                        unite = new String[3];
-                        valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
-                                + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1];
+						cnt = 1;
 
-                        axeTmp.add("Y \\ X");
+						unite = new String[3];
+						valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
+						                    + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1];
 
-                        while (!readLineDcm().equals(END)) {
+						axeTmp.add("Y \\ X");
 
-                            ;
+						while (!readLineDcm().equals(END)) {
 
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+							;
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                            }
+							spaceSplitLine2 = line.split(" ");
+							quotesSplitLine = line.split("\"");
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                            }
+							if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+								description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+							}
 
-                            if (line.trim().startsWith(UNITE_X)) {
+							if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+								fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[0] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_X)) {
 
-                            if (line.trim().startsWith(UNITE_Y)) {
+								if (quotesSplitLine.length > 1) {
+									unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[0] = " ";
+								}
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[1] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_Y)) {
 
-                            if (line.trim().startsWith(UNITE_W)) {
+								if (quotesSplitLine.length > 1) {
+									unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[1] = " ";
+								}
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[2] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[2] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_W)) {
 
-                            if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
+								if (quotesSplitLine.length > 1) {
+									unite[2] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[2] = " ";
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
+								threeSpaceSplitLine = line.split("   ");
 
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
+										axeTmp.add(Utilitaire.cutNumber(s));
+									}
+								}
 
-                                    axeTmp.clear();
-                                }
-                            }
+								if (axeTmp.size() == valeur[0].length) {
+									valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
 
-                            if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
-                                    | line.trim().startsWith(VALEUR_TEXT)) {
+									axeTmp.clear();
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
+									| line.trim().startsWith(VALEUR_TEXT)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) & !s.equals(VALEUR_NOMBRE)
-                                            & !s.equals(VALEUR_TEXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
+								threeSpaceSplitLine = line.split("   ");
 
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) & !s.equals(VALEUR_NOMBRE)
+											& !s.equals(VALEUR_TEXT)) {
+										axeTmp.add(Utilitaire.cutNumber(s));
+									}
+								}
 
-                                    cnt++;
+								if (axeTmp.size() == valeur[0].length) {
+									valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
 
-                                    axeTmp.clear();
-                                }
+									cnt++;
 
-                            }
+									axeTmp.clear();
+								}
 
-                        }
+							}
 
-                        // System.out.println(spaceSplitLine[1]);
+						}
 
-                        listLabel.add(
-                                new Map(spaceSplitLine[1], description.toString(), MAP_FIXED, fonction.toString(), unite, new String[0][0], valeur));
+						// System.out.println(spaceSplitLine[1]);
 
-                        description.setLength(0);
-                        fonction.setLength(0);
+						listLabel.add(
+								new Map(spaceSplitLine[1], description.toString(), MAP_FIXED.intern(), fonction.toString().intern(), unite, new String[0][0], valeur));
 
-                        axeTmp.clear();
+						description.setLength(0);
+						fonction.setLength(0);
 
-                        if (!listCategory.contains(Cdf.MAP_FIXED))
-                            listCategory.add(Cdf.MAP_FIXED);
+						axeTmp.clear();
 
-                        checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
+						if (!listCategory.contains(Cdf.MAP_FIXED))
+							listCategory.add(Cdf.MAP_FIXED);
 
-                        break;
+						checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 
-                    case DISTRIBUTION:
+						break;
 
-                        unite = new String[1];
+					case DISTRIBUTION:
 
-                        valeur = new String[1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
+						unite = new String[1];
 
-                        ArrayList<String> distribution = new ArrayList<String>();
+						valeur = new String[1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
 
-                        while (!readLineDcm().equals(END)) {
+						ArrayList<String> distribution = new ArrayList<String>();
 
-                            ;
+						while (!readLineDcm().equals(END)) {
 
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+							;
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                            }
+							spaceSplitLine2 = line.split(" ");
+							quotesSplitLine = line.split("\"");
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                            }
+							if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+								description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+							}
 
-                            if (line.trim().startsWith(UNITE_X)) {
+							if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+								fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+							}
 
-                                if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
-                                } else {
-                                    unite[0] = " ";
-                                }
-                            }
+							if (line.trim().startsWith(UNITE_X)) {
 
-                            if (line.trim().startsWith(AXE_X)) {
+								if (quotesSplitLine.length > 1) {
+									unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+								} else {
+									unite[0] = " ";
+								}
+							}
 
-                                threeSpaceSplitLine = line.split("   ");
+							if (line.trim().startsWith(AXE_X)) {
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X)) {
-                                        distribution.add(Utilitaire.cutNumber(s));
-                                    }
-                                }
-                            }
+								threeSpaceSplitLine = line.split("   ");
 
-                        }
+								for (String s : threeSpaceSplitLine) {
+									if (s.length() != 0 & !s.equals(AXE_X)) {
+										distribution.add(Utilitaire.cutNumber(s));
+									}
+								}
+							}
 
-                        valeur[0] = distribution.toArray(new String[distribution.size()]);
+						}
 
-                        // System.out.println(spaceSplitLine[1]);
+						valeur[0] = distribution.toArray(new String[distribution.size()]);
 
-                        listLabel.add(new Axis(spaceSplitLine[1], description.toString(), AXIS_VALUES, fonction.toString(), unite, new String[0][0],
-                                valeur));
+						// System.out.println(spaceSplitLine[1]);
 
-                        description.setLength(0);
-                        fonction.setLength(0);
+						listLabel.add(new Axis(spaceSplitLine[1], description.toString(), AXIS_VALUES.intern(), fonction.toString().intern(), unite, new String[0][0],
+								valeur));
 
-                        if (!listCategory.contains(Cdf.AXIS_VALUES))
-                            listCategory.add(Cdf.AXIS_VALUES);
+						description.setLength(0);
+						fonction.setLength(0);
 
-                        checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
+						if (!listCategory.contains(Cdf.AXIS_VALUES))
+							listCategory.add(Cdf.AXIS_VALUES);
 
-                        break;
+						checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 
-                    case MATRIX:
+						break;
 
-                        cnt = 1;
+					case MATRIX:
 
-                        if (spaceSplitLine[spaceSplitLine.length - 2].equals("@")) {
-                            unite = new String[1];
-                            valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
-                                    + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 3]) + 1];
+						cnt = 1;
 
-                            axeTmp.add("Y \\ X");
+						if (spaceSplitLine[spaceSplitLine.length - 2].equals("@")) {
+							unite = new String[1];
+							valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
+							                    + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 3]) + 1];
 
-                            for (int x = 1; x < valeur[0].length; x++) {
-                                axeTmp.add(Integer.toString(x));
-                            }
-                            valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
+							axeTmp.add("Y \\ X");
 
-                            axeTmp.clear();
+							for (int x = 1; x < valeur[0].length; x++) {
+								axeTmp.add(Integer.toString(x));
+							}
+							valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
 
-                            while (!readLineDcm().equals(END)) {
+							axeTmp.clear();
 
-                                ;
+							while (!readLineDcm().equals(END)) {
 
-                                spaceSplitLine2 = line.split(" ");
-                                quotesSplitLine = line.split("\"");
+								;
 
-                                if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                    description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                                }
+								spaceSplitLine2 = line.split(" ");
+								quotesSplitLine = line.split("\"");
 
-                                if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                    fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                                }
+								if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+									description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+								}
 
-                                if (line.trim().startsWith(UNITE_W)) {
+								if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+									fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+								}
 
-                                    if (quotesSplitLine.length > 1) {
-                                        unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
-                                    } else {
-                                        unite[0] = " ";
-                                    }
-                                }
+								if (line.trim().startsWith(UNITE_W)) {
 
-                                if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
+									if (quotesSplitLine.length > 1) {
+										unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+									} else {
+										unite[0] = " ";
+									}
+								}
 
-                                    threeSpaceSplitLine = line.split("   ");
+								if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                    axeTmp.add(Integer.toString(cnt));
+									threeSpaceSplitLine = line.split("   ");
 
-                                    for (String s : threeSpaceSplitLine) {
-                                        if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
-                                            if (Utilitaire.isNumber(s)) {
-                                                axeTmp.add(Utilitaire.cutNumber(s));
-                                            } else {
-                                                axeTmp.add(s.replace("\"", ""));
-                                            }
-                                        }
-                                    }
+									axeTmp.add(Integer.toString(cnt));
 
-                                    if (axeTmp.size() == valeur[0].length) {
-                                        valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
+									for (String s : threeSpaceSplitLine) {
+										if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
+											if (Utilitaire.isNumber(s)) {
+												axeTmp.add(Utilitaire.cutNumber(s));
+											} else {
+												axeTmp.add(s.replace("\"", ""));
+											}
+										}
+									}
 
-                                        cnt++;
+									if (axeTmp.size() == valeur[0].length) {
+										valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
 
-                                        axeTmp.clear();
-                                    }
+										cnt++;
 
-                                }
+										axeTmp.clear();
+									}
 
-                            }
+								}
 
-                        } else {
+							}
 
-                            unite = new String[1];
-                            valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]) + 1];
+						} else {
 
-                            axeTmp.add("X");
+							unite = new String[1];
+							valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]) + 1];
 
-                            for (int x = 1; x < valeur[0].length; x++) {
-                                axeTmp.add(Integer.toString(x));
-                            }
-                            valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
+							axeTmp.add("X");
 
-                            axeTmp.clear();
+							for (int x = 1; x < valeur[0].length; x++) {
+								axeTmp.add(Integer.toString(x));
+							}
+							valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
 
-                            axeTmp.add("Z");
+							axeTmp.clear();
 
-                            while (!readLineDcm().equals(END)) {
+							axeTmp.add("Z");
 
-                                spaceSplitLine2 = line.split(" ");
-                                quotesSplitLine = line.split("\"");
+							while (!readLineDcm().equals(END)) {
 
-                                if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
-                                    description.append(quotesSplitLine[quotesSplitLine.length - 1]);
-                                }
+								spaceSplitLine2 = line.split(" ");
+								quotesSplitLine = line.split("\"");
 
-                                if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
-                                    fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
-                                }
+								if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+									description.append(quotesSplitLine[quotesSplitLine.length - 1]);
+								}
 
-                                if (line.trim().startsWith(UNITE_W)) {
+								if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+									fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
+								}
 
-                                    if (quotesSplitLine.length > 1) {
-                                        unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
-                                    } else {
-                                        unite[0] = " ";
-                                    }
-                                }
+								if (line.trim().startsWith(UNITE_W)) {
 
-                                if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
+									if (quotesSplitLine.length > 1) {
+										unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+									} else {
+										unite[0] = " ";
+									}
+								}
 
-                                    threeSpaceSplitLine = line.split("   ");
+								if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                    for (String s : threeSpaceSplitLine) {
-                                        if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
-                                            if (Utilitaire.isNumber(s)) {
-                                                axeTmp.add(Utilitaire.cutNumber(s));
-                                            } else {
-                                                axeTmp.add(s.replace("\"", ""));
-                                            }
+									threeSpaceSplitLine = line.split("   ");
 
-                                        }
-                                    }
+									for (String s : threeSpaceSplitLine) {
+										if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
+											if (Utilitaire.isNumber(s)) {
+												axeTmp.add(Utilitaire.cutNumber(s));
+											} else {
+												axeTmp.add(s.replace("\"", ""));
+											}
 
-                                    if (axeTmp.size() == valeur[0].length) {
-                                        valeur[1] = axeTmp.toArray(new String[axeTmp.size()]);
+										}
+									}
 
-                                        axeTmp.clear();
-                                    }
+									if (axeTmp.size() == valeur[0].length) {
+										valeur[1] = axeTmp.toArray(new String[axeTmp.size()]);
 
-                                }
+										axeTmp.clear();
+									}
 
-                            }
+								}
 
-                        }
+							}
 
-                        listLabel.add(new ValueBlock(spaceSplitLine[1], description.toString(), VALUE_BLOCK, fonction.toString(), unite,
-                                new String[0][0], valeur));
+						}
 
-                        description.setLength(0);
-                        fonction.setLength(0);
+						listLabel.add(new ValueBlock(spaceSplitLine[1], description.toString(), VALUE_BLOCK.intern(), fonction.toString().intern(), unite,
+								new String[0][0], valeur));
 
-                        axeTmp.clear();
+						description.setLength(0);
+						fonction.setLength(0);
 
-                        if (!listCategory.contains(Cdf.VALUE_BLOCK))
-                            listCategory.add(Cdf.VALUE_BLOCK);
+						axeTmp.clear();
 
-                        checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
+						if (!listCategory.contains(Cdf.VALUE_BLOCK))
+							listCategory.add(Cdf.VALUE_BLOCK);
 
-                        break;
-                    }
-                }
-            }
+						checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 
-        } catch (Exception e) {
+						break;
+					}
+				}
+			}
 
-            e.printStackTrace();
+		} catch (Exception e) {
 
-        } finally {
-            try {
-                numLine = 0;
-                buf.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+			e.printStackTrace();
 
-    private final String readLineDcm() {
-        try {
-            numLine++;
-            return line = buf.readLine();
+		} finally {
+			try {
+				numLine = 0;
+				buf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+	private final String readLineDcm() {
+		try {
+			numLine++;
+			return line = buf.readLine();
 
-    @Override
-    public ArrayList<Variable> getListLabel() {
-        return this.listLabel;
-    }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-    @Override
-    public boolean exportToExcel(File file) {
-        return ExportUtils.toExcel(this, file);
-    }
+	@Override
+	public ArrayList<Variable> getListLabel() {
+		return this.listLabel;
+	}
 
-    @Override
-    public boolean exportToTxt(File file) {
-        return ExportUtils.toText(this, file);
-    }
+	@Override
+	public boolean exportToExcel(File file) {
+		return ExportUtils.toExcel(this, file);
+	}
 
-    @Override
-    public String getName() {
-        return this.name;
-    }
+	@Override
+	public boolean exportToTxt(File file) {
+		return ExportUtils.toText(this, file);
+	}
 
-    @Override
-    public String toString() {
-        return this.name;
-    }
+	@Override
+	public String getName() {
+		return this.name;
+	}
 
-    @Override
-    public int getNbLabel() {
-        return this.listLabel.size();
-    }
+	@Override
+	public String toString() {
+		return this.name;
+	}
 
-    @Override
-    public float getAvgScore() {
-        return 0;
-    }
+	@Override
+	public int getNbLabel() {
+		return this.listLabel.size();
+	}
 
-    @Override
-    public int getMinScore() {
-        return 0;
-    }
+	@Override
+	public float getAvgScore() {
+		return 0;
+	}
 
-    @Override
-    public int getMaxScore() {
-        return 0;
-    }
+	@Override
+	public int getMinScore() {
+		return 0;
+	}
 
-    @Override
-    public HashMap<Integer, Integer> getRepartitionScore() {
-        return repartitionScore;
-    }
+	@Override
+	public int getMaxScore() {
+		return 0;
+	}
 
-    @Override
-    public boolean exportToM(File file) {
-        return ExportUtils.toM(this, file);
-    }
+	@Override
+	public HashMap<Integer, Integer> getRepartitionScore() {
+		return repartitionScore;
+	}
 
-    @Override
-    public void addObserver(Observer obs) {
-        listObserver.add(obs);
-    }
+	@Override
+	public boolean exportToM(File file) {
+		return ExportUtils.toM(this, file);
+	}
 
-    @Override
-    public void notifyObserver(String cdf, String rate) {
-        for (Observer obs : listObserver) {
-            obs.update(cdf, rate);
-        }
-    }
+	@Override
+	public void addObserver(Observer obs) {
+		listObserver.add(obs);
+	}
 
-    @Override
-    public ArrayList<String> getCategoryList() {
-        return listCategory;
-    }
+	@Override
+	public void notifyObserver(String cdf, String rate) {
+		for (Observer obs : listObserver) {
+			obs.update(cdf, rate);
+		}
+	}
 
-    @Override
-    public double getCheckSum() {
-        return checkSum;
-    }
+	@Override
+	public ArrayList<String> getCategoryList() {
+		return listCategory;
+	}
+
+	@Override
+	public double getCheckSum() {
+		return checkSum;
+	}
 
 }

@@ -22,6 +22,7 @@ import com.orsoncharts.util.Orientation;
 
 import cdf.Map;
 import cdf.Variable;
+import tools.Utilitaire;
 
 public final class SurfaceChart extends JComponent {
 
@@ -40,23 +41,27 @@ public final class SurfaceChart extends JComponent {
             final Function3D function = new Function3D() {
 
                 private static final long serialVersionUID = 1L;
+                private String value;
 
                 @Override
                 public double getValue(double x, double y) {
                     if (x != 0 & y != 0) {
-                        try {
-                            return Double.valueOf(map.getValue((int) y, (int) x));
-                        } catch (NumberFormatException nbfEx) {
-                            return Double.NaN;
-                        }
+                    	
+                    	value = map.getValue((int) y, (int) x);
+                    	
+                    	if(Utilitaire.isNumber(value))
+                    	{
+                    		return Double.valueOf(value);
+                    	}
+                    	return Double.NaN;
                     }
                     return 0;
                 }
             };
 
             // Erreur sur les axes (nom)
-            final Chart3D chart = Chart3DFactory.createSurfaceChart("", "", function, "X [" + map.getUnitX() + "]",
-                    "Z [" + map.getUnitZ() + "]", "Y [" + map.getUnitY() + "]");
+            final Chart3D chart = Chart3DFactory.createSurfaceChart("", "", function, ("X [" + map.getUnitX() + "]").intern(),
+                    ("Z [" + map.getUnitZ() + "]").intern(), ("Y [" + map.getUnitY() + "]").intern()); // Test String.intern()
             final XYZPlot plot = (XYZPlot) chart.getPlot();
             plot.setDimensions(new Dimension3D(20, 10, 20));
 

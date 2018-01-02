@@ -10,20 +10,19 @@ import javax.swing.JFileChooser;
 
 public final class Utilitaire {
 
-    public final static String xml = "xml";
-    public final static String lab = "lab";
-    public final static String a2l = "a2l";
-    public final static String dcm = "dcm";
-    public final static String m = "m";
-
-    private static final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
+    public final static String XML = "xml";
+    public final static String LAB = "lab";
+    public final static String A2L = "a2l";
+    public final static String DCM = "dcm";
+    public final static String M = "m";
 
     /*
      * Get the extension of a file.
      */
     public static final String getExtension(File f) {
-        String ext = null;
-        String s = f.getName();
+        
+    	String ext = null;
+        final String s = f.getName();
 
         int i = s.lastIndexOf('.');
 
@@ -40,17 +39,17 @@ public final class Utilitaire {
     } // Fin methode
 
     public static final boolean isNumber(String s) {
-        try {
-            Double.parseDouble(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-
+    	
+    	final String REGEX_NUMBER = "[+-]?\\d+(\\.\\d+)?";
+    	
+    	return s.matches(REGEX_NUMBER);
     }
 
     public static final void createDtd(String pathFolder) {
+    	
+    	final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
         final File dtd = new File(pathFolder + "/" + DTD);
+        
         dtd.deleteOnExit();
         if (!dtd.exists()) {
             final InputStream myDtd = Utilitaire.class.getResourceAsStream("/" + DTD);

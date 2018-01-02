@@ -286,7 +286,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
 
                     String extension = Utilitaire.getExtension(f);
                     // Solutionner le NPE
-                    if (extension.equals(Utilitaire.lab) | extension.equals(Utilitaire.xml)) {
+                    if (extension.equals(Utilitaire.LAB) | extension.equals(Utilitaire.XML)) {
                         return true;
                     }
                     return false;

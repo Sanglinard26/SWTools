@@ -128,7 +128,7 @@ public final class PanelBdd extends JComponent {
                         return true;
 
                     String extension = Utilitaire.getExtension(f);
-                    if (extension.equals(Utilitaire.xml) | extension.equals(Utilitaire.dcm)) {
+                    if (extension.equals(Utilitaire.XML) | extension.equals(Utilitaire.DCM)) {
                         return true;
                     }
                     return false;

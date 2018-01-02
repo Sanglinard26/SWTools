@@ -48,6 +48,8 @@ public final class Paco implements Cdf, Observable {
 	private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
 	private int minScore = Byte.MAX_VALUE;
 	private int maxScore = Byte.MIN_VALUE;
+	
+	private static final String NO_FONCTION = "Pas de fonction definie";
 
 	private double checkSum = 0;
 
@@ -58,6 +60,18 @@ public final class Paco implements Cdf, Observable {
 	private static final NumberFormat nbf = NumberFormat.getInstance();
 
 	public Paco(final File file, PanelCDF panCdf) {
+		
+		// PaCo Keywords
+		final String SW_INSTANCE = "SW-INSTANCE";
+		final String SW_UNIT = "SW-UNIT";
+		final String SHORT_NAME = "SHORT-NAME";
+		final String SW_UNIT_DISPLAY = "SW-UNIT-DISPLAY";
+		final String SW_FEATURE_REF = "SW-FEATURE-REF";
+		final String SW_CS_ENTRY = "SW-CS-ENTRY";
+		final String LONG_NAME = "LONG-NAME";
+		final String CATEGORY = "CATEGORY";
+		final String SW_AXIS_CONT = "SW-AXIS-CONT";
+		//
 
 		if (panCdf != null)
 			addObserver(panCdf);
@@ -131,8 +145,8 @@ public final class Paco implements Cdf, Observable {
 
 		if (document != null) {
 			final Element racine = document.getDocumentElement();
-			final NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
-			final NodeList listSwUnit = racine.getElementsByTagName("SW-UNIT");
+			final NodeList listSwInstance = racine.getElementsByTagName(SW_INSTANCE);
+			final NodeList listSwUnit = racine.getElementsByTagName(SW_UNIT);
 			Element eUnit;
 			String swFeatureRef;
 			String[] swUnitRef = null;
@@ -147,10 +161,11 @@ public final class Paco implements Cdf, Observable {
 			int nbAxe;
 
 			// Remplissage de la HashMap des unites
+			// Test String.intern()
 			for (short u = 0; u < nbUnit; u++) {
 				eUnit = (Element) listSwUnit.item(u);
-				unit.put(eUnit.getElementsByTagName("SHORT-NAME").item(0).getTextContent(),
-						eUnit.getElementsByTagName("SW-UNIT-DISPLAY").item(0).getTextContent());
+				unit.put(eUnit.getElementsByTagName(SHORT_NAME).item(0).getTextContent().intern(),
+						eUnit.getElementsByTagName(SW_UNIT_DISPLAY).item(0).getTextContent().intern());
 			}
 
 			String fullAttributAxe;
@@ -162,13 +177,13 @@ public final class Paco implements Cdf, Observable {
 
 				// System.out.println(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent());
 
-				if (label.getElementsByTagName("SW-FEATURE-REF").item(0) != null) {
-					swFeatureRef = label.getElementsByTagName("SW-FEATURE-REF").item(0).getTextContent();
+				if (label.getElementsByTagName(SW_FEATURE_REF).item(0) != null) {
+					swFeatureRef = label.getElementsByTagName(SW_FEATURE_REF).item(0).getTextContent().intern();
 				} else {
-					swFeatureRef = "Pas de fonction definie";
+					swFeatureRef = NO_FONCTION.intern();
 				}
 
-				swAxisCont = label.getElementsByTagName("SW-AXIS-CONT");
+				swAxisCont = label.getElementsByTagName(SW_AXIS_CONT);
 				nbAxe = swAxisCont.getLength();
 				swUnitRef = new String[swAxisCont.getLength()];
 
@@ -185,15 +200,16 @@ public final class Paco implements Cdf, Observable {
 						}
 					}
 
-					swUnitRef[n] = unit.get(swAxisCont.item(n).getFirstChild().getTextContent());
+					// Test String.intern()
+					swUnitRef[n] = unit.get(swAxisCont.item(n).getFirstChild().getTextContent().intern());
 				}
 				// _________________________________________
 
-				swCsEntry = label.getElementsByTagName("SW-CS-ENTRY");
+				swCsEntry = label.getElementsByTagName(SW_CS_ENTRY);
 
-				shortName = label.getElementsByTagName("SHORT-NAME").item(0).getTextContent();
-				longName = label.getElementsByTagName("LONG-NAME").item(0).getTextContent();
-				category = label.getElementsByTagName("CATEGORY").item(0).getTextContent();
+				shortName = label.getElementsByTagName(SHORT_NAME).item(0).getTextContent();
+				longName = label.getElementsByTagName(LONG_NAME).item(0).getTextContent();
+				category = label.getElementsByTagName(CATEGORY).item(0).getTextContent().intern(); // Test String.intern()
 
 				switch (category) {
 				case ASCII:
@@ -284,6 +300,13 @@ public final class Paco implements Cdf, Observable {
 	}
 
 	private final String[][] readEntry(NodeList swCsEntry) {
+		
+		final String DATE = "DATE";
+		final String SW_CS_PERFORMED_BY = "SW-CS-PERFORMED-BY";
+		final String SW_CS_STATE = "SW-CS-STATE";
+		final String REMARK = "REMARK";
+		final String EMPTY_REMARK = "";
+		
 
 		final int nbEntry = swCsEntry.getLength();
 		final String[][] entry = new String[nbEntry][4];
@@ -294,11 +317,11 @@ public final class Paco implements Cdf, Observable {
 		for (byte n = 0; n < nbEntry; n++) {
 			aEntry = (Element) swCsEntry.item(n);
 
-			entry[n][0] = aEntry.getElementsByTagName("DATE").item(0).getTextContent().replace("T", " @ ");
-			entry[n][1] = aEntry.getElementsByTagName("SW-CS-PERFORMED-BY").item(0).getTextContent();
-			entry[n][2] = aEntry.getElementsByTagName("SW-CS-STATE").item(0).getTextContent();
+			entry[n][0] = aEntry.getElementsByTagName(DATE).item(0).getTextContent().replace("T", " @ ");
+			entry[n][1] = aEntry.getElementsByTagName(SW_CS_PERFORMED_BY).item(0).getTextContent().intern(); // Test String.intern()
+			entry[n][2] = aEntry.getElementsByTagName(SW_CS_STATE).item(0).getTextContent().intern(); // Test String.intern()
 
-			nodeRemark = aEntry.getElementsByTagName("REMARK").item(0);
+			nodeRemark = aEntry.getElementsByTagName(REMARK).item(0);
 
 			if (nodeRemark.hasChildNodes()) {
 
@@ -315,10 +338,10 @@ public final class Paco implements Cdf, Observable {
 				entry[n][3] = nodeRemark.getTextContent();
 			}
 
-			if (entry[n][0] == null) entry[n][0] = "";
-			if (entry[n][1] == null) entry[n][1] = "";
-			if (entry[n][2] == null) entry[n][2] = "";
-			if (entry[n][3] == null) entry[n][3] = "";
+			if (entry[n][0] == null) entry[n][0] = EMPTY_REMARK;
+			if (entry[n][1] == null) entry[n][1] = EMPTY_REMARK;
+			if (entry[n][2] == null) entry[n][2] = EMPTY_REMARK;
+			if (entry[n][3] == null) entry[n][3] = EMPTY_REMARK;
 		}
 		return entry;
 	}
@@ -334,8 +357,10 @@ public final class Paco implements Cdf, Observable {
 
 	private final String[][] readAxis(NodeList swAxisCont) {
 
+		final String SW_VALUES_PHYS = "SW-VALUES-PHYS";
+		
 		final Element eAxisCont = (Element) swAxisCont.item(0);
-		final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+		final Node swValuesPhys = eAxisCont.getElementsByTagName(SW_VALUES_PHYS).item(0);
 		final NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
 
 		final int nbVal = value.getLength();
@@ -352,6 +377,8 @@ public final class Paco implements Cdf, Observable {
 	private final String[][] readValueBlock(String[] dim, NodeList swAxisCont) {
 		// A finir d'implementer pour les dimensions multiples
 
+		final String SW_VALUES_PHYS = "SW-VALUES-PHYS";
+		
 		final String val[][];
 
 		if (dim[1].equals("0")) {
@@ -364,7 +391,7 @@ public final class Paco implements Cdf, Observable {
 		}
 
 		final Element eAxisCont = (Element) swAxisCont.item(0);
-		final Node swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+		final Node swValuesPhys = eAxisCont.getElementsByTagName(SW_VALUES_PHYS).item(0);
 
 		final NodeList value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(0).getNodeName());
 		NodeList valueVg = null;
@@ -397,6 +424,9 @@ public final class Paco implements Cdf, Observable {
 
 	private final String[][] readCurve(NodeList swAxisCont) {
 
+		final String SW_AXIS_INDEX = "SW-AXIS-INDEX";
+		final String SW_VALUES_PHYS = "SW-VALUES-PHYS";
+		
 		final String val[][] = new String[2][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength()];
 
 		Element eAxisCont;
@@ -408,8 +438,8 @@ public final class Paco implements Cdf, Observable {
 		for (byte n = 0; n < 2; n++) {
 
 			eAxisCont = (Element) swAxisCont.item(n);
-			indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
-			swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+			indexAxis = eAxisCont.getElementsByTagName(SW_AXIS_INDEX).item(0);
+			swValuesPhys = eAxisCont.getElementsByTagName(SW_VALUES_PHYS).item(0);
 			value = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
 
 			nbVal = value.getLength();
@@ -431,6 +461,10 @@ public final class Paco implements Cdf, Observable {
 	}
 
 	private final String[][] readMap(NodeList swAxisCont) {
+		
+		final String SW_AXIS_INDEX = "SW-AXIS-INDEX";
+		final String SW_VALUES_PHYS = "SW-VALUES-PHYS";
+		
 		// Premiere dimension = Axe Y car nombre de ligne
 		// Deuxieme dimension = Axe X car nombre de colonne
 		final String val[][] = new String[((Element) swAxisCont.item(1)).getLastChild().getChildNodes().getLength()
@@ -449,8 +483,8 @@ public final class Paco implements Cdf, Observable {
 		for (byte n = 0; n < 3; n++) {
 
 			eAxisCont = (Element) swAxisCont.item(n);
-			indexAxis = eAxisCont.getElementsByTagName("SW-AXIS-INDEX").item(0);
-			swValuesPhys = eAxisCont.getElementsByTagName("SW-VALUES-PHYS").item(0);
+			indexAxis = eAxisCont.getElementsByTagName(SW_AXIS_INDEX).item(0);
+			swValuesPhys = eAxisCont.getElementsByTagName(SW_VALUES_PHYS).item(0);
 			nodeListV = eAxisCont.getElementsByTagName(swValuesPhys.getChildNodes().item(1).getNodeName());
 
 			nbAxeVal = nodeListV.getLength();

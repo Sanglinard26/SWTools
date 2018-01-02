@@ -272,7 +272,7 @@ public final class PanelCDF extends JComponent implements Observer {
                         return true;
 
                     final String extension = Utilitaire.getExtension(f);
-                    if (extension.equals(Utilitaire.xml) | extension.equals(Utilitaire.dcm) | extension.equals(Utilitaire.m)) {
+                    if (extension.equals(Utilitaire.XML) | extension.equals(Utilitaire.DCM) | extension.equals(Utilitaire.M)) {
                         return true;
                     }
                     return false;
