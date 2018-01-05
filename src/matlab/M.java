@@ -14,7 +14,6 @@ import java.util.HashMap;
 import cdf.Axis;
 import cdf.Cdf;
 import cdf.Curve;
-import cdf.ExportUtils;
 import cdf.Map;
 import cdf.Observable;
 import cdf.Scalaire;
@@ -52,7 +51,7 @@ public final class M implements Cdf, Observable {
         this.name = file.getName().substring(0, file.getName().length() - 2);
 
         this.parse(file);
-        
+
         listObserver.clear(); // Plus besoin d'observer
 
     }
@@ -275,21 +274,6 @@ public final class M implements Cdf, Observable {
     @Override
     public double getCheckSum() {
         return checkSum;
-    }
-
-    @Override
-    public boolean exportToExcel(File file) {
-        return ExportUtils.toExcel(this, file);
-    }
-
-    @Override
-    public boolean exportToTxt(File file) {
-        return ExportUtils.toText(this, file);
-    }
-
-    @Override
-    public boolean exportToM(File file) {
-        return ExportUtils.toM(this, file);
     }
 
 }

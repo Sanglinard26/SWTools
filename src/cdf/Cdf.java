@@ -3,7 +3,6 @@
  */
 package cdf;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -37,10 +36,4 @@ public interface Cdf {
     public int getMaxScore();
 
     public double getCheckSum();
-
-    public boolean exportToExcel(final File file);
-
-    public boolean exportToTxt(File file);
-
-    public boolean exportToM(File file);
 }

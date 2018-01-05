@@ -168,7 +168,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                             final int rep = fileChooser.showSaveDialog(null);
 
                             if (rep == JFileChooser.APPROVE_OPTION) {
-                                if (ListCdf.this.getSelectedValue().exportToTxt(fileChooser.getSelectedFile())) {
+                                if (CdfUtils.toText(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile())) {
                                     JOptionPane.showMessageDialog(null, "Export termine !");
                                 } else {
                                     JOptionPane.showMessageDialog(null, "Export abandonne !");
@@ -195,7 +195,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                                 final int rep = fileChooser.showSaveDialog(null);
 
                                 if (rep == JFileChooser.APPROVE_OPTION) {
-                                    if (ListCdf.this.getSelectedValue().exportToExcel(fileChooser.getSelectedFile())) {
+                                    if (CdfUtils.toExcel(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile())) {
                                         JOptionPane.showMessageDialog(null, "Export termine !");
                                     } else {
                                         JOptionPane.showMessageDialog(null, "Export abandonne !");
@@ -223,7 +223,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                                 final int rep = fileChooser.showSaveDialog(null);
 
                                 if (rep == JFileChooser.APPROVE_OPTION) {
-                                    if (ListCdf.this.getSelectedValue().exportToM(fileChooser.getSelectedFile())) {
+                                    if (CdfUtils.toM(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile())) {
                                         JOptionPane.showMessageDialog(null, "Export termine !");
                                     } else {
                                         JOptionPane.showMessageDialog(null, "Export abandonne !");
@@ -265,25 +265,25 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     @Override
                     public void actionPerformed(ActionEvent e) {
 
-                    	final Thread thread = new Thread(new Runnable() {
-							
-							@Override
-							public void run() {
-								
-								Cdf cdfCompar = CdfUtils.comparCdf(ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0]),
-		                                ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[1]), PanelCDF.getRadiobtval().isSelected());
-								
-								if (cdfCompar != null) {
-		                            ListCdf.this.getModel().addCdf(cdfCompar);
-		                            JOptionPane.showMessageDialog(null, "Comparaison terminee !", null,
-		                                    JOptionPane.INFORMATION_MESSAGE);
-		                        } else {
-		                            JOptionPane.showMessageDialog(null, "Pas de difference de valeur entre les deux fichiers", null,
-		                                    JOptionPane.INFORMATION_MESSAGE);
-		                        }
-							}
-						});
-                    	thread.start();		
+                        final Thread thread = new Thread(new Runnable() {
+
+                            @Override
+                            public void run() {
+
+                                Cdf cdfCompar = CdfUtils.comparCdf(ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0]),
+                                        ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[1]),
+                                        PanelCDF.getRadiobtval().isSelected());
+
+                                if (cdfCompar != null) {
+                                    ListCdf.this.getModel().addCdf(cdfCompar);
+                                    JOptionPane.showMessageDialog(null, "Comparaison terminee !", null, JOptionPane.INFORMATION_MESSAGE);
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "Pas de difference de valeur entre les deux fichiers", null,
+                                            JOptionPane.INFORMATION_MESSAGE);
+                                }
+                            }
+                        });
+                        thread.start();
                     }
                 });
                 menu.add(menuItem);

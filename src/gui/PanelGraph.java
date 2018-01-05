@@ -26,6 +26,8 @@ public final class PanelGraph extends JComponent {
     private static final JRadioButton radioBt2D = new JRadioButton("2D");
     private static final JRadioButton radioBt3D = new JRadioButton("3D", true);
 
+    private static Variable selectedVar;
+
     static {
         panBtRadio.setBorder(LineBorder.createBlackLineBorder());
     }
@@ -52,6 +54,21 @@ public final class PanelGraph extends JComponent {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+
+            panCard.removeAll();
+
+            switch (e.getActionCommand()) {
+            case "2D":
+                panCard.add(new XYChart(selectedVar), "2D");
+                break;
+            case "3D":
+                panCard.add(new SurfaceChart(selectedVar), "3D");
+                break;
+            }
+
+            panCard.revalidate();
+            panCard.repaint();
+
             cardLayout.show(panCard, e.getActionCommand());
         }
     }
@@ -61,12 +78,13 @@ public final class PanelGraph extends JComponent {
     }
 
     public final void createChart(final Variable variable) {
+
+        selectedVar = variable;
+
         if (radioBt2D.isSelected()) {
             panCard.add(new XYChart(variable), "2D");
-            panCard.add(new SurfaceChart(variable), "3D");
         } else {
             panCard.add(new SurfaceChart(variable), "3D");
-            panCard.add(new XYChart(variable), "2D");
         }
 
     }

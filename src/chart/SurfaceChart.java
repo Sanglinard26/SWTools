@@ -30,13 +30,17 @@ public final class SurfaceChart extends JComponent {
 
     private static final JLabel labelNoGraph = new JLabel("Graphique non disponible");
 
+    static {
+        labelNoGraph.setHorizontalAlignment(SwingConstants.CENTER);
+    }
+
     public SurfaceChart(final Variable variable) {
 
-        if (variable instanceof Map) {
-        	
-        	final Map map = (Map) variable;
+        this.setLayout(new BorderLayout());
 
-            this.setLayout(new BorderLayout());
+        if (variable instanceof Map) {
+
+            final Map map = (Map) variable;
 
             final Function3D function = new Function3D() {
 
@@ -46,14 +50,21 @@ public final class SurfaceChart extends JComponent {
                 @Override
                 public double getValue(double x, double y) {
                     if (x != 0 & y != 0) {
-                    	
-                    	value = map.getValue((int) y, (int) x);
-                    	
-                    	if(Utilitaire.isNumber(value))
-                    	{
-                    		return Double.valueOf(value);
-                    	}
-                    	return Double.NaN;
+
+                        /*
+                         * int xi = Arrays.binarySearch(map.getXvalues(), x); int zi = Arrays.binarySearch(map.getYvalues(), y);
+                         * 
+                         * if (xi < 0) { // xi = Math.abs(xi) - 2; xi = 0; } if (zi < 0) { // zi = Math.abs(zi) - 2; zi = 0; }
+                         * 
+                         * value = map.getValue(zi, xi);
+                         */
+
+                        value = map.getValue((int) y, (int) x);
+
+                        if (Utilitaire.isNumber(value)) {
+                            return Double.parseDouble(value);
+                        }
+                        return Double.NaN;
                     }
                     return 0;
                 }
@@ -67,9 +78,17 @@ public final class SurfaceChart extends JComponent {
 
             final ValueAxis3D xAxis = plot.getXAxis();
             xAxis.setRange(1, map.getValues()[0].length - 1);
-
             final ValueAxis3D zAxis = plot.getZAxis();
             zAxis.setRange(1, map.getValues().length - 1);
+
+            /*
+             * if (Utilitaire.isNumber(map.getValue(0, 1)) & Utilitaire.isNumber(map.getValue(0, map.getDimX() - 1))) {
+             * xAxis.setRange(Double.parseDouble(map.getValue(0, 1)), Double.parseDouble(map.getValue(0, map.getDimX() - 1)));
+             * System.out.println(xAxis.getRange()); } if (Utilitaire.isNumber(map.getValue(1, 0)) & Utilitaire.isNumber(map.getValue(map.getDimY() -
+             * 1, map.getDimX() - 1))) { zAxis.setRange(Double.parseDouble(map.getValue(1, 0)), Double.parseDouble(map.getValue(map.getDimY() - 1,
+             * 0))); System.out.println(zAxis.getRange()); }
+             */
+
             final SurfaceRenderer renderer = (SurfaceRenderer) plot.getRenderer();
             if (map.getMaxZValue() - map.getMinZValue() != 0)
                 renderer.setColorScale(new RainbowScale(new Range(map.getMinZValue(), map.getMaxZValue())));
@@ -82,8 +101,6 @@ public final class SurfaceChart extends JComponent {
 
             this.add(new DisplayPanel3D(chartPanel));
         } else {
-            this.setLayout(new BorderLayout());
-            labelNoGraph.setHorizontalAlignment(SwingConstants.CENTER);
             this.add(labelNoGraph, BorderLayout.CENTER);
         }
 

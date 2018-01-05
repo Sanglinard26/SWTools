@@ -88,6 +88,16 @@ public final class Map extends Variable {
         return values[col][row];
     }
 
+    /*
+     * public final double[] getXvalues() { double[] xValues = new double[this.dimX - 1]; for (int i = 1; i < this.dimX - 1; i++) { if
+     * (Utilitaire.isNumber(this.getValue(0, i))) { xValues[i - 1] = Double.parseDouble(this.getValue(0, i)); } else { xValues[i - 1] = i; } } return
+     * xValues; }
+     * 
+     * public final double[] getYvalues() { double[] yValues = new double[this.dimY - 1]; for (int i = 1; i < this.dimY - 1; i++) { if
+     * (Utilitaire.isNumber(this.getValue(i, 0))) { yValues[i - 1] = Double.parseDouble(this.getValue(i, 0)); } else { yValues[i - 1] = i; } } return
+     * yValues; }
+     */
+
     public final int getDimX() {
         return dimX;
     }
