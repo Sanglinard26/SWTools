@@ -1,5 +1,7 @@
 package cdf;
 
+import tools.Utilitaire;
+
 public final class Map extends Variable {
 
     private final String[][] values;
@@ -22,25 +24,21 @@ public final class Map extends Variable {
 
         for (short x = 1; x < dimX; x++) {
             for (short y = 1; y < dimY; y++) {
-                if (values[y][x] != null) {
-                    try {
+            	
+            	if (Utilitaire.isNumber(values[y][x]))
+            	{
+            		value = Float.parseFloat(values[y][x]);
 
-                        value = Float.parseFloat(values[y][x]);
+                    if (value < minZValue)
+                        minZValue = value;
 
-                        if (value < minZValue)
-                            minZValue = value;
-
-                        if (value > maxZValue)
-                            maxZValue = value;
-                    } catch (NumberFormatException e) {
-                        minZValue = Float.NaN;
-                        maxZValue = Float.NaN;
-                    }
-                } else {
-                    minZValue = Float.NaN;
+                    if (value > maxZValue)
+                        maxZValue = value;
+            	}else{
+            		minZValue = Float.NaN;
                     maxZValue = Float.NaN;
-                }
-
+                    break;
+            	}
             }
         }
     }
