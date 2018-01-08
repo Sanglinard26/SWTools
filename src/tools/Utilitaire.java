@@ -20,8 +20,8 @@ public final class Utilitaire {
      * Get the extension of a file.
      */
     public static final String getExtension(File f) {
-        
-    	String ext = null;
+
+        String ext = null;
         final String s = f.getName();
 
         int i = s.lastIndexOf('.');
@@ -39,17 +39,18 @@ public final class Utilitaire {
     } // Fin methode
 
     public static final boolean isNumber(String s) {
-    	
-    	final String REGEX_NUMBER = "[+-]?\\d+(\\.\\d+)?";
-    	
-    	return s.matches(REGEX_NUMBER);
+
+        final String REGEX_NUMBER_SI = "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?";
+        // final String REGEX_NUMBER = "[+-]?\\d+(\\.\\d+)?";
+
+        return s.matches(REGEX_NUMBER_SI);
     }
 
     public static final void createDtd(String pathFolder) {
-    	
-    	final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
+
+        final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
         final File dtd = new File(pathFolder + "/" + DTD);
-        
+
         dtd.deleteOnExit();
         if (!dtd.exists()) {
             final InputStream myDtd = Utilitaire.class.getResourceAsStream("/" + DTD);

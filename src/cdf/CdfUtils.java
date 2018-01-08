@@ -14,9 +14,11 @@ import javax.swing.JOptionPane;
 
 import gui.SWToolsMain;
 import jxl.Workbook;
+import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
 import jxl.format.Colour;
+import jxl.format.VerticalAlignment;
 import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.WritableCellFormat;
@@ -158,6 +160,12 @@ public final class CdfUtils {
 
         WritableWorkbook workbook = null;
 
+        final int COL_SCALAIRE = 0;
+        final int COL_COURBE = 1;
+        final int COL_MAP = 2;
+        final int COL_VALUEBLOCK = 3;
+        final int COL_AXE = 4;
+
         try {
             workbook = Workbook.createWorkbook(file);
 
@@ -171,25 +179,34 @@ public final class CdfUtils {
             axisFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
             axisFormat.setBackground(Colour.VERY_LIGHT_YELLOW);
 
-            final WritableSheet shtInfo = workbook.createSheet("Infos", 0);
-            shtInfo.getSettings().setShowGridLines(false);
-            shtInfo.getSettings().setDefaultColumnWidth(50);
-            shtInfo.mergeCells(0, 0, 4, 0);
-            shtInfo.setRowView(0, 1000);
+            final WritableSheet sheetInfo = workbook.createSheet("Infos", 0);
+            sheetInfo.getSettings().setShowGridLines(false);
+            sheetInfo.getSettings().setDefaultColumnWidth(50);
+            sheetInfo.mergeCells(0, 0, 4, 0);
+            sheetInfo.setRowView(0, 1000);
 
             // Entete de la feuille
-            writeCell(shtInfo, 0, 0, "INFOS", arial10format);
-            writeCell(shtInfo, 0, 1, "Nom du fichier : " + cdf.getName(), arial10format);
-            writeCell(shtInfo, 0, 2, "Nombre de variables : " + String.valueOf(cdf.getNbLabel()), arial10format);
-            writeCell(shtInfo, 0, 4, "Liste des variables : ", arial10format);
-            writeCell(shtInfo, 0, 5, "Scalaire", arial10format);
-            writeCell(shtInfo, 1, 5, "Courbe", arial10format);
-            writeCell(shtInfo, 2, 5, "Map", arial10format);
-            writeCell(shtInfo, 3, 5, "Bloc de valeurs", arial10format);
-            writeCell(shtInfo, 4, 5, "Axe", arial10format);
+            WritableFont arial20Bold = new WritableFont(WritableFont.ARIAL, 20, WritableFont.BOLD);
+            WritableCellFormat infoFormat = new WritableCellFormat(arial20Bold);
+            infoFormat.setBackground(Colour.GRAY_25);
+            infoFormat.setBorder(Border.ALL, BorderLineStyle.MEDIUM);
+            infoFormat.setAlignment(Alignment.CENTRE);
+            infoFormat.setVerticalAlignment(VerticalAlignment.CENTRE);
+            writeCell(sheetInfo, 0, 0, "INFOS", infoFormat);
+
+            writeCell(sheetInfo, 0, 1, "Nom du fichier : " + cdf.getName(), borderFormat);
+            sheetInfo.mergeCells(0, 1, 4, 1);
+            writeCell(sheetInfo, 0, 2, "Nombre de variables : " + String.valueOf(cdf.getNbLabel()), borderFormat);
+            sheetInfo.mergeCells(0, 2, 4, 2);
+            writeCell(sheetInfo, COL_SCALAIRE, 3, "Scalaire", borderFormat);
+            writeCell(sheetInfo, COL_COURBE, 3, "Courbe", borderFormat);
+            writeCell(sheetInfo, COL_MAP, 3, "Map", borderFormat);
+            writeCell(sheetInfo, COL_VALUEBLOCK, 3, "Bloc de valeurs", borderFormat);
+            writeCell(sheetInfo, COL_AXE, 3, "Axe", borderFormat);
             //
 
             final WritableSheet shtScore = workbook.createSheet("Scores", 2);
+            shtScore.getSettings().setDefaultColumnWidth(50);
 
             writeCell(shtScore, 0, 0, "Score moyen du fichier : " + cdf.getAvgScore(), arial10format);
             writeCell(shtScore, 0, 2, "0% " + "(" + cdf.getRepartitionScore().get(0) + ")", arial10format);
@@ -199,20 +216,28 @@ public final class CdfUtils {
             writeCell(shtScore, 4, 2, "100% " + "(" + cdf.getRepartitionScore().get(100) + ")", arial10format);
 
             final WritableSheet sheetValues = workbook.createSheet("Valeurs", 1);
+            sheetValues.getSettings().setShowGridLines(false);
 
             int row = 0;
-            int cnt = 0;
             int cnt0 = 0;
             int cnt25 = 0;
             int cnt50 = 0;
             int cnt75 = 0;
             int cnt100 = 0;
 
-            final int offsetEntete = 6;
+            int cntScalaire = 0;
+            int cntCourbe = 0;
+            int cntMap = 0;
+            int cntValueBlock = 0;
+            int cntAxe = 0;
+
+            final int offsetEntete = 4;
+
+            WritableCellFormat centerAlign = new WritableCellFormat();
+            centerAlign.setAlignment(Alignment.CENTRE);
+            centerAlign.setVerticalAlignment(VerticalAlignment.CENTRE);
 
             for (Variable var : cdf.getListLabel()) {
-
-                shtInfo.addHyperlink(new WritableHyperlink(0, offsetEntete + cnt, var.getShortName(), sheetValues, 0, row));
 
                 switch (var.getLastScore()) {
                 case 0:
@@ -240,6 +265,11 @@ public final class CdfUtils {
                 }
 
                 if (var instanceof Scalaire) {
+
+                    sheetInfo.addHyperlink(new WritableHyperlink(COL_SCALAIRE, offsetEntete + cntScalaire, var.getShortName(), sheetValues, 0, row));
+                    sheetInfo.getWritableCell(COL_SCALAIRE, offsetEntete + cntScalaire).setCellFormat(centerAlign);
+                    cntScalaire++;
+
                     Scalaire variableType = (Scalaire) var;
                     writeCell(sheetValues, 0, row, variableType.getShortName(), arial10format);
                     row += 1;
@@ -247,6 +277,11 @@ public final class CdfUtils {
                     row += 2;
                 }
                 if (var instanceof Axis) {
+
+                    sheetInfo.addHyperlink(new WritableHyperlink(COL_AXE, offsetEntete + cntAxe, var.getShortName(), sheetValues, 0, row));
+                    sheetInfo.getWritableCell(COL_AXE, offsetEntete + cntAxe).setCellFormat(centerAlign);
+                    cntAxe++;
+
                     Axis variableType = (Axis) var;
                     writeCell(sheetValues, 0, row, variableType.getShortName(), arial10format);
 
@@ -259,6 +294,11 @@ public final class CdfUtils {
                     row += 2;
                 }
                 if (var instanceof Curve) {
+
+                    sheetInfo.addHyperlink(new WritableHyperlink(COL_COURBE, offsetEntete + cntCourbe, var.getShortName(), sheetValues, 0, row));
+                    sheetInfo.getWritableCell(COL_COURBE, offsetEntete + cntCourbe).setCellFormat(centerAlign);
+                    cntCourbe++;
+
                     Curve variableType = (Curve) var;
                     writeCell(sheetValues, 0, row, variableType.getShortName(), arial10format);
 
@@ -280,6 +320,12 @@ public final class CdfUtils {
                 }
 
                 if (var instanceof ValueBlock) {
+
+                    sheetInfo.addHyperlink(
+                            new WritableHyperlink(COL_VALUEBLOCK, offsetEntete + cntValueBlock, var.getShortName(), sheetValues, 0, row));
+                    sheetInfo.getWritableCell(COL_VALUEBLOCK, offsetEntete + cntValueBlock).setCellFormat(centerAlign);
+                    cntValueBlock++;
+
                     ValueBlock variableType = (ValueBlock) var;
                     writeCell(sheetValues, 0, row, variableType.getShortName(), arial10format);
 
@@ -300,6 +346,11 @@ public final class CdfUtils {
                 }
 
                 if (var instanceof Map) {
+
+                    sheetInfo.addHyperlink(new WritableHyperlink(COL_MAP, offsetEntete + cntMap, var.getShortName(), sheetValues, 0, row));
+                    sheetInfo.getWritableCell(COL_MAP, offsetEntete + cntMap).setCellFormat(centerAlign);
+                    cntMap++;
+
                     Map variableType = (Map) var;
                     writeCell(sheetValues, 0, row, variableType.getShortName(), arial10format);
 
@@ -317,7 +368,6 @@ public final class CdfUtils {
                     }
                     row += 2;
                 }
-                cnt += 1;
             }
 
             workbook.write();
@@ -346,13 +396,12 @@ public final class CdfUtils {
 
     static final void writeCell(WritableSheet sht, int col, int row, String txtValue, WritableCellFormat format)
             throws RowsExceededException, WriteException {
-        try {
-            final double value = Double.parseDouble(txtValue);
-            sht.addCell(new Number(col, row, value, format));
-        } catch (NumberFormatException e) {
+
+        if (Utilitaire.isNumber(txtValue)) {
+            sht.addCell(new Number(col, row, Double.parseDouble(txtValue), format));
+        } else {
             sht.addCell(new Label(col, row, txtValue, format));
         }
-
     }
 
     public static final boolean toText(Cdf cdf, final File file) {
