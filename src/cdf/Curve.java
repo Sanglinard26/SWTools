@@ -49,7 +49,7 @@ public final class Curve extends Variable {
     }
 
     @Override
-    public String toMFormat() {
+    public String toMFormat(boolean transpose) {
         StringBuilder sb = new StringBuilder();
         sb.append("% " + getShortName());
         sb.append("\n");
@@ -87,17 +87,17 @@ public final class Curve extends Variable {
         return sb.toString();
     }
 
-	@Override
-	public double getChecksum() {
-		double valCheck = 0;
-		
-		for (byte y = 0; y < 2; y++) {
+    @Override
+    public double getChecksum() {
+        double valCheck = 0;
+
+        for (byte y = 0; y < 2; y++) {
             for (short x = 0; x < dimX; x++) {
                 valCheck += getValue(y, x).hashCode();
             }
         }
-		
-		return valCheck;
-	}
+
+        return valCheck;
+    }
 
 }

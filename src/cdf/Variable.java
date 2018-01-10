@@ -100,7 +100,7 @@ public abstract class Variable {
 
     public abstract double getChecksum();
 
-    public abstract String toMFormat();
+    public abstract String toMFormat(boolean transpose);
 
     public abstract String[][] getValues();
 

@@ -223,7 +223,13 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                                 final int rep = fileChooser.showSaveDialog(null);
 
                                 if (rep == JFileChooser.APPROVE_OPTION) {
-                                    if (CdfUtils.toM(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile())) {
+                                    boolean transpose = false;
+                                    if (JOptionPane.showConfirmDialog(null, "Transposer pour Matlab?", null,
+                                            JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+                                        transpose = true;
+                                    }
+
+                                    if (CdfUtils.toM(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile(), transpose)) {
                                         JOptionPane.showMessageDialog(null, "Export termine !");
                                     } else {
                                         JOptionPane.showMessageDialog(null, "Export abandonne !");

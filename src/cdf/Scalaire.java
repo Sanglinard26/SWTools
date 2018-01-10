@@ -19,7 +19,7 @@ public final class Scalaire extends Variable {
     }
 
     @Override
-    public String toMFormat() {
+    public String toMFormat(boolean transpose) {
         StringBuilder sb = new StringBuilder();
         sb.append(getShortName() + " = ");
 

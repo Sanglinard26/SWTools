@@ -24,21 +24,20 @@ public final class Map extends Variable {
 
         for (short x = 1; x < dimX; x++) {
             for (short y = 1; y < dimY; y++) {
-            	
-            	if (Utilitaire.isNumber(values[y][x]))
-            	{
-            		value = Float.parseFloat(values[y][x]);
+
+                if (Utilitaire.isNumber(values[y][x])) {
+                    value = Float.parseFloat(values[y][x]);
 
                     if (value < minZValue)
                         minZValue = value;
 
                     if (value > maxZValue)
                         maxZValue = value;
-            	}else{
-            		minZValue = Float.NaN;
+                } else {
+                    minZValue = Float.NaN;
                     maxZValue = Float.NaN;
                     break;
-            	}
+                }
             }
         }
     }
@@ -105,7 +104,7 @@ public final class Map extends Variable {
     }
 
     @Override
-    public String toMFormat() {
+    public String toMFormat(boolean transpose) {
         StringBuilder sb = new StringBuilder();
         sb.append("% " + getShortName());
         sb.append("\n");
@@ -113,7 +112,7 @@ public final class Map extends Variable {
         // valeur x
         sb.append(getShortName().substring(0, getShortName().length() - 2) + "X_A" + " = ");
         sb.append("[");
-        for (int x = 1; x < values[0].length; x++) {
+        for (int x = 1; x < dimX; x++) {
             if (x > 1) {
                 sb.append(" " + getValue(0, x));
             } else {
@@ -128,7 +127,7 @@ public final class Map extends Variable {
         sb.append("\n");
         sb.append(getShortName().substring(0, getShortName().length() - 2) + "Y_A" + " = ");
         sb.append("[");
-        for (int x = 1; x < values.length; x++) {
+        for (int x = 1; x < dimY; x++) {
             if (x > 1) {
                 sb.append(" " + getValue(x, 0));
             } else {
@@ -140,26 +139,50 @@ public final class Map extends Variable {
         // unite y
         sb.append("\t\t\t" + "%" + "(" + getUnitY() + ")");
 
-        // valeur z
-        sb.append("\n");
-        sb.append(getShortName() + " = ");
-        sb.append("[");
-        for (int x = 1; x < values[0].length; x++) {
-            for (int y = 1; y < values.length; y++) {
-                if (y > 1) {
-                    sb.append(" " + getValue(y, x));
+        if (transpose) {
+
+            // valeur z
+            sb.append("\n");
+            sb.append(getShortName() + " = ");
+            sb.append("[");
+            for (int x = 1; x < dimX; x++) {
+                for (int y = 1; y < dimY; y++) {
+                    if (y > 1) {
+                        sb.append(" " + getValue(y, x));
+                    } else {
+                        sb.append(getValue(y, x));
+                    }
+                }
+                if (x != dimX - 1) {
+                    sb.append(";");
+                    sb.append("\n");
                 } else {
-                    sb.append(getValue(y, x));
+                    sb.append("];");
+                }
+            }
+
+        } else {
+
+            // valeur z
+            sb.append("\n");
+            sb.append(getShortName() + " = ");
+            sb.append("[");
+            for (int y = 1; y < dimY; y++) {
+                for (int x = 1; x < dimX; x++) {
+                    if (x > 1) {
+                        sb.append(" " + getValue(y, x));
+                    } else {
+                        sb.append(getValue(y, x));
+                    }
                 }
 
+                if (y != dimY - 1) {
+                    sb.append(";");
+                    sb.append("\n");
+                } else {
+                    sb.append("];");
+                }
             }
-            if (x != values[0].length - 1) {
-                sb.append(";");
-                sb.append("\n");
-            } else {
-                sb.append("];");
-            }
-
         }
 
         // unite z

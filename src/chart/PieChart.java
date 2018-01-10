@@ -8,23 +8,21 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 
 import javax.swing.JComponent;
+import javax.swing.UIManager;
 
 public final class PieChart extends JComponent {
 
     private static final long serialVersionUID = 1L;
 
     private final Dimension dim;
-    private int value;
     private final static int padding = 2;
-    private static final Color emptySlice = Color.WHITE;
-    private static final Color fullSlice = Color.BLUE;
+    private static final Color emptySlice = UIManager.getLookAndFeel().getDefaults().getColor("ProgressBar.background");
+    private static final Color fullSlice = UIManager.getLookAndFeel().getDefaults().getColor("ProgressBar.foreground"); //
 
     private static final Slice[] slices = new Slice[2];
 
     public PieChart(Dimension dim) {
         this.dim = dim;
-        slices[0] = new Slice(100 - value, emptySlice);
-        slices[1] = new Slice(value, fullSlice);
     }
 
     @Override
@@ -38,7 +36,6 @@ public final class PieChart extends JComponent {
     }
 
     public final void setValue(int value) {
-        this.value = value;
         slices[0] = new Slice(100 - value, emptySlice);
         slices[1] = new Slice(value, fullSlice);
         repaint();
@@ -67,7 +64,7 @@ public final class PieChart extends JComponent {
     }
 
     private final class Slice {
-    	
+
         private final int value;
         private final Color color;
 

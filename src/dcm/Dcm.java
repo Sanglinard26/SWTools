@@ -34,7 +34,16 @@ public final class Dcm implements Cdf, Observable {
 
     private final String name;
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
-    private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1);
+    private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5) {
+        private static final long serialVersionUID = 1L;
+        {
+            put(0, 0);
+            put(25, 0);
+            put(50, 0);
+            put(75, 0);
+            put(100, 0);
+        }
+    };
 
     private final ArrayList<Observer> listObserver = new ArrayList<Observer>();
 
@@ -1010,6 +1019,8 @@ public final class Dcm implements Cdf, Observable {
                     }
                 }
             }
+
+            repartitionScore.put(0, listLabel.size());
 
         } catch (Exception e) {
 

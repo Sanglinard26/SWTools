@@ -48,13 +48,13 @@ public final class ValueBlock extends Variable {
     public final int getDimX() {
         return dimX;
     }
-    
+
     public int getDimY() {
-		return dimY;
-	}
+        return dimY;
+    }
 
     @Override
-    public String toMFormat() {
+    public String toMFormat(boolean transpose) {
         StringBuilder sb = new StringBuilder();
 
         // valeur z
@@ -95,18 +95,18 @@ public final class ValueBlock extends Variable {
         return sb.toString();
     }
 
-	@Override
-	public double getChecksum() {
-		
-		double valCheck = 0;
-		
-		for (byte y = 0; y < dimY; y++) {
+    @Override
+    public double getChecksum() {
+
+        double valCheck = 0;
+
+        for (byte y = 0; y < dimY; y++) {
             for (short x = 0; x < dimX; x++) {
                 valCheck += getValue(y, x).hashCode();
             }
         }
-		
-		return valCheck;
-	}
+
+        return valCheck;
+    }
 
 }

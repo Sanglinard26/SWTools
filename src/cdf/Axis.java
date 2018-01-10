@@ -44,7 +44,7 @@ public final class Axis extends Variable {
     }
 
     @Override
-    public String toMFormat() {
+    public String toMFormat(boolean transpose) {
         StringBuilder sb = new StringBuilder();
         sb.append(getShortName() + " = ");
         // valeur
@@ -62,15 +62,14 @@ public final class Axis extends Variable {
         return sb.toString();
     }
 
-	@Override
-	public double getChecksum() {
-		
-		double valCheck = 0;
-		
-		for (short x = 0; x < dim; x++)
-		{
-			valCheck += getzValues(x).hashCode();
-		}
-		return valCheck;
-	}
+    @Override
+    public double getChecksum() {
+
+        double valCheck = 0;
+
+        for (short x = 0; x < dim; x++) {
+            valCheck += getzValues(x).hashCode();
+        }
+        return valCheck;
+    }
 }

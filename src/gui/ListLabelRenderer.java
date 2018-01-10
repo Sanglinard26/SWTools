@@ -91,8 +91,7 @@ public final class ListLabelRenderer extends JPanel implements ListCellRenderer<
         }
 
         if (isSelected) {
-            setBackground(Color.getHSBColor(100, 100, 100));
-            variableName.setFont(new Font(null, Font.BOLD, 12));
+            variableName.setFont(new Font(null, Font.BOLD, 14));
             setBorder(new LineBorder(Color.BLACK, 1));
         } else {
             setBackground(Color.WHITE);
