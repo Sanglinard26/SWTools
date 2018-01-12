@@ -96,8 +96,10 @@ public final class Paco implements Cdf, Observable {
                 return;
             }
         } catch (ParserConfigurationException e) {
+            System.out.println(e);
             e.printStackTrace();
         } catch (SAXException e) {
+            System.out.println(e);
             logger.severe(e.toString());
 
             final int reponse = JOptionPane.showConfirmDialog(null,
@@ -135,10 +137,12 @@ public final class Paco implements Cdf, Observable {
                     JOptionPane.showMessageDialog(null, "Le PaCo a ete enregistre a l'adresse suivante :\n" + fileBis.getPath());
 
                 } catch (IOException e1) {
+                    System.out.println(e);
                     e1.printStackTrace();
                 }
             }
         } catch (IOException e) {
+            System.out.println(e);
             e.printStackTrace();
         }
 
@@ -173,8 +177,6 @@ public final class Paco implements Cdf, Observable {
 
             for (int i = 0; i < nbLabel; i++) {
                 label = (Element) listSwInstance.item(i);
-
-                // System.out.println(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent());
 
                 if (label.getElementsByTagName(SW_FEATURE_REF).item(0) != null) {
                     swFeatureRef = label.getElementsByTagName(SW_FEATURE_REF).item(0).getTextContent().intern();
@@ -321,29 +323,32 @@ public final class Paco implements Cdf, Observable {
 
             nodeRemark = aEntry.getElementsByTagName(REMARK).item(0);
 
-            if (nodeRemark.hasChildNodes()) {
+            if (nodeRemark != null) {
+                if (nodeRemark.hasChildNodes()) {
 
-                final StringBuilder sb = new StringBuilder();
-                nbParagraphe = nodeRemark.getChildNodes().getLength();
-                for (byte x = 0; x < nbParagraphe; x++) {
-                    sb.append(nodeRemark.getChildNodes().item(x).getTextContent());
+                    final StringBuilder sb = new StringBuilder();
+                    nbParagraphe = nodeRemark.getChildNodes().getLength();
+                    for (byte x = 0; x < nbParagraphe; x++) {
+                        sb.append(nodeRemark.getChildNodes().item(x).getTextContent());
 
-                    if (x < nbParagraphe - 1)
-                        sb.append("\n");
+                        if (x < nbParagraphe - 1)
+                            sb.append("\n");
+                    }
+                    entry[n][3] = sb.toString();
+                } else {
+                    entry[n][3] = nodeRemark.getTextContent();
                 }
-                entry[n][3] = sb.toString();
-            } else {
-                entry[n][3] = nodeRemark.getTextContent();
+
+                if (entry[n][0] == null)
+                    entry[n][0] = EMPTY_REMARK;
+                if (entry[n][1] == null)
+                    entry[n][1] = EMPTY_REMARK;
+                if (entry[n][2] == null)
+                    entry[n][2] = EMPTY_REMARK;
+                if (entry[n][3] == null)
+                    entry[n][3] = EMPTY_REMARK;
             }
 
-            if (entry[n][0] == null)
-                entry[n][0] = EMPTY_REMARK;
-            if (entry[n][1] == null)
-                entry[n][1] = EMPTY_REMARK;
-            if (entry[n][2] == null)
-                entry[n][2] = EMPTY_REMARK;
-            if (entry[n][3] == null)
-                entry[n][3] = EMPTY_REMARK;
         }
         return entry;
     }

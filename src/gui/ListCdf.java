@@ -168,12 +168,34 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                             final int rep = fileChooser.showSaveDialog(null);
 
                             if (rep == JFileChooser.APPROVE_OPTION) {
-                                if (CdfUtils.toText(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile())) {
+
+                                boolean result = false;
+
+                                if (!fileChooser.getSelectedFile().exists()) {
+
+                                    result = CdfUtils.toText(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile());
+
+                                } else {
+
+                                    switch (JOptionPane.showConfirmDialog(null, "Le fichier existe deja, ecraser?", null,
+                                            JOptionPane.INFORMATION_MESSAGE)) {
+                                    case JOptionPane.OK_OPTION:
+                                        result = CdfUtils.toText(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile());
+                                        break;
+                                    case JOptionPane.NO_OPTION:
+                                        this.actionPerformed(e);
+                                        return;
+                                    default:
+                                        break;
+                                    }
+                                }
+
+                                if (result) {
                                     JOptionPane.showMessageDialog(null, "Export termine !");
                                 } else {
                                     JOptionPane.showMessageDialog(null, "Export abandonne !");
-                                    fileChooser.getSelectedFile().delete();
                                 }
+
                             }
 
                         }
@@ -195,15 +217,35 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                                 final int rep = fileChooser.showSaveDialog(null);
 
                                 if (rep == JFileChooser.APPROVE_OPTION) {
-                                    if (CdfUtils.toExcel(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile())) {
+
+                                    boolean result = false;
+
+                                    if (!fileChooser.getSelectedFile().exists()) {
+
+                                        result = CdfUtils.toExcel(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile());
+
+                                    } else {
+
+                                        switch (JOptionPane.showConfirmDialog(null, "Le fichier existe deja, ecraser?", null,
+                                                JOptionPane.INFORMATION_MESSAGE)) {
+                                        case JOptionPane.OK_OPTION:
+                                            result = CdfUtils.toExcel(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile());
+                                            break;
+                                        case JOptionPane.NO_OPTION:
+                                            this.actionPerformed(e);
+                                            return;
+                                        default:
+                                            break;
+                                        }
+                                    }
+
+                                    if (result) {
                                         JOptionPane.showMessageDialog(null, "Export termine !");
                                     } else {
                                         JOptionPane.showMessageDialog(null, "Export abandonne !");
-                                        fileChooser.getSelectedFile().delete();
                                     }
                                 }
                             }
-
                         }
                     });
                     menuExport.add(menuItem);
@@ -218,7 +260,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                             if (true) {
                                 final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_CDF));
                                 fileChooser.setDialogTitle("Enregistement du fichier");
-                                fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier m (*.m)", ".m"));
+                                fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier m (*.m)", "m"));
                                 fileChooser.setSelectedFile(new File(ListCdf.this.getSelectedValue() + ".m"));
                                 final int rep = fileChooser.showSaveDialog(null);
 
@@ -229,15 +271,34 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                                         transpose = true;
                                     }
 
-                                    if (CdfUtils.toM(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile(), transpose)) {
+                                    boolean result = false;
+
+                                    if (!fileChooser.getSelectedFile().exists()) {
+
+                                        result = CdfUtils.toM(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile(), transpose);
+
+                                    } else {
+
+                                        switch (JOptionPane.showConfirmDialog(null, "Le fichier existe deja, ecraser?", null,
+                                                JOptionPane.INFORMATION_MESSAGE)) {
+                                        case JOptionPane.OK_OPTION:
+                                            result = CdfUtils.toM(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile(), transpose);
+                                            break;
+                                        case JOptionPane.NO_OPTION:
+                                            this.actionPerformed(e);
+                                            return;
+                                        default:
+                                            break;
+                                        }
+                                    }
+
+                                    if (result) {
                                         JOptionPane.showMessageDialog(null, "Export termine !");
                                     } else {
                                         JOptionPane.showMessageDialog(null, "Export abandonne !");
-                                        fileChooser.getSelectedFile().delete();
                                     }
                                 }
                             }
-
                         }
                     });
                     menuExport.add(menuItem);
@@ -245,6 +306,17 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     menu.add(menuMove);
                     menu.addSeparator();
                     menu.add(menuExport);
+                    menu.addSeparator();
+
+                    menuItem = new JMenuItem("Repartition des scores");
+                    menuItem.addActionListener(new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            new FrameScores(ListCdf.this.getSelectedValue());
+                        }
+                    });
+                    menu.add(menuItem);
 
                 } else {
                     menuItem = new JMenuItem("Supprimer tous les fichiers", new ImageIcon(getClass().getResource(ICON_TRASH)));
