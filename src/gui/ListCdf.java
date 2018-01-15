@@ -13,6 +13,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.DropMode;
@@ -192,6 +193,12 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
                                 if (result) {
                                     JOptionPane.showMessageDialog(null, "Export termine !");
+                                    try {
+                                        Runtime.getRuntime().exec("cmd.exe /c start " + fileChooser.getSelectedFile().getAbsolutePath());
+                                    } catch (IOException e1) {
+                                        // TODO Auto-generated catch block
+                                        e1.printStackTrace();
+                                    }
                                 } else {
                                     JOptionPane.showMessageDialog(null, "Export abandonne !");
                                 }
@@ -241,6 +248,12 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
                                     if (result) {
                                         JOptionPane.showMessageDialog(null, "Export termine !");
+                                        try {
+                                            Runtime.getRuntime().exec("cmd.exe /c start " + fileChooser.getSelectedFile().getAbsolutePath());
+                                        } catch (IOException e1) {
+                                            // TODO Auto-generated catch block
+                                            e1.printStackTrace();
+                                        }
                                     } else {
                                         JOptionPane.showMessageDialog(null, "Export abandonne !");
                                     }
@@ -294,6 +307,12 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
                                     if (result) {
                                         JOptionPane.showMessageDialog(null, "Export termine !");
+                                        try {
+                                            Runtime.getRuntime().exec("cmd.exe /c start " + fileChooser.getSelectedFile().getAbsolutePath());
+                                        } catch (IOException e1) {
+                                            // TODO Auto-generated catch block
+                                            e1.printStackTrace();
+                                        }
                                     } else {
                                         JOptionPane.showMessageDialog(null, "Export abandonne !");
                                     }

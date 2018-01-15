@@ -116,7 +116,7 @@ public final class ListLabel extends JList<Variable> {
 
             panelBt = new JPanel(new GridLayout(1, 2));
 
-            typeFilter = new JComboBox<String>(new ModelCombo());
+            typeFilter = new JComboBox<String>();
             populateFilter(null);
             ((JLabel) typeFilter.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
             typeFilter.addActionListener(this);
@@ -156,24 +156,18 @@ public final class ListLabel extends JList<Variable> {
             oldSearchItem = new LinkedList<String>();
         }
 
-        private class ModelCombo extends DefaultComboBoxModel<String> {
-
-            private static final long serialVersionUID = 1L;
-
-            public ModelCombo() {
-                super();
-            }
-        }
-
         public final void populateFilter(ArrayList<String> list) {
 
+            DefaultComboBoxModel<String> cbModel = (DefaultComboBoxModel<String>) typeFilter.getModel();
+
             if (typeFilter.getModel().getSize() > 0)
-                ((ModelCombo) typeFilter.getModel()).removeAllElements();
-            ((ModelCombo) typeFilter.getModel()).addElement("ALL");
+                cbModel.removeAllElements();
+
+            cbModel.addElement("ALL");
 
             if (list != null)
                 for (int i = 0; i < list.size(); i++) {
-                    ((ModelCombo) typeFilter.getModel()).addElement(list.get(i));
+                    cbModel.addElement(list.get(i));
                 }
 
         }

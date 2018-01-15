@@ -54,9 +54,14 @@ public final class Paco implements Cdf, Observable {
 
     private final ArrayList<String> listCategory = new ArrayList<String>();
 
-    private final ArrayList<Observer> listObserver = new ArrayList<Observer>();
+    private final ArrayList<Observer> listObserver = new ArrayList<Observer>(1);
 
     private static final NumberFormat nbf = NumberFormat.getInstance();
+
+    static {
+        nbf.setMaximumFractionDigits(1);
+        factory.setIgnoringElementContentWhitespace(true);
+    }
 
     public Paco(final File file, PanelCDF panCdf) {
 
@@ -72,14 +77,11 @@ public final class Paco implements Cdf, Observable {
         final String SW_AXIS_CONT = "SW-AXIS-CONT";
         //
 
-        if (panCdf != null)
+        if (panCdf != null) {
             addObserver(panCdf);
-
-        nbf.setMaximumFractionDigits(1);
+        }
 
         this.name = file.getName().substring(0, file.getName().length() - 4);
-
-        factory.setIgnoringElementContentWhitespace(true);
 
         DocumentBuilder builder;
         Document document = null;

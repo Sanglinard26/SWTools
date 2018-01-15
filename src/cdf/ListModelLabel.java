@@ -34,15 +34,14 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
 
     public void setFilter(String type, String filter) {
         listLabelFiltre.clear();
-        
+
         final int nbLabel = listLabel.size();
         Variable var;
-     
-        for(int i = 0; i < nbLabel; i++)
-        {
-        	var = listLabel.get(i);
-        	
-        	if (var.getShortName().toLowerCase().indexOf(filter) > -1) {
+
+        for (int i = 0; i < nbLabel; i++) {
+            var = listLabel.get(i);
+
+            if (var.getShortName().toLowerCase().indexOf(filter) > -1) {
                 if (type.equals("ALL") | type.isEmpty()) {
                     listLabelFiltre.add(var);
                 }
@@ -51,7 +50,7 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
                 }
             }
         }
-        
+
         this.fireContentsChanged(this, 0, getSize());
     }
 

@@ -6,12 +6,12 @@ public final class TableModelView extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
 
-    private String[] entete = new String[0];
+    private int nbCol = 0;
     private String[][] values = new String[0][0];
 
     @Override
     public String getColumnName(int column) {
-        return entete[column];
+        return "";
     }
 
     @Override
@@ -21,7 +21,7 @@ public final class TableModelView extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return entete.length;
+        return nbCol;
     }
 
     @Override
@@ -42,12 +42,8 @@ public final class TableModelView extends AbstractTableModel {
 
     public final void setData(String[][] data) {
         this.values = data;
+        this.nbCol = values[0].length;
 
-        final int nbCol = values[0].length;
-
-        this.entete = new String[nbCol];
-        for (short i = 0; i < nbCol; i++)
-            this.entete[i] = "";
         fireTableStructureChanged();
     }
 }

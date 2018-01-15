@@ -7,9 +7,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -19,7 +19,7 @@ import cdf.Cdf;
 import cdf.Variable;
 import chart.PieChart;
 
-public final class ListLabelRenderer extends JPanel implements ListCellRenderer<Variable> {
+public final class ListLabelRenderer extends JComponent implements ListCellRenderer<Variable> {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,15 +31,23 @@ public final class ListLabelRenderer extends JPanel implements ListCellRenderer<
     private static final String AXIS = "/variable/AXIS.gif";
     private static final String ASCII = "/variable/ASCII.gif";
 
-    private final JLabel variableName = new JLabel();
-    private final PieChart score = new PieChart(new Dimension(30, 30));
+    private static final JLabel variableName = new JLabel();
+    private static final PieChart score = new PieChart(new Dimension(30, 30));
+
+    // En chargeant les icones dans un tableau le gain de temps pour afficher la liste est considerable
+    private final ImageIcon[] icons = new ImageIcon[] { new ImageIcon(getClass().getResource(SCALAIRE)), new ImageIcon(getClass().getResource(CURVE)),
+            new ImageIcon(getClass().getResource(MAP)), new ImageIcon(getClass().getResource(INCONNU)),
+            new ImageIcon(getClass().getResource(VALUEBLOCK)), new ImageIcon(getClass().getResource(AXIS)),
+            new ImageIcon(getClass().getResource(ASCII)) };
+
+    static {
+        variableName.setHorizontalAlignment(SwingConstants.LEFT);
+        variableName.setVerticalAlignment(SwingConstants.CENTER);
+    }
 
     public ListLabelRenderer() {
 
         setLayout(new BorderLayout());
-
-        variableName.setHorizontalAlignment(SwingConstants.LEFT);
-        variableName.setVerticalAlignment(SwingConstants.CENTER);
 
         add(variableName, BorderLayout.CENTER);
         add(score, BorderLayout.EAST);
@@ -56,37 +64,37 @@ public final class ListLabelRenderer extends JPanel implements ListCellRenderer<
 
         switch (value.getCategory()) {
         case Cdf.VALUE:
-            variableName.setIcon(new ImageIcon(getClass().getResource(SCALAIRE)));
+            variableName.setIcon(icons[0]);
             break;
         case Cdf.CURVE_INDIVIDUAL:
-            variableName.setIcon(new ImageIcon(getClass().getResource(CURVE)));
+            variableName.setIcon(icons[1]);
             break;
         case Cdf.CURVE_GROUPED:
-            variableName.setIcon(new ImageIcon(getClass().getResource(CURVE)));
+            variableName.setIcon(icons[1]);
             break;
         case Cdf.CURVE_FIXED:
-            variableName.setIcon(new ImageIcon(getClass().getResource(CURVE)));
+            variableName.setIcon(icons[1]);
             break;
         case Cdf.MAP_INDIVIDUAL:
-            variableName.setIcon(new ImageIcon(getClass().getResource(MAP)));
+            variableName.setIcon(icons[2]);
             break;
         case Cdf.MAP_GROUPED:
-            variableName.setIcon(new ImageIcon(getClass().getResource(MAP)));
+            variableName.setIcon(icons[2]);
             break;
         case Cdf.MAP_FIXED:
-            variableName.setIcon(new ImageIcon(getClass().getResource(MAP)));
+            variableName.setIcon(icons[2]);
             break;
         case Cdf.VALUE_BLOCK:
-            variableName.setIcon(new ImageIcon(getClass().getResource(VALUEBLOCK)));
+            variableName.setIcon(icons[4]);
             break;
         case Cdf.AXIS_VALUES:
-            variableName.setIcon(new ImageIcon(getClass().getResource(AXIS)));
+            variableName.setIcon(icons[5]);
             break;
         case Cdf.ASCII:
-            variableName.setIcon(new ImageIcon(getClass().getResource(ASCII)));
+            variableName.setIcon(icons[6]);
             break;
         default:
-            variableName.setIcon(new ImageIcon(getClass().getResource(INCONNU)));
+            variableName.setIcon(icons[3]);
             break;
         }
 
