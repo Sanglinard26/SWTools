@@ -23,13 +23,13 @@ public final class ListLabelRenderer extends JComponent implements ListCellRende
 
     private static final long serialVersionUID = 1L;
 
-    private static final String SCALAIRE = "/variable/SCALAIRE.gif";
-    private static final String CURVE = "/variable/CURVE.gif";
-    private static final String MAP = "/variable/MAP.gif";
-    private static final String INCONNU = "/variable/INCONNU.gif";
-    private static final String VALUEBLOCK = "/variable/VALUEBLOCK.gif";
-    private static final String AXIS = "/variable/AXIS.gif";
-    private static final String ASCII = "/variable/ASCII.gif";
+    private static final String SCALAIRE = "/variable/SCALAIRE.png";
+    private static final String CURVE = "/variable/CURVE.png";
+    private static final String MAP = "/variable/MAP.png";
+    private static final String INCONNU = "/variable/INCONNU.png";
+    private static final String VALUEBLOCK = "/variable/VALUEBLOCK.png";
+    private static final String AXIS = "/variable/AXIS.png";
+    private static final String ASCII = "/variable/ASCII.png";
 
     private static final JLabel variableName = new JLabel();
     private static final PieChart score = new PieChart(new Dimension(30, 30));

@@ -362,8 +362,6 @@ public final class PanelCDF extends JComponent implements Observer {
     private final class ListTransferHandler extends TransferHandler {
         private static final long serialVersionUID = 1L;
 
-        Boolean needDTD = false;
-
         @Override
         public boolean canImport(TransferSupport info) {
 
@@ -382,7 +380,7 @@ public final class PanelCDF extends JComponent implements Observer {
                 return false;
             }
 
-            Transferable objetTransfer = info.getTransferable();
+            final Transferable objetTransfer = info.getTransferable();
 
             List<File> dropFiles;
             try {
@@ -390,13 +388,9 @@ public final class PanelCDF extends JComponent implements Observer {
 
                 for (int nFile = 0; nFile < dropFiles.size(); nFile++) {
                     if (Utilitaire.getExtension(dropFiles.get(nFile)).equals("xml")) {
-                        needDTD = true;
+                        Utilitaire.createDtd(dropFiles.get(0).getParent());
                         break;
                     }
-                }
-
-                if (needDTD) {
-                    Utilitaire.createDtd(dropFiles.get(0).getParent());
                 }
 
                 pm = new ProgressMonitor(PanelCDF.this, "Fichier :", "...", 0, 0);

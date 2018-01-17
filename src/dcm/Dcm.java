@@ -25,6 +25,14 @@ import tools.Utilitaire;
 
 public final class Dcm implements Cdf, Observable {
 
+    // Corriger les variables qui ont des axes avec du texte
+
+    private static final String SPACE = " ";
+    private static final String THREE_SPACE = "   ";
+    private static final String QUOTE = "\"";
+
+    private static final String[][] EMPTY_COMMENT = new String[0][0];
+
     private static BufferedReader buf = null;
     private static String line;
 
@@ -134,7 +142,7 @@ public final class Dcm implements Cdf, Observable {
 
                 notifyObserver(this.name, nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
 
-                spaceSplitLine = line.split(" ");
+                spaceSplitLine = line.split(SPACE);
 
                 if (spaceSplitLine.length > 0) {
 
@@ -147,10 +155,8 @@ public final class Dcm implements Cdf, Observable {
 
                         while (!readLineDcm().equals(END)) {
 
-                            ;
-
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+                            spaceSplitLine2 = line.split(SPACE);
+                            quotesSplitLine = line.split(QUOTE);
 
                             if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
@@ -161,15 +167,15 @@ public final class Dcm implements Cdf, Observable {
                             if (line.trim().startsWith(UNITE_W)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[0] = " ";
+                                    unite[0] = SPACE.intern();
                                 }
 
                             }
 
                             if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
-                                valeur[0][0] = Utilitaire.cutNumber(spaceSplitLine2[spaceSplitLine2.length - 1]);
+                                valeur[0][0] = Utilitaire.cutNumber(spaceSplitLine2[spaceSplitLine2.length - 1].replace(QUOTE, ""));
                             }
 
                         }
@@ -177,7 +183,7 @@ public final class Dcm implements Cdf, Observable {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(new Scalaire(spaceSplitLine[1], description.toString(), VALUE.intern(), fonction.toString().intern(), unite,
-                                new String[0][0], valeur));
+                                EMPTY_COMMENT, valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -191,15 +197,13 @@ public final class Dcm implements Cdf, Observable {
 
                     case TEXTSTRING:
 
-                        unite = new String[] { " " };
+                        unite = new String[] { SPACE.intern() };
                         valeur = new String[1][1];
 
                         while (!readLineDcm().equals(END)) {
 
-                            ;
-
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+                            spaceSplitLine2 = line.split(SPACE);
+                            quotesSplitLine = line.split(QUOTE);
 
                             if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
@@ -209,7 +213,7 @@ public final class Dcm implements Cdf, Observable {
                             }
 
                             if (line.trim().startsWith(VALEUR_TEXT)) {
-                                valeur[0][0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                valeur[0][0] = quotesSplitLine[quotesSplitLine.length - 1].replace(QUOTE, "");
                             }
 
                         }
@@ -217,7 +221,7 @@ public final class Dcm implements Cdf, Observable {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(new Scalaire(spaceSplitLine[1], description.toString(), ASCII.intern(), fonction.toString().intern(), unite,
-                                new String[0][0], valeur));
+                                EMPTY_COMMENT, valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -236,10 +240,8 @@ public final class Dcm implements Cdf, Observable {
 
                         while (!readLineDcm().equals(END)) {
 
-                            ;
-
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+                            spaceSplitLine2 = line.split(SPACE);
+                            quotesSplitLine = line.split(QUOTE);
 
                             if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
@@ -252,39 +254,39 @@ public final class Dcm implements Cdf, Observable {
                             if (line.trim().startsWith(UNITE_X)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[0] = " ";
+                                    unite[0] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(UNITE_W)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[1] = " ";
+                                    unite[1] = SPACE.intern();
                                 }
                             }
 
-                            if (line.trim().startsWith(AXE_X)) {
+                            if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X)) {
-                                        axeX.add(Utilitaire.cutNumber(s));
+                                    if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
+                                        axeX.add(Utilitaire.cutNumber(s).replace(QUOTE, ""));
                                     }
                                 }
                             }
 
                             if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
                                     if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
-                                        axeY.add(Utilitaire.cutNumber(s));
+                                        axeY.add(Utilitaire.cutNumber(s).replace(QUOTE, ""));
                                     }
                                 }
                             }
@@ -297,7 +299,7 @@ public final class Dcm implements Cdf, Observable {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL.intern(), fonction.toString().intern(),
-                                unite, new String[0][0], valeur));
+                                unite, EMPTY_COMMENT, valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -319,10 +321,8 @@ public final class Dcm implements Cdf, Observable {
 
                         while (!readLineDcm().equals(END)) {
 
-                            ;
-
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+                            spaceSplitLine2 = line.split(SPACE);
+                            quotesSplitLine = line.split(QUOTE);
 
                             if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
@@ -335,39 +335,39 @@ public final class Dcm implements Cdf, Observable {
                             if (line.trim().startsWith(UNITE_X)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[0] = " ";
+                                    unite[0] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(UNITE_W)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[1] = " ";
+                                    unite[1] = SPACE.intern();
                                 }
                             }
 
-                            if (line.trim().startsWith(AXE_X)) {
+                            if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X)) {
-                                        axeX.add(Utilitaire.cutNumber(s));
+                                    if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
+                                        axeX.add(Utilitaire.cutNumber(s).replace(QUOTE, ""));
                                     }
                                 }
                             }
 
                             if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
                                     if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
-                                        axeY.add(Utilitaire.cutNumber(s));
+                                        axeY.add(Utilitaire.cutNumber(s).replace(QUOTE, ""));
                                     }
                                 }
                             }
@@ -379,8 +379,8 @@ public final class Dcm implements Cdf, Observable {
 
                         // System.out.println(spaceSplitLine[1]);
 
-                        listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_INDIVIDUAL.intern(), fonction.toString().intern(),
-                                unite, new String[0][0], valeur));
+                        listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_FIXED.intern(), fonction.toString().intern(), unite,
+                                EMPTY_COMMENT, valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -402,10 +402,8 @@ public final class Dcm implements Cdf, Observable {
 
                         while (!readLineDcm().equals(END)) {
 
-                            ;
-
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+                            spaceSplitLine2 = line.split(SPACE);
+                            quotesSplitLine = line.split(QUOTE);
 
                             if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
@@ -418,27 +416,27 @@ public final class Dcm implements Cdf, Observable {
                             if (line.trim().startsWith(UNITE_X)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[0] = " ";
+                                    unite[0] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(UNITE_W)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[1] = " ";
+                                    unite[1] = SPACE.intern();
                                 }
                             }
 
-                            if (line.trim().startsWith(AXE_X)) {
+                            if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X)) {
+                                    if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
                                         axeX.add(Utilitaire.cutNumber(s));
                                     }
                                 }
@@ -446,11 +444,11 @@ public final class Dcm implements Cdf, Observable {
 
                             if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
                                     if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
-                                        axeY.add(Utilitaire.cutNumber(s));
+                                        axeY.add(Utilitaire.cutNumber(s).replace(QUOTE, ""));
                                     }
                                 }
                             }
@@ -463,7 +461,7 @@ public final class Dcm implements Cdf, Observable {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(new Curve(spaceSplitLine[1], description.toString(), CURVE_GROUPED.intern(), fonction.toString().intern(),
-                                unite, new String[0][0], valeur));
+                                unite, EMPTY_COMMENT, valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -490,10 +488,8 @@ public final class Dcm implements Cdf, Observable {
 
                         while (!readLineDcm().equals(END)) {
 
-                            ;
-
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+                            spaceSplitLine2 = line.split(SPACE);
+                            quotesSplitLine = line.split(QUOTE);
 
                             if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
@@ -506,33 +502,33 @@ public final class Dcm implements Cdf, Observable {
                             if (line.trim().startsWith(UNITE_X)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[0] = " ";
+                                    unite[0] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(UNITE_Y)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[1] = " ";
+                                    unite[1] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(UNITE_W)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[2] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[2] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[2] = " ";
+                                    unite[2] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
                                     if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
@@ -550,12 +546,12 @@ public final class Dcm implements Cdf, Observable {
                             if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
                                     | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
                                     if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) & !s.equals(VALEUR_NOMBRE)
                                             & !s.equals(VALEUR_TEXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(s));
+                                        axeTmp.add(Utilitaire.cutNumber(s).replace(QUOTE, ""));
                                     }
                                 }
 
@@ -574,7 +570,7 @@ public final class Dcm implements Cdf, Observable {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(new Map(spaceSplitLine[1], description.toString(), MAP_INDIVIDUAL.intern(), fonction.toString().intern(), unite,
-                                new String[0][0], valeur));
+                                EMPTY_COMMENT, valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -600,10 +596,8 @@ public final class Dcm implements Cdf, Observable {
 
                         while (!readLineDcm().equals(END)) {
 
-                            ;
-
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+                            spaceSplitLine2 = line.split(SPACE);
+                            quotesSplitLine = line.split(QUOTE);
 
                             if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
@@ -616,33 +610,33 @@ public final class Dcm implements Cdf, Observable {
                             if (line.trim().startsWith(UNITE_X)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[0] = " ";
+                                    unite[0] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(UNITE_Y)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[1] = " ";
+                                    unite[1] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(UNITE_W)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[2] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[2] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[2] = " ";
+                                    unite[2] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
                                     if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
@@ -660,12 +654,12 @@ public final class Dcm implements Cdf, Observable {
                             if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
                                     | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
                                     if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) & !s.equals(VALEUR_NOMBRE)
                                             & !s.equals(VALEUR_TEXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(s));
+                                        axeTmp.add(Utilitaire.cutNumber(s).replace(QUOTE, ""));
                                     }
                                 }
 
@@ -684,7 +678,7 @@ public final class Dcm implements Cdf, Observable {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(new Map(spaceSplitLine[1], description.toString(), MAP_GROUPED.intern(), fonction.toString().intern(), unite,
-                                new String[0][0], valeur));
+                                EMPTY_COMMENT, valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -710,10 +704,8 @@ public final class Dcm implements Cdf, Observable {
 
                         while (!readLineDcm().equals(END)) {
 
-                            ;
-
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+                            spaceSplitLine2 = line.split(SPACE);
+                            quotesSplitLine = line.split(QUOTE);
 
                             if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
@@ -726,33 +718,33 @@ public final class Dcm implements Cdf, Observable {
                             if (line.trim().startsWith(UNITE_X)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[0] = " ";
+                                    unite[0] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(UNITE_Y)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[1] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[1] = " ";
+                                    unite[1] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(UNITE_W)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[2] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[2] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[2] = " ";
+                                    unite[2] = SPACE.intern();
                                 }
                             }
 
                             if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
                                     if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
@@ -770,12 +762,12 @@ public final class Dcm implements Cdf, Observable {
                             if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
                                     | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
                                     if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) & !s.equals(VALEUR_NOMBRE)
                                             & !s.equals(VALEUR_TEXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(s));
+                                        axeTmp.add(Utilitaire.cutNumber(s).replace(QUOTE, ""));
                                     }
                                 }
 
@@ -794,7 +786,7 @@ public final class Dcm implements Cdf, Observable {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(new Map(spaceSplitLine[1], description.toString(), MAP_FIXED.intern(), fonction.toString().intern(), unite,
-                                new String[0][0], valeur));
+                                EMPTY_COMMENT, valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -820,8 +812,8 @@ public final class Dcm implements Cdf, Observable {
 
                             ;
 
-                            spaceSplitLine2 = line.split(" ");
-                            quotesSplitLine = line.split("\"");
+                            spaceSplitLine2 = line.split(SPACE);
+                            quotesSplitLine = line.split(QUOTE);
 
                             if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
@@ -834,19 +826,19 @@ public final class Dcm implements Cdf, Observable {
                             if (line.trim().startsWith(UNITE_X)) {
 
                                 if (quotesSplitLine.length > 1) {
-                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                    unite[0] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                 } else {
-                                    unite[0] = " ";
+                                    unite[0] = SPACE.intern();
                                 }
                             }
 
-                            if (line.trim().startsWith(AXE_X)) {
+                            if (line.trim().startsWith(AXE_X) | line.trim().startsWith(AXE_X_TXT)) {
 
-                                threeSpaceSplitLine = line.split("   ");
+                                threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                 for (String s : threeSpaceSplitLine) {
                                     if (s.length() != 0 & !s.equals(AXE_X)) {
-                                        distribution.add(Utilitaire.cutNumber(s));
+                                        distribution.add(Utilitaire.cutNumber(s).replace(QUOTE, ""));
                                     }
                                 }
                             }
@@ -858,7 +850,7 @@ public final class Dcm implements Cdf, Observable {
                         // System.out.println(spaceSplitLine[1]);
 
                         listLabel.add(new Axis(spaceSplitLine[1], description.toString(), AXIS_VALUES.intern(), fonction.toString().intern(), unite,
-                                new String[0][0], valeur));
+                                EMPTY_COMMENT, valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
@@ -892,8 +884,8 @@ public final class Dcm implements Cdf, Observable {
 
                                 ;
 
-                                spaceSplitLine2 = line.split(" ");
-                                quotesSplitLine = line.split("\"");
+                                spaceSplitLine2 = line.split(SPACE);
+                                quotesSplitLine = line.split(QUOTE);
 
                                 if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
                                     description.append(quotesSplitLine[quotesSplitLine.length - 1]);
@@ -906,15 +898,15 @@ public final class Dcm implements Cdf, Observable {
                                 if (line.trim().startsWith(UNITE_W)) {
 
                                     if (quotesSplitLine.length > 1) {
-                                        unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                        unite[0] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                     } else {
-                                        unite[0] = " ";
+                                        unite[0] = SPACE.intern();
                                     }
                                 }
 
                                 if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                    threeSpaceSplitLine = line.split("   ");
+                                    threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                     axeTmp.add(Integer.toString(cnt));
 
@@ -923,7 +915,7 @@ public final class Dcm implements Cdf, Observable {
                                             if (Utilitaire.isNumber(s)) {
                                                 axeTmp.add(Utilitaire.cutNumber(s));
                                             } else {
-                                                axeTmp.add(s.replace("\"", ""));
+                                                axeTmp.add(s.replace(QUOTE, ""));
                                             }
                                         }
                                     }
@@ -958,8 +950,8 @@ public final class Dcm implements Cdf, Observable {
 
                             while (!readLineDcm().equals(END)) {
 
-                                spaceSplitLine2 = line.split(" ");
-                                quotesSplitLine = line.split("\"");
+                                spaceSplitLine2 = line.split(SPACE);
+                                quotesSplitLine = line.split(QUOTE);
 
                                 if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
                                     description.append(quotesSplitLine[quotesSplitLine.length - 1]);
@@ -972,22 +964,22 @@ public final class Dcm implements Cdf, Observable {
                                 if (line.trim().startsWith(UNITE_W)) {
 
                                     if (quotesSplitLine.length > 1) {
-                                        unite[0] = quotesSplitLine[quotesSplitLine.length - 1];
+                                        unite[0] = quotesSplitLine[quotesSplitLine.length - 1].intern();
                                     } else {
-                                        unite[0] = " ";
+                                        unite[0] = SPACE.intern();
                                     }
                                 }
 
                                 if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
 
-                                    threeSpaceSplitLine = line.split("   ");
+                                    threeSpaceSplitLine = line.split(THREE_SPACE);
 
                                     for (String s : threeSpaceSplitLine) {
                                         if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
                                             if (Utilitaire.isNumber(s)) {
                                                 axeTmp.add(Utilitaire.cutNumber(s));
                                             } else {
-                                                axeTmp.add(s.replace("\"", ""));
+                                                axeTmp.add(s.replace(QUOTE, ""));
                                             }
 
                                         }
@@ -1006,7 +998,7 @@ public final class Dcm implements Cdf, Observable {
                         }
 
                         listLabel.add(new ValueBlock(spaceSplitLine[1], description.toString(), VALUE_BLOCK.intern(), fonction.toString().intern(),
-                                unite, new String[0][0], valeur));
+                                unite, EMPTY_COMMENT, valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);

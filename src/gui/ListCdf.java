@@ -4,6 +4,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -64,10 +66,12 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
         final DropLocation loc = getDropLocation();
         if (loc == null) {
+            setBackground(Color.WHITE);
             setBorder(null);
             return;
         }
 
+        setBackground(UIManager.getLookAndFeel().getDefaults().getColor("textHighlight"));
         setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED, Color.LIGHT_GRAY, Color.GRAY));
     }
 
@@ -192,19 +196,28 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                                 }
 
                                 if (result) {
-                                    JOptionPane.showMessageDialog(null, "Export termine !");
-                                    try {
-                                        Runtime.getRuntime().exec("cmd.exe /c start " + fileChooser.getSelectedFile().getAbsolutePath());
-                                    } catch (IOException e1) {
-                                        // TODO Auto-generated catch block
-                                        e1.printStackTrace();
+
+                                    final int reponse = JOptionPane.showConfirmDialog(null,
+                                            "Export termine !\n" + fileChooser.getSelectedFile() + "\nVoulez-vous ouvrir le fichier?", null,
+                                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                                    switch (reponse) {
+                                    case JOptionPane.OK_OPTION:
+                                        try {
+                                            if (Desktop.isDesktopSupported()) {
+                                                Desktop.getDesktop().open(fileChooser.getSelectedFile());
+                                            }
+                                        } catch (IOException e1) {
+                                            e1.printStackTrace();
+                                        }
+                                        break;
+                                    case JOptionPane.NO_OPTION:
+                                        break;
                                     }
                                 } else {
                                     JOptionPane.showMessageDialog(null, "Export abandonne !");
                                 }
-
                             }
-
                         }
                     });
                     menuExport.add(menuItem);
@@ -247,12 +260,23 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                                     }
 
                                     if (result) {
-                                        JOptionPane.showMessageDialog(null, "Export termine !");
-                                        try {
-                                            Runtime.getRuntime().exec("cmd.exe /c start " + fileChooser.getSelectedFile().getAbsolutePath());
-                                        } catch (IOException e1) {
-                                            // TODO Auto-generated catch block
-                                            e1.printStackTrace();
+
+                                        final int reponse = JOptionPane.showConfirmDialog(null,
+                                                "Export termine !\n" + fileChooser.getSelectedFile() + "\nVoulez-vous ouvrir le fichier?", null,
+                                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                                        switch (reponse) {
+                                        case JOptionPane.OK_OPTION:
+                                            try {
+                                                if (Desktop.isDesktopSupported()) {
+                                                    Desktop.getDesktop().open(fileChooser.getSelectedFile());
+                                                }
+                                            } catch (IOException e1) {
+                                                e1.printStackTrace();
+                                            }
+                                            break;
+                                        case JOptionPane.NO_OPTION:
+                                            break;
                                         }
                                     } else {
                                         JOptionPane.showMessageDialog(null, "Export abandonne !");
@@ -306,12 +330,23 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                                     }
 
                                     if (result) {
-                                        JOptionPane.showMessageDialog(null, "Export termine !");
-                                        try {
-                                            Runtime.getRuntime().exec("cmd.exe /c start " + fileChooser.getSelectedFile().getAbsolutePath());
-                                        } catch (IOException e1) {
-                                            // TODO Auto-generated catch block
-                                            e1.printStackTrace();
+
+                                        final int reponse = JOptionPane.showConfirmDialog(null,
+                                                "Export termine !\n" + fileChooser.getSelectedFile() + "\nVoulez-vous ouvrir le fichier?", null,
+                                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                                        switch (reponse) {
+                                        case JOptionPane.OK_OPTION:
+                                            try {
+                                                if (Desktop.isDesktopSupported()) {
+                                                    Desktop.getDesktop().open(fileChooser.getSelectedFile());
+                                                }
+                                            } catch (IOException e1) {
+                                                e1.printStackTrace();
+                                            }
+                                            break;
+                                        case JOptionPane.NO_OPTION:
+                                            break;
                                         }
                                     } else {
                                         JOptionPane.showMessageDialog(null, "Export abandonne !");

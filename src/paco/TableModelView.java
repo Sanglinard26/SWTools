@@ -6,12 +6,13 @@ public final class TableModelView extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String EMPTY = "";
     private int nbCol = 0;
     private String[][] values = new String[0][0];
 
     @Override
     public String getColumnName(int column) {
-        return "";
+        return EMPTY;
     }
 
     @Override
@@ -37,7 +38,7 @@ public final class TableModelView extends AbstractTableModel {
         if (value != null) {
             return value;
         }
-        return "";
+        return EMPTY;
     }
 
     public final void setData(String[][] data) {

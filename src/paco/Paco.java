@@ -214,6 +214,8 @@ public final class Paco implements Cdf, Observable {
                 longName = label.getElementsByTagName(LONG_NAME).item(0).getTextContent();
                 category = label.getElementsByTagName(CATEGORY).item(0).getTextContent().intern(); // Test String.intern()
 
+                // System.out.println(shortName);
+
                 switch (category) {
                 case ASCII:
                     listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readValue(swAxisCont)));
@@ -245,6 +247,10 @@ public final class Paco implements Cdf, Observable {
                     break;
                 case MAP_FIXED:
                     listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
+                    break;
+                case "SW_COMPONENT": // Rustine vite fait pour poursuivre la lecture du fichier
+                    listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry),
+                            new String[][] { { "Pas de valeur" } }));
                     break;
                 }
 

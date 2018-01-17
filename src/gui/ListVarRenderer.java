@@ -17,12 +17,19 @@ public final class ListVarRenderer extends JLabel implements ListCellRenderer<Va
 
     private static final long serialVersionUID = 1L;
 
-    private static final String SCALAIRE = "/variable/SCALAIRE.gif";
-    private static final String CURVE = "/variable/CURVE.gif";
-    private static final String MAP = "/variable/MAP.gif";
-    private static final String INCONNU = "/variable/INCONNU.gif";
-    private static final String VALUEBLOCK = "/variable/VALUEBLOCK.gif";
-    private static final String ASCII = "/variable/ASCII.gif";
+    private static final String SCALAIRE = "/variable/SCALAIRE.png";
+    private static final String CURVE = "/variable/CURVE.png";
+    private static final String MAP = "/variable/MAP.png";
+    private static final String INCONNU = "/variable/INCONNU.png";
+    private static final String VALUEBLOCK = "/variable/VALUEBLOCK.png";
+    private static final String AXIS = "/variable/AXIS.png";
+    private static final String ASCII = "/variable/ASCII.png";
+
+    // En chargeant les icones dans un tableau le gain de temps pour afficher la liste est considerable
+    private final ImageIcon[] icons = new ImageIcon[] { new ImageIcon(getClass().getResource(SCALAIRE)), new ImageIcon(getClass().getResource(CURVE)),
+            new ImageIcon(getClass().getResource(MAP)), new ImageIcon(getClass().getResource(INCONNU)),
+            new ImageIcon(getClass().getResource(VALUEBLOCK)), new ImageIcon(getClass().getResource(AXIS)),
+            new ImageIcon(getClass().getResource(ASCII)) };
 
     public ListVarRenderer() {
         setHorizontalAlignment(LEFT);
@@ -40,22 +47,25 @@ public final class ListVarRenderer extends JLabel implements ListCellRenderer<Va
 
         switch (value.getType()) {
         case "SCALAIRE":
-            setIcon(new ImageIcon(getClass().getResource(SCALAIRE)));
+            setIcon(icons[0]);
             break;
         case "CURVE":
-            setIcon(new ImageIcon(getClass().getResource(CURVE)));
+            setIcon(icons[1]);
             break;
         case "MAP":
-            setIcon(new ImageIcon(getClass().getResource(MAP)));
+            setIcon(icons[2]);
             break;
         case "VALUEBLOCK":
-            setIcon(new ImageIcon(getClass().getResource(VALUEBLOCK)));
+            setIcon(icons[4]);
             break;
         case "ASCII":
-            setIcon(new ImageIcon(getClass().getResource(ASCII)));
+            setIcon(icons[6]);
+            break;
+        case "AXIS":
+            setIcon(icons[5]);
             break;
         default:
-            setIcon(new ImageIcon(getClass().getResource(INCONNU)));
+            setIcon(icons[3]);
             break;
         }
 
