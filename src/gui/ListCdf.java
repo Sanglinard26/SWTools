@@ -6,6 +6,8 @@ package gui;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RadialGradientPaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -13,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 
@@ -62,6 +65,8 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     @Override
     protected void paintComponent(Graphics g) {
 
+        Graphics2D g2 = (Graphics2D) g.create();
+
         super.paintComponent(g);
 
         final DropLocation loc = getDropLocation();
@@ -71,8 +76,23 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
             return;
         }
 
-        setBackground(UIManager.getLookAndFeel().getDefaults().getColor("textHighlight"));
         setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED, Color.LIGHT_GRAY, Color.GRAY));
+
+        Point2D center = new Point2D.Float(loc.getDropPoint().x, loc.getDropPoint().y);
+        float radius = 72f;
+        float[] dist = { 0.0f, 1f };
+        Color[] colors = { Color.WHITE, UIManager.getLookAndFeel().getDefaults().getColor("textHighlight") };
+        RadialGradientPaint p = new RadialGradientPaint(center, radius, dist, colors);
+        g2.setPaint(p);
+
+        if (getModel().getSize() > 0) {
+            g2.fillRect(0, (int) getCellBounds(0, getModel().getSize() - 1).getHeight(), getWidth(),
+                    (int) (getHeight() - getCellBounds(0, getModel().getSize() - 1).getHeight()));
+        } else {
+            g2.fillRect(0, 0, getWidth(), getHeight());
+        }
+
+        g2.dispose();
     }
 
     @Override

@@ -61,16 +61,16 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
             component.setBackground(Color.WHITE);
         }
 
-        if (isSelected) {
-            component.setBackground(Color.LIGHT_GRAY);
-            component.setForeground(Color.WHITE);
-        }
-
         if (value.toString().indexOf(" => ") > -1) // Comparaison
         {
             component.setBorder(new LineBorder(Color.BLACK, 1));
             component.setBackground(Color.WHITE);
             component.setForeground(Color.BLACK);
+        }
+
+        if (isSelected) {
+            component.setBackground(Color.LIGHT_GRAY);
+            component.setForeground(Color.WHITE);
         }
 
         if (table.getColumnCount() * table.getRowCount() == 1)

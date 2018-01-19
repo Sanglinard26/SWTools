@@ -73,7 +73,11 @@ public final class Dcm implements Cdf, Observable {
 
         this.name = file.getName().substring(0, file.getName().length() - 4);
 
+        long start = System.currentTimeMillis();
+
         this.parse(file);
+
+        System.out.println(System.currentTimeMillis() - start);
 
         listObserver.clear(); // Plus besoin d'observer
 
@@ -136,6 +140,8 @@ public final class Dcm implements Cdf, Observable {
 
             // Pour les MAP
             int cnt;
+            int nbSplit;
+            String tmpValue;
             final ArrayList<String> axeTmp = new ArrayList<String>();
 
             while (readLineDcm() != null) {
@@ -273,9 +279,16 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                for (String s : threeSpaceSplitLine) {
-                                    if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
-                                        axeX.add(Utilitaire.cutNumber(s).replace(QUOTE, ""));
+                                /*
+                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
+                                 * axeX.add(Utilitaire.cutNumber(s).replace(QUOTE, "")); } }
+                                 */
+
+                                nbSplit = threeSpaceSplitLine.length;
+                                for (int i = 0; i < nbSplit; i++) {
+                                    tmpValue = threeSpaceSplitLine[i];
+                                    if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
+                                        axeX.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
                                     }
                                 }
                             }

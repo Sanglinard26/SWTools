@@ -6,25 +6,17 @@ package gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.LinearGradientPaint;
-import java.awt.RenderingHints;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.LineBorder;
-import javax.swing.plaf.basic.BasicProgressBarUI;
 
 import cdf.Cdf;
 
@@ -104,52 +96,4 @@ public final class ListCdfRenderer extends JPanel implements ListCellRenderer<Cd
 
         return this;
     }
-
-    @SuppressWarnings("unused")
-    private class BarUI extends BasicProgressBarUI {
-
-        @Override
-        protected void paintDeterminate(Graphics g, JComponent c) {
-
-            Graphics2D g2d = (Graphics2D) g;
-
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            final int width = progressBar.getWidth();
-            final int height = progressBar.getHeight();
-
-            double dProgress = progressBar.getPercentComplete();
-            if (dProgress < 0) {
-                dProgress = 0;
-            } else if (dProgress > 1) {
-                dProgress = 1;
-            }
-
-            int iInnerWidth = (int) Math.round(width * dProgress);
-
-            int x = 0;
-            int y = height / 2;
-
-            Point2D start = new Point2D.Double(x, y);
-            Point2D end = new Point2D.Double(x + iInnerWidth + 1, y);
-
-            float[] dist = { 0.0f, 0.5f, 1.0f };
-            Color[] colors = { Color.RED, Color.YELLOW, Color.GREEN };
-            LinearGradientPaint p = new LinearGradientPaint(start, end, dist, colors);
-
-            g2d.setPaint(p);
-
-            Rectangle2D fill = new Rectangle2D.Double(0, 0, iInnerWidth, height);
-
-            g2d.fill(fill);
-
-            g2d.setColor(Color.BLACK);
-            g2d.drawString(progressBar.getString(), width / 4, height - 6);
-
-            g2d.dispose();
-
-        }
-
-    }
-
 }
