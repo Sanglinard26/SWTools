@@ -91,9 +91,9 @@ public final class XYChart extends JComponent {
                     serie.addPoint(Double.parseDouble(xValue), Double.parseDouble(zValue));
                 } else {
                     if (Utilitaire.isNumber(zValue)) {
-                        serie.addPoint(x, Double.parseDouble(zValue));
+                        serie.addPoint(y, Double.parseDouble(zValue));
                     } else {
-                        serie.addPoint(x, Float.NaN);
+                        serie.addPoint(y, Float.NaN);
                     }
                 }
             }

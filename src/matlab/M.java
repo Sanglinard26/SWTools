@@ -84,7 +84,7 @@ public final class M implements Cdf, Observable {
 
                         if (shortName.lastIndexOf("_") + 1 < line.indexOf("=")) {
 
-                            System.out.println(shortName);
+                            //System.out.println(shortName);
 
                             switch (line.substring(shortName.lastIndexOf("_") + 1, line.indexOf("=")).trim()) {
                             case "C":
