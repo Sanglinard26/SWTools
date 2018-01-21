@@ -11,16 +11,16 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.text.DecimalFormat;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.LineBorder;
 
 import cdf.Cdf;
 
-public final class ListCdfRenderer extends JPanel implements ListCellRenderer<Cdf> {
+public final class ListCdfRenderer extends JComponent implements ListCellRenderer<Cdf> {
 
     private static final long serialVersionUID = 1L;
 

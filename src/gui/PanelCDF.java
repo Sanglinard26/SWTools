@@ -321,7 +321,7 @@ public final class PanelCDF extends JComponent implements Observer {
                 cdfName.setLength(0);
                 cdfName.append(file.getName().substring(0, file.getName().length() - 4));
 
-                if (!(ListModelCdf.getListcdfname().contains(cdfName))) {
+                if (!(ListModelCdf.getListcdfname().contains(cdfName.toString()))) {
                     if (!pm.isCanceled()) {
 
                         switch (Utilitaire.getExtension(file)) {
