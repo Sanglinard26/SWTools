@@ -79,9 +79,7 @@ public abstract class Variable {
     }
 
     public final int getLastScore() {
-        if (!(swCsHistory.length < 1))
-            return maturite.get(swCsHistory[swCsHistory.length - 1][2].toLowerCase());
-        return 0;
+        return swCsHistory.length > 0 ? maturite.get(swCsHistory[swCsHistory.length - 1][2].toLowerCase()) : 0;
     }
 
     @Override

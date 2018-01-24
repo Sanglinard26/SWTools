@@ -19,7 +19,7 @@ public final class Curve extends Variable {
 
         StringBuilder sb = new StringBuilder("\n");
         for (byte y = 0; y < 2; y++) {
-            for (short x = 0; x < dimX; x++) {
+            for (byte x = 0; x < dimX; x++) {
                 sb.append(this.getValue(y, x) + "\t");
             }
             sb.append("\n");
@@ -57,7 +57,7 @@ public final class Curve extends Variable {
         // valeur x
         sb.append(getShortName().substring(0, getShortName().length() - 2) + "X_A" + " = ");
         sb.append("[");
-        for (int x = 0; x < values[0].length; x++) {
+        for (short x = 0; x < values[0].length; x++) {
             if (x > 0) {
                 sb.append(" " + getValue(0, x));
             } else {
@@ -72,7 +72,7 @@ public final class Curve extends Variable {
         sb.append("\n");
         sb.append(getShortName() + " = ");
         sb.append("[");
-        for (int x = 0; x < values[0].length; x++) {
+        for (short x = 0; x < values[0].length; x++) {
             if (x > 0) {
                 sb.append(" " + getValue(1, x));
             } else {

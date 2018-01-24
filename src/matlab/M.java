@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import cdf.Axis;
 import cdf.Cdf;
@@ -34,7 +35,7 @@ public final class M implements Cdf, Observable {
 
     private final String name;
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
-    private final ArrayList<String> listCategory = new ArrayList<String>();
+    private final HashSet<String> listCategory = new HashSet<String>();
     private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1);
 
     private final ArrayList<Observer> listObserver = new ArrayList<Observer>();
@@ -84,7 +85,7 @@ public final class M implements Cdf, Observable {
 
                         if (shortName.lastIndexOf("_") + 1 < line.indexOf("=")) {
 
-                            //System.out.println(shortName);
+                            // System.out.println(shortName);
 
                             switch (line.substring(shortName.lastIndexOf("_") + 1, line.indexOf("=")).trim()) {
                             case "C":
@@ -92,8 +93,7 @@ public final class M implements Cdf, Observable {
                                 listLabel.add(new Scalaire(shortName, "", VALUE, NO_FUNCTION, new String[] { "" }, new String[0][0],
                                         new String[][] { { line.substring(line.indexOf("=") + 1, line.indexOf(";")).trim() } }));
 
-                                if (!listCategory.contains(Cdf.VALUE))
-                                    listCategory.add(Cdf.VALUE);
+                                listCategory.add(Cdf.VALUE);
 
                                 break;
                             case "T":
@@ -113,8 +113,7 @@ public final class M implements Cdf, Observable {
                                 listLabel.add(
                                         new Curve(shortName, "", CURVE_INDIVIDUAL, NO_FUNCTION, new String[] { "", "" }, new String[0][0], valeur));
 
-                                if (!listCategory.contains(Cdf.CURVE_INDIVIDUAL))
-                                    listCategory.add(Cdf.CURVE_INDIVIDUAL);
+                                listCategory.add(Cdf.CURVE_INDIVIDUAL);
 
                                 break;
                             case "CUR":
@@ -134,16 +133,14 @@ public final class M implements Cdf, Observable {
                                 listLabel.add(
                                         new Curve(shortName, "", CURVE_INDIVIDUAL, NO_FUNCTION, new String[] { "", "" }, new String[0][0], valeur));
 
-                                if (!listCategory.contains(Cdf.CURVE_INDIVIDUAL))
-                                    listCategory.add(Cdf.CURVE_INDIVIDUAL);
+                                listCategory.add(Cdf.CURVE_INDIVIDUAL);
 
                                 break;
                             case "M":
                                 listLabel.add(new Map(shortName, "", MAP_INDIVIDUAL, NO_FUNCTION, new String[] { "", "", "" }, new String[0][0],
                                         new String[][] { { "0" } }));
 
-                                if (!listCategory.contains(Cdf.MAP_INDIVIDUAL))
-                                    listCategory.add(Cdf.MAP_INDIVIDUAL);
+                                listCategory.add(Cdf.MAP_INDIVIDUAL);
 
                                 break;
                             case "A":
@@ -157,16 +154,14 @@ public final class M implements Cdf, Observable {
 
                                 listLabel.add(new Axis(shortName, "", AXIS_VALUES, NO_FUNCTION, new String[] { "" }, new String[0][0], valeur));
 
-                                if (!listCategory.contains(Cdf.AXIS_VALUES))
-                                    listCategory.add(Cdf.AXIS_VALUES);
+                                listCategory.add(Cdf.AXIS_VALUES);
 
                                 break;
                             case "CA":
                                 listLabel.add(new ValueBlock(shortName, "", VALUE_BLOCK, NO_FUNCTION, new String[] { "" }, new String[0][0],
                                         new String[][] { { "0" } }));
 
-                                if (!listCategory.contains(Cdf.VALUE_BLOCK))
-                                    listCategory.add(Cdf.VALUE_BLOCK);
+                                listCategory.add(Cdf.VALUE_BLOCK);
 
                                 break;
                             default:
@@ -242,7 +237,7 @@ public final class M implements Cdf, Observable {
     }
 
     @Override
-    public ArrayList<String> getCategoryList() {
+    public HashSet<String> getCategoryList() {
         return listCategory;
     }
 

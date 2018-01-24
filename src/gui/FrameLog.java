@@ -27,13 +27,32 @@ public final class FrameLog extends JFrame {
 
     private final JTextPane txtLog = new JTextPane();
     private final JButton btSendMail = new JButton("Envoyer le log");
-    private BufferedReader brLog;
 
     public FrameLog() {
         this.setTitle("Log");
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(FENETRE_ICON)));
+
+        loadLog();
+
+        add(new JScrollPane(txtLog), BorderLayout.CENTER);
+        add(btSendMail, BorderLayout.SOUTH);
+        btSendMail.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendMail(txtLog.getText());
+                FrameLog.this.dispose();
+            }
+        });
+
+        this.setSize(400, 300);
+        this.setVisible(true);
+    }
+
+    public final void loadLog() {
+
+        final BufferedReader brLog;
 
         try {
             String line;
@@ -47,20 +66,6 @@ public final class FrameLog extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        add(new JScrollPane(txtLog), BorderLayout.CENTER);
-        add(btSendMail, BorderLayout.SOUTH);
-        btSendMail.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sendMail(txtLog.getText());
-                FrameLog.this.dispose();
-            }
-        });
-
-        this.setSize(400, 300);
-        this.setVisible(true);
     }
 
     // Nombre de caractere limite avec l'URI, à voir pour remplacer l'envoi de mail par l'API JavaMail.
@@ -73,11 +78,9 @@ public final class FrameLog extends JFrame {
                 try {
                     Desktop.getDesktop().mail(new URI("mailto", adresse, null));
                 } catch (IOException | URISyntaxException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
         }
     }
-
 }

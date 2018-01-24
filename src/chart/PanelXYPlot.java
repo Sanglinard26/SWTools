@@ -35,7 +35,7 @@ public final class PanelXYPlot extends JPanel {
     private final String title;
     private final String xAxisLabel;
     private final String yAxisLabel;
-    private final double[][] rangeXY;
+    private final double[] rangeXY;
 
     private List<SerieScale> listSeries;
     private SeriesCollection seriesCollection;
@@ -53,7 +53,7 @@ public final class PanelXYPlot extends JPanel {
         this.yAxisLabel = yAxisLabel;
         this.seriesCollection = seriesCollection;
 
-        this.rangeXY = new double[2][2];
+        this.rangeXY = new double[4];
 
         fillRangeXY();
 
@@ -71,10 +71,10 @@ public final class PanelXYPlot extends JPanel {
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        final double minXvalue = this.rangeXY[0][0];
-        final double maxXvalue = this.rangeXY[0][1];
-        final double minYvalue = this.rangeXY[1][0];
-        final double maxYvalue = this.rangeXY[1][1];
+        final double minXvalue = this.rangeXY[0];
+        final double maxXvalue = this.rangeXY[1];
+        final double minYvalue = this.rangeXY[2];
+        final double maxYvalue = this.rangeXY[3];
         final double diffXvalue = maxXvalue - minXvalue;
         final double diffYvalue = maxYvalue - minYvalue;
 
@@ -278,7 +278,7 @@ public final class PanelXYPlot extends JPanel {
         double minYValue = Double.POSITIVE_INFINITY;
         double maxYValue = Double.NEGATIVE_INFINITY;
 
-        double[][] rangeSerie;
+        double[] rangeSerie;
 
         final int nbSerie = seriesCollection.getSeriesCount();
 
@@ -286,16 +286,16 @@ public final class PanelXYPlot extends JPanel {
 
             rangeSerie = seriesCollection.getSerie(i).getRangeXY();
 
-            minXValue = Math.min(minXValue, rangeSerie[0][0]);
-            maxXValue = Math.max(maxXValue, rangeSerie[0][1]);
-            minYValue = Math.min(minYValue, rangeSerie[1][0]);
-            maxYValue = Math.max(maxYValue, rangeSerie[1][1]);
+            minXValue = Math.min(minXValue, rangeSerie[0]);
+            maxXValue = Math.max(maxXValue, rangeSerie[1]);
+            minYValue = Math.min(minYValue, rangeSerie[2]);
+            maxYValue = Math.max(maxYValue, rangeSerie[3]);
         }
 
-        this.rangeXY[0][0] = minXValue;
-        this.rangeXY[0][1] = maxXValue;
-        this.rangeXY[1][0] = minYValue;
-        this.rangeXY[1][1] = maxYValue;
+        this.rangeXY[0] = minXValue;
+        this.rangeXY[1] = maxXValue;
+        this.rangeXY[2] = minYValue;
+        this.rangeXY[3] = maxYValue;
     }
 
     public final SeriesCollection getSeriesCollection() {

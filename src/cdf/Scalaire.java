@@ -26,7 +26,7 @@ public final class Scalaire extends Variable {
         if (Utilitaire.isNumber(getValue())) {
             sb.append(getValue() + ";");
         } else {
-            if (Boolean.parseBoolean(getValue())) {
+            if (Boolean.parseBoolean(getValue().toString())) {
                 sb.append("1;");
             } else {
                 sb.append("0;");

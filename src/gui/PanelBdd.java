@@ -108,7 +108,7 @@ public final class PanelBdd extends JComponent {
     }
 
     @SuppressWarnings("unused")
-	private final class OpenCDF implements ActionListener {
+    private final class OpenCDF implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
@@ -181,7 +181,7 @@ public final class PanelBdd extends JComponent {
 
         private final File[] filesCDF;
         @SuppressWarnings("unused")
-		private Cdf cdf;
+        private Cdf cdf;
 
         public TaskCharging(File[] filesPaco) {
             this.filesCDF = filesPaco;

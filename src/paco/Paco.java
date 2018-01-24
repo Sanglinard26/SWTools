@@ -9,12 +9,12 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,38 +32,115 @@ import cdf.ValueBlock;
 import cdf.Variable;
 import gui.Observer;
 import gui.PanelCDF;
+import gui.SWToolsMain;
 import tools.Utilitaire;
 
 public final class Paco implements Cdf, Observable {
 
-    private static Logger logger = Logger.getLogger("MyLogger");
-
-    private final String name;
+    private String name;
     private boolean valid;
-    private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     private int nbLabel = 0;
-    private final HashMap<String, String> unit = new HashMap<String, String>();
     private ArrayList<Variable> listLabel;
+    private HashSet<String> listCategory;
     private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
     private int minScore = Byte.MAX_VALUE;
     private int maxScore = Byte.MIN_VALUE;
-
-    private static final String NO_FONCTION = "Pas de fonction definie";
-
     private double checkSum = 0;
 
-    private final ArrayList<String> listCategory = new ArrayList<String>();
-
-    private final ArrayList<Observer> listObserver = new ArrayList<Observer>(1);
-
+    private static final String NO_FONCTION = "Pas de fonction definie";
+    private static final ArrayList<Observer> listObserver = new ArrayList<Observer>(1);
+    private static final DocumentBuilderFactory factory;
     private static final NumberFormat nbf = NumberFormat.getInstance();
 
     static {
         nbf.setMaximumFractionDigits(1);
+        factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringElementContentWhitespace(true);
     }
 
     public Paco(final File file, PanelCDF panCdf) {
+
+        DocumentBuilder builder;
+        Document document = null;
+        try {
+
+            long start = System.currentTimeMillis();
+
+            builder = factory.newDocumentBuilder();
+
+            document = builder.parse(new File(file.toURI())); // Permet de virer l'exception <java.net.malformedurlexception unknown protocol c>
+
+            if (document.getDoctype() != null) {
+                valid = true;
+
+                if (panCdf != null) {
+                    addObserver(panCdf);
+                }
+
+                this.name = file.getName().substring(0, file.getName().length() - 4);
+
+                parse(document);
+
+                SWToolsMain.getLogger().info(System.currentTimeMillis() - start + " ms");
+
+                document = null;
+                listObserver.clear(); // Plus besoin d'observer
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Format de PaCo non valide !" + "\nNom : " + this.name, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                valid = false;
+                return;
+            }
+
+        } catch (Exception e) {
+
+            if (e instanceof SAXException) {
+                Logger.getLogger("MyLogger").severe(e.toString());
+
+                final int reponse = JOptionPane.showConfirmDialog(null,
+                        "Le PaCo contient des caracteres invalides." + "\nVoir le log pour plus de details." + "\n\nNom : " + this.name
+                                + "\n\n Voulez-vous corriger les erreurs en creeant une copie du fichier?",
+                        "ERREUR DE PARSING", JOptionPane.YES_NO_OPTION);
+
+                if (reponse == JOptionPane.OK_OPTION) {
+                    String line;
+                    char[] chars;
+                    BufferedReader buf;
+                    BufferedWriter bw;
+                    File fileBis;
+                    StringBuilder sb = new StringBuilder();
+                    try {
+                        buf = new BufferedReader(new FileReader(file));
+                        fileBis = new File(file.getPath().replace(file.getPath().substring(file.getPath().lastIndexOf('.'), file.getPath().length()),
+                                "_SWTools.XML"));
+                        bw = new BufferedWriter(new FileWriter(fileBis));
+                        while ((line = buf.readLine()) != null) {
+                            chars = line.toCharArray();
+                            sb.setLength(0);
+                            for (int i = 0; i < chars.length; i++) {
+                                if (chars[i] == 0x1a)
+                                    chars[i] = ' ';
+
+                                sb.append(chars[i]);
+                            }
+                            bw.write(sb.toString());
+                            bw.write("\n");
+                        }
+                        buf.close();
+                        bw.close();
+
+                        JOptionPane.showMessageDialog(null, "Le PaCo a ete enregistre a l'adresse suivante :\n" + fileBis.getPath());
+
+                    } catch (IOException e1) {
+                        System.out.println(e);
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    private final void parse(Document document) {
 
         // PaCo Keywords
         final String SW_INSTANCE = "SW-INSTANCE";
@@ -77,206 +154,131 @@ public final class Paco implements Cdf, Observable {
         final String SW_AXIS_CONT = "SW-AXIS-CONT";
         //
 
-        if (panCdf != null) {
-            addObserver(panCdf);
+        final Element racine = document.getDocumentElement();
+        final NodeList listSwInstance = racine.getElementsByTagName(SW_INSTANCE);
+        final NodeList listSwUnit = racine.getElementsByTagName(SW_UNIT);
+        Element eUnit;
+        String swFeatureRef;
+        String[] swUnitRef = null;
+        NodeList swCsEntry, swAxisCont;
+        nbLabel = listSwInstance.getLength();
+        Element label;
+        String shortName, longName, category;
+
+        listLabel = new ArrayList<Variable>(nbLabel);
+        listCategory = new HashSet<String>();
+
+        final int nbUnit = listSwUnit.getLength();
+        final HashMap<String, String> unit = new HashMap<String, String>(nbUnit);
+        int nbAxe;
+
+        // Remplissage de la HashMap des unites
+        // Test String.intern()
+        for (short u = 0; u < nbUnit; u++) {
+            eUnit = (Element) listSwUnit.item(u);
+            unit.put(eUnit.getElementsByTagName(SHORT_NAME).item(0).getTextContent().intern(),
+                    eUnit.getElementsByTagName(SW_UNIT_DISPLAY).item(0).getTextContent().intern());
         }
 
-        this.name = file.getName().substring(0, file.getName().length() - 4);
+        String fullAttributAxe;
+        String attributAxe;
+        String[] splitAttributAxe;
 
-        DocumentBuilder builder;
-        Document document = null;
-        try {
-            builder = factory.newDocumentBuilder();
+        for (int i = 0; i < nbLabel; i++) {
+            label = (Element) listSwInstance.item(i);
 
-            document = builder.parse(new File(file.toURI())); // Permet de virer l'exception <java.net.malformedurlexception unknown protocol c>
-
-            if (document.getDoctype() != null) {
-                valid = true;
+            if (label.getElementsByTagName(SW_FEATURE_REF).item(0) != null) {
+                swFeatureRef = label.getElementsByTagName(SW_FEATURE_REF).item(0).getTextContent().intern();
             } else {
-                JOptionPane.showMessageDialog(null, "Format de PaCo non valide !" + "\nNom : " + this.name, "ERREUR", JOptionPane.ERROR_MESSAGE);
-                valid = false;
-                return;
-            }
-        } catch (ParserConfigurationException e) {
-            System.out.println(e);
-            e.printStackTrace();
-        } catch (SAXException e) {
-            System.out.println(e);
-            logger.severe(e.toString());
-
-            final int reponse = JOptionPane.showConfirmDialog(null,
-                    "Le PaCo contient des caracteres invalides." + "\nVoir le log pour plus de details." + "\n\nNom : " + this.name
-                            + "\n\n Voulez-vous corriger les erreurs en creeant une copie du fichier?",
-                    "ERREUR DE PARSING", JOptionPane.YES_NO_OPTION);
-
-            if (reponse == JOptionPane.OK_OPTION) {
-                String line;
-                char[] chars;
-                BufferedReader buf;
-                BufferedWriter bw;
-                File fileBis;
-                StringBuilder sb = new StringBuilder();
-                try {
-                    buf = new BufferedReader(new FileReader(file));
-                    fileBis = new File(file.getPath().replace(file.getPath().substring(file.getPath().lastIndexOf('.'), file.getPath().length()),
-                            "_SWTools.XML"));
-                    bw = new BufferedWriter(new FileWriter(fileBis));
-                    while ((line = buf.readLine()) != null) {
-                        chars = line.toCharArray();
-                        sb.setLength(0);
-                        for (int i = 0; i < chars.length; i++) {
-                            if (chars[i] == 0x1a)
-                                chars[i] = ' ';
-
-                            sb.append(chars[i]);
-                        }
-                        bw.write(sb.toString());
-                        bw.write("\n");
-                    }
-                    buf.close();
-                    bw.close();
-
-                    JOptionPane.showMessageDialog(null, "Le PaCo a ete enregistre a l'adresse suivante :\n" + fileBis.getPath());
-
-                } catch (IOException e1) {
-                    System.out.println(e);
-                    e1.printStackTrace();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println(e);
-            e.printStackTrace();
-        }
-
-        if (document != null) {
-            final Element racine = document.getDocumentElement();
-            final NodeList listSwInstance = racine.getElementsByTagName(SW_INSTANCE);
-            final NodeList listSwUnit = racine.getElementsByTagName(SW_UNIT);
-            Element eUnit;
-            String swFeatureRef;
-            String[] swUnitRef = null;
-            NodeList swCsEntry, swAxisCont;
-            nbLabel = listSwInstance.getLength();
-            Element label;
-            String shortName, longName, category;
-
-            listLabel = new ArrayList<Variable>(nbLabel);
-
-            final int nbUnit = listSwUnit.getLength();
-            int nbAxe;
-
-            // Remplissage de la HashMap des unites
-            // Test String.intern()
-            for (short u = 0; u < nbUnit; u++) {
-                eUnit = (Element) listSwUnit.item(u);
-                unit.put(eUnit.getElementsByTagName(SHORT_NAME).item(0).getTextContent().intern(),
-                        eUnit.getElementsByTagName(SW_UNIT_DISPLAY).item(0).getTextContent().intern());
+                swFeatureRef = NO_FONCTION.intern();
             }
 
-            String fullAttributAxe;
-            String attributAxe;
-            String[] splitAttributAxe;
+            swAxisCont = label.getElementsByTagName(SW_AXIS_CONT);
+            nbAxe = swAxisCont.getLength();
+            swUnitRef = new String[swAxisCont.getLength()];
 
-            for (int i = 0; i < nbLabel; i++) {
-                label = (Element) listSwInstance.item(i);
-
-                if (label.getElementsByTagName(SW_FEATURE_REF).item(0) != null) {
-                    swFeatureRef = label.getElementsByTagName(SW_FEATURE_REF).item(0).getTextContent().intern();
-                } else {
-                    swFeatureRef = NO_FONCTION.intern();
-                }
-
-                swAxisCont = label.getElementsByTagName(SW_AXIS_CONT);
-                nbAxe = swAxisCont.getLength();
-                swUnitRef = new String[swAxisCont.getLength()];
-
-                // A finir d'implementer pour les ValueBlock
-                splitAttributAxe = null; // Le tableau est cense avoir trois elements
-                for (byte n = 0; n < nbAxe; n++) {
-                    if (swAxisCont.item(n).hasAttributes()) {
-                        fullAttributAxe = swAxisCont.item(n).getAttributes().getNamedItem("SI").getTextContent();
-                        if (fullAttributAxe.indexOf(";") > -1) {
-                            attributAxe = fullAttributAxe.substring(fullAttributAxe.indexOf(";") + 1);
-                            if (attributAxe.indexOf("@") > -1) {
-                                splitAttributAxe = attributAxe.split("@"); // nbColonne@nbLigne@nb?
-                            }
+            // A finir d'implementer pour les ValueBlock
+            splitAttributAxe = null; // Le tableau est cense avoir trois elements
+            for (byte n = 0; n < nbAxe; n++) {
+                if (swAxisCont.item(n).hasAttributes()) {
+                    fullAttributAxe = swAxisCont.item(n).getAttributes().getNamedItem("SI").getTextContent();
+                    if (fullAttributAxe.indexOf(";") > -1) {
+                        attributAxe = fullAttributAxe.substring(fullAttributAxe.indexOf(";") + 1);
+                        if (attributAxe.indexOf("@") > -1) {
+                            splitAttributAxe = attributAxe.split("@"); // nbColonne@nbLigne@nb?
                         }
                     }
-
-                    // Test String.intern()
-                    swUnitRef[n] = unit.get(swAxisCont.item(n).getFirstChild().getTextContent().intern());
-                }
-                // _________________________________________
-
-                swCsEntry = label.getElementsByTagName(SW_CS_ENTRY);
-
-                shortName = label.getElementsByTagName(SHORT_NAME).item(0).getTextContent();
-                longName = label.getElementsByTagName(LONG_NAME).item(0).getTextContent();
-                category = label.getElementsByTagName(CATEGORY).item(0).getTextContent().intern(); // Test String.intern()
-
-                // System.out.println(shortName);
-
-                switch (category) {
-                case ASCII:
-                    listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readValue(swAxisCont)));
-                    break;
-                case VALUE:
-                    listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readValue(swAxisCont)));
-                    break;
-                case CURVE_INDIVIDUAL:
-                    listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont)));
-                    break;
-                case CURVE_FIXED: // Modif
-                    listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont)));
-                    break;
-                case AXIS_VALUES:
-                    listLabel.add(new Axis(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readAxis(swAxisCont)));
-                    break;
-                case CURVE_GROUPED:
-                    listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont)));
-                    break;
-                case VALUE_BLOCK:
-                    listLabel.add(new ValueBlock(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                            readValueBlock(splitAttributAxe, swAxisCont)));
-                    break;
-                case MAP_INDIVIDUAL:
-                    listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
-                    break;
-                case MAP_GROUPED:
-                    listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
-                    break;
-                case MAP_FIXED:
-                    listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
-                    break;
-                case "SW_COMPONENT": // Rustine vite fait pour poursuivre la lecture du fichier
-                    listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                            new String[][] { { "Pas de valeur" } }));
-                    break;
                 }
 
-                if (!listCategory.contains(category))
-                    listCategory.add(category);
+                // Test String.intern()
+                swUnitRef[n] = unit.get(swAxisCont.item(n).getFirstChild().getTextContent().intern());
+            }
+            // _________________________________________
 
-                notifyObserver(this.name, nbf.format(((double) i / (double) (this.nbLabel - 1)) * 100) + "%");
+            swCsEntry = label.getElementsByTagName(SW_CS_ENTRY);
 
-                // checksum
-                checkSum += listLabel.get(i).getChecksum();
+            shortName = label.getElementsByTagName(SHORT_NAME).item(0).getTextContent();
+            longName = label.getElementsByTagName(LONG_NAME).item(0).getTextContent();
+            category = label.getElementsByTagName(CATEGORY).item(0).getTextContent().intern(); // Test String.intern()
+
+            // System.out.println(shortName);
+
+            switch (category) {
+            case ASCII:
+                listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readValue(swAxisCont)));
+                break;
+            case VALUE:
+                listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readValue(swAxisCont)));
+                break;
+            case CURVE_INDIVIDUAL:
+                listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont)));
+                break;
+            case CURVE_FIXED: // Modif
+                listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont)));
+                break;
+            case AXIS_VALUES:
+                listLabel.add(new Axis(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readAxis(swAxisCont)));
+                break;
+            case CURVE_GROUPED:
+                listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont)));
+                break;
+            case VALUE_BLOCK:
+                listLabel.add(new ValueBlock(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry),
+                        readValueBlock(splitAttributAxe, swAxisCont)));
+                break;
+            case MAP_INDIVIDUAL:
+                listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
+                break;
+            case MAP_GROUPED:
+                listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
+                break;
+            case MAP_FIXED:
+                listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
+                break;
+            case "SW_COMPONENT": // Rustine vite fait pour poursuivre la lecture du fichier
+                listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry),
+                        new String[][] { { "Pas de valeur" } }));
+                break;
             }
 
-            getScores();
+            listCategory.add(category);
 
-            for (int score = 0; score <= 100; score += 25) {
-                if (repartitionScore.get(score) > 0) {
-                    if (score <= minScore)
-                        minScore = score;
-                    if (score >= maxScore)
-                        maxScore = score;
-                }
-            }
+            notifyObserver(this.name, nbf.format(((double) i / (double) (this.nbLabel - 1)) * 100) + "%");
+
+            // checksum
+            checkSum += listLabel.get(i).getChecksum();
         }
 
-        document = null;
-        listObserver.clear(); // Plus besoin d'observer
+        getScores();
+
+        for (int score = 0; score <= 100; score += 25) {
+            if (repartitionScore.get(score) > 0) {
+                if (score <= minScore)
+                    minScore = score;
+                if (score >= maxScore)
+                    maxScore = score;
+            }
+        }
     }
 
     @Override
@@ -622,7 +624,7 @@ public final class Paco implements Cdf, Observable {
     }
 
     @Override
-    public ArrayList<String> getCategoryList() {
+    public HashSet<String> getCategoryList() {
         return listCategory;
     }
 

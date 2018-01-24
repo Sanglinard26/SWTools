@@ -26,42 +26,41 @@ public final class Serie {
     public final List<XYPoint> getPoints() {
         return points;
     }
-    
-    public final double[][] getRangeXY()
-    {
-    	final double[][] range = new double[2][2];
-    	
-    	double minXValue = Double.POSITIVE_INFINITY;
-		double maxXValue = Double.NEGATIVE_INFINITY;
-		double minYValue = Double.POSITIVE_INFINITY;
-		double maxYValue = Double.NEGATIVE_INFINITY;
-    	
-		final int nbPoint = points.size();
-		
-		for (int i = 0; i < nbPoint; i++) {
-			minXValue = Math.min(minXValue, points.get(i).getX());
-			maxXValue = Math.max(maxXValue, points.get(i).getX());
-			minYValue = Math.min(minYValue, points.get(i).getY());
-			maxYValue = Math.max(maxYValue, points.get(i).getY());
+
+    public final double[] getRangeXY() {
+        final double[] range = new double[4];
+
+        double minXValue = Double.POSITIVE_INFINITY;
+        double maxXValue = Double.NEGATIVE_INFINITY;
+        double minYValue = Double.POSITIVE_INFINITY;
+        double maxYValue = Double.NEGATIVE_INFINITY;
+
+        final int nbPoint = points.size();
+
+        for (int i = 0; i < nbPoint; i++) {
+            minXValue = Math.min(minXValue, points.get(i).getX());
+            maxXValue = Math.max(maxXValue, points.get(i).getX());
+            minYValue = Math.min(minYValue, points.get(i).getY());
+            maxYValue = Math.max(maxYValue, points.get(i).getY());
         }
-		
-		range[0][0] = minXValue;
-		range[0][1] = maxXValue;
-		
-		if (minYValue != Double.POSITIVE_INFINITY) {
-			range[1][0] = minYValue;
-        }else{
-        	range[1][0] = Double.NaN;
+
+        range[0] = minXValue;
+        range[1] = maxXValue;
+
+        if (minYValue != Double.POSITIVE_INFINITY) {
+            range[2] = minYValue;
+        } else {
+            range[2] = Double.NaN;
         }
-		
-		if (maxYValue != Double.NEGATIVE_INFINITY) {
-			range[1][1] = maxYValue;
-        }else{
-        	range[1][1] = Double.NaN;
+
+        if (maxYValue != Double.NEGATIVE_INFINITY) {
+            range[3] = maxYValue;
+        } else {
+            range[3] = Double.NaN;
         }
-		
-		return range;
-    	
+
+        return range;
+
     }
 
     public final Color getColor() {

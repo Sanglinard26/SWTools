@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
@@ -22,7 +21,6 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
 
     private static final long serialVersionUID = 1L;
 
-    private JLabel component;
     private RainbowScale rainbowScale;
     private Map map = null;
     private boolean setMapColor;
@@ -50,43 +48,43 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
-        component = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        component.setHorizontalAlignment(SwingConstants.CENTER);
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        setHorizontalAlignment(SwingConstants.CENTER);
 
-        component.setForeground(Color.BLACK);
+        setForeground(Color.BLACK);
 
         if (Utilitaire.isNumber(value.toString()) & row > 0 & column > 0 & map != null & setMapColor == true) {
-            component.setBackground(rainbowScale.valueToColor(Double.parseDouble(value.toString())));
+            setBackground(rainbowScale.valueToColor(Double.parseDouble(value.toString())));
         } else {
-            component.setBackground(Color.WHITE);
+            setBackground(Color.WHITE);
         }
 
         if (value.toString().indexOf(" => ") > -1) // Comparaison
         {
-            component.setBorder(new LineBorder(Color.BLACK, 1));
-            component.setBackground(Color.WHITE);
-            component.setForeground(Color.BLACK);
+            setBorder(new LineBorder(Color.BLACK, 1));
+            setBackground(Color.WHITE);
+            setForeground(Color.BLACK);
         }
 
         if (isSelected) {
-            component.setBackground(Color.LIGHT_GRAY);
-            component.setForeground(Color.WHITE);
+            setBackground(Color.LIGHT_GRAY);
+            setForeground(Color.WHITE);
         }
 
         if (table.getColumnCount() * table.getRowCount() == 1)
-            return component;
+            return this;
 
         if (table.getColumnCount() * table.getRowCount() == 2 * table.getColumnCount()) {
             if (row == 0)
-                component.setFont(new Font(null, Font.BOLD, component.getFont().getSize()));
-            return component;
+                setFont(new Font(null, Font.BOLD, getFont().getSize()));
+            return this;
         }
 
         if (row == 0 | column == 0) {
-            component.setFont(new Font(null, Font.BOLD, component.getFont().getSize()));
-            return component;
+            setFont(new Font(null, Font.BOLD, getFont().getSize()));
+            return this;
         }
 
-        return component;
+        return this;
     }
 }

@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -156,9 +156,9 @@ public final class ListLabel extends JList<Variable> {
             oldSearchItem = new LinkedList<String>();
         }
 
-        public final void populateFilter(ArrayList<String> list) {
+        public final void populateFilter(HashSet<String> list) {
 
-            DefaultComboBoxModel<String> cbModel = (DefaultComboBoxModel<String>) typeFilter.getModel();
+            final DefaultComboBoxModel<String> cbModel = (DefaultComboBoxModel<String>) typeFilter.getModel();
 
             if (typeFilter.getModel().getSize() > 0)
                 cbModel.removeAllElements();
@@ -166,10 +166,9 @@ public final class ListLabel extends JList<Variable> {
             cbModel.addElement("ALL");
 
             if (list != null)
-                for (int i = 0; i < list.size(); i++) {
-                    cbModel.addElement(list.get(i));
+                for (String s : list) {
+                    cbModel.addElement(s);
                 }
-
         }
 
         public final void popMenu(int x, int y) {

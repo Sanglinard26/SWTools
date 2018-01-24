@@ -5,6 +5,7 @@ package cdf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public interface Cdf {
 
@@ -23,7 +24,7 @@ public interface Cdf {
 
     public int getNbLabel();
 
-    public ArrayList<String> getCategoryList();
+    public HashSet<String> getCategoryList();
 
     public ArrayList<Variable> getListLabel();
 

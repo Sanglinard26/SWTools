@@ -19,7 +19,7 @@ public final class ValueBlock extends Variable {
     public final String toString() {
 
         StringBuilder sb = new StringBuilder("\n");
-        for (byte y = 0; y < dimY; y++) {
+        for (short y = 0; y < dimY; y++) {
             for (short x = 0; x < dimX; x++) {
                 sb.append(this.getValue(y, x) + "\t");
             }
@@ -49,7 +49,7 @@ public final class ValueBlock extends Variable {
         return dimX;
     }
 
-    public int getDimY() {
+    public final int getDimY() {
         return dimY;
     }
 
@@ -62,8 +62,8 @@ public final class ValueBlock extends Variable {
         sb.append("[");
 
         if (dimY > 2) {
-            for (int x = 1; x < values[0].length; x++) {
-                for (int y = 1; y < values.length; y++) {
+            for (short x = 1; x < values[0].length; x++) {
+                for (short y = 1; y < values.length; y++) {
                     if (y > 1) {
                         sb.append(" " + getValue(y, x));
                     } else {
@@ -79,7 +79,7 @@ public final class ValueBlock extends Variable {
                 }
             }
         } else {
-            for (int x = 1; x < values[0].length; x++) {
+            for (short x = 1; x < values[0].length; x++) {
                 if (x > 1) {
                     sb.append(" " + getValue(1, x));
                 } else {
@@ -100,7 +100,7 @@ public final class ValueBlock extends Variable {
 
         double valCheck = 0;
 
-        for (byte y = 0; y < dimY; y++) {
+        for (short y = 0; y < dimY; y++) {
             for (short x = 0; x < dimX; x++) {
                 valCheck += getValue(y, x).hashCode();
             }

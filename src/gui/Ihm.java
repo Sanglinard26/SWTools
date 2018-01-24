@@ -182,6 +182,7 @@ public final class Ihm extends JFrame {
                 if (fl == null) {
                     fl = new FrameLog();
                 } else {
+                    fl.loadLog();
                     fl.setVisible(true);
                 }
             }
