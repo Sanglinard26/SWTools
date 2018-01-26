@@ -18,7 +18,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import gui.TableView;
-import paco.TableModelView;
 
 public abstract class Variable {
 
@@ -27,7 +26,7 @@ public abstract class Variable {
     private final String category;
     private final String swFeatureRef;
     private final String[] swUnitRef;
-    private final String[][] swCsHistory;
+    private final History[] swCsHistory;
 
     private static TableView tableView;
     private static JPanel panel;
@@ -45,7 +44,7 @@ public abstract class Variable {
         }
     };
 
-    public Variable(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory) {
+    public Variable(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory) {
         this.shortName = shortName;
         this.longName = longName;
         this.category = category;
@@ -74,12 +73,12 @@ public abstract class Variable {
         return swUnitRef;
     }
 
-    public final String[][] getSwCsHistory() {
+    public final History[] getSwCsHistory() {
         return swCsHistory;
     }
 
     public final int getLastScore() {
-        return swCsHistory.length > 0 ? maturite.get(swCsHistory[swCsHistory.length - 1][2].toLowerCase()) : 0;
+        return swCsHistory.length > 0 ? maturite.get(swCsHistory[swCsHistory.length - 1].getScore().toLowerCase()) : 0;
     }
 
     @Override

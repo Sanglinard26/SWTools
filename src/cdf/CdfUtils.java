@@ -67,7 +67,7 @@ public final class CdfUtils {
 
                             }
                             varBase = new Axis(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-                                    new String[0][0], copyVal);
+                                    new History[0], copyVal);
                         } else if (var instanceof Curve) {
                             copyVal = new String[2][((Curve) var).getDimX()];
                             for (byte y = 0; y < 2; y++) {
@@ -81,7 +81,7 @@ public final class CdfUtils {
                                 }
                             }
                             varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-                                    new String[0][0], copyVal);
+                                    new History[0], copyVal);
                         } else if (var instanceof Map) {
                             copyVal = new String[((Map) var).getDimY()][((Map) var).getDimX()];
                             for (short x = 0; x < var.getValues()[0].length; x++) {
@@ -95,7 +95,7 @@ public final class CdfUtils {
                                 }
                             }
                             varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-                                    new String[0][0], copyVal);
+                                    new History[0], copyVal);
                         } else if (var instanceof Scalaire) {
                             if (modeValeur) {
                                 copyVal = new String[1][1];
@@ -104,7 +104,7 @@ public final class CdfUtils {
                             }
 
                             varBase = new Scalaire(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
-                                    var.getSwUnitRef(), new String[0][0], copyVal);
+                                    var.getSwUnitRef(), new History[0], copyVal);
                         } else if (var instanceof ValueBlock) {
                             copyVal = new String[((ValueBlock) var).getDimY()][((ValueBlock) var).getDimX()];
                             for (short x = 0; x < var.getValues()[0].length; x++) {
@@ -119,7 +119,7 @@ public final class CdfUtils {
                             }
                             copyVal = new String[((ValueBlock) var).getDimY()][((ValueBlock) var).getDimX()];
                             varBase = new ValueBlock(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
-                                    var.getSwUnitRef(), new String[0][0], copyVal);
+                                    var.getSwUnitRef(), new History[0], copyVal);
                         }
                         for (short x = 0; x < var.getValues()[0].length; x++) {
                             for (short y = 0; y < var.getValues().length; y++) {

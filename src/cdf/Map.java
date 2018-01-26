@@ -11,7 +11,7 @@ public final class Map extends Variable {
     private float minZValue = Float.POSITIVE_INFINITY;
     private float maxZValue = Float.NEGATIVE_INFINITY;
 
-    public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
+    public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
             String[][] values) {
 
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
@@ -22,8 +22,9 @@ public final class Map extends Variable {
 
         float value;
 
-        for (short x = 1; x < dimX; x++) {
-            for (short y = 1; y < dimY; y++) {
+        // Acces par ligne
+        for (short y = 1; y < dimY; y++) {
+            for (short x = 1; x < dimX; x++) {
 
                 if (Utilitaire.isNumber(values[y][x])) {
                     value = Float.parseFloat(values[y][x]);

@@ -15,6 +15,7 @@ import java.util.HashSet;
 import cdf.Axis;
 import cdf.Cdf;
 import cdf.Curve;
+import cdf.History;
 import cdf.Map;
 import cdf.Observable;
 import cdf.Scalaire;
@@ -32,7 +33,7 @@ public final class Dcm implements Cdf, Observable {
     private static final String THREE_SPACE = "   ";
     private static final String QUOTE = "\"";
 
-    private static final String[][] EMPTY_COMMENT = new String[0][0];
+    private static final History[] EMPTY_COMMENT = new History[0];
 
     private static BufferedReader buf = null;
     private static String line;

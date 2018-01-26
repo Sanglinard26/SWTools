@@ -6,7 +6,7 @@ public final class Scalaire extends Variable {
 
     private final String[][] value = new String[1][1];
 
-    public Scalaire(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
+    public Scalaire(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
             String[][] value) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 

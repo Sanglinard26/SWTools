@@ -24,6 +24,8 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import cdf.History;
+
 public final class PanelHistory extends JComponent {
 
     private static final long serialVersionUID = 1L;
@@ -104,11 +106,11 @@ public final class PanelHistory extends JComponent {
         }
     }
 
-    public final void setDatas(String[][] datas) {
+    public final void setDatas(History[] datas) {
 
         removeDatas();
 
-        for (String[] data : datas) {
+        for (History data : datas) {
             panData.add(new Data(data));
         }
     }
@@ -150,7 +152,7 @@ public final class PanelHistory extends JComponent {
         private final JTextPane textPane = new JTextPane();
         private final JScrollPane scrollPane = new JScrollPane(textPane);
 
-        public Data(String[] data) {
+        public Data(History data) {
 
             this.setLayout(null);
             this.setMinimumSize(new Dimension(header.getWidth(), 50));
@@ -197,17 +199,17 @@ public final class PanelHistory extends JComponent {
                 }
             });
 
-            textDate.setText(data[0]);
+            textDate.setText(data.getDate());
             add(textDate);
 
-            textAuteur.setText(data[1]);
+            textAuteur.setText(data.getAuteur());
             add(textAuteur);
 
-            bar.setValue(maturite.get(data[2].toLowerCase()));
-            bar.setString(String.valueOf(maturite.get(data[2].toLowerCase())) + "%");
+            bar.setValue(maturite.get(data.getScore().toLowerCase()));
+            bar.setString(String.valueOf(maturite.get(data.getScore().toLowerCase())) + "%");
             add(bar);
 
-            textPane.setText(data[3]);
+            textPane.setText(data.getCommentaire());
             textPane.setCaretPosition(0);
             add(scrollPane);
         }

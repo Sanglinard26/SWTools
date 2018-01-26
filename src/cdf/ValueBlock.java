@@ -6,7 +6,7 @@ public final class ValueBlock extends Variable {
     private final int dimX;
     private final int dimY;
 
-    public ValueBlock(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
+    public ValueBlock(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
             String[][] values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;

@@ -15,6 +15,7 @@ import java.util.HashSet;
 import cdf.Axis;
 import cdf.Cdf;
 import cdf.Curve;
+import cdf.History;
 import cdf.Map;
 import cdf.Observable;
 import cdf.Scalaire;
@@ -29,6 +30,8 @@ public final class M implements Cdf, Observable {
     private static String line;
     private static int numLine;
     private static final NumberFormat nbf = NumberFormat.getInstance();
+
+    private static final History[] EMPTY_COMMENT = new History[0];
 
     private double checkSum = 0;
     private static final String NO_FUNCTION = "Pas de fonction definie";
@@ -90,7 +93,7 @@ public final class M implements Cdf, Observable {
                             switch (line.substring(shortName.lastIndexOf("_") + 1, line.indexOf("=")).trim()) {
                             case "C":
 
-                                listLabel.add(new Scalaire(shortName, "", VALUE, NO_FUNCTION, new String[] { "" }, new String[0][0],
+                                listLabel.add(new Scalaire(shortName, "", VALUE, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT,
                                         new String[][] { { line.substring(line.indexOf("=") + 1, line.indexOf(";")).trim() } }));
 
                                 listCategory.add(Cdf.VALUE);
@@ -110,8 +113,8 @@ public final class M implements Cdf, Observable {
 
                                 }
 
-                                listLabel.add(
-                                        new Curve(shortName, "", CURVE_INDIVIDUAL, NO_FUNCTION, new String[] { "", "" }, new String[0][0], valeur));
+                                listLabel
+                                        .add(new Curve(shortName, "", CURVE_INDIVIDUAL, NO_FUNCTION, new String[] { "", "" }, EMPTY_COMMENT, valeur));
 
                                 listCategory.add(Cdf.CURVE_INDIVIDUAL);
 
@@ -130,14 +133,14 @@ public final class M implements Cdf, Observable {
 
                                 }
 
-                                listLabel.add(
-                                        new Curve(shortName, "", CURVE_INDIVIDUAL, NO_FUNCTION, new String[] { "", "" }, new String[0][0], valeur));
+                                listLabel
+                                        .add(new Curve(shortName, "", CURVE_INDIVIDUAL, NO_FUNCTION, new String[] { "", "" }, EMPTY_COMMENT, valeur));
 
                                 listCategory.add(Cdf.CURVE_INDIVIDUAL);
 
                                 break;
                             case "M":
-                                listLabel.add(new Map(shortName, "", MAP_INDIVIDUAL, NO_FUNCTION, new String[] { "", "", "" }, new String[0][0],
+                                listLabel.add(new Map(shortName, "", MAP_INDIVIDUAL, NO_FUNCTION, new String[] { "", "", "" }, EMPTY_COMMENT,
                                         new String[][] { { "0" } }));
 
                                 listCategory.add(Cdf.MAP_INDIVIDUAL);
@@ -152,20 +155,20 @@ public final class M implements Cdf, Observable {
 
                                 }
 
-                                listLabel.add(new Axis(shortName, "", AXIS_VALUES, NO_FUNCTION, new String[] { "" }, new String[0][0], valeur));
+                                listLabel.add(new Axis(shortName, "", AXIS_VALUES, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
 
                                 listCategory.add(Cdf.AXIS_VALUES);
 
                                 break;
                             case "CA":
-                                listLabel.add(new ValueBlock(shortName, "", VALUE_BLOCK, NO_FUNCTION, new String[] { "" }, new String[0][0],
+                                listLabel.add(new ValueBlock(shortName, "", VALUE_BLOCK, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT,
                                         new String[][] { { "0" } }));
 
                                 listCategory.add(Cdf.VALUE_BLOCK);
 
                                 break;
                             default:
-                                listLabel.add(new Scalaire(shortName, "", category, NO_FUNCTION, new String[] { "" }, new String[0][0],
+                                listLabel.add(new Scalaire(shortName, "", category, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT,
                                         new String[][] { { "0" } }));
                                 break;
                             }

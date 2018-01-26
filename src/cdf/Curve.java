@@ -5,7 +5,7 @@ public final class Curve extends Variable {
     private final String[][] values;
     private final int dimX;
 
-    public Curve(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
+    public Curve(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
             String[][] values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;

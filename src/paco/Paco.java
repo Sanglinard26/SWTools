@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 import cdf.Axis;
 import cdf.Cdf;
 import cdf.Curve;
+import cdf.History;
 import cdf.Map;
 import cdf.Observable;
 import cdf.Scalaire;
@@ -310,26 +311,22 @@ public final class Paco implements Cdf, Observable {
         return this.name.equals(obj.toString());
     }
 
-    private final String[][] readEntry(NodeList swCsEntry) {
+    private final History[] readEntry(NodeList swCsEntry) {
 
         final String DATE = "DATE";
         final String SW_CS_PERFORMED_BY = "SW-CS-PERFORMED-BY";
         final String SW_CS_STATE = "SW-CS-STATE";
         final String REMARK = "REMARK";
-        final String EMPTY_REMARK = "";
 
         final int nbEntry = swCsEntry.getLength();
-        final String[][] entry = new String[nbEntry][4];
+        final History[] entry = new History[nbEntry];
         Element aEntry;
         Node nodeRemark;
         int nbParagraphe = 0;
+        String remark = null;
 
         for (byte n = 0; n < nbEntry; n++) {
             aEntry = (Element) swCsEntry.item(n);
-
-            entry[n][0] = aEntry.getElementsByTagName(DATE).item(0).getTextContent().replace("T", " @ ");
-            entry[n][1] = aEntry.getElementsByTagName(SW_CS_PERFORMED_BY).item(0).getTextContent().intern(); // Test String.intern()
-            entry[n][2] = aEntry.getElementsByTagName(SW_CS_STATE).item(0).getTextContent().intern(); // Test String.intern()
 
             nodeRemark = aEntry.getElementsByTagName(REMARK).item(0);
 
@@ -344,20 +341,15 @@ public final class Paco implements Cdf, Observable {
                         if (x < nbParagraphe - 1)
                             sb.append("\n");
                     }
-                    entry[n][3] = sb.toString();
+                    remark = sb.toString();
                 } else {
-                    entry[n][3] = nodeRemark.getTextContent();
+                    remark = nodeRemark.getTextContent();
                 }
-
-                if (entry[n][0] == null)
-                    entry[n][0] = EMPTY_REMARK;
-                if (entry[n][1] == null)
-                    entry[n][1] = EMPTY_REMARK;
-                if (entry[n][2] == null)
-                    entry[n][2] = EMPTY_REMARK;
-                if (entry[n][3] == null)
-                    entry[n][3] = EMPTY_REMARK;
             }
+
+            entry[n] = new History(aEntry.getElementsByTagName(DATE).item(0).getTextContent().replace("T", " @ "),
+                    aEntry.getElementsByTagName(SW_CS_PERFORMED_BY).item(0).getTextContent().intern(),
+                    aEntry.getElementsByTagName(SW_CS_STATE).item(0).getTextContent().intern(), remark);
 
         }
         return entry;

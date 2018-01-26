@@ -5,7 +5,7 @@ public final class Axis extends Variable {
     private final String[][] zValues;
     private final int dim;
 
-    public Axis(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, String[][] swCsHistory,
+    public Axis(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
             String[][] values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 
