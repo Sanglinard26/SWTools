@@ -13,8 +13,8 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final ArrayList<Variable> listLabel = new ArrayList<Variable>();
-    private static final ArrayList<Variable> listLabelFiltre = new ArrayList<Variable>();
+    private static final List<Variable> listLabel = new ArrayList<Variable>();
+    private static final List<Variable> listLabelFiltre = new ArrayList<Variable>();
 
     public ListModelLabel() {
     }
@@ -24,7 +24,7 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
         return listLabelFiltre.size();
     }
 
-    public void setList(ArrayList<Variable> list) {
+    public void setList(List<Variable> list) {
         if (!listLabel.isEmpty()) {
             listLabel.clear();
         }

@@ -2,15 +2,14 @@ package cdf;
 
 public final class Curve extends Variable {
 
-    private final String[][] values;
+    private final Values values;
     private final int dimX;
 
-    public Curve(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
-            String[][] values) {
+    public Curve(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;
 
-        this.dimX = values[0].length;
+        this.dimX = values.getDimX();
 
     }
 
@@ -36,12 +35,12 @@ public final class Curve extends Variable {
     }
 
     @Override
-    public final String[][] getValues() {
+    public final Values getValues() {
         return this.values;
     }
 
     public final String getValue(int col, int row) {
-        return values[col][row];
+        return values.getValue(col, row);
     }
 
     public final int getDimX() {
@@ -57,7 +56,7 @@ public final class Curve extends Variable {
         // valeur x
         sb.append(getShortName().substring(0, getShortName().length() - 2) + "X_A" + " = ");
         sb.append("[");
-        for (short x = 0; x < values[0].length; x++) {
+        for (short x = 0; x < values.getDimX(); x++) {
             if (x > 0) {
                 sb.append(" " + getValue(0, x));
             } else {
@@ -72,7 +71,7 @@ public final class Curve extends Variable {
         sb.append("\n");
         sb.append(getShortName() + " = ");
         sb.append("[");
-        for (short x = 0; x < values[0].length; x++) {
+        for (short x = 0; x < values.getDimX(); x++) {
             if (x > 0) {
                 sb.append(" " + getValue(1, x));
             } else {

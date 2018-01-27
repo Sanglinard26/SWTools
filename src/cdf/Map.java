@@ -4,21 +4,20 @@ import tools.Utilitaire;
 
 public final class Map extends Variable {
 
-    private final String[][] values;
+    private final Values values;
     private final int dimX;
     private final int dimY;
 
     private float minZValue = Float.POSITIVE_INFINITY;
     private float maxZValue = Float.NEGATIVE_INFINITY;
 
-    public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
-            String[][] values) {
+    public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
 
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 
         this.values = values;
-        this.dimX = values[0].length;
-        this.dimY = values.length;
+        this.dimX = values.getDimX();
+        this.dimY = values.getDimY();
 
         float value;
 
@@ -26,8 +25,8 @@ public final class Map extends Variable {
         for (short y = 1; y < dimY; y++) {
             for (short x = 1; x < dimX; x++) {
 
-                if (Utilitaire.isNumber(values[y][x])) {
-                    value = Float.parseFloat(values[y][x]);
+                if (Utilitaire.isNumber(values.getValue(y, x))) {
+                    value = Float.parseFloat(values.getValue(y, x));
 
                     if (value < minZValue)
                         minZValue = value;
@@ -78,12 +77,12 @@ public final class Map extends Variable {
     }
 
     @Override
-    public final String[][] getValues() {
+    public final Values getValues() {
         return values;
     }
 
     public final String getValue(int col, int row) {
-        return values[col][row];
+        return values.getValue(col, row);
     }
 
     /*
@@ -197,9 +196,9 @@ public final class Map extends Variable {
 
         double valCheck = 0;
 
-        for (short x = 0; x < dimX; x++) {
-            for (short y = 0; y < dimY; y++) {
-                valCheck += values[y][x].hashCode();
+        for (short y = 0; y < dimY; y++) {
+            for (short x = 0; x < dimX; x++) {
+                valCheck += values.getValue(y, x).hashCode();
             }
         }
 

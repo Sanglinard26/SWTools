@@ -4,13 +4,13 @@ import tools.Utilitaire;
 
 public final class Scalaire extends Variable {
 
-    private final String[][] value = new String[1][1];
+    private final Values value;
 
     public Scalaire(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
-            String[][] value) {
+            Values value) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 
-        this.value[0][0] = value[0][0];
+        this.value = value;
     }
 
     @Override
@@ -38,7 +38,7 @@ public final class Scalaire extends Variable {
     }
 
     public final String getValue() {
-        return value[0][0];
+        return value.getValue(0, 0);
     }
 
     public final String getUnit() {
@@ -46,7 +46,7 @@ public final class Scalaire extends Variable {
     }
 
     @Override
-    public String[][] getValues() {
+    public Values getValues() {
         return value;
     }
 

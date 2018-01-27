@@ -20,6 +20,7 @@ import cdf.Map;
 import cdf.Observable;
 import cdf.Scalaire;
 import cdf.ValueBlock;
+import cdf.Values;
 import cdf.Variable;
 import gui.Observer;
 import gui.PanelCDF;
@@ -114,7 +115,7 @@ public final class Dcm implements Cdf, Observable {
         final StringBuilder description = new StringBuilder();
         final StringBuilder fonction = new StringBuilder();
         String[] unite;
-        String[][] valeur;
+        Values valeur;
 
         try {
 
@@ -158,7 +159,7 @@ public final class Dcm implements Cdf, Observable {
                     case PARAMETER:
 
                         unite = new String[1];
-                        valeur = new String[1][1];
+                        valeur = new Values(1, 1);
 
                         while (!readLineDcm().equals(END)) {
 
@@ -182,7 +183,7 @@ public final class Dcm implements Cdf, Observable {
                             }
 
                             if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
-                                valeur[0][0] = Utilitaire.cutNumber(spaceSplitLine2[spaceSplitLine2.length - 1].replace(QUOTE, ""));
+                                valeur.setValue(0, 0, Utilitaire.cutNumber(spaceSplitLine2[spaceSplitLine2.length - 1].replace(QUOTE, "")));
                             }
 
                         }
@@ -204,7 +205,7 @@ public final class Dcm implements Cdf, Observable {
                     case TEXTSTRING:
 
                         unite = new String[] { SPACE.intern() };
-                        valeur = new String[1][1];
+                        valeur = new Values(1, 1);
 
                         while (!readLineDcm().equals(END)) {
 
@@ -219,7 +220,7 @@ public final class Dcm implements Cdf, Observable {
                             }
 
                             if (line.trim().startsWith(VALEUR_TEXT)) {
-                                valeur[0][0] = quotesSplitLine[quotesSplitLine.length - 1].replace(QUOTE, "");
+                                valeur.setValue(0, 0, quotesSplitLine[quotesSplitLine.length - 1].replace(QUOTE, ""));
                             }
 
                         }
@@ -241,7 +242,9 @@ public final class Dcm implements Cdf, Observable {
                     case LINE:
 
                         unite = new String[2];
-                        valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
+                        valeur = new Values(Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]), 2); // new
+                                                                                                             // String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length
+                                                                                                             // - 1])];
 
                         while (!readLineDcm().equals(END)) {
 

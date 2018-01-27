@@ -2,17 +2,17 @@ package cdf;
 
 public final class ValueBlock extends Variable {
 
-    private final String[][] values;
+    private final Values values;
     private final int dimX;
     private final int dimY;
 
     public ValueBlock(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
-            String[][] values) {
+            Values values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;
 
-        this.dimX = values[0].length;
-        this.dimY = values.length;
+        this.dimX = values.getDimX();
+        this.dimY = values.getDimY();
     }
 
     @Override
@@ -37,12 +37,12 @@ public final class ValueBlock extends Variable {
     }
 
     @Override
-    public final String[][] getValues() {
+    public final Values getValues() {
         return values;
     }
 
     public final String getValue(int col, int row) {
-        return values[col][row];
+        return values.getValue(col, row);
     }
 
     public final int getDimX() {
@@ -62,8 +62,8 @@ public final class ValueBlock extends Variable {
         sb.append("[");
 
         if (dimY > 2) {
-            for (short x = 1; x < values[0].length; x++) {
-                for (short y = 1; y < values.length; y++) {
+            for (short x = 1; x < this.dimX; x++) {
+                for (short y = 1; y < this.dimY; y++) {
                     if (y > 1) {
                         sb.append(" " + getValue(y, x));
                     } else {
@@ -71,7 +71,7 @@ public final class ValueBlock extends Variable {
                     }
 
                 }
-                if (x != values[0].length - 1) {
+                if (x != this.dimX - 1) {
                     sb.append(";");
                     sb.append("\n");
                 } else {
@@ -79,7 +79,7 @@ public final class ValueBlock extends Variable {
                 }
             }
         } else {
-            for (short x = 1; x < values[0].length; x++) {
+            for (short x = 1; x < this.dimX; x++) {
                 if (x > 1) {
                     sb.append(" " + getValue(1, x));
                 } else {
