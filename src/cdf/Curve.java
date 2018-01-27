@@ -91,10 +91,9 @@ public final class Curve extends Variable {
     public double getChecksum() {
         double valCheck = 0;
 
-        for (byte y = 0; y < 2; y++) {
-            for (short x = 0; x < dimX; x++) {
-                valCheck += getValue(y, x).hashCode();
-            }
+        for (short x = 0; x < dimX; x++) {
+            valCheck += getValue(0, x).hashCode();
+            valCheck += getValue(1, x).hashCode();
         }
 
         return valCheck;

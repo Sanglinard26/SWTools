@@ -197,8 +197,8 @@ public final class Map extends Variable {
 
         double valCheck = 0;
 
-        for (short x = 0; x < dimX; x++) {
-            for (short y = 0; y < dimY; y++) {
+        for (short y = 0; y < dimY; y++) {
+            for (short x = 0; x < dimX; x++) {
                 valCheck += values[y][x].hashCode();
             }
         }
