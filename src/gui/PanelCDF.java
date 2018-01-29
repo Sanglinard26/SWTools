@@ -44,6 +44,7 @@ import cdf.Variable;
 import dcm.Dcm;
 import matlab.M;
 import paco.Paco;
+import paco.StAXPaco;
 import tools.Preference;
 import tools.Utilitaire;
 
@@ -256,6 +257,9 @@ public final class PanelCDF extends JComponent implements Observer {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
+        	
+        	if(Ihm.testMode) new StAXPaco();
+        	
             final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_CDF));
             jFileChooser.setMultiSelectionEnabled(true);
             jFileChooser.setFileFilter(new FileFilter() {

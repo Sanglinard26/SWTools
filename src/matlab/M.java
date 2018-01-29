@@ -20,6 +20,7 @@ import cdf.Map;
 import cdf.Observable;
 import cdf.Scalaire;
 import cdf.ValueBlock;
+import cdf.Values;
 import cdf.Variable;
 import gui.Observer;
 import gui.PanelCDF;
@@ -73,7 +74,7 @@ public final class M implements Cdf, Observable {
 
             String shortName = null;
             String category = "";
-            String[][] valeur;
+            Values valeur;
 
             String subString;
 
@@ -92,9 +93,12 @@ public final class M implements Cdf, Observable {
 
                             switch (line.substring(shortName.lastIndexOf("_") + 1, line.indexOf("=")).trim()) {
                             case "C":
+                            	
+                            	valeur = new Values(1, 1);
+                            	valeur.setValue(0, 0, line.substring(line.indexOf("=") + 1, line.indexOf(";")).trim());
 
                                 listLabel.add(new Scalaire(shortName, "", VALUE, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT,
-                                        new String[][] { { line.substring(line.indexOf("=") + 1, line.indexOf(";")).trim() } }));
+                                        valeur));
 
                                 listCategory.add(Cdf.VALUE);
 
@@ -105,12 +109,14 @@ public final class M implements Cdf, Observable {
                                 subString = subString.replace("[", "");
                                 subString = subString.replace("]", "");
 
-                                valeur = new String[2][subString.split("\\s+").length];
+                                //valeur = new String[2][subString.split("\\s+").length];
+                                valeur = new Values(subString.split("\\s+").length, 2);
 
-                                for (int x = 0; x < valeur[0].length; x++) {
-                                    valeur[0][x] = Integer.toString(x);
-                                    valeur[1][x] = subString.split("\\s+")[x].trim();
-
+                                for (int x = 0; x < valeur.getDimX(); x++) {
+                                    //valeur[0][x] = Integer.toString(x);
+                                    //valeur[1][x] = subString.split("\\s+")[x].trim();
+                                	valeur.setValue(0, x, Integer.toString(x));
+                                	valeur.setValue(1, x, subString.split("\\s+")[x].trim());
                                 }
 
                                 listLabel
@@ -125,12 +131,14 @@ public final class M implements Cdf, Observable {
                                 subString = subString.replace("[", "");
                                 subString = subString.replace("]", "");
 
-                                valeur = new String[2][subString.split("\\s+").length];
+                                //valeur = new String[2][subString.split("\\s+").length];
+                                valeur = new Values(subString.split("\\s+").length, 2);
 
-                                for (int x = 0; x < valeur[0].length; x++) {
-                                    valeur[0][x] = Integer.toString(x);
-                                    valeur[1][x] = subString.split("\\s+")[x].trim();
-
+                                for (int x = 0; x < valeur.getDimX(); x++) {
+                                    //valeur[0][x] = Integer.toString(x);
+                                    //valeur[1][x] = subString.split("\\s+")[x].trim();
+                                    valeur.setValue(0, x, Integer.toString(x));
+                                	valeur.setValue(1, x, subString.split("\\s+")[x].trim());
                                 }
 
                                 listLabel
@@ -140,19 +148,24 @@ public final class M implements Cdf, Observable {
 
                                 break;
                             case "M":
+                            	
+                            	valeur = new Values(1, 1);
+                            	valeur.setValue(0, 0, "0");
+                            	
                                 listLabel.add(new Map(shortName, "", MAP_INDIVIDUAL, NO_FUNCTION, new String[] { "", "", "" }, EMPTY_COMMENT,
-                                        new String[][] { { "0" } }));
+                                        valeur));
 
                                 listCategory.add(Cdf.MAP_INDIVIDUAL);
 
                                 break;
                             case "A":
 
-                                valeur = new String[1][line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s").length];
+                                //valeur = new String[1][line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s").length];
+                            	valeur = new Values(line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s").length, 1);
 
-                                for (int x = 0; x < valeur[0].length; x++) {
-                                    valeur[0][x] = line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s")[x].trim();
-
+                                for (int x = 0; x < valeur.getDimX(); x++) {
+                                    //valeur[0][x] = line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s")[x].trim();
+                                	valeur.setValue(0, x, line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s")[x].trim());
                                 }
 
                                 listLabel.add(new Axis(shortName, "", AXIS_VALUES, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
@@ -161,15 +174,23 @@ public final class M implements Cdf, Observable {
 
                                 break;
                             case "CA":
+                            	
+                            	valeur = new Values(1, 1);
+                            	valeur.setValue(0, 0, "0");
+                            	
                                 listLabel.add(new ValueBlock(shortName, "", VALUE_BLOCK, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT,
-                                        new String[][] { { "0" } }));
+                                        valeur));
 
                                 listCategory.add(Cdf.VALUE_BLOCK);
 
                                 break;
                             default:
+                            	
+                            	valeur = new Values(1, 1);
+                            	valeur.setValue(0, 0, "0");
+                            	
                                 listLabel.add(new Scalaire(shortName, "", category, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT,
-                                        new String[][] { { "0" } }));
+                                        valeur));
                                 break;
                             }
 

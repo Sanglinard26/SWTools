@@ -65,7 +65,7 @@ public final class Ihm extends JFrame {
     private static FrameAide fa = null;
     private static FrameNews fn = null;
 
-    private static final boolean debugBDD = false;
+    public static final boolean testMode = true;
 
     public Ihm() {
 
@@ -251,7 +251,7 @@ public final class Ihm extends JFrame {
 
         // Onglet BDD
         onglets.addTab("Gestion BDD", new ImageIcon(getClass().getResource(ICON_BDD)), ongletBdd);
-        onglets.setEnabledAt(2, debugBDD);
+        onglets.setEnabledAt(2, testMode);
 
         onglets.addChangeListener(new ChangeListener() {
 
