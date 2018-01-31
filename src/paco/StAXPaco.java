@@ -5,11 +5,13 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
@@ -19,582 +21,673 @@ import cdf.Curve;
 import cdf.History;
 import cdf.Map;
 import cdf.Scalaire;
+import cdf.ValueBlock;
 import cdf.Values;
 import cdf.Variable;
 import gui.SWToolsMain;
 
 public final class StAXPaco implements Cdf {
 
-    private String name;
-    private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
-    private final HashSet<String> listCategory = new HashSet<String>();
+	private String name;
+	private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
+	private final HashSet<String> listCategory = new HashSet<String>();
 
-    private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1) {
-        private static final long serialVersionUID = 1L;
-        {
-            put(0, 0);
-        }
-    };
+	private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1) {
+		private static final long serialVersionUID = 1L;
+		{
+			put(0, 0);
+		}
+	};
 
-    public StAXPaco(File file) {
+	public StAXPaco(File file) {
 
-        // File xml = new File("C:\\Users\\tramp\\Desktop\\Tmp\\PaCo\\AP_BooCtl_D-MAP-REGULS_DV5RC_C4xx_TTBVA_170626_KeRa_B16.XML");
-        // File xml = new File("C:\\User\\U354706\\DV5RC\\06_SW\\00_PaCo\\Test\\Full_Calib.XML");
+		// File xml = new File("C:\\Users\\tramp\\Desktop\\Tmp\\PaCo\\AP_BooCtl_D-MAP-REGULS_DV5RC_C4xx_TTBVA_170626_KeRa_B16.XML");
+		// File xml = new File("C:\\User\\U354706\\DV5RC\\06_SW\\00_PaCo\\Test\\Full_Calib.XML");
 
-        this.name = file.getName();
+		this.name = file.getName();
 
-        long start = System.currentTimeMillis();
-        parse(file);
-        SWToolsMain.getLogger().info(System.currentTimeMillis() - start + " ms");
-    }
+		long start = System.currentTimeMillis();
+		parse(file);
+		SWToolsMain.getLogger().info(System.currentTimeMillis() - start + " ms");
+	}
 
-    private final void parse(File xml) {
+	private final void parse(File xml) {
 
-        XMLInputFactory xmlif = XMLInputFactory.newInstance();
-        XMLEventReader xmler = null;
+		XMLInputFactory xmlif = XMLInputFactory.newInstance();
+		XMLEventReader xmler = null;
 
-        try {
-            xmler = xmlif.createXMLEventReader(new FileReader(xml));
+		try {
+			xmler = xmlif.createXMLEventReader(new FileReader(xml));
 
-            XMLEvent event;
+			XMLEvent event;
 
-            String shortName = null, longName = null, category = null, swFeatureRef = null;
-            String[] unite = null;
-            Values valeur = null;
-            byte numAxe;
-            List<String> tmpAxeX = new ArrayList<String>();
-            List<String> tmpAxeY = new ArrayList<String>();
-            List<String> tmpValues = new ArrayList<String>();
+			String shortName = null, longName = null, category = null, swFeatureRef = null;
+			String[] unite = null;
+			Values valeur = null;
+			byte numAxe;
+			List<String> tmpAxeX = new ArrayList<String>();
+			List<String> tmpAxeY = new ArrayList<String>();
+			List<String> tmpValues = new ArrayList<String>();
 
-            while (xmler.hasNext()) {
+			final HashMap<String, String> unit = new HashMap<String, String>();
+			StringBuilder shortNameUnit = new StringBuilder();
+			StringBuilder swUnitDisplay = new StringBuilder();
 
-                tmpAxeX.clear();
-                tmpAxeY.clear();
-                tmpValues.clear();
+			while (xmler.hasNext()) {
 
-                event = xmler.nextEvent();
+				tmpAxeX.clear();
+				tmpAxeY.clear();
+				tmpValues.clear();
 
-                switch (event.toString()) {
-                case "<SW-INSTANCE>":
+				event = xmler.nextEvent();
 
-                    numAxe = 0;
+				switch (event.toString()) {
 
-                    while (!event.toString().equals("</SW-INSTANCE>")) {
+				case "<SW-UNIT>":
 
-                        if (event.isStartElement()) {
+					shortNameUnit.setLength(0);
+					swUnitDisplay.setLength(0);
 
-                            StartElement startElement = event.asStartElement();
+					while (!event.toString().equals("</SW-UNIT>")) {
 
-                            switch (startElement.getName().toString()) {
-                            case "SHORT-NAME":
+						if(event.isCharacters()){
+							if(!event.asCharacters().getData().equals("\n")){
+								if(shortNameUnit.length() == 0){
+									shortNameUnit.append(event.asCharacters().getData());
+								}else{
+									swUnitDisplay.append(event.asCharacters().getData());
+									break;
+								}
+							}	
+						}
+						event = xmler.nextEvent();
+					}
 
-                                do {
-                                    event = xmler.nextEvent();
-                                    if (event.isCharacters()) {
-                                        shortName = event.asCharacters().getData();
-                                    }
+					if(swUnitDisplay.toString().equals("tbd")){
+						swUnitDisplay.setLength(0);
+						swUnitDisplay.append("");
+					}
 
-                                } while (!event.isCharacters());
+					unit.put(shortNameUnit.toString(), swUnitDisplay.toString());
 
-                                break;
-                            case "LONG-NAME":
+					shortNameUnit.setLength(0);
+					swUnitDisplay.setLength(0);
 
-                                do {
-                                    event = xmler.nextEvent();
-                                    if (event.isCharacters()) {
-                                        if (!event.asCharacters().getData().equals("\n")) {
-                                            longName = event.asCharacters().getData();
-                                        } else {
-                                            longName = "";
-                                        }
-                                    }
+					break;
 
-                                } while (!event.isCharacters());
 
-                                break;
-                            case "CATEGORY":
+				case "<SW-INSTANCE>":
 
-                                do {
-                                    event = xmler.nextEvent();
-                                    if (event.isCharacters()) {
-                                        category = event.asCharacters().getData();
-                                    }
+					numAxe = 0;
 
-                                } while (!event.isCharacters());
+					while (!event.toString().equals("</SW-INSTANCE>")) {
 
-                                break;
-                            case "SW-FEATURE-REF":
+						if (event.isStartElement()) {
 
-                                do {
-                                    event = xmler.nextEvent();
-                                    if (event.isCharacters()) {
-                                        swFeatureRef = event.asCharacters().getData();
-                                    }
+							StartElement startElement = event.asStartElement();
 
-                                } while (!event.isCharacters());
+							switch (startElement.getName().toString()) {
+							case "SHORT-NAME":
 
-                                break;
+								do {
+									event = xmler.nextEvent();
+									if (event.isCharacters()) {
+										shortName = event.asCharacters().getData();
+									}
 
-                            case "SW-VALUES-PHYS":
+								} while (!event.isCharacters());
 
-                                switch (category) {
-                                case "VALUE":
+								break;
+							case "LONG-NAME":
 
-                                    unite = new String[1];
-                                    valeur = new Values(1, 1);
+								do {
+									event = xmler.nextEvent();
+									if (event.isCharacters()) {
+										if (!event.asCharacters().getData().equals("\n")) {
+											longName = event.asCharacters().getData();
+										} else {
+											longName = "";
+										}
+									}
 
-                                    while (!event.isCharacters()) {
-                                        event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n")) {
-                                                valeur.setValue(0, 0, event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
-                                            }
+								} while (!event.isCharacters());
 
-                                        }
-                                    }
+								break;
+							case "CATEGORY":
 
-                                    this.listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
-                                    listCategory.add(Cdf.VALUE);
+								do {
+									event = xmler.nextEvent();
+									if (event.isCharacters()) {
+										category = event.asCharacters().getData();
+									}
 
-                                    break;
-                                case "CURVE_INDIVIDUAL":
+								} while (!event.isCharacters());
 
-                                    tmpValues.clear();
+								break;
+							case "SW-FEATURE-REF":
 
-                                    while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+								do {
+									event = xmler.nextEvent();
+									if (event.isCharacters()) {
+										swFeatureRef = event.asCharacters().getData();
+									}
 
-                                        event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n")) {
-                                                tmpValues.add(event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
-                                            }
+								} while (!event.isCharacters());
 
-                                        }
+								break;
 
-                                    }
+							case "SW-VALUES-PHYS":
 
-                                    switch (numAxe) {
-                                    case 0:
-                                        unite = new String[2];
-                                        if (tmpValues.size() > 0) {
-                                            valeur = new Values(tmpValues.size(), 2);
-                                            for (int i = 0; i < tmpValues.size(); i++) {
-                                                valeur.setValue(0, i, tmpValues.get(i));
-                                            }
-                                        }
+								switch (category) {
+								case "VALUE":
 
-                                        break;
-                                    case 1:
+									unite = new String[1];
+									valeur = new Values(1, 1);
 
-                                        if (tmpValues.size() > 0) {
-                                            for (int i = 0; i < tmpValues.size(); i++) {
-                                                valeur.setValue(1, i, tmpValues.get(i));
-                                            }
+									while (!event.isCharacters()) {
+										event = xmler.nextEvent();
+										if (event.isCharacters()) {
+											if (!event.asCharacters().getData().equals("\n")) {
+												valeur.setValue(0, 0, event.asCharacters().getData());
+											} else {
+												event = xmler.peek();
+											}
 
-                                            this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
-                                            listCategory.add(Cdf.CURVE_INDIVIDUAL);
-                                        }
+										}
+									}
 
-                                        break;
-                                    }
+									this.listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
+									listCategory.add(Cdf.VALUE);
 
-                                    numAxe++;
+									break;
 
-                                    break;
+								case "VALUE_BLOCK":
 
-                                case "AXIS_VALUES":
+									tmpValues.clear();
 
-                                    tmpValues.clear();
+									int nbDim = 0;
 
-                                    while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+									while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
-                                        event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n")) {
-                                                tmpValues.add(event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
-                                            }
+										event = xmler.nextEvent();
 
-                                        }
+										if(event.toString().equals("<LABEL>")){
+											nbDim++;
+										}
 
-                                    }
+										if (event.isCharacters()) {
+											if (!event.asCharacters().getData().equals("\n")) {
+												tmpValues.add(event.asCharacters().getData());
+											} else {
+												event = xmler.peek();
+											}
+										}
 
-                                    if (tmpValues.size() > 0) {
-                                        unite = new String[1];
-                                        valeur = new Values(tmpValues.size(), 1);
-                                        for (int i = 0; i < tmpValues.size(); i++) {
-                                            valeur.setValue(0, i, tmpValues.get(i));
-                                        }
+										if(event.toString().equals("<LABEL>")){
 
-                                        this.listLabel.add(new Axis(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
-                                        listCategory.add(Cdf.AXIS_VALUES);
-                                    }
+										}
+									}
 
-                                    numAxe++;
+									if(nbDim == 0){
+										nbDim = 2;
+									}
+									
+									unite = new String[1];
+									valeur = new Values(tmpValues.size(), nbDim);
+									
+									if(nbDim == 2){
+										for(int i = 0; i<tmpValues.size(); i++){
+											valeur.setValue(0, i, Integer.toString(i));
+											valeur.setValue(1, i, tmpValues.get(i));
+										}
+									}
 
-                                    break;
 
-                                case "CURVE_FIXED":
+									this.listLabel.add(new ValueBlock(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
+									listCategory.add(Cdf.VALUE_BLOCK);
 
-                                    tmpValues.clear();
+									break;
 
-                                    while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+								case "CURVE_INDIVIDUAL":
 
-                                        event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n")) {
-                                                tmpValues.add(event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
-                                            }
+									tmpValues.clear();
 
-                                        }
+									while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
-                                    }
+										event = xmler.nextEvent();
+										if (event.isCharacters()) {
+											if (!event.asCharacters().getData().equals("\n")) {
+												tmpValues.add(event.asCharacters().getData());
+											} else {
+												event = xmler.peek();
+											}
 
-                                    switch (numAxe) {
-                                    case 0:
-                                        unite = new String[2];
-                                        if (tmpValues.size() > 0) {
-                                            valeur = new Values(tmpValues.size(), 2);
-                                            for (int i = 0; i < tmpValues.size(); i++) {
-                                                valeur.setValue(0, i, tmpValues.get(i));
-                                            }
-                                        }
+										}
 
-                                        break;
-                                    case 1:
+									}
 
-                                        if (tmpValues.size() > 0) {
-                                            for (int i = 0; i < tmpValues.size(); i++) {
-                                                valeur.setValue(1, i, tmpValues.get(i));
-                                            }
+									switch (numAxe) {
+									case 0:
+										unite = new String[2];
+										if (tmpValues.size() > 0) {
+											valeur = new Values(tmpValues.size(), 2);
+											for (int i = 0; i < tmpValues.size(); i++) {
+												valeur.setValue(0, i, tmpValues.get(i));
+											}
+										}
 
-                                            this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
-                                            listCategory.add(Cdf.CURVE_INDIVIDUAL);
-                                        }
+										break;
+									case 1:
 
-                                        break;
-                                    }
+										if (tmpValues.size() > 0) {
+											for (int i = 0; i < tmpValues.size(); i++) {
+												valeur.setValue(1, i, tmpValues.get(i));
+											}
 
-                                    numAxe++;
+											this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
+											listCategory.add(Cdf.CURVE_INDIVIDUAL);
+										}
 
-                                    break;
+										break;
+									}
 
-                                case "CURVE_GROUPED":
+									numAxe++;
 
-                                    tmpValues.clear();
+									break;
 
-                                    while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+								case "AXIS_VALUES":
 
-                                        event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n")) {
-                                                tmpValues.add(event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
-                                            }
+									tmpValues.clear();
 
-                                        }
+									while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
-                                    }
+										event = xmler.nextEvent();
+										if (event.isCharacters()) {
+											if (!event.asCharacters().getData().equals("\n")) {
+												tmpValues.add(event.asCharacters().getData());
+											} else {
+												event = xmler.peek();
+											}
 
-                                    switch (numAxe) {
-                                    case 0:
-                                        unite = new String[2];
-                                        if (tmpValues.size() > 0) {
-                                            valeur = new Values(tmpValues.size(), 2);
-                                            for (int i = 0; i < tmpValues.size(); i++) {
-                                                valeur.setValue(0, i, tmpValues.get(i));
-                                            }
-                                        }
+										}
 
-                                        break;
-                                    case 1:
+									}
 
-                                        if (tmpValues.size() > 0) {
-                                            for (int i = 0; i < tmpValues.size(); i++) {
-                                                valeur.setValue(1, i, tmpValues.get(i));
-                                            }
+									if (tmpValues.size() > 0) {
+										unite = new String[1];
+										valeur = new Values(tmpValues.size(), 1);
+										for (int i = 0; i < tmpValues.size(); i++) {
+											valeur.setValue(0, i, tmpValues.get(i));
+										}
 
-                                            this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
-                                            listCategory.add(Cdf.CURVE_GROUPED);
-                                        }
+										this.listLabel.add(new Axis(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
+										listCategory.add(Cdf.AXIS_VALUES);
+									}
 
-                                        break;
-                                    }
+									numAxe++;
 
-                                    numAxe++;
+									break;
 
-                                    break;
+								case "CURVE_FIXED":
 
-                                case "MAP_INDIVIDUAL":
+									tmpValues.clear();
 
-                                    while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+									while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
-                                        event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
+										event = xmler.nextEvent();
+										if (event.isCharacters()) {
+											if (!event.asCharacters().getData().equals("\n")) {
+												tmpValues.add(event.asCharacters().getData());
+											} else {
+												event = xmler.peek();
+											}
 
-                                                switch (numAxe) {
-                                                case 0:
-                                                    tmpAxeX.add(event.asCharacters().getData());
-                                                    break;
-                                                case 1:
-                                                    tmpAxeY.add(event.asCharacters().getData());
-                                                    break;
-                                                case 2:
-                                                    tmpValues.add(event.asCharacters().getData());
-                                                    break;
-                                                }
+										}
 
-                                            } else {
-                                                event = xmler.peek();
-                                            }
-                                        }
+									}
 
-                                    }
+									switch (numAxe) {
+									case 0:
+										unite = new String[2];
+										if (tmpValues.size() > 0) {
+											valeur = new Values(tmpValues.size(), 2);
+											for (int i = 0; i < tmpValues.size(); i++) {
+												valeur.setValue(0, i, tmpValues.get(i));
+											}
+										}
 
-                                    switch (numAxe) {
-                                    case 0:
+										break;
+									case 1:
 
-                                        break;
-                                    case 1:
+										if (tmpValues.size() > 0) {
+											for (int i = 0; i < tmpValues.size(); i++) {
+												valeur.setValue(1, i, tmpValues.get(i));
+											}
 
-                                        break;
-                                    case 2:
+											this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
+											listCategory.add(Cdf.CURVE_INDIVIDUAL);
+										}
 
-                                        unite = new String[3];
-                                        valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
-                                        valeur.setValue(0, 0, "X \\ Y");
+										break;
+									}
 
-                                        for (int i = 0; i < tmpAxeX.size(); i++) {
-                                            valeur.setValue(0, i + 1, tmpAxeX.get(i));
-                                        }
+									numAxe++;
 
-                                        for (int i = 0; i < tmpValues.size(); i++) {
-                                            valeur.setValue((int) ((double) i / (double) (tmpAxeX.size() + 1)) + 1, i % (tmpAxeX.size() + 1),
-                                                    tmpValues.get(i));
-                                        }
+									break;
 
-                                        this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
-                                        listCategory.add(Cdf.MAP_INDIVIDUAL);
+								case "CURVE_GROUPED":
 
-                                        tmpAxeX.clear();
-                                        tmpAxeY.clear();
-                                        tmpValues.clear();
+									tmpValues.clear();
 
-                                        break;
-                                    }
+									while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
-                                    numAxe++;
+										event = xmler.nextEvent();
+										if (event.isCharacters()) {
+											if (!event.asCharacters().getData().equals("\n")) {
+												tmpValues.add(event.asCharacters().getData());
+											} else {
+												event = xmler.peek();
+											}
 
-                                    break;
+										}
 
-                                case "MAP_FIXED":
+									}
 
-                                    while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+									switch (numAxe) {
+									case 0:
+										unite = new String[2];
+										if (tmpValues.size() > 0) {
+											valeur = new Values(tmpValues.size(), 2);
+											for (int i = 0; i < tmpValues.size(); i++) {
+												valeur.setValue(0, i, tmpValues.get(i));
+											}
+										}
 
-                                        event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
+										break;
+									case 1:
 
-                                                switch (numAxe) {
-                                                case 0:
-                                                    tmpAxeX.add(event.asCharacters().getData());
-                                                    break;
-                                                case 1:
-                                                    tmpAxeY.add(event.asCharacters().getData());
-                                                    break;
-                                                case 2:
-                                                    tmpValues.add(event.asCharacters().getData());
-                                                    break;
-                                                }
+										if (tmpValues.size() > 0) {
+											for (int i = 0; i < tmpValues.size(); i++) {
+												valeur.setValue(1, i, tmpValues.get(i));
+											}
 
-                                            } else {
-                                                event = xmler.peek();
-                                            }
-                                        }
+											this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
+											listCategory.add(Cdf.CURVE_GROUPED);
+										}
 
-                                    }
+										break;
+									}
 
-                                    switch (numAxe) {
-                                    case 0:
+									numAxe++;
 
-                                        break;
-                                    case 1:
+									break;
 
-                                        break;
-                                    case 2:
+								case "MAP_INDIVIDUAL":
 
-                                        unite = new String[3];
-                                        valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
-                                        valeur.setValue(0, 0, "X \\ Y");
+									while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
-                                        for (int i = 0; i < tmpAxeX.size(); i++) {
-                                            valeur.setValue(0, i + 1, tmpAxeX.get(i));
-                                        }
+										event = xmler.nextEvent();
+										if (event.isCharacters()) {
+											if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
 
-                                        for (int i = 0; i < tmpValues.size(); i++) {
-                                            valeur.setValue((int) ((double) i / (double) (tmpAxeX.size() + 1)) + 1, i % (tmpAxeX.size() + 1),
-                                                    tmpValues.get(i));
-                                        }
+												switch (numAxe) {
+												case 0:
+													tmpAxeX.add(event.asCharacters().getData());
+													break;
+												case 1:
+													tmpAxeY.add(event.asCharacters().getData());
+													break;
+												case 2:
+													tmpValues.add(event.asCharacters().getData());
+													break;
+												}
 
-                                        this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
-                                        listCategory.add(Cdf.MAP_FIXED);
+											} else {
+												event = xmler.peek();
+											}
+										}
 
-                                        tmpAxeX.clear();
-                                        tmpAxeY.clear();
-                                        tmpValues.clear();
+									}
 
-                                        break;
-                                    }
+									switch (numAxe) {
+									case 0:
 
-                                    numAxe++;
+										break;
+									case 1:
 
-                                    break;
+										break;
+									case 2:
 
-                                case "MAP_GROUPED":
+										unite = new String[3];
+										valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
+										valeur.setValue(0, 0, "X \\ Y");
 
-                                    while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+										for (int i = 0; i < tmpAxeX.size(); i++) {
+											valeur.setValue(0, i + 1, tmpAxeX.get(i));
+										}
 
-                                        event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
+										for (int i = 0; i < tmpValues.size(); i++) {
+											valeur.setValue((int) ((double) i / (double) (tmpAxeX.size() + 1)) + 1, i % (tmpAxeX.size() + 1),
+													tmpValues.get(i));
+										}
 
-                                                switch (numAxe) {
-                                                case 0:
-                                                    tmpAxeX.add(event.asCharacters().getData());
-                                                    break;
-                                                case 1:
-                                                    tmpAxeY.add(event.asCharacters().getData());
-                                                    break;
-                                                case 2:
-                                                    tmpValues.add(event.asCharacters().getData());
-                                                    break;
-                                                }
+										this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
+										listCategory.add(Cdf.MAP_INDIVIDUAL);
 
-                                            } else {
-                                                event = xmler.peek();
-                                            }
-                                        }
+										tmpAxeX.clear();
+										tmpAxeY.clear();
+										tmpValues.clear();
 
-                                    }
+										break;
+									}
 
-                                    switch (numAxe) {
-                                    case 0:
+									numAxe++;
 
-                                        break;
-                                    case 1:
+									break;
 
-                                        break;
-                                    case 2:
+								case "MAP_FIXED":
 
-                                        unite = new String[3];
-                                        valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
-                                        valeur.setValue(0, 0, "X \\ Y");
+									while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
-                                        for (int i = 0; i < tmpAxeX.size(); i++) {
-                                            valeur.setValue(0, i + 1, tmpAxeX.get(i));
-                                        }
+										event = xmler.nextEvent();
+										if (event.isCharacters()) {
 
-                                        for (int i = 0; i < tmpValues.size(); i++) {
-                                            valeur.setValue((int) ((double) i / (double) (tmpAxeX.size() + 1)) + 1, i % (tmpAxeX.size() + 1),
-                                                    tmpValues.get(i));
-                                        }
+											if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
 
-                                        this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
-                                        listCategory.add(Cdf.MAP_GROUPED);
+												switch (numAxe) {
+												case 0:
+													tmpAxeX.add(event.asCharacters().getData());
+													break;
+												case 1:
+													tmpAxeY.add(event.asCharacters().getData());
+													break;
+												case 2:
+													tmpValues.add(event.asCharacters().getData());
+													break;
+												}
 
-                                        tmpAxeX.clear();
-                                        tmpAxeY.clear();
-                                        tmpValues.clear();
+											} else {
+												event = xmler.peek();
+											}
+										}
 
-                                        break;
-                                    }
+									}
 
-                                    numAxe++;
+									switch (numAxe) {
+									case 0:
 
-                                    break;
-                                }
-                                break;
-                            }
+										break;
+									case 1:
 
-                        }
-                        event = xmler.nextEvent();
-                    }
+										break;
+									case 2:
 
-                    break;
+										unite = new String[3];
+										valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
+										valeur.setValue(0, 0, "X \\ Y");
 
-                default:
-                    break;
-                }
+										for (int i = 0; i < tmpAxeX.size(); i++) {
+											valeur.setValue(0, i + 1, tmpAxeX.get(i));
+										}
 
-            }
+										for (int i = 0; i < tmpValues.size(); i++) {
+											valeur.setValue((int) ((double) i / (double) (tmpAxeX.size() + 1)) + 1, i % (tmpAxeX.size() + 1),
+													tmpValues.get(i));
+										}
 
-            tmpValues.clear();
+										this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
+										listCategory.add(Cdf.MAP_FIXED);
 
-        } catch (
+										tmpAxeX.clear();
+										tmpAxeY.clear();
+										tmpValues.clear();
 
-        Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                xmler.close();
-            } catch (XMLStreamException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+										break;
+									}
 
-    @Override
-    public String getName() {
-        return this.name;
-    }
+									numAxe++;
 
-    @Override
-    public int getNbLabel() {
-        return this.listLabel.size();
-    }
+									break;
 
-    @Override
-    public HashSet<String> getCategoryList() {
-        return this.listCategory;
-    }
+								case "MAP_GROUPED":
 
-    @Override
-    public List<Variable> getListLabel() {
-        return this.listLabel;
-    }
+									while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
-    @Override
-    public HashMap<Integer, Integer> getRepartitionScore() {
-        return this.repartitionScore;
-    }
+										event = xmler.nextEvent();
+										if (event.isCharacters()) {
+											if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
 
-    @Override
-    public float getAvgScore() {
-        return 0;
-    }
+												switch (numAxe) {
+												case 0:
+													tmpAxeX.add(event.asCharacters().getData());
+													break;
+												case 1:
+													tmpAxeY.add(event.asCharacters().getData());
+													break;
+												case 2:
+													tmpValues.add(event.asCharacters().getData());
+													break;
+												}
 
-    @Override
-    public int getMinScore() {
-        return 0;
-    }
+											} else {
+												event = xmler.peek();
+											}
+										}
 
-    @Override
-    public int getMaxScore() {
-        return 0;
-    }
+									}
 
-    @Override
-    public double getCheckSum() {
-        return 0;
-    }
+									switch (numAxe) {
+									case 0:
+
+										break;
+									case 1:
+
+										break;
+									case 2:
+
+										unite = new String[3];
+										valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
+										valeur.setValue(0, 0, "X \\ Y");
+
+										for (int i = 0; i < tmpAxeX.size(); i++) {
+											valeur.setValue(0, i + 1, tmpAxeX.get(i));
+										}
+
+										for (int i = 0; i < tmpValues.size(); i++) {
+											valeur.setValue((int) ((double) i / (double) (tmpAxeX.size() + 1)) + 1, i % (tmpAxeX.size() + 1),
+													tmpValues.get(i));
+										}
+
+										this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, new History[0], valeur));
+										listCategory.add(Cdf.MAP_GROUPED);
+
+										tmpAxeX.clear();
+										tmpAxeY.clear();
+										tmpValues.clear();
+
+										break;
+									}
+
+									numAxe++;
+
+									break;
+								}
+								break;
+							}
+
+						}
+						event = xmler.nextEvent();
+					}
+
+					break;
+
+				default:
+					break;
+				}
+
+			}
+
+			System.out.println(unit);
+			tmpAxeX.clear();
+			tmpAxeY.clear();
+			tmpValues.clear();
+
+		} catch (
+
+				Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				xmler.close();
+			} catch (XMLStreamException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public String getName() {
+		return this.name;
+	}
+
+	@Override
+	public int getNbLabel() {
+		return this.listLabel.size();
+	}
+
+	@Override
+	public HashSet<String> getCategoryList() {
+		return this.listCategory;
+	}
+
+	@Override
+	public List<Variable> getListLabel() {
+		return this.listLabel;
+	}
+
+	@Override
+	public HashMap<Integer, Integer> getRepartitionScore() {
+		return this.repartitionScore;
+	}
+
+	@Override
+	public float getAvgScore() {
+		return 0;
+	}
+
+	@Override
+	public int getMinScore() {
+		return 0;
+	}
+
+	@Override
+	public int getMaxScore() {
+		return 0;
+	}
+
+	@Override
+	public double getCheckSum() {
+		return 0;
+	}
 
 }
