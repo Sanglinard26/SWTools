@@ -257,9 +257,7 @@ public final class PanelCDF extends JComponent implements Observer {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-        	
-        	if(Ihm.testMode) new StAXPaco();
-        	
+
             final JFileChooser jFileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_CDF));
             jFileChooser.setMultiSelectionEnabled(true);
             jFileChooser.setFileFilter(new FileFilter() {
@@ -310,6 +308,8 @@ public final class PanelCDF extends JComponent implements Observer {
         private Cdf cdf;
         private final StringBuilder cdfName = new StringBuilder();
 
+        private boolean stax = false;
+
         public TaskCharging(File[] filesPaco) {
             this.filesCDF = filesPaco;
         }
@@ -319,6 +319,13 @@ public final class PanelCDF extends JComponent implements Observer {
 
             pm.setMaximum(filesCDF.length);
             pm.setProgress(cnt);
+
+            if (Ihm.testMode) {
+                int reponse = JOptionPane.showConfirmDialog(null, "Utiliser StAX?");
+                if (reponse == JOptionPane.OK_OPTION) {
+                    stax = true;
+                }
+            }
 
             for (File file : filesCDF) {
 
@@ -330,11 +337,18 @@ public final class PanelCDF extends JComponent implements Observer {
 
                         switch (Utilitaire.getExtension(file)) {
                         case "xml":
-                            cdf = new Paco(file, PanelCDF.this);
 
-                            if (((Paco) cdf).isValid()) {
+                            if (stax) {
+                                cdf = new StAXPaco(file);
                                 listCDF.getModel().addCdf(cdf);
+                            } else {
+                                cdf = new Paco(file, PanelCDF.this);
+
+                                if (((Paco) cdf).isValid()) {
+                                    listCDF.getModel().addCdf(cdf);
+                                }
                             }
+
                             break;
                         case "dcm":
                             cdf = new Dcm(file, PanelCDF.this);
