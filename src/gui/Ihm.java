@@ -26,7 +26,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -170,7 +169,33 @@ public final class Ihm extends JFrame {
         subMenu.add(menuItem);
         menu.add(subMenu);
 
+        menu.addSeparator();
+
+        subMenu = new JMenu("Parseur XML");
+        ButtonGroup btGroup = new ButtonGroup();
+        radioMenuItem = new JRadioButtonMenuItem("DOM");
+        radioMenuItem.setToolTipText("A utiliser pour les XML de moins de 20000 variables car gourmand en memoire");
+        radioMenuItem.addActionListener(new ClickParseur());
+        btGroup.add(radioMenuItem);
+        subMenu.add(radioMenuItem);
+        radioMenuItem = new JRadioButtonMenuItem("StAX");
+        radioMenuItem.setToolTipText("Plus rapide et utilise moins de memoire mais moin robuste que DOM");
+        radioMenuItem.addActionListener(new ClickParseur());
+        btGroup.add(radioMenuItem);
+        subMenu.add(radioMenuItem);
+        menu.add(subMenu);
+
         menuBar.add(menu);
+
+        final Enumeration<AbstractButton> enumAbParseur = btGroup.getElements();
+        AbstractButton abParseur;
+        while (enumAb.hasMoreElements()) {
+            abParseur = enumAbParseur.nextElement();
+            if (abParseur.getActionCommand().equals(Preference.getPreference(Preference.KEY_XML_PARSEUR))) {
+                abParseur.setSelected(true);
+                break;
+            }
+        }
 
         menu = new JMenu("Infos");
         menuItem = new JMenuItem(new AbstractAction("Log", new ImageIcon(getClass().getResource(ICON_LOG))) {
@@ -289,18 +314,19 @@ public final class Ihm extends JFrame {
                         UIManager.setLookAndFeel(info.getClassName());
                         SwingUtilities.updateComponentTreeUI(Ihm.this);
                         Preference.setPreference(Preference.KEY_NOM_LF, action.getActionCommand());
-                    } catch (ClassNotFoundException e1) {
-                        e1.printStackTrace();
-                    } catch (InstantiationException e1) {
-                        e1.printStackTrace();
-                    } catch (IllegalAccessException e1) {
-                        e1.printStackTrace();
-                    } catch (UnsupportedLookAndFeelException e1) {
+                    } catch (Exception e1) {
                         e1.printStackTrace();
                     }
                     break;
                 }
             }
+        }
+    }
+
+    private final class ClickParseur implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent action) {
+            Preference.setPreference(Preference.KEY_XML_PARSEUR, action.getActionCommand());
         }
     }
 
