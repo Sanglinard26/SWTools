@@ -5,10 +5,10 @@ package cdf;
 
 public final class History {
 
-    private final String date;
-    private final String auteur;
-    private final String score;
-    private final String commentaire;
+    private String date;
+    private String auteur;
+    private String score;
+    private String commentaire;
 
     public History(String date, String auteur, String score, String commentaire) {
 
@@ -53,5 +53,23 @@ public final class History {
     public final String getCommentaire() {
         return commentaire;
     }
+    
+    public final void setDate(String date) {
+        this.date = date;
+    }
+
+    public final void setAuteur(String auteur) {
+        this.auteur = auteur;
+    }
+
+    public final void setScore(String score) {
+        this.score = score;
+    }
+
+    public final void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
+    }
+    
+    
 
 }
