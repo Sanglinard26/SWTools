@@ -88,11 +88,16 @@ public final class Curve extends Variable {
 
     @Override
     public double getChecksum() {
+
         double valCheck = 0;
+        String value;
 
         for (byte y = 0; y < 2; y++) {
             for (short x = 0; x < dimX; x++) {
-                valCheck += getValue(y, x).hashCode();
+                value = getValue(y, x);
+                if (value != null) {
+                    valCheck += value.hashCode();
+                }
             }
         }
 

@@ -52,7 +52,7 @@ public final class Scalaire extends Variable {
 
     @Override
     public double getChecksum() {
-        return getValue().hashCode();
+        return getValue() != null ? getValue().hashCode() : 0;
     }
 
 }

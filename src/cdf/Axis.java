@@ -65,9 +65,13 @@ public final class Axis extends Variable {
     public double getChecksum() {
 
         double valCheck = 0;
+        String value;
 
         for (short x = 0; x < dim; x++) {
-            valCheck += getzValues(x).hashCode();
+            value = getzValues(x);
+            if (value != null) {
+                valCheck += value.hashCode();
+            }
         }
         return valCheck;
     }

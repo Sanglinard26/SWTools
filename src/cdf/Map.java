@@ -195,10 +195,14 @@ public final class Map extends Variable {
     public double getChecksum() {
 
         double valCheck = 0;
+        String value;
 
         for (short y = 0; y < dimY; y++) {
             for (short x = 0; x < dimX; x++) {
-                valCheck += values.getValue(y, x).hashCode();
+                value = getValue(y, x);
+                if (value != null) {
+                    valCheck += value.hashCode();
+                }
             }
         }
 
