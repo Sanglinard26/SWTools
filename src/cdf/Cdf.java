@@ -37,4 +37,6 @@ public interface Cdf {
     public int getMaxScore();
 
     public double getCheckSum();
+
+    public boolean isValid();
 }

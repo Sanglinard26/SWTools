@@ -17,16 +17,14 @@ import cdf.Cdf;
 import cdf.Curve;
 import cdf.History;
 import cdf.Map;
-import cdf.Observable;
 import cdf.Scalaire;
 import cdf.ValueBlock;
 import cdf.Values;
 import cdf.Variable;
-import gui.Observer;
-import gui.PanelCDF;
+import gui.SWToolsMain;
 import tools.Utilitaire;
 
-public final class Dcm implements Cdf, Observable {
+public final class Dcm implements Cdf {
 
     // Corriger les variables qui ont des axes avec du texte
 
@@ -41,9 +39,8 @@ public final class Dcm implements Cdf, Observable {
 
     private double checkSum = 0;
 
-    private static int numLine;
-
     private final String name;
+    private boolean valid;
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
     private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1) {
         private static final long serialVersionUID = 1L;
@@ -51,8 +48,6 @@ public final class Dcm implements Cdf, Observable {
             put(0, 0);
         }
     };
-
-    private final ArrayList<Observer> listObserver = new ArrayList<Observer>(1);
 
     private static final NumberFormat nbf = NumberFormat.getInstance();
 
@@ -62,13 +57,7 @@ public final class Dcm implements Cdf, Observable {
         nbf.setMaximumFractionDigits(1);
     }
 
-    public Dcm(final File file, PanelCDF panCdf) {
-
-        numLine = 0;
-
-        if (panCdf != null) {
-            addObserver(panCdf);
-        }
+    public Dcm(final File file) {
 
         this.name = file.getName().substring(0, file.getName().length() - 4);
 
@@ -77,8 +66,6 @@ public final class Dcm implements Cdf, Observable {
         this.parse(file);
 
         System.out.println(System.currentTimeMillis() - start);
-
-        listObserver.clear(); // Plus besoin d'observer
 
     }
 
@@ -121,12 +108,6 @@ public final class Dcm implements Cdf, Observable {
 
             buf = new BufferedReader(new FileReader(file));
 
-            final BufferedReader reader = new BufferedReader(new FileReader(file));
-            int nbLines = 0;
-            while (reader.readLine() != null)
-                nbLines++;
-            reader.close();
-
             // String line;
             String[] spaceSplitLine;
             String[] spaceSplitLine2;
@@ -140,8 +121,6 @@ public final class Dcm implements Cdf, Observable {
             String tmpValue;
 
             while (readLineDcm() != null) {
-
-                notifyObserver(this.name, nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
 
                 spaceSplitLine = line.split(SPACE);
 
@@ -1007,13 +986,16 @@ public final class Dcm implements Cdf, Observable {
 
             repartitionScore.put(0, listLabel.size());
 
+            this.valid = true;
+
         } catch (Exception e) {
 
             e.printStackTrace();
 
+            SWToolsMain.getLogger().severe("Erreur sur l'ouverture de : " + this.name);
+
         } finally {
             try {
-                numLine = 0;
                 buf.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -1023,7 +1005,6 @@ public final class Dcm implements Cdf, Observable {
 
     private final String readLineDcm() {
         try {
-            numLine++;
             return line = buf.readLine();
 
         } catch (IOException e) {
@@ -1073,18 +1054,6 @@ public final class Dcm implements Cdf, Observable {
     }
 
     @Override
-    public void addObserver(Observer obs) {
-        listObserver.add(obs);
-    }
-
-    @Override
-    public void notifyObserver(String cdf, String rate) {
-        for (Observer obs : listObserver) {
-            obs.update(cdf, rate);
-        }
-    }
-
-    @Override
     public HashSet<String> getCategoryList() {
         return listCategory;
     }
@@ -1092,6 +1061,11 @@ public final class Dcm implements Cdf, Observable {
     @Override
     public double getCheckSum() {
         return checkSum;
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.valid;
     }
 
 }

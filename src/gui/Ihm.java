@@ -267,8 +267,12 @@ public final class Ihm extends JFrame {
         setJMenuBar(menuBar);
         //
 
+        // test glasspane
+        InfiniteProgressPanel progressPanel = new InfiniteProgressPanel();
+        setGlassPane(progressPanel);
+
         // Onglet lecteur PaCo
-        ongletPaCo.add(new PanelCDF());
+        ongletPaCo.add(new PanelCDF(progressPanel));
         onglets.addTab("Fichier de calibration", new ImageIcon(getClass().getResource(ICON_FDONNEE)), ongletPaCo);
 
         // Onglet comparaison de Lab

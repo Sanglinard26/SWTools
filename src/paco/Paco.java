@@ -29,17 +29,14 @@ import cdf.Cdf;
 import cdf.Curve;
 import cdf.History;
 import cdf.Map;
-import cdf.Observable;
 import cdf.Scalaire;
 import cdf.ValueBlock;
 import cdf.Values;
 import cdf.Variable;
-import gui.Observer;
-import gui.PanelCDF;
 import gui.SWToolsMain;
 import tools.Utilitaire;
 
-public final class Paco implements Cdf, Observable {
+public final class Paco implements Cdf {
 
     private String name;
     private boolean valid;
@@ -52,7 +49,6 @@ public final class Paco implements Cdf, Observable {
     private double checkSum = 0;
 
     private static final String NO_FONCTION = "Pas de fonction definie";
-    private static final ArrayList<Observer> listObserver = new ArrayList<Observer>(1);
     private static final DocumentBuilderFactory factory;
     private static final NumberFormat nbf = NumberFormat.getInstance();
 
@@ -62,7 +58,7 @@ public final class Paco implements Cdf, Observable {
         factory.setIgnoringElementContentWhitespace(true);
     }
 
-    public Paco(final File file, PanelCDF panCdf) {
+    public Paco(final File file) {
 
         DocumentBuilder builder;
         Document document = null;
@@ -75,11 +71,6 @@ public final class Paco implements Cdf, Observable {
             document = builder.parse(new File(file.toURI())); // Permet de virer l'exception <java.net.malformedurlexception unknown protocol c>
 
             if (document.getDoctype() != null) {
-                valid = true;
-
-                if (panCdf != null) {
-                    addObserver(panCdf);
-                }
 
                 this.name = file.getName().substring(0, file.getName().length() - 4);
 
@@ -88,7 +79,6 @@ public final class Paco implements Cdf, Observable {
                 SWToolsMain.getLogger().info(System.currentTimeMillis() - start + " ms");
 
                 document = null;
-                listObserver.clear(); // Plus besoin d'observer
 
             } else {
                 JOptionPane.showMessageDialog(null, "Format de PaCo non valide !" + "\nNom : " + this.name, "ERREUR", JOptionPane.ERROR_MESSAGE);
@@ -136,11 +126,12 @@ public final class Paco implements Cdf, Observable {
                         JOptionPane.showMessageDialog(null, "Le PaCo a ete enregistre a l'adresse suivante :\n" + fileBis.getPath());
 
                     } catch (IOException e1) {
-                        System.out.println(e);
                         e1.printStackTrace();
                     }
                 }
             }
+
+            SWToolsMain.getLogger().severe("Erreur sur l'ouverture de : " + this.name);
         }
     }
 
@@ -267,8 +258,6 @@ public final class Paco implements Cdf, Observable {
 
             listCategory.add(category);
 
-            notifyObserver(this.name, nbf.format(((double) i / (double) (this.nbLabel - 1)) * 100) + "%");
-
             checkSum += listLabel.get(i).getChecksum();
         }
 
@@ -283,15 +272,13 @@ public final class Paco implements Cdf, Observable {
             }
         }
 
+        this.valid = true;
+
     }
 
     @Override
     public final String getName() {
         return this.name;
-    }
-
-    public final boolean isValid() {
-        return valid;
     }
 
     @Override
@@ -617,19 +604,6 @@ public final class Paco implements Cdf, Observable {
     }
 
     @Override
-    public void addObserver(Observer obs) {
-        listObserver.add(obs);
-    }
-
-    @Override
-    public void notifyObserver(String cdf, String rate) {
-        for (Observer obs : listObserver) {
-            obs.update(cdf, rate);
-        }
-
-    }
-
-    @Override
     public HashSet<String> getCategoryList() {
         return listCategory;
     }
@@ -651,6 +625,11 @@ public final class Paco implements Cdf, Observable {
         this.maxScore = 0;
 
         getScores();
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.valid;
     }
 
 }

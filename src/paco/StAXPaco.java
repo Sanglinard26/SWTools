@@ -1,5 +1,6 @@
 package paco;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import tools.Utilitaire;
 public final class StAXPaco implements Cdf {
 
     private String name;
+    private boolean valid;
     private ArrayList<Variable> listLabel;
     private final HashSet<String> listCategory = new HashSet<String>();
     private int minScore = Byte.MAX_VALUE;
@@ -42,6 +44,7 @@ public final class StAXPaco implements Cdf {
         long start = System.currentTimeMillis();
         parseStAX(file);
         SWToolsMain.getLogger().info(System.currentTimeMillis() - start + " ms");
+
     }
 
     private final void parseStAX(File xml) {
@@ -51,10 +54,19 @@ public final class StAXPaco implements Cdf {
 
         try {
 
+            final BufferedReader reader = new BufferedReader(new FileReader(xml));
+            int nbLabel = 0;
+            String line;
+            while ((line = reader.readLine()) != null)
+                if (line.indexOf("<SW-INSTANCE>") > -1) {
+                    nbLabel++;
+                }
+            reader.close();
+
             xmler = xmlif.createXMLEventReader(new FileReader(xml));
             XMLEvent event;
 
-            listLabel = new ArrayList<Variable>();
+            listLabel = new ArrayList<Variable>(nbLabel);
 
             String shortName = null, longName = null, category = null, swFeatureRef = null;
             String[] unite = null;
@@ -80,6 +92,8 @@ public final class StAXPaco implements Cdf {
             final StringBuilder shortNameUnit = new StringBuilder();
             final StringBuilder swUnitDisplay = new StringBuilder();
             final StringBuilder pRemark = new StringBuilder();
+
+            int cntLabel = 0;
 
             while (xmler.hasNext()) {
 
@@ -314,7 +328,7 @@ public final class StAXPaco implements Cdf {
                                             valeur.setValue(1, i + 1, tmpValues.get(i));
                                         }
                                     } else {
-                                        valeur.setValue(0, 0, "X \\ Y");
+                                        valeur.setValue(0, 0, "Y \\ X");
                                         for (int i = 0; i < tmpValues.size(); i++) {
                                             valeur.setValue((int) ((double) (i + 1) / (double) ((tmpValues.size() / nbDim) + 1)) + 1,
                                                     (i + 1) % ((tmpValues.size() / nbDim) + 1), tmpValues.get(i));
@@ -509,7 +523,7 @@ public final class StAXPaco implements Cdf {
 
                                     if (numAxe == 2) {
                                         valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
-                                        valeur.setValue(0, 0, "X \\ Y");
+                                        valeur.setValue(0, 0, "Y \\ X");
 
                                         for (int i = 0; i < tmpAxeX.size(); i++) {
                                             valeur.setValue(0, i + 1, tmpAxeX.get(i));
@@ -555,7 +569,7 @@ public final class StAXPaco implements Cdf {
 
                                     if (numAxe == 2) {
                                         valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
-                                        valeur.setValue(0, 0, "X \\ Y");
+                                        valeur.setValue(0, 0, "Y \\ X");
 
                                         for (int i = 0; i < tmpAxeX.size(); i++) {
                                             valeur.setValue(0, i + 1, tmpAxeX.get(i));
@@ -600,7 +614,7 @@ public final class StAXPaco implements Cdf {
 
                                     if (numAxe == 2) {
                                         valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
-                                        valeur.setValue(0, 0, "X \\ Y");
+                                        valeur.setValue(0, 0, "Y \\ X");
 
                                         for (int i = 0; i < tmpAxeX.size(); i++) {
                                             valeur.setValue(0, i + 1, tmpAxeX.get(i));
@@ -656,11 +670,16 @@ public final class StAXPaco implements Cdf {
                                                     }
                                                 }
 
-                                                if (event.isEndElement()) {
+                                                if (event.isEndElement() && pRemark.length() > 0) {
                                                     pRemark.append("\n");
                                                 }
                                             }
-                                            tmpRemark.add(pRemark.toString().substring(0, pRemark.toString().length() - 2));
+                                            if (pRemark.length() > 0) {
+                                                tmpRemark.add(pRemark.toString().substring(0, pRemark.toString().length() - 2));
+                                            } else {
+                                                tmpRemark.add("");
+                                            }
+
                                             break;
 
                                         }
@@ -690,49 +709,51 @@ public final class StAXPaco implements Cdf {
 
                     // On cree la variable
                     switch (category) {
-                    case "VALUE":
+                    case Cdf.VALUE:
                         this.listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.VALUE);
                         break;
-                    case "ASCII":
+                    case Cdf.ASCII:
                         this.listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.ASCII);
                         break;
-                    case "VALUE_BLOCK":
+                    case Cdf.VALUE_BLOCK:
                         this.listLabel.add(new ValueBlock(shortName, longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.VALUE_BLOCK);
                         break;
-                    case "AXIS_VALUES":
+                    case Cdf.AXIS_VALUES:
                         this.listLabel.add(new Axis(shortName, longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.AXIS_VALUES);
                         break;
-                    case "CURVE_INDIVIDUAL":
+                    case Cdf.CURVE_INDIVIDUAL:
                         this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.CURVE_INDIVIDUAL);
                         break;
-                    case "CURVE_FIXED":
+                    case Cdf.CURVE_FIXED:
                         this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.CURVE_FIXED);
                         break;
-                    case "CURVE_GROUPED":
+                    case Cdf.CURVE_GROUPED:
                         this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.CURVE_GROUPED);
                         break;
-                    case "MAP_INDIVIDUAL":
+                    case Cdf.MAP_INDIVIDUAL:
                         this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.MAP_INDIVIDUAL);
                         break;
-                    case "MAP_FIXED":
+                    case Cdf.MAP_FIXED:
                         this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.MAP_FIXED);
                         break;
-                    case "MAP_GROUPED":
+                    case Cdf.MAP_GROUPED:
                         this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.MAP_GROUPED);
                         break;
                     }
 
-                    checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
+                    checkSum += listLabel.get(cntLabel).getChecksum();
+
+                    cntLabel++;
 
                     break;
                 }
@@ -750,6 +771,8 @@ public final class StAXPaco implements Cdf {
                 }
             }
 
+            this.valid = true;
+
             shortNameUnit.setLength(0);
             swUnitDisplay.setLength(0);
             pRemark.setLength(0);
@@ -763,10 +786,9 @@ public final class StAXPaco implements Cdf {
             tmpScore.clear();
             tmpRemark.clear();
 
-        } catch (
-
-        Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            SWToolsMain.getLogger().severe("Erreur sur l'ouverture de : " + this.name);
         } finally {
             try {
                 xmler.close();
@@ -841,6 +863,11 @@ public final class StAXPaco implements Cdf {
     @Override
     public double getCheckSum() {
         return this.checkSum;
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.valid;
     }
 
 }

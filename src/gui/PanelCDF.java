@@ -26,7 +26,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 import javax.swing.TransferHandler;
 import javax.swing.border.LineBorder;
@@ -48,7 +47,7 @@ import paco.StAXPaco;
 import tools.Preference;
 import tools.Utilitaire;
 
-public final class PanelCDF extends JComponent implements Observer {
+public final class PanelCDF extends JComponent {
 
     private static final long serialVersionUID = 1L;
 
@@ -78,9 +77,11 @@ public final class PanelCDF extends JComponent implements Observer {
     private static final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneLeft, splitPaneRight);
     private static final PanelHistory panelHistory = new PanelHistory();
 
-    private ProgressMonitor pm;
+    private final InfiniteProgressPanel progressPanel;
 
-    public PanelCDF() {
+    public PanelCDF(InfiniteProgressPanel progressPanel) {
+
+        this.progressPanel = progressPanel;
 
         setLayout(new BorderLayout());
 
@@ -291,11 +292,8 @@ public final class PanelCDF extends JComponent implements Observer {
                     }
                 }
 
-                pm = new ProgressMonitor(PanelCDF.this, "Fichier :", "...", 0, 0);
-                pm.setMillisToDecideToPopup(0);
-                pm.setMillisToPopup(0);
-
                 new TaskCharging(jFileChooser.getSelectedFiles()).execute();
+
             }
         }
 
@@ -304,67 +302,61 @@ public final class PanelCDF extends JComponent implements Observer {
     private final class TaskCharging extends SwingWorker<Integer, Integer> {
 
         private File[] filesCDF;
-        private int cnt = 0;
         private Cdf cdf;
         private final StringBuilder cdfName = new StringBuilder();
 
         public TaskCharging(File[] filesPaco) {
             this.filesCDF = filesPaco;
+
         }
 
         @Override
         protected Integer doInBackground() throws Exception {
 
-            pm.setMaximum(filesCDF.length);
-            pm.setProgress(cnt);
+            progressPanel.start();
 
             for (File file : filesCDF) {
 
                 cdfName.setLength(0);
                 cdfName.append(file.getName().substring(0, file.getName().length() - 4));
 
-                pm.setNote(cdfName.toString());
+                progressPanel.setText("Ouverture de : " + cdfName.toString());
 
                 if (!(ListModelCdf.getListcdfname().contains(cdfName.toString()))) {
-                    if (!pm.isCanceled()) {
 
-                        switch (Utilitaire.getExtension(file)) {
-                        case "xml":
+                    switch (Utilitaire.getExtension(file)) {
+                    case "xml":
 
-                            if (Preference.getPreference(Preference.KEY_XML_PARSEUR).equals("DOM")) {
-                                cdf = new Paco(file, PanelCDF.this);
-                                if (((Paco) cdf).isValid()) {
-                                    listCDF.getModel().addCdf(cdf);
-                                }
-                            } else {
-                                cdf = new StAXPaco(file);
-                                listCDF.getModel().addCdf(cdf);
-                            }
-
-                            break;
-                        case "dcm":
-                            cdf = new Dcm(file, PanelCDF.this);
-
-                            listCDF.getModel().addCdf(cdf);
-                            break;
-                        case "m":
-                            cdf = new M(file, PanelCDF.this);
-
-                            listCDF.getModel().addCdf(cdf);
+                        if (Preference.getPreference(Preference.KEY_XML_PARSEUR).equals("DOM")) {
+                            cdf = new Paco(file);
+                        } else {
+                            cdf = new StAXPaco(file);
                         }
+
+                        break;
+                    case "dcm":
+                        cdf = new Dcm(file);
+                        break;
+                    case "m":
+                        cdf = new M(file);
                     }
+
+                    if (cdf.isValid()) {
+                        listCDF.getModel().addCdf(cdf);
+                    }
+
                 } else {
                     JOptionPane.showMessageDialog(null, "Fichier deja present dans la liste !" + "\nNom : " + cdfName, "INFO",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
-                cnt += 1;
-                pm.setProgress(cnt);
             }
+
+            progressPanel.stop();
 
             filesCDF = null;
             cdf = null;
 
-            return cnt;
+            return 0;
         }
 
     }
@@ -402,10 +394,6 @@ public final class PanelCDF extends JComponent implements Observer {
                         break;
                     }
                 }
-
-                pm = new ProgressMonitor(PanelCDF.this, "Fichier :", "...", 0, 0);
-                pm.setMillisToDecideToPopup(0);
-                pm.setMillisToPopup(0);
 
                 new TaskCharging(dropFiles.toArray(new File[dropFiles.size()])).execute();
 
@@ -445,11 +433,6 @@ public final class PanelCDF extends JComponent implements Observer {
 
     public final static JRadioButton getRadiobtval() {
         return radioBtVal;
-    }
-
-    @Override
-    public final void update(String cdf, String rate) {
-        pm.setNote(cdf + " : " + rate);
     }
 
 }
