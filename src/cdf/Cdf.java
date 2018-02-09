@@ -3,9 +3,9 @@
  */
 package cdf;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public interface Cdf {
 
@@ -26,7 +26,7 @@ public interface Cdf {
 
     public HashSet<String> getCategoryList();
 
-    public ArrayList<Variable> getListLabel();
+    public List<Variable> getListLabel();
 
     public HashMap<Integer, Integer> getRepartitionScore();
 
@@ -37,4 +37,6 @@ public interface Cdf {
     public int getMaxScore();
 
     public double getCheckSum();
+
+    public boolean isValid();
 }

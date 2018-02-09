@@ -194,10 +194,10 @@ public final class PanelBdd extends JComponent {
 
                 switch (Utilitaire.getExtension(file)) {
                 case "xml":
-                    cdf = new Paco(file, null);
+                    cdf = new Paco(file);
                     break;
                 case "dcm":
-                    cdf = new Dcm(file, null);
+                    cdf = new Dcm(file);
                     break;
                 }
                 // bdConnection.addPaCo(cdf, AUTO_IMPORT);

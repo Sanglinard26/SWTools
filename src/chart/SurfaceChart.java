@@ -77,9 +77,9 @@ public final class SurfaceChart extends JComponent {
             plot.setDimensions(new Dimension3D(20, 10, 20));
 
             final ValueAxis3D xAxis = plot.getXAxis();
-            xAxis.setRange(1, map.getValues()[0].length - 1);
+            xAxis.setRange(1, map.getValues().getDimX() - 1);
             final ValueAxis3D zAxis = plot.getZAxis();
-            zAxis.setRange(1, map.getValues().length - 1);
+            zAxis.setRange(1, map.getValues().getDimY() - 1);
 
             /*
              * if (Utilitaire.isNumber(map.getValue(0, 1)) & Utilitaire.isNumber(map.getValue(0, map.getDimX() - 1))) {

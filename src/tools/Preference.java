@@ -13,6 +13,7 @@ public final class Preference {
     private static final String DEF_ETAT_COLOR_MAP = "false";
     private static final String DEF_PATH_FOLDER_DB = "C:/User/SWTools/Database";
     private static final String DEF_LF = "Windows";
+    private static final String DEF_XML_PARSEUR = "DOM";
 
     public static final String KEY_ADD_LAB = "pathLab";
     public static final String KEY_RESULT_LAB = "pathExportLabResult";
@@ -20,6 +21,7 @@ public final class Preference {
     public static final String KEY_ETAT_COLOR_MAP = "flagColorMap";
     public static final String KEY_PATH_FOLDER_DB = "pathFolderDb";
     public static final String KEY_NOM_LF = "nomLF";
+    public static final String KEY_XML_PARSEUR = "xmlParseur";
 
     private static final Preferences preferences = Preferences.userRoot().node("swtools");
 
@@ -43,6 +45,9 @@ public final class Preference {
             break;
         case KEY_NOM_LF:
             defValue = DEF_LF;
+            break;
+        case KEY_XML_PARSEUR:
+            defValue = DEF_XML_PARSEUR;
             break;
         default:
             defValue = "";

@@ -8,7 +8,7 @@ public final class TableModelView extends AbstractTableModel {
 
     private static final String EMPTY = "";
     private int nbCol = 0;
-    private String[][] values = new String[0][0];
+    private Values values;;
 
     @Override
     public String getColumnName(int column) {
@@ -27,13 +27,13 @@ public final class TableModelView extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return values.length;
+        return values.getDimY();
     }
 
     @Override
     public Object getValueAt(int row, int col) {
 
-        final Object value = values[row][col];
+        final Object value = values.getValue(row, col);
 
         if (value != null) {
             return value;
@@ -41,9 +41,9 @@ public final class TableModelView extends AbstractTableModel {
         return EMPTY;
     }
 
-    public final void setData(String[][] data) {
+    public final void setData(Values data) {
         this.values = data;
-        this.nbCol = values[0].length;
+        this.nbCol = values.getDimX();
 
         fireTableStructureChanged();
     }

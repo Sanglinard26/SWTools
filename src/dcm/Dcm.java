@@ -17,15 +17,14 @@ import cdf.Cdf;
 import cdf.Curve;
 import cdf.History;
 import cdf.Map;
-import cdf.Observable;
 import cdf.Scalaire;
 import cdf.ValueBlock;
+import cdf.Values;
 import cdf.Variable;
-import gui.Observer;
-import gui.PanelCDF;
+import gui.SWToolsMain;
 import tools.Utilitaire;
 
-public final class Dcm implements Cdf, Observable {
+public final class Dcm implements Cdf {
 
     // Corriger les variables qui ont des axes avec du texte
 
@@ -40,9 +39,8 @@ public final class Dcm implements Cdf, Observable {
 
     private double checkSum = 0;
 
-    private static int numLine;
-
     private final String name;
+    private boolean valid;
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
     private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1) {
         private static final long serialVersionUID = 1L;
@@ -50,8 +48,6 @@ public final class Dcm implements Cdf, Observable {
             put(0, 0);
         }
     };
-
-    private final ArrayList<Observer> listObserver = new ArrayList<Observer>(1);
 
     private static final NumberFormat nbf = NumberFormat.getInstance();
 
@@ -61,13 +57,7 @@ public final class Dcm implements Cdf, Observable {
         nbf.setMaximumFractionDigits(1);
     }
 
-    public Dcm(final File file, PanelCDF panCdf) {
-
-        numLine = 0;
-
-        if (panCdf != null) {
-            addObserver(panCdf);
-        }
+    public Dcm(final File file) {
 
         this.name = file.getName().substring(0, file.getName().length() - 4);
 
@@ -76,8 +66,6 @@ public final class Dcm implements Cdf, Observable {
         this.parse(file);
 
         System.out.println(System.currentTimeMillis() - start);
-
-        listObserver.clear(); // Plus besoin d'observer
 
     }
 
@@ -114,17 +102,11 @@ public final class Dcm implements Cdf, Observable {
         final StringBuilder description = new StringBuilder();
         final StringBuilder fonction = new StringBuilder();
         String[] unite;
-        String[][] valeur;
+        Values valeur;
 
         try {
 
             buf = new BufferedReader(new FileReader(file));
-
-            final BufferedReader reader = new BufferedReader(new FileReader(file));
-            int nbLines = 0;
-            while (reader.readLine() != null)
-                nbLines++;
-            reader.close();
 
             // String line;
             String[] spaceSplitLine;
@@ -132,22 +114,13 @@ public final class Dcm implements Cdf, Observable {
             String[] quotesSplitLine;
             String[] threeSpaceSplitLine;
 
-            // Pour les LINE
-            final ArrayList<String> axeX = new ArrayList<String>();
-            final ArrayList<String> axeY = new ArrayList<String>();
-
-            // Pour les MAP
             int cnt;
+            int cntX;
+            int cntZ;
             int nbSplit;
             String tmpValue;
-            final ArrayList<String> axeTmp = new ArrayList<String>();
-
-            // Pour les distribution
-            ArrayList<String> distribution = new ArrayList<String>();
 
             while (readLineDcm() != null) {
-
-                notifyObserver(this.name, nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
 
                 spaceSplitLine = line.split(SPACE);
 
@@ -158,7 +131,7 @@ public final class Dcm implements Cdf, Observable {
                     case PARAMETER:
 
                         unite = new String[1];
-                        valeur = new String[1][1];
+                        valeur = new Values(1, 1);
 
                         while (!readLineDcm().equals(END)) {
 
@@ -182,7 +155,7 @@ public final class Dcm implements Cdf, Observable {
                             }
 
                             if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
-                                valeur[0][0] = Utilitaire.cutNumber(spaceSplitLine2[spaceSplitLine2.length - 1].replace(QUOTE, ""));
+                                valeur.setValue(0, 0, Utilitaire.cutNumber(spaceSplitLine2[spaceSplitLine2.length - 1].replace(QUOTE, "")));
                             }
 
                         }
@@ -204,7 +177,7 @@ public final class Dcm implements Cdf, Observable {
                     case TEXTSTRING:
 
                         unite = new String[] { SPACE.intern() };
-                        valeur = new String[1][1];
+                        valeur = new Values(1, 1);
 
                         while (!readLineDcm().equals(END)) {
 
@@ -219,7 +192,7 @@ public final class Dcm implements Cdf, Observable {
                             }
 
                             if (line.trim().startsWith(VALEUR_TEXT)) {
-                                valeur[0][0] = quotesSplitLine[quotesSplitLine.length - 1].replace(QUOTE, "");
+                                valeur.setValue(0, 0, quotesSplitLine[quotesSplitLine.length - 1].replace(QUOTE, ""));
                             }
 
                         }
@@ -241,7 +214,10 @@ public final class Dcm implements Cdf, Observable {
                     case LINE:
 
                         unite = new String[2];
-                        valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
+                        valeur = new Values(Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]), 2);
+
+                        cntX = 0;
+                        cntZ = 0;
 
                         while (!readLineDcm().equals(END)) {
 
@@ -278,16 +254,14 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
-                                 * axeX.add(Utilitaire.cutNumber(s).replace(QUOTE, "")); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
-                                        axeX.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntX < valeur.getDimX()) {
+                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntX++;
+                                        }
                                     }
                                 }
                             }
@@ -296,24 +270,19 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
-                                 * axeY.add(Utilitaire.cutNumber(s).replace(QUOTE, "")); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
-                                        axeY.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntZ < valeur.getDimX()) {
+                                            valeur.setValue(1, cntZ, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntZ++;
+                                        }
                                     }
                                 }
                             }
 
                         }
-
-                        valeur[0] = axeX.toArray(new String[axeX.size()]);
-                        valeur[1] = axeY.toArray(new String[axeY.size()]);
 
                         // System.out.println(spaceSplitLine[1]);
 
@@ -322,9 +291,6 @@ public final class Dcm implements Cdf, Observable {
 
                         description.setLength(0);
                         fonction.setLength(0);
-
-                        axeX.clear();
-                        axeY.clear();
 
                         listCategory.add(Cdf.CURVE_INDIVIDUAL);
 
@@ -335,7 +301,10 @@ public final class Dcm implements Cdf, Observable {
                     case FIXED_LINE:
 
                         unite = new String[2];
-                        valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
+                        valeur = new Values(Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]), 2);
+
+                        cntX = 0;
+                        cntZ = 0;
 
                         while (!readLineDcm().equals(END)) {
 
@@ -372,16 +341,14 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
-                                 * axeX.add(Utilitaire.cutNumber(s).replace(QUOTE, "")); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
-                                        axeX.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntX < valeur.getDimX()) {
+                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntX++;
+                                        }
                                     }
                                 }
                             }
@@ -390,24 +357,19 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
-                                 * axeY.add(Utilitaire.cutNumber(s).replace(QUOTE, "")); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
-                                        axeY.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntZ < valeur.getDimX()) {
+                                            valeur.setValue(1, cntZ, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntZ++;
+                                        }
                                     }
                                 }
                             }
 
                         }
-
-                        valeur[0] = axeX.toArray(new String[axeX.size()]);
-                        valeur[1] = axeY.toArray(new String[axeY.size()]);
 
                         // System.out.println(spaceSplitLine[1]);
 
@@ -416,9 +378,6 @@ public final class Dcm implements Cdf, Observable {
 
                         description.setLength(0);
                         fonction.setLength(0);
-
-                        axeX.clear();
-                        axeY.clear();
 
                         listCategory.add(Cdf.CURVE_FIXED);
 
@@ -429,7 +388,10 @@ public final class Dcm implements Cdf, Observable {
                     case GROUP_LINE:
 
                         unite = new String[2];
-                        valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
+                        valeur = new Values(Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]), 2);
+
+                        cntX = 0;
+                        cntZ = 0;
 
                         while (!readLineDcm().equals(END)) {
 
@@ -466,16 +428,14 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
-                                 * axeX.add(Utilitaire.cutNumber(s)); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
-                                        axeX.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntX < valeur.getDimX()) {
+                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntX++;
+                                        }
                                     }
                                 }
                             }
@@ -484,24 +444,19 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) {
-                                 * axeY.add(Utilitaire.cutNumber(s).replace(QUOTE, "")); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
-                                        axeY.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntZ < valeur.getDimX()) {
+                                            valeur.setValue(1, cntZ, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntZ++;
+                                        }
                                     }
                                 }
                             }
 
                         }
-
-                        valeur[0] = axeX.toArray(new String[axeX.size()]);
-                        valeur[1] = axeY.toArray(new String[axeY.size()]);
 
                         // System.out.println(spaceSplitLine[1]);
 
@@ -511,9 +466,6 @@ public final class Dcm implements Cdf, Observable {
                         description.setLength(0);
                         fonction.setLength(0);
 
-                        axeX.clear();
-                        axeY.clear();
-
                         listCategory.add(Cdf.CURVE_GROUPED);
 
                         checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
@@ -522,13 +474,14 @@ public final class Dcm implements Cdf, Observable {
 
                     case MAP:
 
-                        cnt = 1;
+                        cntX = 1;
+                        cntZ = 0;
 
                         unite = new String[3];
-                        valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
-                                + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1];
+                        valeur = new Values(Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1,
+                                Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]) + 1);
 
-                        axeTmp.add("Y \\ X");
+                        valeur.setValue(0, 0, "Y \\ X");
 
                         while (!readLineDcm().equals(END)) {
 
@@ -574,24 +527,21 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
-                                 * axeTmp.add(Utilitaire.cutNumber(s)); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntX < valeur.getDimX()) {
+                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntX++;
+                                        }
                                     }
                                 }
+                            }
 
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
-
-                                    axeTmp.clear();
-                                }
+                            if (cntX == valeur.getDimX()) {
+                                cntX = 0;
+                                cntZ++;
                             }
 
                             if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
@@ -599,28 +549,17 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) &
-                                 * !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) { axeTmp.add(Utilitaire.cutNumber(s).replace(QUOTE, "")); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_Y) & !tmpValue.equals(AXE_Y_TXT)
                                             & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntX < valeur.getDimX()) {
+                                            valeur.setValue(cntZ, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntX++;
+                                        }
                                     }
                                 }
-
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
-
-                                    cnt++;
-
-                                    axeTmp.clear();
-                                }
-
                             }
 
                         }
@@ -633,8 +572,6 @@ public final class Dcm implements Cdf, Observable {
                         description.setLength(0);
                         fonction.setLength(0);
 
-                        axeTmp.clear();
-
                         listCategory.add(Cdf.MAP_INDIVIDUAL);
 
                         checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
@@ -643,13 +580,14 @@ public final class Dcm implements Cdf, Observable {
 
                     case GROUP_MAP:
 
-                        cnt = 1;
+                        cntX = 1;
+                        cntZ = 0;
 
                         unite = new String[3];
-                        valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
-                                + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1];
+                        valeur = new Values(Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1,
+                                Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]) + 1);
 
-                        axeTmp.add("Y \\ X");
+                        valeur.setValue(0, 0, "Y \\ X");
 
                         while (!readLineDcm().equals(END)) {
 
@@ -695,24 +633,21 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
-                                 * axeTmp.add(Utilitaire.cutNumber(s)); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntX < valeur.getDimX()) {
+                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntX++;
+                                        }
                                     }
                                 }
+                            }
 
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
-
-                                    axeTmp.clear();
-                                }
+                            if (cntX == valeur.getDimX()) {
+                                cntX = 0;
+                                cntZ++;
                             }
 
                             if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
@@ -720,30 +655,19 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) &
-                                 * !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) { axeTmp.add(Utilitaire.cutNumber(s).replace(QUOTE, "")); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_Y) & !tmpValue.equals(AXE_Y_TXT)
                                             & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntX < valeur.getDimX()) {
+                                            valeur.setValue(cntZ, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntX++;
+                                        }
                                     }
                                 }
 
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
-
-                                    cnt++;
-
-                                    axeTmp.clear();
-                                }
-
                             }
-
                         }
 
                         // System.out.println(spaceSplitLine[1]);
@@ -754,8 +678,6 @@ public final class Dcm implements Cdf, Observable {
                         description.setLength(0);
                         fonction.setLength(0);
 
-                        axeTmp.clear();
-
                         listCategory.add(Cdf.MAP_GROUPED);
 
                         checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
@@ -764,13 +686,14 @@ public final class Dcm implements Cdf, Observable {
 
                     case FIXED_MAP:
 
-                        cnt = 1;
+                        cntX = 1;
+                        cntZ = 0;
 
                         unite = new String[3];
-                        valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
-                                + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1];
+                        valeur = new Values(Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 2]) + 1,
+                                Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]) + 1);
 
-                        axeTmp.add("Y \\ X");
+                        valeur.setValue(0, 0, "Y \\ X");
 
                         while (!readLineDcm().equals(END)) {
 
@@ -816,24 +739,21 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(AXE_X) & !s.equals(AXE_X_TXT)) {
-                                 * axeTmp.add(Utilitaire.cutNumber(s)); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntX < valeur.getDimX()) {
+                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntX++;
+                                        }
                                     }
                                 }
+                            }
 
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
-
-                                    axeTmp.clear();
-                                }
+                            if (cntX == valeur.getDimX()) {
+                                cntX = 0;
+                                cntZ++;
                             }
 
                             if (line.trim().startsWith(AXE_Y) | line.trim().startsWith(AXE_Y_TXT) | line.trim().startsWith(VALEUR_NOMBRE)
@@ -841,30 +761,18 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(AXE_Y) & !s.equals(AXE_Y_TXT) &
-                                 * !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT)) { axeTmp.add(Utilitaire.cutNumber(s).replace(QUOTE, "")); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_Y) & !tmpValue.equals(AXE_Y_TXT)
                                             & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
-                                        axeTmp.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cntX < valeur.getDimX()) {
+                                            valeur.setValue(cntZ, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cntX++;
+                                        }
                                     }
                                 }
-
-                                if (axeTmp.size() == valeur[0].length) {
-                                    valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
-
-                                    cnt++;
-
-                                    axeTmp.clear();
-                                }
-
                             }
-
                         }
 
                         // System.out.println(spaceSplitLine[1]);
@@ -874,8 +782,6 @@ public final class Dcm implements Cdf, Observable {
 
                         description.setLength(0);
                         fonction.setLength(0);
-
-                        axeTmp.clear();
 
                         listCategory.add(Cdf.MAP_FIXED);
 
@@ -887,7 +793,9 @@ public final class Dcm implements Cdf, Observable {
 
                         unite = new String[1];
 
-                        valeur = new String[1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])];
+                        valeur = new Values(Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]), 1);
+
+                        cnt = 0;
 
                         while (!readLineDcm().equals(END)) {
 
@@ -915,33 +823,25 @@ public final class Dcm implements Cdf, Observable {
 
                                 threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                /*
-                                 * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(AXE_X)) {
-                                 * distribution.add(Utilitaire.cutNumber(s).replace(QUOTE, "")); } }
-                                 */
-
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X)) {
-                                        distribution.add(Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                        if (cnt < valeur.getDimX()) {
+                                            valeur.setValue(0, cnt, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            cnt++;
+                                        }
                                     }
                                 }
                             }
 
                         }
 
-                        valeur[0] = distribution.toArray(new String[distribution.size()]);
-
-                        // System.out.println(spaceSplitLine[1]);
-
                         listLabel.add(new Axis(spaceSplitLine[1], description.toString(), AXIS_VALUES.intern(), fonction.toString().intern(), unite,
                                 EMPTY_COMMENT, valeur));
 
                         description.setLength(0);
                         fonction.setLength(0);
-
-                        distribution.clear();
 
                         listCategory.add(Cdf.AXIS_VALUES);
 
@@ -951,25 +851,22 @@ public final class Dcm implements Cdf, Observable {
 
                     case MATRIX:
 
-                        cnt = 1;
-
                         if (spaceSplitLine[spaceSplitLine.length - 2].equals("@")) {
+
+                            cntX = 1;
+                            cntZ = 1;
+
                             unite = new String[1];
-                            valeur = new String[Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1])
-                                    + 1][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 3]) + 1];
+                            valeur = new Values(Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 3]) + 1,
+                                    Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]) + 1);
 
-                            axeTmp.add("Y \\ X");
+                            valeur.setValue(0, 0, "Y \\ X");
 
-                            for (int x = 1; x < valeur[0].length; x++) {
-                                axeTmp.add(Integer.toString(x));
+                            for (int x = 1; x < valeur.getDimX(); x++) {
+                                valeur.setValue(0, x, Integer.toString(x));
                             }
-                            valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
-
-                            axeTmp.clear();
 
                             while (!readLineDcm().equals(END)) {
-
-                                ;
 
                                 spaceSplitLine2 = line.split(SPACE);
                                 quotesSplitLine = line.split(QUOTE);
@@ -991,57 +888,44 @@ public final class Dcm implements Cdf, Observable {
                                     }
                                 }
 
+                                if (cntX == valeur.getDimX()) {
+                                    cntX = 1;
+                                    cntZ++;
+                                }
+
                                 if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
 
                                     threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                    axeTmp.add(Integer.toString(cnt));
-
-                                    /*
-                                     * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT))
-                                     * { if (Utilitaire.isNumber(s)) { axeTmp.add(Utilitaire.cutNumber(s)); } else { axeTmp.add(s.replace(QUOTE, ""));
-                                     * } } }
-                                     */
+                                    valeur.setValue(cntZ, 0, Integer.toString(cntZ));
 
                                     nbSplit = threeSpaceSplitLine.length;
                                     for (int i = 0; i < nbSplit; i++) {
                                         tmpValue = threeSpaceSplitLine[i];
                                         if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
-                                            if (Utilitaire.isNumber(tmpValue)) {
-                                                axeTmp.add(Utilitaire.cutNumber(tmpValue));
-                                            } else {
-                                                axeTmp.add(tmpValue.replace(QUOTE, ""));
+                                            if (cntX < valeur.getDimX()) {
+                                                valeur.setValue(cntZ, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                                cntX++;
                                             }
                                         }
                                     }
-
-                                    if (axeTmp.size() == valeur[0].length) {
-                                        valeur[cnt] = axeTmp.toArray(new String[axeTmp.size()]);
-
-                                        cnt++;
-
-                                        axeTmp.clear();
-                                    }
-
                                 }
-
                             }
 
                         } else {
 
+                            cntX = 1;
+
                             unite = new String[1];
-                            valeur = new String[2][Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]) + 1];
+                            valeur = new Values(Integer.parseInt(spaceSplitLine[spaceSplitLine.length - 1]) + 1, 2);
 
-                            axeTmp.add("X");
+                            valeur.setValue(0, 0, "X");
 
-                            for (int x = 1; x < valeur[0].length; x++) {
-                                axeTmp.add(Integer.toString(x));
+                            for (int x = 1; x < valeur.getDimX(); x++) {
+                                valeur.setValue(0, x, Integer.toString(x));
                             }
-                            valeur[0] = axeTmp.toArray(new String[axeTmp.size()]);
 
-                            axeTmp.clear();
-
-                            axeTmp.add("Z");
+                            valeur.setValue(1, 0, "Z");
 
                             while (!readLineDcm().equals(END)) {
 
@@ -1069,32 +953,16 @@ public final class Dcm implements Cdf, Observable {
 
                                     threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                    /*
-                                     * for (String s : threeSpaceSplitLine) { if (s.length() != 0 & !s.equals(VALEUR_NOMBRE) & !s.equals(VALEUR_TEXT))
-                                     * { if (Utilitaire.isNumber(s)) { axeTmp.add(Utilitaire.cutNumber(s)); } else { axeTmp.add(s.replace(QUOTE, ""));
-                                     * }
-                                     * 
-                                     * } }
-                                     */
-
                                     nbSplit = threeSpaceSplitLine.length;
                                     for (int i = 0; i < nbSplit; i++) {
                                         tmpValue = threeSpaceSplitLine[i];
                                         if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
-                                            if (Utilitaire.isNumber(tmpValue)) {
-                                                axeTmp.add(Utilitaire.cutNumber(tmpValue));
-                                            } else {
-                                                axeTmp.add(tmpValue.replace(QUOTE, ""));
+                                            if (cntX < valeur.getDimX()) {
+                                                valeur.setValue(1, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                                cntX++;
                                             }
                                         }
                                     }
-
-                                    if (axeTmp.size() == valeur[0].length) {
-                                        valeur[1] = axeTmp.toArray(new String[axeTmp.size()]);
-
-                                        axeTmp.clear();
-                                    }
-
                                 }
 
                             }
@@ -1107,8 +975,6 @@ public final class Dcm implements Cdf, Observable {
                         description.setLength(0);
                         fonction.setLength(0);
 
-                        axeTmp.clear();
-
                         listCategory.add(Cdf.VALUE_BLOCK);
 
                         checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
@@ -1120,13 +986,16 @@ public final class Dcm implements Cdf, Observable {
 
             repartitionScore.put(0, listLabel.size());
 
+            this.valid = true;
+
         } catch (Exception e) {
 
             e.printStackTrace();
 
+            SWToolsMain.getLogger().severe("Erreur sur l'ouverture de : " + this.name);
+
         } finally {
             try {
-                numLine = 0;
                 buf.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -1136,7 +1005,6 @@ public final class Dcm implements Cdf, Observable {
 
     private final String readLineDcm() {
         try {
-            numLine++;
             return line = buf.readLine();
 
         } catch (IOException e) {
@@ -1167,7 +1035,7 @@ public final class Dcm implements Cdf, Observable {
 
     @Override
     public float getAvgScore() {
-        return 0;
+        return 0f;
     }
 
     @Override
@@ -1186,18 +1054,6 @@ public final class Dcm implements Cdf, Observable {
     }
 
     @Override
-    public void addObserver(Observer obs) {
-        listObserver.add(obs);
-    }
-
-    @Override
-    public void notifyObserver(String cdf, String rate) {
-        for (Observer obs : listObserver) {
-            obs.update(cdf, rate);
-        }
-    }
-
-    @Override
     public HashSet<String> getCategoryList() {
         return listCategory;
     }
@@ -1205,6 +1061,11 @@ public final class Dcm implements Cdf, Observable {
     @Override
     public double getCheckSum() {
         return checkSum;
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.valid;
     }
 
 }

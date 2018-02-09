@@ -17,18 +17,16 @@ import cdf.Cdf;
 import cdf.Curve;
 import cdf.History;
 import cdf.Map;
-import cdf.Observable;
 import cdf.Scalaire;
 import cdf.ValueBlock;
+import cdf.Values;
 import cdf.Variable;
-import gui.Observer;
-import gui.PanelCDF;
+import gui.SWToolsMain;
 
-public final class M implements Cdf, Observable {
+public final class M implements Cdf {
 
     private static BufferedReader buf = null;
     private static String line;
-    private static int numLine;
     private static final NumberFormat nbf = NumberFormat.getInstance();
 
     private static final History[] EMPTY_COMMENT = new History[0];
@@ -37,26 +35,18 @@ public final class M implements Cdf, Observable {
     private static final String NO_FUNCTION = "Pas de fonction definie";
 
     private final String name;
+    private boolean valid;
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
     private final HashSet<String> listCategory = new HashSet<String>();
     private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1);
 
-    private final ArrayList<Observer> listObserver = new ArrayList<Observer>();
-
-    public M(final File file, PanelCDF panCdf) {
-
-        numLine = 0;
-
-        if (panCdf != null)
-            addObserver(panCdf);
+    public M(final File file) {
 
         nbf.setMaximumFractionDigits(1);
 
         this.name = file.getName().substring(0, file.getName().length() - 2);
 
         this.parse(file);
-
-        listObserver.clear(); // Plus besoin d'observer
 
     }
 
@@ -65,21 +55,14 @@ public final class M implements Cdf, Observable {
         try {
 
             buf = new BufferedReader(new FileReader(file));
-            final BufferedReader reader = new BufferedReader(new FileReader(file));
-            int nbLines = 0;
-            while (reader.readLine() != null)
-                nbLines++;
-            reader.close();
 
             String shortName = null;
             String category = "";
-            String[][] valeur;
+            Values valeur;
 
             String subString;
 
             while (readLineM() != null) {
-
-                notifyObserver(this.name, nbf.format(((double) numLine / (double) (nbLines)) * 100) + "%");
 
                 if (!line.startsWith("%")) {
                     if (line.indexOf("=") > 0) {
@@ -93,8 +76,10 @@ public final class M implements Cdf, Observable {
                             switch (line.substring(shortName.lastIndexOf("_") + 1, line.indexOf("=")).trim()) {
                             case "C":
 
-                                listLabel.add(new Scalaire(shortName, "", VALUE, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT,
-                                        new String[][] { { line.substring(line.indexOf("=") + 1, line.indexOf(";")).trim() } }));
+                                valeur = new Values(1, 1);
+                                valeur.setValue(0, 0, line.substring(line.indexOf("=") + 1, line.indexOf(";")).trim());
+
+                                listLabel.add(new Scalaire(shortName, "", VALUE, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
 
                                 listCategory.add(Cdf.VALUE);
 
@@ -105,12 +90,14 @@ public final class M implements Cdf, Observable {
                                 subString = subString.replace("[", "");
                                 subString = subString.replace("]", "");
 
-                                valeur = new String[2][subString.split("\\s+").length];
+                                // valeur = new String[2][subString.split("\\s+").length];
+                                valeur = new Values(subString.split("\\s+").length, 2);
 
-                                for (int x = 0; x < valeur[0].length; x++) {
-                                    valeur[0][x] = Integer.toString(x);
-                                    valeur[1][x] = subString.split("\\s+")[x].trim();
-
+                                for (int x = 0; x < valeur.getDimX(); x++) {
+                                    // valeur[0][x] = Integer.toString(x);
+                                    // valeur[1][x] = subString.split("\\s+")[x].trim();
+                                    valeur.setValue(0, x, Integer.toString(x));
+                                    valeur.setValue(1, x, subString.split("\\s+")[x].trim());
                                 }
 
                                 listLabel
@@ -125,12 +112,14 @@ public final class M implements Cdf, Observable {
                                 subString = subString.replace("[", "");
                                 subString = subString.replace("]", "");
 
-                                valeur = new String[2][subString.split("\\s+").length];
+                                // valeur = new String[2][subString.split("\\s+").length];
+                                valeur = new Values(subString.split("\\s+").length, 2);
 
-                                for (int x = 0; x < valeur[0].length; x++) {
-                                    valeur[0][x] = Integer.toString(x);
-                                    valeur[1][x] = subString.split("\\s+")[x].trim();
-
+                                for (int x = 0; x < valeur.getDimX(); x++) {
+                                    // valeur[0][x] = Integer.toString(x);
+                                    // valeur[1][x] = subString.split("\\s+")[x].trim();
+                                    valeur.setValue(0, x, Integer.toString(x));
+                                    valeur.setValue(1, x, subString.split("\\s+")[x].trim());
                                 }
 
                                 listLabel
@@ -140,19 +129,24 @@ public final class M implements Cdf, Observable {
 
                                 break;
                             case "M":
-                                listLabel.add(new Map(shortName, "", MAP_INDIVIDUAL, NO_FUNCTION, new String[] { "", "", "" }, EMPTY_COMMENT,
-                                        new String[][] { { "0" } }));
+
+                                valeur = new Values(1, 1);
+                                valeur.setValue(0, 0, "0");
+
+                                listLabel
+                                        .add(new Map(shortName, "", MAP_INDIVIDUAL, NO_FUNCTION, new String[] { "", "", "" }, EMPTY_COMMENT, valeur));
 
                                 listCategory.add(Cdf.MAP_INDIVIDUAL);
 
                                 break;
                             case "A":
 
-                                valeur = new String[1][line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s").length];
+                                // valeur = new String[1][line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s").length];
+                                valeur = new Values(line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s").length, 1);
 
-                                for (int x = 0; x < valeur[0].length; x++) {
-                                    valeur[0][x] = line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s")[x].trim();
-
+                                for (int x = 0; x < valeur.getDimX(); x++) {
+                                    // valeur[0][x] = line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s")[x].trim();
+                                    valeur.setValue(0, x, line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s")[x].trim());
                                 }
 
                                 listLabel.add(new Axis(shortName, "", AXIS_VALUES, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
@@ -161,15 +155,21 @@ public final class M implements Cdf, Observable {
 
                                 break;
                             case "CA":
-                                listLabel.add(new ValueBlock(shortName, "", VALUE_BLOCK, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT,
-                                        new String[][] { { "0" } }));
+
+                                valeur = new Values(1, 1);
+                                valeur.setValue(0, 0, "0");
+
+                                listLabel.add(new ValueBlock(shortName, "", VALUE_BLOCK, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
 
                                 listCategory.add(Cdf.VALUE_BLOCK);
 
                                 break;
                             default:
-                                listLabel.add(new Scalaire(shortName, "", category, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT,
-                                        new String[][] { { "0" } }));
+
+                                valeur = new Values(1, 1);
+                                valeur.setValue(0, 0, "0");
+
+                                listLabel.add(new Scalaire(shortName, "", category, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
                                 break;
                             }
 
@@ -182,15 +182,17 @@ public final class M implements Cdf, Observable {
 
             }
 
+            this.valid = true;
+
         } catch (Exception e) {
 
             e.printStackTrace();
 
+            SWToolsMain.getLogger().severe("Erreur sur l'ouverture de : " + this.name);
+
         } finally {
 
             try {
-
-                numLine = 0;
                 buf.close();
 
             } catch (IOException e) {
@@ -203,25 +205,12 @@ public final class M implements Cdf, Observable {
 
     private final String readLineM() {
         try {
-            numLine++;
             return line = buf.readLine();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
-    }
-
-    @Override
-    public void addObserver(Observer obs) {
-        listObserver.add(obs);
-    }
-
-    @Override
-    public void notifyObserver(String cdf, String rate) {
-        for (Observer obs : listObserver) {
-            obs.update(cdf, rate);
-        }
     }
 
     @Override
@@ -272,6 +261,11 @@ public final class M implements Cdf, Observable {
     @Override
     public double getCheckSum() {
         return checkSum;
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.valid;
     }
 
 }

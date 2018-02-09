@@ -8,8 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
@@ -27,16 +29,14 @@ import cdf.Cdf;
 import cdf.Curve;
 import cdf.History;
 import cdf.Map;
-import cdf.Observable;
 import cdf.Scalaire;
 import cdf.ValueBlock;
+import cdf.Values;
 import cdf.Variable;
-import gui.Observer;
-import gui.PanelCDF;
 import gui.SWToolsMain;
 import tools.Utilitaire;
 
-public final class Paco implements Cdf, Observable {
+public final class Paco implements Cdf {
 
     private String name;
     private boolean valid;
@@ -49,7 +49,6 @@ public final class Paco implements Cdf, Observable {
     private double checkSum = 0;
 
     private static final String NO_FONCTION = "Pas de fonction definie";
-    private static final ArrayList<Observer> listObserver = new ArrayList<Observer>(1);
     private static final DocumentBuilderFactory factory;
     private static final NumberFormat nbf = NumberFormat.getInstance();
 
@@ -59,7 +58,7 @@ public final class Paco implements Cdf, Observable {
         factory.setIgnoringElementContentWhitespace(true);
     }
 
-    public Paco(final File file, PanelCDF panCdf) {
+    public Paco(final File file) {
 
         DocumentBuilder builder;
         Document document = null;
@@ -72,11 +71,6 @@ public final class Paco implements Cdf, Observable {
             document = builder.parse(new File(file.toURI())); // Permet de virer l'exception <java.net.malformedurlexception unknown protocol c>
 
             if (document.getDoctype() != null) {
-                valid = true;
-
-                if (panCdf != null) {
-                    addObserver(panCdf);
-                }
 
                 this.name = file.getName().substring(0, file.getName().length() - 4);
 
@@ -85,7 +79,6 @@ public final class Paco implements Cdf, Observable {
                 SWToolsMain.getLogger().info(System.currentTimeMillis() - start + " ms");
 
                 document = null;
-                listObserver.clear(); // Plus besoin d'observer
 
             } else {
                 JOptionPane.showMessageDialog(null, "Format de PaCo non valide !" + "\nNom : " + this.name, "ERREUR", JOptionPane.ERROR_MESSAGE);
@@ -133,11 +126,12 @@ public final class Paco implements Cdf, Observable {
                         JOptionPane.showMessageDialog(null, "Le PaCo a ete enregistre a l'adresse suivante :\n" + fileBis.getPath());
 
                     } catch (IOException e1) {
-                        System.out.println(e);
                         e1.printStackTrace();
                     }
                 }
             }
+
+            SWToolsMain.getLogger().severe("Erreur sur l'ouverture de : " + this.name);
         }
     }
 
@@ -257,16 +251,13 @@ public final class Paco implements Cdf, Observable {
                 listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
                 break;
             case "SW_COMPONENT": // Rustine vite fait pour poursuivre la lecture du fichier
-                listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                        new String[][] { { "Pas de valeur" } }));
+                // listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry),
+                // new String[][] { { "Pas de valeur" } }));
                 break;
             }
 
             listCategory.add(category);
 
-            notifyObserver(this.name, nbf.format(((double) i / (double) (this.nbLabel - 1)) * 100) + "%");
-
-            // checksum
             checkSum += listLabel.get(i).getChecksum();
         }
 
@@ -280,15 +271,14 @@ public final class Paco implements Cdf, Observable {
                     maxScore = score;
             }
         }
+
+        this.valid = true;
+
     }
 
     @Override
     public final String getName() {
         return this.name;
-    }
-
-    public final boolean isValid() {
-        return valid;
     }
 
     @Override
@@ -297,8 +287,8 @@ public final class Paco implements Cdf, Observable {
     }
 
     @Override
-    public final ArrayList<Variable> getListLabel() {
-        return this.listLabel;
+    public final List<Variable> getListLabel() {
+        return Collections.unmodifiableList(this.listLabel);
     }
 
     @Override
@@ -355,16 +345,16 @@ public final class Paco implements Cdf, Observable {
         return entry;
     }
 
-    private final String[][] readValue(NodeList swAxisCont) {
+    private final Values readValue(NodeList swAxisCont) {
 
-        final String val[][] = new String[1][1];
+        final Values value = new Values(1, 1);
 
-        val[0][0] = Utilitaire.cutNumber(swAxisCont.item(0).getLastChild().getTextContent());
+        value.setValue(0, 0, Utilitaire.cutNumber(swAxisCont.item(0).getLastChild().getTextContent()));
 
-        return val;
+        return value;
     }
 
-    private final String[][] readAxis(NodeList swAxisCont) {
+    private final Values readAxis(NodeList swAxisCont) {
 
         final String SW_VALUES_PHYS = "SW-VALUES-PHYS";
 
@@ -374,29 +364,30 @@ public final class Paco implements Cdf, Observable {
 
         final int nbVal = value.getLength();
 
-        final String val[][] = new String[1][nbVal];
+        final Values values = new Values(nbVal, 1);
 
         for (short a = 0; a < nbVal; a++) {
-            val[0][a] = Utilitaire.cutNumber(value.item(a).getTextContent());
+            values.setValue(0, a, Utilitaire.cutNumber(value.item(a).getTextContent()));
         }
 
-        return val;
+        return values;
     }
 
-    private final String[][] readValueBlock(String[] dim, NodeList swAxisCont) {
+    private final Values readValueBlock(String[] dim, NodeList swAxisCont) {
         // A finir d'implementer pour les dimensions multiples
 
         final String SW_VALUES_PHYS = "SW-VALUES-PHYS";
 
-        final String val[][];
+        final Values values;
 
         if (dim[1].equals("0")) {
-            val = new String[2][Integer.parseInt(dim[0]) + 1];
-            val[0][0] = "X";
-            val[1][0] = "Z";
+            values = new Values(Integer.parseInt(dim[0]) + 1, 2); // new String[2][Integer.parseInt(dim[0]) + 1];
+            values.setValue(0, 0, "X");
+            values.setValue(1, 0, "Z");
         } else {
-            val = new String[Integer.parseInt(dim[1]) + 1][Integer.parseInt(dim[0]) + 1];
-            val[0][0] = "Y \\ X";
+            values = new Values(Integer.parseInt(dim[0]) + 1, Integer.parseInt(dim[1]) + 1); // new String[Integer.parseInt(dim[1]) +
+            // 1][Integer.parseInt(dim[0]) + 1];
+            values.setValue(0, 0, "Y \\ X");
         }
 
         final Element eAxisCont = (Element) swAxisCont.item(0);
@@ -409,34 +400,36 @@ public final class Paco implements Cdf, Observable {
         for (short i = 0; i < nbVal; i++) {
             switch (value.item(i).getNodeName()) {
             case "V":
-                val[0][i + 1] = Integer.toString(i);
-                val[1][i + 1] = Utilitaire.cutNumber(value.item(i).getTextContent());
+                values.setValue(0, i + 1, Integer.toString(i));// val[0][i + 1] = Integer.toString(i);
+                values.setValue(1, i + 1, Utilitaire.cutNumber(value.item(i).getTextContent())); // val[1][i + 1] =
+                                                                                                 // Utilitaire.cutNumber(value.item(i).getTextContent());
                 break;
             case "VG":
                 valueVg = value.item(i).getChildNodes();
-                val[i + 1][0] = Integer.toString(i);
+                values.setValue(i + 1, 0, Integer.toString(i)); // val[i + 1][0] = Integer.toString(i);
                 for (short j = 0; j < valueVg.getLength(); j++) {
                     if (valueVg.item(j).getNodeName().equals("V")) {
-                        val[0][j] = Integer.toString(j - 1);
-                        val[i + 1][j] = valueVg.item(j).getTextContent();
+                        values.setValue(0, j, Integer.toString(j - 1)); // val[0][j] = Integer.toString(j - 1);
+                        values.setValue(i + 1, j, valueVg.item(j).getTextContent());// val[i + 1][j] = valueVg.item(j).getTextContent();
                     }
                 }
                 break;
             case "VT":
-                val[0][i + 1] = Integer.toString(i);
-                val[1][i + 1] = Utilitaire.cutNumber(value.item(i).getFirstChild().getTextContent());
+                values.setValue(0, i + 1, Integer.toString(i));// val[0][i + 1] = Integer.toString(i);
+                values.setValue(1, i + 1, Utilitaire.cutNumber(value.item(i).getFirstChild().getTextContent()));// val[1][i + 1] =
+                                                                                                                // Utilitaire.cutNumber(value.item(i).getFirstChild().getTextContent());
                 break;
             }
         }
-        return val;
+        return values;
     }
 
-    private final String[][] readCurve(NodeList swAxisCont) {
+    private final Values readCurve(NodeList swAxisCont) {
 
         final String SW_AXIS_INDEX = "SW-AXIS-INDEX";
         final String SW_VALUES_PHYS = "SW-VALUES-PHYS";
 
-        final String val[][] = new String[2][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength()];
+        final Values values = new Values(((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength(), 2);
 
         Element eAxisCont;
         Node indexAxis;
@@ -455,31 +448,33 @@ public final class Paco implements Cdf, Observable {
 
             switch (indexAxis.getTextContent()) {
             case "1":
-                for (short b = 0; b < nbVal; b++) {
-                    val[0][b] = Utilitaire.cutNumber(value.item(b).getTextContent());
+                for (short x = 0; x < nbVal; x++) {
+                    values.setValue(0, x, Utilitaire.cutNumber(value.item(x).getTextContent()));
                 }
                 break;
             case "0":
-                for (short a = 0; a < nbVal; a++) {
-                    val[1][a] = Utilitaire.cutNumber(value.item(a).getTextContent());
+                for (short x = 0; x < nbVal; x++) {
+                    values.setValue(1, x, Utilitaire.cutNumber(value.item(x).getTextContent()));
                 }
                 break;
             }
         }
-        return val;
+        return values;
     }
 
-    private final String[][] readMap(NodeList swAxisCont) {
+    private final Values readMap(NodeList swAxisCont) {
 
         final String SW_AXIS_INDEX = "SW-AXIS-INDEX";
         final String SW_VALUES_PHYS = "SW-VALUES-PHYS";
 
         // Premiere dimension = Axe Y car nombre de ligne
         // Deuxieme dimension = Axe X car nombre de colonne
-        final String val[][] = new String[((Element) swAxisCont.item(1)).getLastChild().getChildNodes().getLength()
-                + 1][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength() + 1];
+        final Values values = new Values(((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength() + 1,
+                ((Element) swAxisCont.item(1)).getLastChild().getChildNodes().getLength() + 1); // new String[((Element)
+                                                                                                // swAxisCont.item(1)).getLastChild().getChildNodes().getLength()
+        // + 1][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength() + 1];
 
-        val[0][0] = "Y \\ X";
+        values.setValue(0, 0, "Y \\ X");
 
         Element eAxisCont;
         Node indexAxis;
@@ -505,11 +500,13 @@ public final class Paco implements Cdf, Observable {
 
                     switch (nodeListV.item(x).getNodeName()) {
                     case "VT":
-                        val[0][x + 1] = Utilitaire.cutNumber(nodeListV.item(x).getFirstChild().getTextContent());
+                        // val[0][x + 1] = Utilitaire.cutNumber(nodeListV.item(x).getFirstChild().getTextContent());
+                        values.setValue(0, x + 1, Utilitaire.cutNumber(nodeListV.item(x).getFirstChild().getTextContent()));
                         break;
 
                     default:
-                        val[0][x + 1] = Utilitaire.cutNumber(nodeListV.item(x).getTextContent());
+                        // val[0][x + 1] = Utilitaire.cutNumber(nodeListV.item(x).getTextContent());
+                        values.setValue(0, x + 1, Utilitaire.cutNumber(nodeListV.item(x).getTextContent()));
                         break;
                     }
                 }
@@ -520,10 +517,12 @@ public final class Paco implements Cdf, Observable {
                 for (short y = 0; y < nbAxeVal; y++) {
                     switch (nodeListV.item(y).getNodeName()) {
                     case "VT":
-                        val[y + 1][0] = Utilitaire.cutNumber(nodeListV.item(y).getFirstChild().getTextContent());
+                        // val[y + 1][0] = Utilitaire.cutNumber(nodeListV.item(y).getFirstChild().getTextContent());
+                        values.setValue(y + 1, 0, Utilitaire.cutNumber(nodeListV.item(y).getFirstChild().getTextContent()));
                         break;
                     default:
-                        val[y + 1][0] = Utilitaire.cutNumber(nodeListV.item(y).getTextContent());
+                        // val[y + 1][0] = Utilitaire.cutNumber(nodeListV.item(y).getTextContent());
+                        values.setValue(y + 1, 0, Utilitaire.cutNumber(nodeListV.item(y).getTextContent()));
                         break;
                     }
                 }
@@ -541,7 +540,8 @@ public final class Paco implements Cdf, Observable {
 
                     if (nbNodeV > 0) {
                         for (short nV = 1; nV < nbNodeV + 1; nV++) {
-                            val[nVG][nV] = Utilitaire.cutNumber(nodeV.item(nV - 1).getTextContent());
+                            // val[nVG][nV] = Utilitaire.cutNumber(nodeV.item(nV - 1).getTextContent());
+                            values.setValue(nVG, nV, Utilitaire.cutNumber(nodeV.item(nV - 1).getTextContent()));
                         }
                     } else {
 
@@ -549,7 +549,8 @@ public final class Paco implements Cdf, Observable {
                         nbNodeV = nodeV.getLength();
 
                         for (short nV = 1; nV < nbNodeV + 1; nV++) {
-                            val[nVG][nV] = Utilitaire.cutNumber(nodeV.item(nV - 1).getFirstChild().getTextContent());
+                            // val[nVG][nV] = Utilitaire.cutNumber(nodeV.item(nV - 1).getFirstChild().getTextContent());
+                            values.setValue(nVG, nV, Utilitaire.cutNumber(nodeV.item(nV - 1).getFirstChild().getTextContent()));
                         }
                     }
                 }
@@ -557,7 +558,7 @@ public final class Paco implements Cdf, Observable {
             }
         }
 
-        return val;
+        return values;
     }
 
     @Override
@@ -603,19 +604,6 @@ public final class Paco implements Cdf, Observable {
     }
 
     @Override
-    public void addObserver(Observer obs) {
-        listObserver.add(obs);
-    }
-
-    @Override
-    public void notifyObserver(String cdf, String rate) {
-        for (Observer obs : listObserver) {
-            obs.update(cdf, rate);
-        }
-
-    }
-
-    @Override
     public HashSet<String> getCategoryList() {
         return listCategory;
     }
@@ -637,6 +625,11 @@ public final class Paco implements Cdf, Observable {
         this.maxScore = 0;
 
         getScores();
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.valid;
     }
 
 }

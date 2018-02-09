@@ -2,15 +2,14 @@ package cdf;
 
 public final class Axis extends Variable {
 
-    private final String[][] zValues;
+    private final Values zValues;
     private final int dim;
 
-    public Axis(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
-            String[][] values) {
+    public Axis(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 
         this.zValues = values;
-        this.dim = zValues[0].length;
+        this.dim = zValues.getDimX();
 
     }
 
@@ -34,12 +33,12 @@ public final class Axis extends Variable {
         return super.getSwUnitRef()[0];
     }
 
-    public final String getzValues(int x) {
-        return zValues[0][x];
+    public final String getzValues(int y) {
+        return zValues.getValue(0, y);
     }
 
     @Override
-    public String[][] getValues() {
+    public Values getValues() {
         return zValues;
     }
 
@@ -49,7 +48,7 @@ public final class Axis extends Variable {
         sb.append(getShortName() + " = ");
         // valeur
         sb.append("[");
-        for (short x = 0; x < this.zValues[0].length; x++) {
+        for (short x = 0; x < this.zValues.getDimX(); x++) {
             if (x > 0) {
                 sb.append(" " + getzValues(x));
             } else {
@@ -66,9 +65,13 @@ public final class Axis extends Variable {
     public double getChecksum() {
 
         double valCheck = 0;
+        String value;
 
         for (short x = 0; x < dim; x++) {
-            valCheck += getzValues(x).hashCode();
+            value = getzValues(x);
+            if (value != null) {
+                valCheck += value.hashCode();
+            }
         }
         return valCheck;
     }

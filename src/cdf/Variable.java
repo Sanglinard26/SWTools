@@ -99,7 +99,7 @@ public abstract class Variable {
 
     public abstract String toMFormat(boolean transpose);
 
-    public abstract String[][] getValues();
+    public abstract Values getValues();
 
     public final JComponent showValues() {
 
