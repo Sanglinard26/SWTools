@@ -92,11 +92,6 @@ public final class Curve extends Variable {
         double valCheck = 0;
         String value;
 
-<<<<<<< HEAD
-        for (short x = 0; x < dimX; x++) {
-            valCheck += getValue(0, x).hashCode();
-            valCheck += getValue(1, x).hashCode();
-=======
         for (byte y = 0; y < 2; y++) {
             for (short x = 0; x < dimX; x++) {
                 value = getValue(y, x);
@@ -104,7 +99,6 @@ public final class Curve extends Variable {
                     valCheck += value.hashCode();
                 }
             }
->>>>>>> refs/heads/Test_Array1D
         }
 
         return valCheck;

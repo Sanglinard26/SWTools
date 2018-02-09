@@ -199,14 +199,10 @@ public final class Map extends Variable {
 
         for (short y = 0; y < dimY; y++) {
             for (short x = 0; x < dimX; x++) {
-<<<<<<< HEAD
-                valCheck += values[y][x].hashCode();
-=======
                 value = getValue(y, x);
                 if (value != null) {
                     valCheck += value.hashCode();
                 }
->>>>>>> refs/heads/Test_Array1D
             }
         }
 
