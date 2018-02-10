@@ -226,7 +226,8 @@ public class InfiniteProgressPanel extends JComponent implements MouseListener {
     public void paintComponent(Graphics g) {
         if (started) {
             int width = getWidth();
-            int height = getHeight();
+            @SuppressWarnings("unused")
+			int height = getHeight();
 
             double maxY = 0.0;
 

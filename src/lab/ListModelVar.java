@@ -12,8 +12,8 @@ import javax.swing.AbstractListModel;
 public final class ListModelVar extends AbstractListModel<Variable> {
 
     private static final long serialVersionUID = 1L;
-    private final ArrayList<Variable> listVariable;
-    private final ArrayList<Variable> listVariableFiltre;
+    private final List<Variable> listVariable;
+    private final List<Variable> listVariableFiltre;
 
     public ListModelVar() {
         this.listVariable = new ArrayList<Variable>();
@@ -30,15 +30,8 @@ public final class ListModelVar extends AbstractListModel<Variable> {
             listVariable.clear();
         }
         listVariable.addAll(lab.getListVariable());
+        Collections.sort(listVariable);
         setFilter("");
-    }
-
-    public void addVar(Variable var) {
-        if (!listVariable.contains(var)) {
-            listVariable.add(var);
-            setFilter("");
-            this.fireIntervalAdded(this, getSize() - 1, getSize() - 1);
-        }
     }
 
     public void setFilter(String filter) {
@@ -49,19 +42,6 @@ public final class ListModelVar extends AbstractListModel<Variable> {
             }
         }
         this.fireContentsChanged(this, 0, getSize());
-    }
-
-    public void removeVar(int index) {
-        if (listVariable.remove(index) != null) {
-            setFilter("");
-            this.fireIntervalRemoved(this, index, index);
-        }
-    }
-
-    public void removeVar(Variable var) {
-        if (listVariable.remove(var)) {
-            setFilter("");
-        }
     }
 
     public void clearList() {

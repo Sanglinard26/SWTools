@@ -2,7 +2,7 @@ package lab;
 
 import java.util.HashMap;
 
-public final class Variable {
+public final class Variable implements Comparable<Variable> {
 
     private final String nom;
     private final String nomLab;
@@ -64,5 +64,15 @@ public final class Variable {
     public boolean equals(Object obj) {
         return nom.equals(obj.toString());
     }
+    
+    @Override
+    public int hashCode() {
+    	return nom.hashCode();
+    }
+
+	@Override
+	public int compareTo(Variable var) {
+		return this.nom.compareTo(var.getNom());
+	}
 
 }
