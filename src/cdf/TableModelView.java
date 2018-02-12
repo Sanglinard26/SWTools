@@ -35,10 +35,7 @@ public final class TableModelView extends AbstractTableModel {
 
         final Object value = values.getValue(row, col);
 
-        if (value != null) {
-            return value;
-        }
-        return EMPTY;
+        return value != null ? value : EMPTY;
     }
 
     public final void setData(Values data) {

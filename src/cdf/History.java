@@ -53,23 +53,5 @@ public final class History {
     public final String getCommentaire() {
         return commentaire;
     }
-    
-    public final void setDate(String date) {
-        this.date = date;
-    }
-
-    public final void setAuteur(String auteur) {
-        this.auteur = auteur;
-    }
-
-    public final void setScore(String score) {
-        this.score = score;
-    }
-
-    public final void setCommentaire(String commentaire) {
-        this.commentaire = commentaire;
-    }
-    
-    
 
 }

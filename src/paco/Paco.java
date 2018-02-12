@@ -381,12 +381,11 @@ public final class Paco implements Cdf {
         final Values values;
 
         if (dim[1].equals("0")) {
-            values = new Values(Integer.parseInt(dim[0]) + 1, 2); // new String[2][Integer.parseInt(dim[0]) + 1];
+            values = new Values(Integer.parseInt(dim[0]) + 1, 2);
             values.setValue(0, 0, "X");
             values.setValue(1, 0, "Z");
         } else {
-            values = new Values(Integer.parseInt(dim[0]) + 1, Integer.parseInt(dim[1]) + 1); // new String[Integer.parseInt(dim[1]) +
-            // 1][Integer.parseInt(dim[0]) + 1];
+            values = new Values(Integer.parseInt(dim[0]) + 1, Integer.parseInt(dim[1]) + 1);
             values.setValue(0, 0, "Y \\ X");
         }
 
@@ -400,24 +399,22 @@ public final class Paco implements Cdf {
         for (short i = 0; i < nbVal; i++) {
             switch (value.item(i).getNodeName()) {
             case "V":
-                values.setValue(0, i + 1, Integer.toString(i));// val[0][i + 1] = Integer.toString(i);
-                values.setValue(1, i + 1, Utilitaire.cutNumber(value.item(i).getTextContent())); // val[1][i + 1] =
-                                                                                                 // Utilitaire.cutNumber(value.item(i).getTextContent());
+                values.setValue(0, i + 1, Integer.toString(i));
+                values.setValue(1, i + 1, Utilitaire.cutNumber(value.item(i).getTextContent()));
                 break;
             case "VG":
                 valueVg = value.item(i).getChildNodes();
-                values.setValue(i + 1, 0, Integer.toString(i)); // val[i + 1][0] = Integer.toString(i);
+                values.setValue(i + 1, 0, Integer.toString(i));
                 for (short j = 0; j < valueVg.getLength(); j++) {
                     if (valueVg.item(j).getNodeName().equals("V")) {
-                        values.setValue(0, j, Integer.toString(j - 1)); // val[0][j] = Integer.toString(j - 1);
-                        values.setValue(i + 1, j, valueVg.item(j).getTextContent());// val[i + 1][j] = valueVg.item(j).getTextContent();
+                        values.setValue(0, j, Integer.toString(j - 1));
+                        values.setValue(i + 1, j, valueVg.item(j).getTextContent());
                     }
                 }
                 break;
             case "VT":
-                values.setValue(0, i + 1, Integer.toString(i));// val[0][i + 1] = Integer.toString(i);
-                values.setValue(1, i + 1, Utilitaire.cutNumber(value.item(i).getFirstChild().getTextContent()));// val[1][i + 1] =
-                                                                                                                // Utilitaire.cutNumber(value.item(i).getFirstChild().getTextContent());
+                values.setValue(0, i + 1, Integer.toString(i));
+                values.setValue(1, i + 1, Utilitaire.cutNumber(value.item(i).getFirstChild().getTextContent()));
                 break;
             }
         }
@@ -470,9 +467,7 @@ public final class Paco implements Cdf {
         // Premiere dimension = Axe Y car nombre de ligne
         // Deuxieme dimension = Axe X car nombre de colonne
         final Values values = new Values(((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength() + 1,
-                ((Element) swAxisCont.item(1)).getLastChild().getChildNodes().getLength() + 1); // new String[((Element)
-                                                                                                // swAxisCont.item(1)).getLastChild().getChildNodes().getLength()
-        // + 1][((Element) swAxisCont.item(0)).getLastChild().getChildNodes().getLength() + 1];
+                ((Element) swAxisCont.item(1)).getLastChild().getChildNodes().getLength() + 1);
 
         values.setValue(0, 0, "Y \\ X");
 
@@ -500,12 +495,9 @@ public final class Paco implements Cdf {
 
                     switch (nodeListV.item(x).getNodeName()) {
                     case "VT":
-                        // val[0][x + 1] = Utilitaire.cutNumber(nodeListV.item(x).getFirstChild().getTextContent());
                         values.setValue(0, x + 1, Utilitaire.cutNumber(nodeListV.item(x).getFirstChild().getTextContent()));
                         break;
-
                     default:
-                        // val[0][x + 1] = Utilitaire.cutNumber(nodeListV.item(x).getTextContent());
                         values.setValue(0, x + 1, Utilitaire.cutNumber(nodeListV.item(x).getTextContent()));
                         break;
                     }
@@ -517,11 +509,9 @@ public final class Paco implements Cdf {
                 for (short y = 0; y < nbAxeVal; y++) {
                     switch (nodeListV.item(y).getNodeName()) {
                     case "VT":
-                        // val[y + 1][0] = Utilitaire.cutNumber(nodeListV.item(y).getFirstChild().getTextContent());
                         values.setValue(y + 1, 0, Utilitaire.cutNumber(nodeListV.item(y).getFirstChild().getTextContent()));
                         break;
                     default:
-                        // val[y + 1][0] = Utilitaire.cutNumber(nodeListV.item(y).getTextContent());
                         values.setValue(y + 1, 0, Utilitaire.cutNumber(nodeListV.item(y).getTextContent()));
                         break;
                     }
@@ -540,7 +530,6 @@ public final class Paco implements Cdf {
 
                     if (nbNodeV > 0) {
                         for (short nV = 1; nV < nbNodeV + 1; nV++) {
-                            // val[nVG][nV] = Utilitaire.cutNumber(nodeV.item(nV - 1).getTextContent());
                             values.setValue(nVG, nV, Utilitaire.cutNumber(nodeV.item(nV - 1).getTextContent()));
                         }
                     } else {
@@ -549,7 +538,6 @@ public final class Paco implements Cdf {
                         nbNodeV = nodeV.getLength();
 
                         for (short nV = 1; nV < nbNodeV + 1; nV++) {
-                            // val[nVG][nV] = Utilitaire.cutNumber(nodeV.item(nV - 1).getFirstChild().getTextContent());
                             values.setValue(nVG, nV, Utilitaire.cutNumber(nodeV.item(nV - 1).getFirstChild().getTextContent()));
                         }
                     }
