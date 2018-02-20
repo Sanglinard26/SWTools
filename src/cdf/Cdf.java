@@ -4,8 +4,8 @@
 package cdf;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public interface Cdf {
 
@@ -24,7 +24,7 @@ public interface Cdf {
 
     public int getNbLabel();
 
-    public HashSet<String> getCategoryList();
+    public Set<String> getCategoryList();
 
     public List<Variable> getListLabel();
 

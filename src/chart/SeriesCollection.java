@@ -29,11 +29,6 @@ public final class SeriesCollection {
             series.clear();
     }
 
-    public final void removeSerie(Serie serie) {
-        if (series.contains(serie))
-            series.remove(serie);
-    }
-
     public final Serie getSerie(int index) {
         return series.get(index);
     }

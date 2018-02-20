@@ -6,6 +6,7 @@ import java.awt.Font;
 
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -14,12 +15,14 @@ import com.orsoncharts.renderer.RainbowScale;
 
 import cdf.Map;
 import cdf.Variable;
-import tools.Preference;
-import tools.Utilitaire;
+import utils.Preference;
+import utils.Utilitaire;
 
 public final class TableViewRenderer extends DefaultTableCellRenderer {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Color backgroundCell = UIManager.getLookAndFeel().getDefaults().getColor("Tree.selectionBackground");
 
     private RainbowScale rainbowScale;
     private Map map = null;
@@ -29,7 +32,7 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
 
     }
 
-    public void colorMap(Variable var) {
+    public final void colorMap(Variable var) {
 
         setMapColor = false;
 
@@ -37,8 +40,8 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
             if (var instanceof Map) {
                 map = (Map) var;
                 if (map.getMinZValue() - map.getMaxZValue() != 0) {
-                    rainbowScale = new RainbowScale(new Range(map.getMinZValue(), map.getMaxZValue()), (map.getDimX() - 1) * (map.getDimY() - 1),
-                            RainbowScale.BLUE_TO_RED_RANGE);
+                    rainbowScale = new RainbowScale(new Range(map.getMinZValue(), map.getMaxZValue()),
+                            (map.getValues().getDimX() - 1) * (map.getValues().getDimY() - 1), RainbowScale.BLUE_TO_RED_RANGE);
                     setMapColor = true;
                 }
             }
@@ -67,7 +70,7 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
         }
 
         if (isSelected) {
-            setBackground(Color.LIGHT_GRAY);
+            setBackground(backgroundCell);
             setForeground(Color.WHITE);
         }
 

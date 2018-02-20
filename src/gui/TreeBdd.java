@@ -34,7 +34,7 @@ import bdd.Bdd;
 import bdd.BddConnexion;
 import bdd.TreeModelBdd;
 import bean.XmlInfo;
-import tools.Preference;
+import utils.Preference;
 
 public final class TreeBdd extends JTree {
 

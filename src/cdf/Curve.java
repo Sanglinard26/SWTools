@@ -3,13 +3,10 @@ package cdf;
 public final class Curve extends Variable {
 
     private final Values values;
-    private final int dimX;
 
     public Curve(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;
-
-        this.dimX = values.getDimX();
 
     }
 
@@ -18,7 +15,7 @@ public final class Curve extends Variable {
 
         StringBuilder sb = new StringBuilder("\n");
         for (byte y = 0; y < 2; y++) {
-            for (byte x = 0; x < dimX; x++) {
+            for (byte x = 0; x < values.getDimX(); x++) {
                 sb.append(this.getValue(y, x) + "\t");
             }
             sb.append("\n");
@@ -41,10 +38,6 @@ public final class Curve extends Variable {
 
     public final String getValue(int col, int row) {
         return values.getValue(col, row);
-    }
-
-    public final int getDimX() {
-        return dimX;
     }
 
     @Override
@@ -93,7 +86,7 @@ public final class Curve extends Variable {
         String value;
 
         for (byte y = 0; y < 2; y++) {
-            for (short x = 0; x < dimX; x++) {
+            for (short x = 0; x < values.getDimX(); x++) {
                 value = getValue(y, x);
                 if (value != null) {
                     valCheck += value.hashCode();

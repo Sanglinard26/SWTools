@@ -34,8 +34,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import cdf.Cdf;
 import dcm.Dcm;
 import paco.Paco;
-import tools.Preference;
-import tools.Utilitaire;
+import utils.Preference;
+import utils.Utilitaire;
 
 public final class PanelBdd extends JComponent {
 

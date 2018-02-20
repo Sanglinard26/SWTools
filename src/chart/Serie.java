@@ -1,6 +1,5 @@
 package chart;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +7,6 @@ public final class Serie {
 
     private final String serieName;
     private final List<XYPoint> points;
-    private Color color;
 
     public Serie(String serieName) {
         this.serieName = serieName;
@@ -60,15 +58,6 @@ public final class Serie {
         }
 
         return range;
-
-    }
-
-    public final Color getColor() {
-        return color;
-    }
-
-    public final void setColor(Color color) {
-        this.color = color;
     }
 
     public final String getName() {

@@ -15,6 +15,7 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -36,6 +37,7 @@ public final class PanelXYPlot extends JPanel {
     private final String xAxisLabel;
     private final String yAxisLabel;
     private final double[] rangeXY;
+    private final HashMap<String, Color> mapColor;
 
     private List<SerieScale> listSeries;
     private SeriesCollection seriesCollection;
@@ -56,6 +58,14 @@ public final class PanelXYPlot extends JPanel {
         this.rangeXY = new double[4];
 
         fillRangeXY();
+
+        int nbSerie = seriesCollection.getSeriesCount();
+
+        this.mapColor = new HashMap<>(nbSerie);
+
+        for (int i = 0; i < nbSerie; i++) {
+            mapColor.put(seriesCollection.getSerie(i).getName(), Color.getHSBColor((float) (i) / (float) (nbSerie), 1, 1));
+        }
 
         setPreferredSize(new Dimension(500, 500));
     }
@@ -203,18 +213,13 @@ public final class PanelXYPlot extends JPanel {
         g2.drawLine(PADDING + LABEL_PADDING, height - PADDING - LABEL_PADDING, PADDING + LABEL_PADDING, PADDING);
         g2.drawLine(PADDING + LABEL_PADDING, height - PADDING - LABEL_PADDING, width - PADDING, height - PADDING - LABEL_PADDING);
 
-        float hue = 0;
         int xMark, yMark;
         int ovalW, ovalH;
 
-        if (listSeries.size() > 0) {
+        if (!listSeries.isEmpty()) {
             for (short nSerie = 0; nSerie < nbSerie; nSerie++) {
 
-                hue = (float) (nSerie) / (float) (listSeries.size());
-
-                g2.setColor(Color.getHSBColor(hue, 1, 1));
-
-                listSeries.get(nSerie).setSerieColor(nSerie, Color.getHSBColor(hue, 1, 1));
+                g2.setColor(mapColor.get(listSeries.get(nSerie).getSerieName()));
 
                 g2.setStroke(GRAPH_STROKE);
                 for (short i = 0; i < listSeries.get(nSerie).size() - 1; i++) {
@@ -312,19 +317,16 @@ public final class PanelXYPlot extends JPanel {
 
         private static final long serialVersionUID = 1L;
 
-        @SuppressWarnings("unused")
         private String serieName;
-        @SuppressWarnings("unused")
-        private Color serieColor;
 
         public SerieScale(String serieName) {
             this.serieName = serieName;
         }
 
-        public void setSerieColor(int index, Color serieColor) {
-            this.serieColor = serieColor;
-            seriesCollection.getSerie(index).setColor(serieColor);
+        public String getSerieName() {
+            return serieName;
         }
+
     }
 
     @Override

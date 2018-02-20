@@ -11,6 +11,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import cdf.Axis;
 import cdf.Cdf;
@@ -22,7 +23,6 @@ import cdf.ValueBlock;
 import cdf.Values;
 import cdf.Variable;
 import gui.SWToolsMain;
-import tools.Utilitaire;
 
 public final class Dcm implements Cdf {
 
@@ -155,7 +155,7 @@ public final class Dcm implements Cdf {
                             }
 
                             if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
-                                valeur.setValue(0, 0, Utilitaire.cutNumber(spaceSplitLine2[spaceSplitLine2.length - 1].replace(QUOTE, "")));
+                                valeur.setValue(0, 0, spaceSplitLine2[spaceSplitLine2.length - 1].replace(QUOTE, ""));
                             }
 
                         }
@@ -259,7 +259,7 @@ public final class Dcm implements Cdf {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
-                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
                                         }
                                     }
@@ -275,7 +275,7 @@ public final class Dcm implements Cdf {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntZ < valeur.getDimX()) {
-                                            valeur.setValue(1, cntZ, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(1, cntZ, tmpValue.replace(QUOTE, ""));
                                             cntZ++;
                                         }
                                     }
@@ -346,7 +346,7 @@ public final class Dcm implements Cdf {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
-                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
                                         }
                                     }
@@ -362,7 +362,7 @@ public final class Dcm implements Cdf {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntZ < valeur.getDimX()) {
-                                            valeur.setValue(1, cntZ, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(1, cntZ, tmpValue.replace(QUOTE, ""));
                                             cntZ++;
                                         }
                                     }
@@ -433,7 +433,7 @@ public final class Dcm implements Cdf {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
-                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
                                         }
                                     }
@@ -449,7 +449,7 @@ public final class Dcm implements Cdf {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntZ < valeur.getDimX()) {
-                                            valeur.setValue(1, cntZ, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(1, cntZ, tmpValue.replace(QUOTE, ""));
                                             cntZ++;
                                         }
                                     }
@@ -532,7 +532,7 @@ public final class Dcm implements Cdf {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
-                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
                                         }
                                     }
@@ -555,7 +555,7 @@ public final class Dcm implements Cdf {
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_Y) & !tmpValue.equals(AXE_Y_TXT)
                                             & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntX < valeur.getDimX()) {
-                                            valeur.setValue(cntZ, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(cntZ, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
                                         }
                                     }
@@ -638,7 +638,7 @@ public final class Dcm implements Cdf {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
-                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
                                         }
                                     }
@@ -661,7 +661,7 @@ public final class Dcm implements Cdf {
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_Y) & !tmpValue.equals(AXE_Y_TXT)
                                             & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntX < valeur.getDimX()) {
-                                            valeur.setValue(cntZ, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(cntZ, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
                                         }
                                     }
@@ -744,7 +744,7 @@ public final class Dcm implements Cdf {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
-                                            valeur.setValue(0, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
                                         }
                                     }
@@ -767,7 +767,7 @@ public final class Dcm implements Cdf {
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_Y) & !tmpValue.equals(AXE_Y_TXT)
                                             & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntX < valeur.getDimX()) {
-                                            valeur.setValue(cntZ, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(cntZ, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
                                         }
                                     }
@@ -828,7 +828,7 @@ public final class Dcm implements Cdf {
                                     tmpValue = threeSpaceSplitLine[i];
                                     if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X)) {
                                         if (cnt < valeur.getDimX()) {
-                                            valeur.setValue(0, cnt, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                            valeur.setValue(0, cnt, tmpValue.replace(QUOTE, ""));
                                             cnt++;
                                         }
                                     }
@@ -904,7 +904,7 @@ public final class Dcm implements Cdf {
                                         tmpValue = threeSpaceSplitLine[i];
                                         if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
                                             if (cntX < valeur.getDimX()) {
-                                                valeur.setValue(cntZ, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                                valeur.setValue(cntZ, cntX, tmpValue.replace(QUOTE, ""));
                                                 cntX++;
                                             }
                                         }
@@ -958,7 +958,7 @@ public final class Dcm implements Cdf {
                                         tmpValue = threeSpaceSplitLine[i];
                                         if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
                                             if (cntX < valeur.getDimX()) {
-                                                valeur.setValue(1, cntX, Utilitaire.cutNumber(tmpValue).replace(QUOTE, ""));
+                                                valeur.setValue(1, cntX, tmpValue.replace(QUOTE, ""));
                                                 cntX++;
                                             }
                                         }
@@ -1054,7 +1054,7 @@ public final class Dcm implements Cdf {
     }
 
     @Override
-    public HashSet<String> getCategoryList() {
+    public Set<String> getCategoryList() {
         return listCategory;
     }
 

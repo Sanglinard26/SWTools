@@ -134,11 +134,12 @@ public final class PanelHistory extends JComponent {
             txtPane.setEditable(false);
             txtPane.setText(txt);
             add(new JScrollPane(txtPane));
-            setMinimumSize(new Dimension(600, 400));
+            this.pack();
         }
 
         public final void setComment(String txt) {
             txtPane.setText(txt);
+            this.pack();
         }
     }
 

@@ -6,12 +6,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
@@ -34,15 +34,15 @@ import cdf.ValueBlock;
 import cdf.Values;
 import cdf.Variable;
 import gui.SWToolsMain;
-import tools.Utilitaire;
+import utils.Utilitaire;
 
 public final class Paco implements Cdf {
 
     private String name;
     private boolean valid;
     private int nbLabel = 0;
-    private ArrayList<Variable> listLabel;
-    private HashSet<String> listCategory;
+    private List<Variable> listLabel;
+    private Set<String> listCategory;
     private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
     private int minScore = Byte.MAX_VALUE;
     private int maxScore = Byte.MIN_VALUE;
@@ -50,10 +50,8 @@ public final class Paco implements Cdf {
 
     private static final String NO_FONCTION = "Pas de fonction definie";
     private static final DocumentBuilderFactory factory;
-    private static final NumberFormat nbf = NumberFormat.getInstance();
 
     static {
-        nbf.setMaximumFractionDigits(1);
         factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringElementContentWhitespace(true);
     }
@@ -72,7 +70,7 @@ public final class Paco implements Cdf {
 
             if (document.getDoctype() != null) {
 
-                this.name = file.getName().substring(0, file.getName().length() - 4);
+                this.name = Utilitaire.getFileNameWithoutExtension(file);
 
                 parse(document);
 
@@ -81,7 +79,7 @@ public final class Paco implements Cdf {
                 document = null;
 
             } else {
-                JOptionPane.showMessageDialog(null, "Format de PaCo non valide !" + "\nNom : " + this.name, "ERREUR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Format de PaCo non valide !" + "\nNom : " + file.getName(), "ERREUR", JOptionPane.ERROR_MESSAGE);
                 valid = false;
                 return;
             }
@@ -251,8 +249,7 @@ public final class Paco implements Cdf {
                 listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
                 break;
             case "SW_COMPONENT": // Rustine vite fait pour poursuivre la lecture du fichier
-                // listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry),
-                // new String[][] { { "Pas de valeur" } }));
+                listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), new Values(1, 1)));
                 break;
             }
 
@@ -325,7 +322,7 @@ public final class Paco implements Cdf {
 
                     final StringBuilder sb = new StringBuilder();
                     nbParagraphe = nodeRemark.getChildNodes().getLength();
-                    for (byte x = 0; x < nbParagraphe; x++) {
+                    for (short x = 0; x < nbParagraphe; x++) {
                         sb.append(nodeRemark.getChildNodes().item(x).getTextContent());
 
                         if (x < nbParagraphe - 1)
@@ -349,7 +346,7 @@ public final class Paco implements Cdf {
 
         final Values value = new Values(1, 1);
 
-        value.setValue(0, 0, Utilitaire.cutNumber(swAxisCont.item(0).getLastChild().getTextContent()));
+        value.setValue(0, 0, swAxisCont.item(0).getLastChild().getTextContent());
 
         return value;
     }
@@ -367,7 +364,7 @@ public final class Paco implements Cdf {
         final Values values = new Values(nbVal, 1);
 
         for (short a = 0; a < nbVal; a++) {
-            values.setValue(0, a, Utilitaire.cutNumber(value.item(a).getTextContent()));
+            values.setValue(0, a, value.item(a).getTextContent());
         }
 
         return values;
@@ -400,7 +397,7 @@ public final class Paco implements Cdf {
             switch (value.item(i).getNodeName()) {
             case "V":
                 values.setValue(0, i + 1, Integer.toString(i));
-                values.setValue(1, i + 1, Utilitaire.cutNumber(value.item(i).getTextContent()));
+                values.setValue(1, i + 1, value.item(i).getTextContent());
                 break;
             case "VG":
                 valueVg = value.item(i).getChildNodes();
@@ -414,7 +411,7 @@ public final class Paco implements Cdf {
                 break;
             case "VT":
                 values.setValue(0, i + 1, Integer.toString(i));
-                values.setValue(1, i + 1, Utilitaire.cutNumber(value.item(i).getFirstChild().getTextContent()));
+                values.setValue(1, i + 1, value.item(i).getFirstChild().getTextContent());
                 break;
             }
         }
@@ -446,12 +443,12 @@ public final class Paco implements Cdf {
             switch (indexAxis.getTextContent()) {
             case "1":
                 for (short x = 0; x < nbVal; x++) {
-                    values.setValue(0, x, Utilitaire.cutNumber(value.item(x).getTextContent()));
+                    values.setValue(0, x, value.item(x).getTextContent());
                 }
                 break;
             case "0":
                 for (short x = 0; x < nbVal; x++) {
-                    values.setValue(1, x, Utilitaire.cutNumber(value.item(x).getTextContent()));
+                    values.setValue(1, x, value.item(x).getTextContent());
                 }
                 break;
             }
@@ -495,10 +492,10 @@ public final class Paco implements Cdf {
 
                     switch (nodeListV.item(x).getNodeName()) {
                     case "VT":
-                        values.setValue(0, x + 1, Utilitaire.cutNumber(nodeListV.item(x).getFirstChild().getTextContent()));
+                        values.setValue(0, x + 1, nodeListV.item(x).getFirstChild().getTextContent());
                         break;
                     default:
-                        values.setValue(0, x + 1, Utilitaire.cutNumber(nodeListV.item(x).getTextContent()));
+                        values.setValue(0, x + 1, nodeListV.item(x).getTextContent());
                         break;
                     }
                 }
@@ -509,10 +506,10 @@ public final class Paco implements Cdf {
                 for (short y = 0; y < nbAxeVal; y++) {
                     switch (nodeListV.item(y).getNodeName()) {
                     case "VT":
-                        values.setValue(y + 1, 0, Utilitaire.cutNumber(nodeListV.item(y).getFirstChild().getTextContent()));
+                        values.setValue(y + 1, 0, nodeListV.item(y).getFirstChild().getTextContent());
                         break;
                     default:
-                        values.setValue(y + 1, 0, Utilitaire.cutNumber(nodeListV.item(y).getTextContent()));
+                        values.setValue(y + 1, 0, nodeListV.item(y).getTextContent());
                         break;
                     }
                 }
@@ -530,7 +527,7 @@ public final class Paco implements Cdf {
 
                     if (nbNodeV > 0) {
                         for (short nV = 1; nV < nbNodeV + 1; nV++) {
-                            values.setValue(nVG, nV, Utilitaire.cutNumber(nodeV.item(nV - 1).getTextContent()));
+                            values.setValue(nVG, nV, nodeV.item(nV - 1).getTextContent());
                         }
                     } else {
 
@@ -538,7 +535,7 @@ public final class Paco implements Cdf {
                         nbNodeV = nodeV.getLength();
 
                         for (short nV = 1; nV < nbNodeV + 1; nV++) {
-                            values.setValue(nVG, nV, Utilitaire.cutNumber(nodeV.item(nV - 1).getFirstChild().getTextContent()));
+                            values.setValue(nVG, nV, nodeV.item(nV - 1).getFirstChild().getTextContent());
                         }
                     }
                 }
@@ -592,7 +589,7 @@ public final class Paco implements Cdf {
     }
 
     @Override
-    public HashSet<String> getCategoryList() {
+    public Set<String> getCategoryList() {
         return listCategory;
     }
 
@@ -601,11 +598,17 @@ public final class Paco implements Cdf {
         return checkSum;
     }
 
-    public Paco(String name, ArrayList<Variable> listComparaison) {
+    public Paco(String name, List<Variable> listComparaison) {
 
         this.name = name;
         this.listLabel = new ArrayList<Variable>(listComparaison.size());
         this.listLabel.addAll(listComparaison);
+
+        this.listCategory = new HashSet<String>();
+
+        for (Variable var : listComparaison) {
+            this.listCategory.add(var.getCategory());
+        }
 
         this.nbLabel = listComparaison.size();
 

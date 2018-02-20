@@ -44,8 +44,8 @@ import dcm.Dcm;
 import matlab.M;
 import paco.Paco;
 import paco.StAXPaco;
-import tools.Preference;
-import tools.Utilitaire;
+import utils.Preference;
+import utils.Utilitaire;
 
 public final class PanelCDF extends JComponent {
 
@@ -77,11 +77,7 @@ public final class PanelCDF extends JComponent {
     private static final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneLeft, splitPaneRight);
     private static final PanelHistory panelHistory = new PanelHistory();
 
-    private final InfiniteProgressPanel progressPanel;
-
-    public PanelCDF(InfiniteProgressPanel progressPanel) {
-
-        this.progressPanel = progressPanel;
+    public PanelCDF() {
 
         setLayout(new BorderLayout());
 
@@ -313,14 +309,14 @@ public final class PanelCDF extends JComponent {
         @Override
         protected Integer doInBackground() throws Exception {
 
-            progressPanel.start();
+            Ihm.getProgressPanel().setVisible(true);
 
             for (File file : filesCDF) {
 
                 cdfName.setLength(0);
                 cdfName.append(file.getName().substring(0, file.getName().length() - 4));
 
-                progressPanel.setText("Ouverture de : " + cdfName.toString());
+                Ihm.getProgressPanel().setText("Ouverture de : " + cdfName.toString());
 
                 if (!(ListModelCdf.getListcdfname().contains(cdfName.toString()))) {
 
@@ -332,16 +328,16 @@ public final class PanelCDF extends JComponent {
                         } else {
                             cdf = new StAXPaco(file);
                         }
-
                         break;
                     case "dcm":
                         cdf = new Dcm(file);
                         break;
                     case "m":
                         cdf = new M(file);
+                        break;
                     }
 
-                    if (cdf.isValid()) {
+                    if (cdf != null && cdf.isValid()) {
                         listCDF.getModel().addCdf(cdf);
                     }
 
@@ -351,7 +347,8 @@ public final class PanelCDF extends JComponent {
                 }
             }
 
-            progressPanel.stop();
+            Ihm.getProgressPanel().setText(null);
+            Ihm.getProgressPanel().setVisible(false);
 
             filesCDF = null;
             cdf = null;

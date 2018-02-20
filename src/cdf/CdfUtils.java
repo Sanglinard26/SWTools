@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -30,124 +31,102 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 import paco.Paco;
-import tools.Utilitaire;
+import utils.Utilitaire;
 
-public final class CdfUtils {
+public abstract class CdfUtils {
 
     public static final Cdf comparCdf(Cdf cdfRef, Cdf cdfWork, boolean modeValeur) {
-        ArrayList<Variable> listCompa;
 
         if (cdfRef.getCheckSum() != cdfWork.getCheckSum()) {
-            listCompa = new ArrayList<Variable>();
+
+            List<Variable> listCompa = new ArrayList<Variable>();
             Variable varCompar;
             Variable varBase = null;
-            Values copyVal = null;
-
-            int checkDim = 0;
+            Values copyValues = null;
+            int dimX, dimY;
+            int idxVar;
 
             for (Variable var : cdfRef.getListLabel()) {
-                if (cdfWork.getListLabel().contains(var)) {
-                    varCompar = cdfWork.getListLabel().get(cdfWork.getListLabel().indexOf(var));
+                idxVar = cdfWork.getListLabel().indexOf(var);
+                if (idxVar > -1) {
+                    varCompar = cdfWork.getListLabel().get(idxVar);
                     if (var.getChecksum() != varCompar.getChecksum()) {
 
-                        checkDim = 0;
+                        dimX = Math.min(var.getValues().getDimX(), varCompar.getValues().getDimX());
+                        dimY = Math.min(var.getValues().getDimY(), varCompar.getValues().getDimY());
 
-                        if (var instanceof Axis) {
-                            copyVal = new Values(var.getValues().getDimX(), 1); // new String[1][((Axis) var).getDim()];
-                            for (short x = 0; x < var.getValues().getDimX(); x++) {
+                        copyValues = new Values(dimX, dimY);
+
+                        for (byte y = 0; y < dimY; y++) {
+                            for (short x = 0; x < dimX; x++) {
                                 if (modeValeur) {
-                                    copyVal.setValue(0, x, var.getValues().getValue(0, x));
+                                    copyValues.setValue(y, x, var.getValues().getValue(y, x));
                                 } else {
-                                    copyVal.setValue(0, x, "0");
-                                }
-
-                            }
-                            varBase = new Axis(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-                                    new History[0], copyVal);
-                        } else if (var instanceof Curve) {
-                            copyVal = new Values(var.getValues().getDimX(), 2); // new String[2][((Curve) var).getDimX()];
-                            for (byte y = 0; y < 2; y++) {
-                                for (short x = 0; x < var.getValues().getDimX(); x++) {
-                                    if (modeValeur) {
-                                        copyVal.setValue(y, x, var.getValues().getValue(y, x));
-                                    } else {
-                                        copyVal.setValue(y, x, "0");
-                                    }
-
+                                    copyValues.setValue(y, x, "0");
                                 }
                             }
-                            varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-                                    new History[0], copyVal);
-                        } else if (var instanceof Map) {
-                            copyVal = new Values(var.getValues().getDimX(), var.getValues().getDimY()); // new String[((Map) var).getDimY()][((Map)
-                                                                                                        // var).getDimX()];
-                            for (short x = 0; x < var.getValues().getDimX(); x++) {
-                                for (short y = 0; y < var.getValues().getDimY(); y++) {
-                                    if (modeValeur) {
-                                        copyVal.setValue(y, x, var.getValues().getValue(y, x));
-                                    } else {
-                                        copyVal.setValue(y, x, "0");
-                                    }
-
-                                }
-                            }
-                            varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-                                    new History[0], copyVal);
-                        } else if (var instanceof Scalaire) {
-                            if (modeValeur) {
-                                copyVal = new Values(1, 1);
-                            } else {
-                                copyVal = new Values(1, 1);
-                                copyVal.setValue(0, 0, "");
-                            }
-
-                            varBase = new Scalaire(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
-                                    var.getSwUnitRef(), new History[0], copyVal);
-                        } else if (var instanceof ValueBlock) {
-                            copyVal = new Values(var.getValues().getDimX(), var.getValues().getDimY()); // new String[((ValueBlock)
-                                                                                                        // var).getDimY()][((ValueBlock)
-                                                                                                        // var).getDimX()];
-                            for (short x = 0; x < var.getValues().getDimX(); x++) {
-                                for (short y = 0; y < var.getValues().getDimY(); y++) {
-                                    if (modeValeur) {
-                                        copyVal.setValue(y, x, var.getValues().getValue(y, x));
-                                    } else {
-                                        copyVal.setValue(y, x, "0");
-                                    }
-
-                                }
-                            }
-                            // copyVal = new String[((ValueBlock) var).getDimY()][((ValueBlock) var).getDimX()];
-                            varBase = new ValueBlock(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
-                                    var.getSwUnitRef(), new History[0], copyVal);
                         }
-                        for (short x = 0; x < var.getValues().getDimX(); x++) {
-                            for (short y = 0; y < var.getValues().getDimY(); y++) {
-                                try {
-                                    if (!var.getValues().getValue(y, x).equals(varCompar.getValues().getValue(y, x))) // Exception possible sur
-                                                                                                                      // dimmension
-                                    {
-                                        if (modeValeur) {
+
+                        switch (var.getCategory()) {
+                        case Cdf.AXIS_VALUES:
+                            varBase = new Axis(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
+                                    new History[0], copyValues);
+                            break;
+                        case Cdf.CURVE_FIXED:
+                            varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
+                                    new History[0], copyValues);
+                            break;
+                        case Cdf.CURVE_GROUPED:
+                            varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
+                                    new History[0], copyValues);
+                            break;
+                        case Cdf.CURVE_INDIVIDUAL:
+                            varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
+                                    new History[0], copyValues);
+                            break;
+                        case Cdf.MAP_FIXED:
+                            varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
+                                    new History[0], copyValues);
+                            break;
+                        case Cdf.MAP_GROUPED:
+                            varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
+                                    new History[0], copyValues);
+                            break;
+                        case Cdf.MAP_INDIVIDUAL:
+                            varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
+                                    new History[0], copyValues);
+                            break;
+                        case Cdf.VALUE:
+                            varBase = new Scalaire(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
+                                    var.getSwUnitRef(), new History[0], copyValues);
+                            break;
+                        case Cdf.ASCII:
+                            varBase = new Scalaire(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
+                                    var.getSwUnitRef(), new History[0], copyValues);
+                            break;
+                        case Cdf.VALUE_BLOCK:
+                            varBase = new ValueBlock(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
+                                    var.getSwUnitRef(), new History[0], copyValues);
+                            break;
+                        }
+
+                        for (short y = 0; y < dimY; y++) {
+                            for (short x = 0; x < dimX; x++) {
+
+                                if (!var.getValues().getValue(y, x).equals(varCompar.getValues().getValue(y, x))) {
+                                    if (modeValeur) {
+                                        varBase.getValues().setValue(y, x,
+                                                var.getValues().getValue(y, x) + " => " + varCompar.getValues().getValue(y, x));
+                                    } else {
+                                        if (Utilitaire.isNumber(var.getValues().getValue(y, x))
+                                                & Utilitaire.isNumber(varCompar.getValues().getValue(y, x))) {
+                                            varBase.getValues().setValue(y, x, Float.toString(Float.parseFloat(varCompar.getValues().getValue(y, x))
+                                                    - Float.parseFloat(var.getValues().getValue(y, x))));
+                                        } else {
                                             varBase.getValues().setValue(y, x,
                                                     var.getValues().getValue(y, x) + " => " + varCompar.getValues().getValue(y, x));
-                                        } else {
-                                            if (Utilitaire.isNumber(var.getValues().getValue(y, x))
-                                                    & Utilitaire.isNumber(varCompar.getValues().getValue(y, x))) {
-                                                varBase.getValues().setValue(y, x,
-                                                        Float.toString(Float.parseFloat(varCompar.getValues().getValue(y, x))
-                                                                - Float.parseFloat(var.getValues().getValue(y, x))));
-                                            } else {
-                                                varBase.getValues().setValue(y, x,
-                                                        var.getValues().getValue(y, x) + " => " + varCompar.getValues().getValue(y, x));
-                                            }
-
                                         }
-                                    }
-                                } catch (ArrayIndexOutOfBoundsException e) {
-                                    if (checkDim != 1) {
-                                        SWToolsMain.getLogger()
-                                                .info(var.getShortName() + " / " + varCompar.getShortName() + " => Dimension differente");
-                                        checkDim = 1;
+
                                     }
                                 }
                             }
@@ -160,6 +139,7 @@ public final class CdfUtils {
             return new Paco(cdfRef.getName() + "_vs_" + cdfWork.getName(), listCompa);
         }
         return null;
+
     }
 
     public static final boolean toExcel(Cdf cdf, final File file) {
@@ -339,7 +319,7 @@ public final class CdfUtils {
 
                     int col = 0;
                     row += 1;
-                    for (short x = 0; x < variableType.getDim(); x++) {
+                    for (short x = 0; x < variableType.getValues().getDimX(); x++) {
                         writeCell(sheetValues, col, row, variableType.getzValues(x), borderFormat);
                         col += 1;
                     }
@@ -356,7 +336,7 @@ public final class CdfUtils {
                     for (byte y = 0; y < 2; y++) {
                         int col = 0;
                         row += 1;
-                        for (short x = 0; x < variableType.getDimX(); x++) {
+                        for (short x = 0; x < variableType.getValues().getDimX(); x++) {
                             if (y == 0) {
                                 writeCell(sheetValues, col, row, variableType.getValue(y, x), axisFormat);
                             } else {
@@ -382,7 +362,7 @@ public final class CdfUtils {
                     for (byte y = 0; y < 2; y++) {
                         int col = 0;
                         row += 1;
-                        for (short x = 0; x < variableType.getDimX(); x++) {
+                        for (short x = 0; x < variableType.getValues().getDimX(); x++) {
                             if (y == 0) {
                                 writeCell(sheetValues, col, row, variableType.getValue(y, x), axisFormat);
                             } else {
@@ -403,10 +383,10 @@ public final class CdfUtils {
 
                     Map variableType = (Map) var;
 
-                    for (short y = 0; y < variableType.getDimY(); y++) {
+                    for (short y = 0; y < variableType.getValues().getDimY(); y++) {
                         int col = 0;
                         row += 1;
-                        for (short x = 0; x < variableType.getDimX(); x++) {
+                        for (short x = 0; x < variableType.getValues().getDimX(); x++) {
                             if (y == 0 | x == 0) {
                                 writeCell(sheetValues, col, row, variableType.getValue(y, x), axisFormat);
                             } else {

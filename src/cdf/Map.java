@@ -1,12 +1,10 @@
 package cdf;
 
-import tools.Utilitaire;
+import utils.Utilitaire;
 
 public final class Map extends Variable {
 
     private final Values values;
-    private final int dimX;
-    private final int dimY;
 
     private float minZValue = Float.POSITIVE_INFINITY;
     private float maxZValue = Float.NEGATIVE_INFINITY;
@@ -16,14 +14,10 @@ public final class Map extends Variable {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 
         this.values = values;
-        this.dimX = values.getDimX();
-        this.dimY = values.getDimY();
-
         float value;
 
-        // Acces par ligne
-        for (short y = 1; y < dimY; y++) {
-            for (short x = 1; x < dimX; x++) {
+        for (short y = 1; y < values.getDimY(); y++) {
+            for (short x = 1; x < values.getDimX(); x++) {
 
                 if (Utilitaire.isNumber(values.getValue(y, x))) {
                     value = Float.parseFloat(values.getValue(y, x));
@@ -46,8 +40,8 @@ public final class Map extends Variable {
     public final String toString() {
         StringBuilder sb = new StringBuilder("\n");
 
-        for (short y = 0; y < dimY; y++) {
-            for (short x = 0; x < dimX; x++) {
+        for (short y = 0; y < values.getDimY(); y++) {
+            for (short x = 0; x < values.getDimX(); x++) {
                 sb.append(this.getValue(y, x) + "\t");
             }
             sb.append("\n");
@@ -95,14 +89,6 @@ public final class Map extends Variable {
      * yValues; }
      */
 
-    public final int getDimX() {
-        return dimX;
-    }
-
-    public final int getDimY() {
-        return dimY;
-    }
-
     @Override
     public String toMFormat(boolean transpose) {
         StringBuilder sb = new StringBuilder();
@@ -112,7 +98,7 @@ public final class Map extends Variable {
         // valeur x
         sb.append(getShortName().substring(0, getShortName().length() - 2) + "X_A" + " = ");
         sb.append("[");
-        for (short x = 1; x < dimX; x++) {
+        for (short x = 1; x < values.getDimX(); x++) {
             if (x > 1) {
                 sb.append(" " + getValue(0, x));
             } else {
@@ -127,7 +113,7 @@ public final class Map extends Variable {
         sb.append("\n");
         sb.append(getShortName().substring(0, getShortName().length() - 2) + "Y_A" + " = ");
         sb.append("[");
-        for (short x = 1; x < dimY; x++) {
+        for (short x = 1; x < values.getDimY(); x++) {
             if (x > 1) {
                 sb.append(" " + getValue(x, 0));
             } else {
@@ -145,15 +131,15 @@ public final class Map extends Variable {
             sb.append("\n");
             sb.append(getShortName() + " = ");
             sb.append("[");
-            for (short x = 1; x < dimX; x++) {
-                for (short y = 1; y < dimY; y++) {
+            for (short x = 1; x < values.getDimX(); x++) {
+                for (short y = 1; y < values.getDimY(); y++) {
                     if (y > 1) {
                         sb.append(" " + getValue(y, x));
                     } else {
                         sb.append(getValue(y, x));
                     }
                 }
-                if (x != dimX - 1) {
+                if (x != values.getDimX() - 1) {
                     sb.append(";");
                     sb.append("\n");
                 } else {
@@ -167,8 +153,8 @@ public final class Map extends Variable {
             sb.append("\n");
             sb.append(getShortName() + " = ");
             sb.append("[");
-            for (short y = 1; y < dimY; y++) {
-                for (short x = 1; x < dimX; x++) {
+            for (short y = 1; y < values.getDimY(); y++) {
+                for (short x = 1; x < values.getDimX(); x++) {
                     if (x > 1) {
                         sb.append(" " + getValue(y, x));
                     } else {
@@ -176,7 +162,7 @@ public final class Map extends Variable {
                     }
                 }
 
-                if (y != dimY - 1) {
+                if (y != values.getDimY() - 1) {
                     sb.append(";");
                     sb.append("\n");
                 } else {
@@ -197,8 +183,8 @@ public final class Map extends Variable {
         double valCheck = 0;
         String value;
 
-        for (short y = 0; y < dimY; y++) {
-            for (short x = 0; x < dimX; x++) {
+        for (short y = 0; y < values.getDimY(); y++) {
+            for (short x = 0; x < values.getDimX(); x++) {
                 value = getValue(y, x);
                 if (value != null) {
                     valCheck += value.hashCode();

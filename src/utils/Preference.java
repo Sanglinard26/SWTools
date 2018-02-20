@@ -1,11 +1,11 @@
 /*
  * Creation : 10 janv. 2017
  */
-package tools;
+package utils;
 
 import java.util.prefs.Preferences;
 
-public final class Preference {
+public abstract class Preference {
 
     private static final String DEF_PATH_LAB = "C:/User";
     private static final String DEF_PATH_RESULT_LAB = "C:/TEMP";

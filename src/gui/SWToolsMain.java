@@ -10,9 +10,10 @@ import java.util.logging.SimpleFormatter;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 
-import tools.Preference;
+import utils.Preference;
+
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class SWToolsMain {
 

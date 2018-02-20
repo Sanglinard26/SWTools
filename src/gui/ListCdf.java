@@ -37,7 +37,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import cdf.Cdf;
 import cdf.CdfUtils;
 import cdf.ListModelCdf;
-import tools.Preference;
+import utils.Preference;
 
 public final class ListCdf extends JList<Cdf> implements KeyListener {
 
@@ -422,9 +422,15 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                             @Override
                             public void run() {
 
+                                Ihm.getProgressPanel().setText("Comparaison en cours...");
+                                Ihm.getProgressPanel().setVisible(true);
+
                                 Cdf cdfCompar = CdfUtils.comparCdf(ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[0]),
                                         ListCdf.this.getModel().getElementAt(ListCdf.this.getSelectedIndices()[1]),
                                         PanelCDF.getRadiobtval().isSelected());
+
+                                Ihm.getProgressPanel().setText(null);
+                                Ihm.getProgressPanel().setVisible(false);
 
                                 if (cdfCompar != null) {
                                     ListCdf.this.getModel().addCdf(cdfCompar);

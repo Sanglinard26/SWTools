@@ -3,6 +3,8 @@
  */
 package cdf;
 
+import utils.Utilitaire;
+
 public final class Values {
 
     private final int dimX;
@@ -31,7 +33,7 @@ public final class Values {
 
     public final void setValue(int axeX, int axeY, String value) {
         idx = axeY + dimX * axeX;
-        this.values[idx] = value;
+        this.values[idx] = Utilitaire.cutNumber(value);
     }
 
 }

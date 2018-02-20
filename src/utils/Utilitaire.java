@@ -1,4 +1,4 @@
-package tools;
+package utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -8,7 +8,7 @@ import java.io.OutputStream;
 
 import javax.swing.JFileChooser;
 
-public final class Utilitaire {
+public abstract class Utilitaire {
 
     public final static String XML = "xml";
     public final static String LAB = "lab";
@@ -21,17 +21,20 @@ public final class Utilitaire {
      */
     public static final String getExtension(File f) {
 
-        String ext = null;
         final String s = f.getName();
 
-        int i = s.lastIndexOf('.');
+        final int i = s.lastIndexOf('.');
 
-        if (i > 0 && i < s.length() - 1) {
-            ext = s.substring(i + 1).toLowerCase();
-        } else {
-            ext = ""; // Fix le NPE si un fichier n'a pas d'extension
-        }
-        return ext;
+        return (i > 0 && i < s.length() - 1) ? s.substring(i + 1).toLowerCase() : "";
+    }
+
+    public static final String getFileNameWithoutExtension(File f) {
+
+        final String fileNameWithExtension = f.getName();
+
+        final int i = fileNameWithExtension.lastIndexOf('.');
+
+        return (i > 0 && i < fileNameWithExtension.length() - 1) ? fileNameWithExtension.substring(0, i) : "";
     }
 
     public static final String cutNumber(String number) {

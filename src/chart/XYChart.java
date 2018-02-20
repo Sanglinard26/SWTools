@@ -10,7 +10,7 @@ import javax.swing.SwingConstants;
 import cdf.Curve;
 import cdf.Map;
 import cdf.Variable;
-import tools.Utilitaire;
+import utils.Utilitaire;
 
 public final class XYChart extends JComponent {
 
@@ -39,7 +39,7 @@ public final class XYChart extends JComponent {
 
     }
 
-    private void createXYLine(Curve curve) {
+    private final void createXYLine(Curve curve) {
 
         final String TITRE = "Y = f(X)";
         final SeriesCollection seriesCollection = new SeriesCollection();
@@ -47,7 +47,7 @@ public final class XYChart extends JComponent {
 
         String xValue, zValue;
 
-        for (short x = 0; x < curve.getDimX(); x++) {
+        for (short x = 0; x < curve.getValues().getDimX(); x++) {
 
             xValue = curve.getValue(0, x);
             zValue = curve.getValue(1, x);
@@ -70,7 +70,7 @@ public final class XYChart extends JComponent {
                 PanelXYChart.RIGHT_POSITION, false));
     }
 
-    private void createIsoX(Map map) {
+    private final void createIsoX(Map map) {
 
         final String TITRE = "Z = f(Y)";
         final SeriesCollection seriesCollection = new SeriesCollection();
@@ -78,11 +78,11 @@ public final class XYChart extends JComponent {
 
         String xValue, zValue;
 
-        for (short x = 1; x < map.getDimX(); x++) {
+        for (short x = 1; x < map.getValues().getDimX(); x++) {
 
             serie = new Serie(map.getValue(0, x));
 
-            for (short y = 1; y < map.getDimY(); y++) {
+            for (short y = 1; y < map.getValues().getDimY(); y++) {
 
                 xValue = map.getValue(y, 0);
                 zValue = map.getValue(y, x);
@@ -105,7 +105,7 @@ public final class XYChart extends JComponent {
                 PanelXYChart.RIGHT_POSITION, true));
     }
 
-    private void createIsoY(Map map) {
+    private final void createIsoY(Map map) {
 
         final String TITRE = "Z = f(X)";
         final SeriesCollection seriesCollection = new SeriesCollection();
@@ -113,11 +113,11 @@ public final class XYChart extends JComponent {
 
         String xValue, zValue;
 
-        for (short y = 1; y < map.getDimY(); y++) {
+        for (short y = 1; y < map.getValues().getDimY(); y++) {
 
             serie = new Serie(map.getValue(y, 0));
 
-            for (short x = 1; x < map.getDimX(); x++) {
+            for (short x = 1; x < map.getValues().getDimX(); x++) {
 
                 xValue = map.getValue(0, x);
                 zValue = map.getValue(y, x);

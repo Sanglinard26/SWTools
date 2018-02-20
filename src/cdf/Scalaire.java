@@ -1,6 +1,6 @@
 package cdf;
 
-import tools.Utilitaire;
+import utils.Utilitaire;
 
 public final class Scalaire extends Variable {
 

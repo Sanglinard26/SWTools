@@ -29,8 +29,8 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import tools.Preference;
-import tools.Utilitaire;
+import utils.Preference;
+import utils.Utilitaire;
 
 public final class Ihm extends JFrame {
 
@@ -50,6 +50,7 @@ public final class Ihm extends JFrame {
     private JMenuItem menuItem;
     private final JCheckBoxMenuItem cbMenuItem;
     private JRadioButtonMenuItem radioMenuItem;
+    private static final SingleComponentInfiniteProgress progressPanel = new SingleComponentInfiniteProgress(false);
 
     private static final JTabbedPane onglets = new JTabbedPane(SwingConstants.TOP);
     private static final JPanel ongletPaCo = new JPanel(new GridLayout(1, 1));
@@ -73,6 +74,9 @@ public final class Ihm extends JFrame {
         setExtendedState(MAXIMIZED_BOTH);
         setMinimumSize(new Dimension(1200, 700));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        // test glasspane
+        setGlassPane(progressPanel);
 
         menu = new JMenu("Preferences");
         cbMenuItem = new JCheckBoxMenuItem("Coloration des cartographies",
@@ -267,12 +271,8 @@ public final class Ihm extends JFrame {
         setJMenuBar(menuBar);
         //
 
-        // test glasspane
-        InfiniteProgressPanel progressPanel = new InfiniteProgressPanel();
-        setGlassPane(progressPanel);
-
         // Onglet lecteur PaCo
-        ongletPaCo.add(new PanelCDF(progressPanel));
+        ongletPaCo.add(new PanelCDF());
         onglets.addTab("Fichier de calibration", new ImageIcon(getClass().getResource(ICON_FDONNEE)), ongletPaCo);
 
         // Onglet comparaison de Lab
@@ -306,6 +306,10 @@ public final class Ihm extends JFrame {
         onglets.setOpaque(true);
         getContentPane().add(onglets, BorderLayout.CENTER);
 
+    }
+
+    public static final SingleComponentInfiniteProgress getProgressPanel() {
+        return progressPanel;
     }
 
     private final class ClickRadio implements ActionListener {

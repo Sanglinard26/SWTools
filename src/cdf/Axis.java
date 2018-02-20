@@ -3,30 +3,23 @@ package cdf;
 public final class Axis extends Variable {
 
     private final Values zValues;
-    private final int dim;
 
     public Axis(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 
         this.zValues = values;
-        this.dim = zValues.getDimX();
-
     }
 
     @Override
     public final String toString() {
         StringBuilder sb = new StringBuilder("\n");
 
-        for (short x = 0; x < dim; x++) {
+        for (short x = 0; x < this.zValues.getDimX(); x++) {
             sb.append(this.getzValues(x) + "\t");
         }
         sb.append("\n");
 
         return super.toString() + "Valeurs :" + sb.toString();
-    }
-
-    public final int getDim() {
-        return dim;
     }
 
     public final String getUnit() {
@@ -67,7 +60,7 @@ public final class Axis extends Variable {
         double valCheck = 0;
         String value;
 
-        for (short x = 0; x < dim; x++) {
+        for (short x = 0; x < this.zValues.getDimX(); x++) {
             value = getzValues(x);
             if (value != null) {
                 valCheck += value.hashCode();

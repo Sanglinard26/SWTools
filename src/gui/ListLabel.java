@@ -14,9 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -156,7 +156,7 @@ public final class ListLabel extends JList<Variable> {
             oldSearchItem = new LinkedList<String>();
         }
 
-        public final void populateFilter(HashSet<String> list) {
+        public final void populateFilter(Set<String> list) {
 
             final DefaultComboBoxModel<String> cbModel = (DefaultComboBoxModel<String>) typeFilter.getModel();
 

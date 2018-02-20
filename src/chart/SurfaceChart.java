@@ -22,7 +22,7 @@ import com.orsoncharts.util.Orientation;
 
 import cdf.Map;
 import cdf.Variable;
-import tools.Utilitaire;
+import utils.Utilitaire;
 
 public final class SurfaceChart extends JComponent {
 
@@ -49,22 +49,11 @@ public final class SurfaceChart extends JComponent {
 
                 @Override
                 public double getValue(double x, double y) {
-                    if (x != 0 & y != 0) {
-
-                        /*
-                         * int xi = Arrays.binarySearch(map.getXvalues(), x); int zi = Arrays.binarySearch(map.getYvalues(), y);
-                         * 
-                         * if (xi < 0) { // xi = Math.abs(xi) - 2; xi = 0; } if (zi < 0) { // zi = Math.abs(zi) - 2; zi = 0; }
-                         * 
-                         * value = map.getValue(zi, xi);
-                         */
+                    if (x * y > 0) {
 
                         value = map.getValue((int) y, (int) x);
 
-                        if (Utilitaire.isNumber(value)) {
-                            return Double.parseDouble(value);
-                        }
-                        return Double.NaN;
+                        return Utilitaire.isNumber(value) ? Double.parseDouble(value) : Double.NaN;
                     }
                     return 0;
                 }
@@ -81,20 +70,12 @@ public final class SurfaceChart extends JComponent {
             final ValueAxis3D zAxis = plot.getZAxis();
             zAxis.setRange(1, map.getValues().getDimY() - 1);
 
-            /*
-             * if (Utilitaire.isNumber(map.getValue(0, 1)) & Utilitaire.isNumber(map.getValue(0, map.getDimX() - 1))) {
-             * xAxis.setRange(Double.parseDouble(map.getValue(0, 1)), Double.parseDouble(map.getValue(0, map.getDimX() - 1)));
-             * System.out.println(xAxis.getRange()); } if (Utilitaire.isNumber(map.getValue(1, 0)) & Utilitaire.isNumber(map.getValue(map.getDimY() -
-             * 1, map.getDimX() - 1))) { zAxis.setRange(Double.parseDouble(map.getValue(1, 0)), Double.parseDouble(map.getValue(map.getDimY() - 1,
-             * 0))); System.out.println(zAxis.getRange()); }
-             */
-
             final SurfaceRenderer renderer = (SurfaceRenderer) plot.getRenderer();
             if (map.getMaxZValue() - map.getMinZValue() != 0)
                 renderer.setColorScale(new RainbowScale(new Range(map.getMinZValue(), map.getMaxZValue())));
             renderer.setDrawFaceOutlines(false);
-            renderer.setXSamples(map.getDimX() - 1);
-            renderer.setZSamples(map.getDimY() - 1);
+            renderer.setXSamples(map.getValues().getDimX() - 1);
+            renderer.setZSamples(map.getValues().getDimY() - 1);
             chart.setLegendPosition(LegendAnchor.BOTTOM_CENTER, Orientation.HORIZONTAL);
 
             final Chart3DPanel chartPanel = new Chart3DPanel(chart);

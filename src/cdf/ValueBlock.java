@@ -3,24 +3,20 @@ package cdf;
 public final class ValueBlock extends Variable {
 
     private final Values values;
-    private final int dimX;
-    private final int dimY;
 
     public ValueBlock(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
             Values values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;
 
-        this.dimX = values.getDimX();
-        this.dimY = values.getDimY();
     }
 
     @Override
     public final String toString() {
 
         StringBuilder sb = new StringBuilder("\n");
-        for (short y = 0; y < dimY; y++) {
-            for (short x = 0; x < dimX; x++) {
+        for (short y = 0; y < values.getDimY(); y++) {
+            for (short x = 0; x < values.getDimX(); x++) {
                 sb.append(this.getValue(y, x) + "\t");
             }
             sb.append("\n");
@@ -45,14 +41,6 @@ public final class ValueBlock extends Variable {
         return values.getValue(col, row);
     }
 
-    public final int getDimX() {
-        return dimX;
-    }
-
-    public final int getDimY() {
-        return dimY;
-    }
-
     @Override
     public String toMFormat(boolean transpose) {
         StringBuilder sb = new StringBuilder();
@@ -61,9 +49,9 @@ public final class ValueBlock extends Variable {
         sb.append(getShortName() + " = ");
         sb.append("[");
 
-        if (dimY > 2) {
-            for (short x = 1; x < this.dimX; x++) {
-                for (short y = 1; y < this.dimY; y++) {
+        if (values.getDimY() > 2) {
+            for (short x = 1; x < this.values.getDimX(); x++) {
+                for (short y = 1; y < this.values.getDimY(); y++) {
                     if (y > 1) {
                         sb.append(" " + getValue(y, x));
                     } else {
@@ -71,7 +59,7 @@ public final class ValueBlock extends Variable {
                     }
 
                 }
-                if (x != this.dimX - 1) {
+                if (x != this.values.getDimX() - 1) {
                     sb.append(";");
                     sb.append("\n");
                 } else {
@@ -79,7 +67,7 @@ public final class ValueBlock extends Variable {
                 }
             }
         } else {
-            for (short x = 1; x < this.dimX; x++) {
+            for (short x = 1; x < this.values.getDimX(); x++) {
                 if (x > 1) {
                     sb.append(" " + getValue(1, x));
                 } else {
@@ -101,8 +89,8 @@ public final class ValueBlock extends Variable {
         double valCheck = 0;
         String value;
 
-        for (short y = 0; y < dimY; y++) {
-            for (short x = 0; x < dimX; x++) {
+        for (short y = 0; y < values.getDimY(); y++) {
+            for (short x = 0; x < values.getDimX(); x++) {
                 value = getValue(y, x);
                 if (value != null) {
                     valCheck += value.hashCode();

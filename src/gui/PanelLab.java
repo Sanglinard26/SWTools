@@ -34,8 +34,8 @@ import lab.Lab;
 import lab.ListModelLab;
 import lab.ListModelVar;
 import lab.Variable;
-import tools.Preference;
-import tools.Utilitaire;
+import utils.Preference;
+import utils.Utilitaire;
 
 public final class PanelLab extends JComponent implements ListDataListener {
 
