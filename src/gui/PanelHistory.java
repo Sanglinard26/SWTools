@@ -185,7 +185,7 @@ public final class PanelHistory extends JComponent {
             textPane.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent paramMouseEvent) {
-                    if (paramMouseEvent.getClickCount() == 2 & scrollPane.getVerticalScrollBar().isShowing()) {
+                    if (paramMouseEvent.getClickCount() == 2 && scrollPane.getVerticalScrollBar().isShowing()) {
 
                         if (fc == null) {
                             fc = new FrameComment(textPane.getText());

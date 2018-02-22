@@ -103,7 +103,7 @@ public final class PanelXYChart extends JComponent {
         @Override
         public void valueChanged(ListSelectionEvent e) {
 
-            if (!e.getValueIsAdjusting() & !legendList.isSelectionEmpty()) {
+            if (!e.getValueIsAdjusting() && !legendList.isSelectionEmpty()) {
 
                 if (serieCollection != null) {
                     serieCollection.removeAllSeries();

@@ -106,7 +106,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == 127 & this.getSelectedIndex() > -1) // touche suppr
+        if (e.getKeyCode() == 127 && this.getSelectedIndex() > -1) // touche suppr
         {
             for (@SuppressWarnings("unused")
             int idx : this.getSelectedIndices()) {
@@ -119,7 +119,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
         final int moveMe = ListCdf.this.getSelectedIndex();
 
-        if (e.isControlDown() & e.getKeyCode() == KeyEvent.VK_UP) {
+        if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_UP) {
 
             if (moveMe != 0) {
                 swap(moveMe, moveMe - 1);
@@ -129,7 +129,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
         }
 
-        if (e.isControlDown() & e.getKeyCode() == KeyEvent.VK_DOWN) {
+        if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_DOWN) {
 
             if (moveMe != getModel().getSize() - 1) {
                 swap(moveMe, moveMe + 1);
@@ -148,7 +148,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     private final class ListMouseListener extends MouseAdapter {
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger() & ListCdf.this.getModel().getSize() > 0 & ListCdf.this.getSelectedIndices().length <= 1) {
+            if (e.isPopupTrigger() && ListCdf.this.getModel().getSize() > 0 && ListCdf.this.getSelectedIndices().length <= 1) {
                 final JPopupMenu menu = new JPopupMenu();
                 final JMenu menuMove = new JMenu("Deplacer");
                 final JMenu menuExport = new JMenu("Export");
@@ -407,7 +407,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                 }
 
                 menu.show(e.getComponent(), e.getX(), e.getY());
-            } else if (e.isPopupTrigger() & ListCdf.this.getModel().getSize() > 0 & ListCdf.this.getSelectedIndices().length == 2) {
+            } else if (e.isPopupTrigger() && ListCdf.this.getModel().getSize() > 0 && ListCdf.this.getSelectedIndices().length == 2) {
                 final JPopupMenu menu = new JPopupMenu();
                 JMenuItem menuItem;
 

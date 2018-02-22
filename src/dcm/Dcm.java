@@ -138,10 +138,10 @@ public final class Dcm implements Cdf {
                             spaceSplitLine2 = line.split(SPACE);
                             quotesSplitLine = line.split(QUOTE);
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                            if (line.trim().startsWith(DESCRIPTION) && quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
                             }
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                            if (line.trim().startsWith(FONCTION) && spaceSplitLine2.length > 1) {
                                 fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
                             }
                             if (line.trim().startsWith(UNITE_W)) {
@@ -184,10 +184,10 @@ public final class Dcm implements Cdf {
                             spaceSplitLine2 = line.split(SPACE);
                             quotesSplitLine = line.split(QUOTE);
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                            if (line.trim().startsWith(DESCRIPTION) && quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
                             }
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                            if (line.trim().startsWith(FONCTION) && spaceSplitLine2.length > 1) {
                                 fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
                             }
 
@@ -224,11 +224,11 @@ public final class Dcm implements Cdf {
                             spaceSplitLine2 = line.split(SPACE);
                             quotesSplitLine = line.split(QUOTE);
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                            if (line.trim().startsWith(DESCRIPTION) && quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
                             }
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                            if (line.trim().startsWith(FONCTION) && spaceSplitLine2.length > 1) {
                                 fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
                             }
 
@@ -257,7 +257,7 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_X) && !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
                                             valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
@@ -273,7 +273,7 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(VALEUR_NOMBRE) && !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntZ < valeur.getDimX()) {
                                             valeur.setValue(1, cntZ, tmpValue.replace(QUOTE, ""));
                                             cntZ++;
@@ -311,11 +311,11 @@ public final class Dcm implements Cdf {
                             spaceSplitLine2 = line.split(SPACE);
                             quotesSplitLine = line.split(QUOTE);
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                            if (line.trim().startsWith(DESCRIPTION) && quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
                             }
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                            if (line.trim().startsWith(FONCTION) && spaceSplitLine2.length > 1) {
                                 fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
                             }
 
@@ -344,7 +344,7 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_X) && !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
                                             valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
@@ -360,7 +360,7 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(VALEUR_NOMBRE) && !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntZ < valeur.getDimX()) {
                                             valeur.setValue(1, cntZ, tmpValue.replace(QUOTE, ""));
                                             cntZ++;
@@ -398,11 +398,11 @@ public final class Dcm implements Cdf {
                             spaceSplitLine2 = line.split(SPACE);
                             quotesSplitLine = line.split(QUOTE);
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                            if (line.trim().startsWith(DESCRIPTION) && quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
                             }
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                            if (line.trim().startsWith(FONCTION) && spaceSplitLine2.length > 1) {
                                 fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
                             }
 
@@ -431,7 +431,7 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_X) && !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
                                             valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
@@ -447,7 +447,7 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(VALEUR_NOMBRE) && !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntZ < valeur.getDimX()) {
                                             valeur.setValue(1, cntZ, tmpValue.replace(QUOTE, ""));
                                             cntZ++;
@@ -488,11 +488,11 @@ public final class Dcm implements Cdf {
                             spaceSplitLine2 = line.split(SPACE);
                             quotesSplitLine = line.split(QUOTE);
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                            if (line.trim().startsWith(DESCRIPTION) && quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
                             }
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                            if (line.trim().startsWith(FONCTION) && spaceSplitLine2.length > 1) {
                                 fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
                             }
 
@@ -530,7 +530,7 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_X) && !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
                                             valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
@@ -552,8 +552,8 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(AXE_Y) & !tmpValue.equals(AXE_Y_TXT)
-                                            & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_Y) && !tmpValue.equals(AXE_Y_TXT)
+                                            && !tmpValue.equals(VALEUR_NOMBRE) && !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntX < valeur.getDimX()) {
                                             valeur.setValue(cntZ, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
@@ -594,11 +594,11 @@ public final class Dcm implements Cdf {
                             spaceSplitLine2 = line.split(SPACE);
                             quotesSplitLine = line.split(QUOTE);
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                            if (line.trim().startsWith(DESCRIPTION) && quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
                             }
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                            if (line.trim().startsWith(FONCTION) && spaceSplitLine2.length > 1) {
                                 fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
                             }
 
@@ -636,7 +636,7 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_X) && !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
                                             valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
@@ -658,8 +658,8 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(AXE_Y) & !tmpValue.equals(AXE_Y_TXT)
-                                            & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_Y) && !tmpValue.equals(AXE_Y_TXT)
+                                            && !tmpValue.equals(VALEUR_NOMBRE) && !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntX < valeur.getDimX()) {
                                             valeur.setValue(cntZ, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
@@ -700,11 +700,11 @@ public final class Dcm implements Cdf {
                             spaceSplitLine2 = line.split(SPACE);
                             quotesSplitLine = line.split(QUOTE);
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                            if (line.trim().startsWith(DESCRIPTION) && quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
                             }
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                            if (line.trim().startsWith(FONCTION) && spaceSplitLine2.length > 1) {
                                 fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
                             }
 
@@ -742,7 +742,7 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X) & !tmpValue.equals(AXE_X_TXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_X) && !tmpValue.equals(AXE_X_TXT)) {
                                         if (cntX < valeur.getDimX()) {
                                             valeur.setValue(0, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
@@ -764,8 +764,8 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(AXE_Y) & !tmpValue.equals(AXE_Y_TXT)
-                                            & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_Y) && !tmpValue.equals(AXE_Y_TXT)
+                                            && !tmpValue.equals(VALEUR_NOMBRE) && !tmpValue.equals(VALEUR_TEXT)) {
                                         if (cntX < valeur.getDimX()) {
                                             valeur.setValue(cntZ, cntX, tmpValue.replace(QUOTE, ""));
                                             cntX++;
@@ -802,11 +802,11 @@ public final class Dcm implements Cdf {
                             spaceSplitLine2 = line.split(SPACE);
                             quotesSplitLine = line.split(QUOTE);
 
-                            if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                            if (line.trim().startsWith(DESCRIPTION) && quotesSplitLine.length > 1) {
                                 description.append(quotesSplitLine[quotesSplitLine.length - 1]);
                             }
 
-                            if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                            if (line.trim().startsWith(FONCTION) && spaceSplitLine2.length > 1) {
                                 fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
                             }
 
@@ -826,7 +826,7 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 & !tmpValue.equals(AXE_X)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_X)) {
                                         if (cnt < valeur.getDimX()) {
                                             valeur.setValue(0, cnt, tmpValue.replace(QUOTE, ""));
                                             cnt++;
@@ -871,11 +871,11 @@ public final class Dcm implements Cdf {
                                 spaceSplitLine2 = line.split(SPACE);
                                 quotesSplitLine = line.split(QUOTE);
 
-                                if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                                if (line.trim().startsWith(DESCRIPTION) && quotesSplitLine.length > 1) {
                                     description.append(quotesSplitLine[quotesSplitLine.length - 1]);
                                 }
 
-                                if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                                if (line.trim().startsWith(FONCTION) && spaceSplitLine2.length > 1) {
                                     fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
                                 }
 
@@ -902,7 +902,7 @@ public final class Dcm implements Cdf {
                                     nbSplit = threeSpaceSplitLine.length;
                                     for (int i = 0; i < nbSplit; i++) {
                                         tmpValue = threeSpaceSplitLine[i];
-                                        if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
+                                        if (tmpValue.length() != 0 && !tmpValue.equals(VALEUR_NOMBRE) && !tmpValue.equals(VALEUR_TEXT)) {
                                             if (cntX < valeur.getDimX()) {
                                                 valeur.setValue(cntZ, cntX, tmpValue.replace(QUOTE, ""));
                                                 cntX++;
@@ -932,11 +932,11 @@ public final class Dcm implements Cdf {
                                 spaceSplitLine2 = line.split(SPACE);
                                 quotesSplitLine = line.split(QUOTE);
 
-                                if (line.trim().startsWith(DESCRIPTION) & quotesSplitLine.length > 1) {
+                                if (line.trim().startsWith(DESCRIPTION) && quotesSplitLine.length > 1) {
                                     description.append(quotesSplitLine[quotesSplitLine.length - 1]);
                                 }
 
-                                if (line.trim().startsWith(FONCTION) & spaceSplitLine2.length > 1) {
+                                if (line.trim().startsWith(FONCTION) && spaceSplitLine2.length > 1) {
                                     fonction.append(spaceSplitLine2[spaceSplitLine2.length - 1]);
                                 }
 
@@ -956,7 +956,7 @@ public final class Dcm implements Cdf {
                                     nbSplit = threeSpaceSplitLine.length;
                                     for (int i = 0; i < nbSplit; i++) {
                                         tmpValue = threeSpaceSplitLine[i];
-                                        if (tmpValue.length() != 0 & !tmpValue.equals(VALEUR_NOMBRE) & !tmpValue.equals(VALEUR_TEXT)) {
+                                        if (tmpValue.length() != 0 && !tmpValue.equals(VALEUR_NOMBRE) && !tmpValue.equals(VALEUR_TEXT)) {
                                             if (cntX < valeur.getDimX()) {
                                                 valeur.setValue(1, cntX, tmpValue.replace(QUOTE, ""));
                                                 cntX++;

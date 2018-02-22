@@ -335,7 +335,7 @@ public final class PanelXYPlot extends JPanel {
         for (short idxSerie = 0; idxSerie < listSeries.size(); idxSerie++) {
             for (short idxPoint = 0; idxPoint < listSeries.get(idxSerie).size(); idxPoint++) {
                 if (Math.abs(x - listSeries.get(idxSerie).get(idxPoint).getX()) < 4
-                        & Math.abs(y - listSeries.get(idxSerie).get(idxPoint).getY()) < 4) {
+                        && Math.abs(y - listSeries.get(idxSerie).get(idxPoint).getY()) < 4) {
                     markPoint(this.getGraphics(), listSeries.get(idxSerie).get(idxPoint));
                     setToolTipText(seriesCollection.getSerie(idxSerie).getPoints().get(idxPoint).toString());
                     return super.contains(x, y); // ==> Permet d'afficher la ToolTip mais plus le menu contextuel

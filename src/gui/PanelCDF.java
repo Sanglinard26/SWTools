@@ -127,7 +127,7 @@ public final class PanelCDF extends JComponent {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting() == false & !listCDF.isSelectionEmpty()) {
+                if (e.getValueIsAdjusting() == false && !listCDF.isSelectionEmpty()) {
 
                     final Variable oldVar = listLabel.getSelectedValue();
 
@@ -137,7 +137,7 @@ public final class PanelCDF extends JComponent {
                     listLabel.ensureIndexIsVisible(0);
                     listLabel.getFilterField().populateFilter(listCDF.getSelectedValue().getCategoryList());
 
-                    if (oldVar != null & listLabel.getModel().getList().contains(oldVar)) {
+                    if (oldVar != null && listLabel.getModel().getList().contains(oldVar)) {
                         listLabel.setSelectedIndex(0);
                         listLabel.setSelectedValue(oldVar, true);
                     }
@@ -170,7 +170,7 @@ public final class PanelCDF extends JComponent {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting() & !listLabel.isSelectionEmpty()) {
+                if (!e.getValueIsAdjusting() && !listLabel.isSelectionEmpty()) {
 
                     selVariable = listLabel.getSelectedValue();
 
@@ -297,6 +297,7 @@ public final class PanelCDF extends JComponent {
 
     private final class TaskCharging extends SwingWorker<Integer, Integer> {
 
+    	private static final int MAXSIZE = 10000;
         private File[] filesCDF;
         private Cdf cdf;
         private final StringBuilder cdfName = new StringBuilder();
@@ -323,7 +324,7 @@ public final class PanelCDF extends JComponent {
                     switch (Utilitaire.getExtension(file)) {
                     case "xml":
 
-                        if (Preference.getPreference(Preference.KEY_XML_PARSEUR).equals("DOM") && (file.length() / 1024) + 1 < 10000) {
+                        if (Preference.getPreference(Preference.KEY_XML_PARSEUR).equals("DOM") && (file.length() / 1024) + 1 < MAXSIZE) {
                             cdf = new Paco(file);
                         } else {
                             cdf = new StAXPaco(file);

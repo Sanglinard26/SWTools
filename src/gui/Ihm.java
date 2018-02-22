@@ -65,7 +65,7 @@ public final class Ihm extends JFrame {
     private static FrameAide fa = null;
     private static FrameNews fn = null;
 
-    public static final boolean testMode = true;
+    public static final boolean testMode = false;
 
     public Ihm() {
 
@@ -279,8 +279,11 @@ public final class Ihm extends JFrame {
         onglets.addTab("Fichier de variables", new ImageIcon(getClass().getResource(ICON_FVARIABLE)), ongletLab);
 
         // Onglet BDD
-        onglets.addTab("Gestion BDD", new ImageIcon(getClass().getResource(ICON_BDD)), ongletBdd);
-        onglets.setEnabledAt(2, testMode);
+        if(testMode)
+        {
+        	onglets.addTab("Gestion BDD", new ImageIcon(getClass().getResource(ICON_BDD)), ongletBdd);
+        	onglets.setEnabledAt(2, testMode);
+        }
 
         onglets.addChangeListener(new ChangeListener() {
 

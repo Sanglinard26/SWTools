@@ -300,7 +300,7 @@ public final class StAXPaco implements Cdf {
                                         }
 
                                         if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
+                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
                                                 tmpValues.add(event.asCharacters().getData());
                                             } else {
                                                 event = xmler.peek();
@@ -341,7 +341,7 @@ public final class StAXPaco implements Cdf {
 
                                         event = xmler.nextEvent();
                                         if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
+                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
                                                 tmpValues.add(event.asCharacters().getData());
                                             } else {
                                                 event = xmler.peek();
@@ -372,7 +372,7 @@ public final class StAXPaco implements Cdf {
 
                                         event = xmler.nextEvent();
                                         if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
+                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
                                                 tmpValues.add(event.asCharacters().getData());
                                             } else {
                                                 event = xmler.peek();
@@ -399,7 +399,7 @@ public final class StAXPaco implements Cdf {
 
                                         event = xmler.nextEvent();
                                         if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
+                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
                                                 tmpValues.add(event.asCharacters().getData());
                                             } else {
                                                 event = xmler.peek();
@@ -430,7 +430,7 @@ public final class StAXPaco implements Cdf {
 
                                         event = xmler.nextEvent();
                                         if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
+                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
                                                 tmpValues.add(event.asCharacters().getData());
                                             } else {
                                                 event = xmler.peek();
@@ -459,7 +459,7 @@ public final class StAXPaco implements Cdf {
 
                                         event = xmler.nextEvent();
                                         if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
+                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
 
                                                 switch (numAxe) {
                                                 case 0:
@@ -505,7 +505,7 @@ public final class StAXPaco implements Cdf {
                                         event = xmler.nextEvent();
                                         if (event.isCharacters()) {
 
-                                            if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
+                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
 
                                                 switch (numAxe) {
                                                 case 0:
@@ -550,7 +550,7 @@ public final class StAXPaco implements Cdf {
 
                                         event = xmler.nextEvent();
                                         if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") & !event.asCharacters().getData().equals("'")) {
+                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
 
                                                 switch (numAxe) {
                                                 case 0:

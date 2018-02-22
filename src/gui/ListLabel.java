@@ -69,8 +69,8 @@ public final class ListLabel extends JList<Variable> {
     private final class ListMouseListener extends MouseAdapter {
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger() & ListLabel.this.getSelectedValue() != null
-                    & ListLabel.this.locationToIndex(e.getPoint()) == ListLabel.this.getSelectedIndex()) {
+            if (e.isPopupTrigger() && ListLabel.this.getSelectedValue() != null
+                    && ListLabel.this.locationToIndex(e.getPoint()) == ListLabel.this.getSelectedIndex()) {
                 final JPopupMenu menu = new JPopupMenu();
                 final JMenu menuCopy = new JMenu("Copier dans le presse-papier");
                 JMenuItem subMenu = new JMenuItem("Format image", new ImageIcon(getClass().getResource(ICON_IMAGE)));
@@ -299,7 +299,7 @@ public final class ListLabel extends JList<Variable> {
         public void paint(Graphics g, JComponent c) {
             super.paint(g, c);
 
-            if (ListLabel.this.getFilterField().txtFiltre.getText().length() > 0 & ListLabel.this.getModel().getSize() < 1) {
+            if (ListLabel.this.getFilterField().txtFiltre.getText().length() > 0 && ListLabel.this.getModel().getSize() < 1) {
                 Graphics2D g2 = (Graphics2D) g.create();
 
                 // Paint the red X.

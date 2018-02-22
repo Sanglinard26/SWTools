@@ -119,7 +119,7 @@ public abstract class CdfUtils {
                                                 var.getValues().getValue(y, x) + " => " + varCompar.getValues().getValue(y, x));
                                     } else {
                                         if (Utilitaire.isNumber(var.getValues().getValue(y, x))
-                                                & Utilitaire.isNumber(varCompar.getValues().getValue(y, x))) {
+                                                && Utilitaire.isNumber(varCompar.getValues().getValue(y, x))) {
                                             varBase.getValues().setValue(y, x, Float.toString(Float.parseFloat(varCompar.getValues().getValue(y, x))
                                                     - Float.parseFloat(var.getValues().getValue(y, x))));
                                         } else {

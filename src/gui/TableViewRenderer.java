@@ -56,7 +56,7 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
 
         setForeground(Color.BLACK);
 
-        if (Utilitaire.isNumber(value.toString()) & row > 0 & column > 0 & map != null & setMapColor == true) {
+        if (Utilitaire.isNumber(value.toString()) && row > 0 && column > 0 && map != null && setMapColor == true) {
             setBackground(rainbowScale.valueToColor(Double.parseDouble(value.toString())));
         } else {
             setBackground(Color.WHITE);

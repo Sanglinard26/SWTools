@@ -52,7 +52,7 @@ public final class XYChart extends JComponent {
             xValue = curve.getValue(0, x);
             zValue = curve.getValue(1, x);
 
-            if (Utilitaire.isNumber(xValue) & Utilitaire.isNumber(zValue)) {
+            if (Utilitaire.isNumber(xValue) && Utilitaire.isNumber(zValue)) {
                 serie.addPoint(Double.parseDouble(xValue), Double.parseDouble(zValue));
             } else {
                 if (Utilitaire.isNumber(zValue)) {
@@ -87,7 +87,7 @@ public final class XYChart extends JComponent {
                 xValue = map.getValue(y, 0);
                 zValue = map.getValue(y, x);
 
-                if (Utilitaire.isNumber(xValue) & Utilitaire.isNumber(zValue)) {
+                if (Utilitaire.isNumber(xValue) && Utilitaire.isNumber(zValue)) {
                     serie.addPoint(Double.parseDouble(xValue), Double.parseDouble(zValue));
                 } else {
                     if (Utilitaire.isNumber(zValue)) {
@@ -122,7 +122,7 @@ public final class XYChart extends JComponent {
                 xValue = map.getValue(0, x);
                 zValue = map.getValue(y, x);
 
-                if (Utilitaire.isNumber(xValue) & Utilitaire.isNumber(zValue)) {
+                if (Utilitaire.isNumber(xValue) && Utilitaire.isNumber(zValue)) {
                     serie.addPoint(Double.parseDouble(xValue), Double.parseDouble(zValue));
                 } else {
                     if (Utilitaire.isNumber(zValue)) {

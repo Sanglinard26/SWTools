@@ -41,7 +41,7 @@ public final class ListLab extends JList<Lab> implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == 127 & this.getSelectedIndex() > -1) // touche suppr
+        if (e.getKeyCode() == 127 && this.getSelectedIndex() > -1) // touche suppr
         {
             this.getModel().removeLab(this.getSelectedIndex());
             this.clearSelection();
@@ -58,7 +58,7 @@ public final class ListLab extends JList<Lab> implements KeyListener {
     private class ListMouseListener extends MouseAdapter {
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger() & ListLab.this.getModel().getSize() > 0) {
+            if (e.isPopupTrigger() && ListLab.this.getModel().getSize() > 0) {
                 JPopupMenu menu = new JPopupMenu();
                 JMenuItem menuItem;
                 if (ListLab.this.locationToIndex(e.getPoint()) == ListLab.this.getSelectedIndex()) {
