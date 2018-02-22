@@ -16,14 +16,13 @@ import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.XMLEvent;
 
 import cdf.Cdf;
+import gui.SWToolsMain;
 import utils.Preference;
 import utils.Utilitaire;
 
@@ -75,39 +74,74 @@ public final class Lab {
 
     private final void parseFromXml(File file) {
 
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder;
-        Document document = null;
-        try {
-            builder = factory.newDocumentBuilder();
-            document = builder.parse(new File(file.toURI()));
-            if (document.getDoctype() == null) {
-                JOptionPane.showMessageDialog(null, "Format de PaCo non valide !" + "\nNom : " + this.name, "ERREUR", JOptionPane.ERROR_MESSAGE);
-                document = null;
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        final XMLInputFactory xmlif = XMLInputFactory.newInstance();
+        XMLEventReader xmler = null;
 
-        if (document != null) {
+        try {
 
             this.name = Utilitaire.getFileNameWithoutExtension(file);
 
-            final Element racine = document.getDocumentElement();
-            final NodeList listSwInstance = racine.getElementsByTagName("SW-INSTANCE");
-            final int nbLabel = listSwInstance.getLength();
-            Element label;
+            xmler = xmlif.createXMLEventReader(new FileReader(file));
+            XMLEvent event;
+            StringBuilder shortName = new StringBuilder();
+            String category = null;
 
-            for (int i = 0; i < nbLabel; i++) {
+            while (xmler.hasNext()) {
 
-                label = (Element) listSwInstance.item(i);
-                if (!label.getElementsByTagName("CATEGORY").item(0).getTextContent().equals(Cdf.AXIS_VALUES)) {
-                    listVariable.add(new Variable(label.getElementsByTagName("SHORT-NAME").item(0).getTextContent(), this.name));
+                event = xmler.nextEvent();
+
+                switch (event.toString()) {
+
+                case "<SW-INSTANCE>":
+
+                    while (!event.toString().equals("</SW-INSTANCE>")) {
+
+                        if (event.isStartElement()) {
+
+                            switch (event.asStartElement().getName().toString()) {
+                            case "SHORT-NAME":
+
+                                shortName.setLength(0);
+
+                                do {
+                                    event = xmler.nextEvent();
+                                    if (event.isCharacters()) {
+                                        shortName.append(event.asCharacters().getData());
+                                    }
+                                } while (!event.toString().equals("</SHORT-NAME>"));
+
+                                break;
+
+                            case "CATEGORY":
+
+                                do {
+                                    event = xmler.nextEvent();
+                                    if (event.isCharacters()) {
+                                        category = event.asCharacters().getData();
+                                    }
+
+                                } while (!event.isCharacters());
+
+                                break;
+                            }
+                        }
+                        event = xmler.nextEvent();
+                    }
+                    if (!category.equals(Cdf.AXIS_VALUES)) {
+                        listVariable.add(new Variable(shortName.toString(), this.name));
+                    }
                 }
-            }
 
-            document = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            SWToolsMain.getLogger().severe("Erreur sur l'ouverture de : " + this.name);
+        } finally {
+            try {
+                xmler.close();
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+            }
         }
     }
 

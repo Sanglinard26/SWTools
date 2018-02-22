@@ -59,7 +59,8 @@ public final class StAXPaco implements Cdf {
 
             listLabel = new ArrayList<Variable>();
 
-            String shortName = null, longName = null, category = null, swFeatureRef = null;
+            StringBuilder shortName = new StringBuilder();
+            String longName = null, category = null, swFeatureRef = null;
             String[] unite = null;
             History[] history = null;
             Values valeur = null;
@@ -150,13 +151,15 @@ public final class StAXPaco implements Cdf {
                             switch (event.asStartElement().getName().toString()) {
                             case "SHORT-NAME":
 
+                                shortName.setLength(0);
+
                                 do {
                                     event = xmler.nextEvent();
                                     if (event.isCharacters()) {
-                                        shortName = event.asCharacters().getData();
+                                        shortName.append(event.asCharacters().getData());
                                     }
 
-                                } while (!event.isCharacters());
+                                } while (!event.toString().equals("</SHORT-NAME>"));
 
                                 break;
                             case "LONG-NAME":
@@ -665,43 +668,43 @@ public final class StAXPaco implements Cdf {
                     // On cree la variable
                     switch (category) {
                     case Cdf.VALUE:
-                        this.listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Scalaire(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.VALUE);
                         break;
                     case Cdf.ASCII:
-                        this.listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Scalaire(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.ASCII);
                         break;
                     case Cdf.VALUE_BLOCK:
-                        this.listLabel.add(new ValueBlock(shortName, longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new ValueBlock(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.VALUE_BLOCK);
                         break;
                     case Cdf.AXIS_VALUES:
-                        this.listLabel.add(new Axis(shortName, longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Axis(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.AXIS_VALUES);
                         break;
                     case Cdf.CURVE_INDIVIDUAL:
-                        this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Curve(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.CURVE_INDIVIDUAL);
                         break;
                     case Cdf.CURVE_FIXED:
-                        this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Curve(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.CURVE_FIXED);
                         break;
                     case Cdf.CURVE_GROUPED:
-                        this.listLabel.add(new Curve(shortName, longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Curve(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.CURVE_GROUPED);
                         break;
                     case Cdf.MAP_INDIVIDUAL:
-                        this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Map(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.MAP_INDIVIDUAL);
                         break;
                     case Cdf.MAP_FIXED:
-                        this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Map(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.MAP_FIXED);
                         break;
                     case Cdf.MAP_GROUPED:
-                        this.listLabel.add(new Map(shortName, longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Map(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.MAP_GROUPED);
                         break;
                     }
@@ -732,6 +735,7 @@ public final class StAXPaco implements Cdf {
                 SWToolsMain.getLogger().severe("Erreur sur l'ouverture de : " + this.name);
             }
 
+            shortName.setLength(0);
             shortNameUnit.setLength(0);
             swUnitDisplay.setLength(0);
             pRemark.setLength(0);

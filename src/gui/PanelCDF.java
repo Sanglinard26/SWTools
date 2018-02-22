@@ -323,7 +323,7 @@ public final class PanelCDF extends JComponent {
                     switch (Utilitaire.getExtension(file)) {
                     case "xml":
 
-                        if (Preference.getPreference(Preference.KEY_XML_PARSEUR).equals("DOM")) {
+                        if (Preference.getPreference(Preference.KEY_XML_PARSEUR).equals("DOM") && (file.length() / 1024) + 1 < 10000) {
                             cdf = new Paco(file);
                         } else {
                             cdf = new StAXPaco(file);
