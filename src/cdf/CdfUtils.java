@@ -116,7 +116,7 @@ public abstract class CdfUtils {
                                 if (!var.getValues().getValue(y, x).equals(varCompar.getValues().getValue(y, x))) {
                                     if (modeValeur) {
                                         varBase.getValues().setValue(y, x,
-                                                var.getValues().getValue(y, x) + " => " + varCompar.getValues().getValue(y, x));
+                                        		var.getValues().getValue(y, x) + " | " + varCompar.getValues().getValue(y, x));
                                     } else {
                                         if (Utilitaire.isNumber(var.getValues().getValue(y, x))
                                                 && Utilitaire.isNumber(varCompar.getValues().getValue(y, x))) {
@@ -124,9 +124,8 @@ public abstract class CdfUtils {
                                                     - Float.parseFloat(var.getValues().getValue(y, x))));
                                         } else {
                                             varBase.getValues().setValue(y, x,
-                                                    var.getValues().getValue(y, x) + " => " + varCompar.getValues().getValue(y, x));
+                                                    var.getValues().getValue(y, x) + " | " + varCompar.getValues().getValue(y, x));
                                         }
-
                                     }
                                 }
                             }
@@ -139,7 +138,6 @@ public abstract class CdfUtils {
             return new Paco(cdfRef.getName() + "_vs_" + cdfWork.getName(), listCompa);
         }
         return null;
-
     }
 
     public static final boolean toExcel(Cdf cdf, final File file) {
