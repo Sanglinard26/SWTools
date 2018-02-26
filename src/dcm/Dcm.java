@@ -154,8 +154,10 @@ public final class Dcm implements Cdf {
 
                             }
 
-                            if (line.trim().startsWith(VALEUR_NOMBRE) | line.trim().startsWith(VALEUR_TEXT)) {
+                            if (line.trim().startsWith(VALEUR_NOMBRE)) {
                                 valeur.setValue(0, 0, spaceSplitLine2[spaceSplitLine2.length - 1].replace(QUOTE, ""));
+                            } else if (line.trim().startsWith(VALEUR_TEXT)) {
+                                valeur.setValue(0, 0, quotesSplitLine[quotesSplitLine.length - 1].replace(QUOTE, ""));
                             }
 
                         }
@@ -826,7 +828,7 @@ public final class Dcm implements Cdf {
                                 nbSplit = threeSpaceSplitLine.length;
                                 for (int i = 0; i < nbSplit; i++) {
                                     tmpValue = threeSpaceSplitLine[i];
-                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_X)) {
+                                    if (tmpValue.length() != 0 && !tmpValue.equals(AXE_X) && !tmpValue.equals(AXE_X_TXT)) {
                                         if (cnt < valeur.getDimX()) {
                                             valeur.setValue(0, cnt, tmpValue.replace(QUOTE, ""));
                                             cnt++;
@@ -863,7 +865,7 @@ public final class Dcm implements Cdf {
                             valeur.setValue(0, 0, "Y \\ X");
 
                             for (int x = 1; x < valeur.getDimX(); x++) {
-                                valeur.setValue(0, x, Integer.toString(x));
+                                valeur.setValue(0, x, Integer.toString(x - 1));
                             }
 
                             while (!readLineDcm().equals(END)) {
@@ -897,7 +899,7 @@ public final class Dcm implements Cdf {
 
                                     threeSpaceSplitLine = line.split(THREE_SPACE);
 
-                                    valeur.setValue(cntZ, 0, Integer.toString(cntZ));
+                                    valeur.setValue(cntZ, 0, Integer.toString(cntZ - 1));
 
                                     nbSplit = threeSpaceSplitLine.length;
                                     for (int i = 0; i < nbSplit; i++) {
@@ -922,7 +924,7 @@ public final class Dcm implements Cdf {
                             valeur.setValue(0, 0, "X");
 
                             for (int x = 1; x < valeur.getDimX(); x++) {
-                                valeur.setValue(0, x, Integer.toString(x));
+                                valeur.setValue(0, x, Integer.toString(x - 1));
                             }
 
                             valeur.setValue(1, 0, "Z");

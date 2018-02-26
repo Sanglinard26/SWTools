@@ -295,8 +295,8 @@ public final class StAXPaco implements Cdf {
                                         event = xmler.nextEvent();
 
                                         if (event.toString().equals("<LABEL>")) {
-                                            nbDim++;
-                                            tmpValues.add(Integer.toString(nbDim));
+                                            // nbDim++;
+                                            tmpValues.add(Integer.toString(nbDim++));
                                         }
 
                                         if (event.isCharacters()) {
@@ -326,7 +326,7 @@ public final class StAXPaco implements Cdf {
                                         valeur.setValue(0, 0, "Y \\ X");
                                         for (int i = 0; i < tmpValues.size(); i++) {
                                             if (i < valeur.getDimX() - 1) {
-                                                valeur.setValue(0, i + 1, Integer.toString(i + 1));
+                                                valeur.setValue(0, i + 1, Integer.toString(i));
                                             }
                                             valeur.setValue((int) ((double) i / (double) (valeur.getDimX() + 0)) + 1, i % (valeur.getDimX()),
                                                     tmpValues.get(i));
