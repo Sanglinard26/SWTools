@@ -39,7 +39,7 @@ public abstract class Utilitaire {
 
     public static final String cutNumber(String number) {
         return number.indexOf(".") < 0 ? number : number.replaceAll("0*$", "").replaceAll("\\.$", "");
-    } // Fin methode
+    }
 
     public static final boolean isNumber(String s) {
 

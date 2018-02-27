@@ -59,8 +59,9 @@ public final class StAXPaco implements Cdf {
 
             listLabel = new ArrayList<Variable>();
 
-            StringBuilder shortName = new StringBuilder();
-            String longName = null, category = null, swFeatureRef = null;
+            final StringBuilder shortName = new StringBuilder();
+            final StringBuilder longName = new StringBuilder();
+            String category = null, swFeatureRef = null;
             String[] unite = null;
             History[] history = null;
             Values valeur = null;
@@ -72,6 +73,7 @@ public final class StAXPaco implements Cdf {
             final List<String> tmpAxeX = new ArrayList<String>();
             final List<String> tmpAxeY = new ArrayList<String>();
             final List<String> tmpValues = new ArrayList<String>();
+            final StringBuilder tmpStringVal = new StringBuilder();
             //
             // Pour les commentaires
             final List<String> tmpDate = new ArrayList<String>();
@@ -164,17 +166,15 @@ public final class StAXPaco implements Cdf {
                                 break;
                             case "LONG-NAME":
 
+                                longName.setLength(0);
+
                                 do {
                                     event = xmler.nextEvent();
-                                    if (event.isCharacters()) {
-                                        if (!event.asCharacters().getData().equals("\n")) {
-                                            longName = event.asCharacters().getData();
-                                        } else {
-                                            longName = "";
-                                        }
+                                    if (event.isCharacters() && !event.asCharacters().getData().equals("\n")) {
+                                        longName.append(event.asCharacters().getData());
                                     }
 
-                                } while (!event.isCharacters());
+                                } while (!event.toString().equals("</LONG-NAME>"));
 
                                 break;
                             case "CATEGORY":
@@ -256,17 +256,16 @@ public final class StAXPaco implements Cdf {
 
                                     valeur = new Values(1, 1);
 
-                                    while (!event.isCharacters()) {
-                                        event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n")) {
-                                                valeur.setValue(0, 0, event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
-                                            }
+                                    tmpStringVal.setLength(0);
 
+                                    while (!event.isEndElement()) {
+                                        event = xmler.nextEvent();
+                                        if (event.isCharacters() && !event.asCharacters().getData().equals("\n")) {
+                                            tmpStringVal.append(event.asCharacters().getData());
                                         }
                                     }
+
+                                    valeur.setValue(0, 0, tmpStringVal.toString());
 
                                     break;
 
@@ -274,17 +273,16 @@ public final class StAXPaco implements Cdf {
 
                                     valeur = new Values(1, 1);
 
-                                    while (!event.isCharacters()) {
-                                        event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n")) {
-                                                valeur.setValue(0, 0, event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
-                                            }
+                                    tmpStringVal.setLength(0);
 
+                                    while (!event.isEndElement()) {
+                                        event = xmler.nextEvent();
+                                        if (event.isCharacters() && !event.asCharacters().getData().equals("\n")) {
+                                            tmpStringVal.append(event.asCharacters().getData());
                                         }
                                     }
+
+                                    valeur.setValue(0, 0, tmpStringVal.toString());
 
                                     break;
 
@@ -295,16 +293,16 @@ public final class StAXPaco implements Cdf {
                                         event = xmler.nextEvent();
 
                                         if (event.toString().equals("<LABEL>")) {
-                                            // nbDim++;
                                             tmpValues.add(Integer.toString(nbDim++));
                                         }
 
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
-                                                tmpValues.add(event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
+                                        if (event.isCharacters() && !event.asCharacters().getData().equals("\n")) {
+                                            tmpStringVal.setLength(0);
+                                            while (!event.isEndElement()) {
+                                                tmpStringVal.append(event.asCharacters().getData());
+                                                event = xmler.nextEvent();
                                             }
+                                            tmpValues.add(tmpStringVal.toString());
                                         }
                                     }
 
@@ -340,15 +338,12 @@ public final class StAXPaco implements Cdf {
                                     while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
                                         event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
-                                                tmpValues.add(event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
-                                            }
-
+                                        if (event.isCharacters() && !event.asCharacters().getData().equals("\n")
+                                                && !event.asCharacters().getData().equals("'")) {
+                                            tmpValues.add(event.asCharacters().getData());
+                                        } else {
+                                            event = xmler.peek();
                                         }
-
                                     }
 
                                     if (numAxe == 1) {
@@ -371,15 +366,12 @@ public final class StAXPaco implements Cdf {
                                     while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
                                         event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
-                                                tmpValues.add(event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
-                                            }
-
+                                        if (event.isCharacters() && !event.asCharacters().getData().equals("\n")
+                                                && !event.asCharacters().getData().equals("'")) {
+                                            tmpValues.add(event.asCharacters().getData());
+                                        } else {
+                                            event = xmler.peek();
                                         }
-
                                     }
 
                                     if (!tmpValues.isEmpty()) {
@@ -398,15 +390,12 @@ public final class StAXPaco implements Cdf {
                                     while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
                                         event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
-                                                tmpValues.add(event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
-                                            }
-
+                                        if (event.isCharacters() && !event.asCharacters().getData().equals("\n")
+                                                && !event.asCharacters().getData().equals("'")) {
+                                            tmpValues.add(event.asCharacters().getData());
+                                        } else {
+                                            event = xmler.peek();
                                         }
-
                                     }
 
                                     if (numAxe == 1) {
@@ -429,12 +418,11 @@ public final class StAXPaco implements Cdf {
                                     while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
                                         event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
-                                                tmpValues.add(event.asCharacters().getData());
-                                            } else {
-                                                event = xmler.peek();
-                                            }
+                                        if (event.isCharacters() && !event.asCharacters().getData().equals("\n")
+                                                && !event.asCharacters().getData().equals("'")) {
+                                            tmpValues.add(event.asCharacters().getData());
+                                        } else {
+                                            event = xmler.peek();
                                         }
                                     }
 
@@ -458,26 +446,24 @@ public final class StAXPaco implements Cdf {
                                     while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
                                         event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
+                                        if (event.isCharacters() && !event.asCharacters().getData().equals("\n")
+                                                && !event.asCharacters().getData().equals("'")) {
 
-                                                switch (numAxe) {
-                                                case 0:
-                                                    tmpAxeX.add(event.asCharacters().getData());
-                                                    break;
-                                                case 1:
-                                                    tmpAxeY.add(event.asCharacters().getData());
-                                                    break;
-                                                case 2:
-                                                    tmpValues.add(event.asCharacters().getData());
-                                                    break;
-                                                }
-
-                                            } else {
-                                                event = xmler.peek();
+                                            switch (numAxe) {
+                                            case 0:
+                                                tmpAxeX.add(event.asCharacters().getData());
+                                                break;
+                                            case 1:
+                                                tmpAxeY.add(event.asCharacters().getData());
+                                                break;
+                                            case 2:
+                                                tmpValues.add(event.asCharacters().getData());
+                                                break;
                                             }
-                                        }
 
+                                        } else {
+                                            event = xmler.peek();
+                                        }
                                     }
 
                                     if (numAxe == 2) {
@@ -503,27 +489,24 @@ public final class StAXPaco implements Cdf {
                                     while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
                                         event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
+                                        if (event.isCharacters() && !event.asCharacters().getData().equals("\n")
+                                                && !event.asCharacters().getData().equals("'")) {
 
-                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
-
-                                                switch (numAxe) {
-                                                case 0:
-                                                    tmpAxeX.add(event.asCharacters().getData());
-                                                    break;
-                                                case 1:
-                                                    tmpAxeY.add(event.asCharacters().getData());
-                                                    break;
-                                                case 2:
-                                                    tmpValues.add(event.asCharacters().getData());
-                                                    break;
-                                                }
-
-                                            } else {
-                                                event = xmler.peek();
+                                            switch (numAxe) {
+                                            case 0:
+                                                tmpAxeX.add(event.asCharacters().getData());
+                                                break;
+                                            case 1:
+                                                tmpAxeY.add(event.asCharacters().getData());
+                                                break;
+                                            case 2:
+                                                tmpValues.add(event.asCharacters().getData());
+                                                break;
                                             }
-                                        }
 
+                                        } else {
+                                            event = xmler.peek();
+                                        }
                                     }
 
                                     if (numAxe == 2) {
@@ -549,26 +532,24 @@ public final class StAXPaco implements Cdf {
                                     while (!event.toString().equals("</SW-VALUES-PHYS>")) {
 
                                         event = xmler.nextEvent();
-                                        if (event.isCharacters()) {
-                                            if (!event.asCharacters().getData().equals("\n") && !event.asCharacters().getData().equals("'")) {
+                                        if (event.isCharacters() && !event.asCharacters().getData().equals("\n")
+                                                && !event.asCharacters().getData().equals("'")) {
 
-                                                switch (numAxe) {
-                                                case 0:
-                                                    tmpAxeX.add(event.asCharacters().getData());
-                                                    break;
-                                                case 1:
-                                                    tmpAxeY.add(event.asCharacters().getData());
-                                                    break;
-                                                case 2:
-                                                    tmpValues.add(event.asCharacters().getData());
-                                                    break;
-                                                }
-
-                                            } else {
-                                                event = xmler.peek();
+                                            switch (numAxe) {
+                                            case 0:
+                                                tmpAxeX.add(event.asCharacters().getData());
+                                                break;
+                                            case 1:
+                                                tmpAxeY.add(event.asCharacters().getData());
+                                                break;
+                                            case 2:
+                                                tmpValues.add(event.asCharacters().getData());
+                                                break;
                                             }
-                                        }
 
+                                        } else {
+                                            event = xmler.peek();
+                                        }
                                     }
 
                                     if (numAxe == 2) {
@@ -597,10 +578,8 @@ public final class StAXPaco implements Cdf {
 
                                     event = xmler.nextEvent();
 
-                                    if (event.isStartElement()) {
-                                        if (event.asStartElement().getName().toString().equals("SW-CS-ENTRY")) {
-                                            nbEntry++;
-                                        }
+                                    if (event.isStartElement() && event.asStartElement().getName().toString().equals("SW-CS-ENTRY")) {
+                                        nbEntry++;
                                     }
 
                                     if (event.isStartElement()) {
@@ -623,10 +602,8 @@ public final class StAXPaco implements Cdf {
                                             while (!event.toString().equals("</REMARK>")) {
                                                 event = xmler.nextEvent();
 
-                                                if (event.isCharacters()) {
-                                                    if (!event.asCharacters().getData().equals("\n")) {
-                                                        pRemark.append(event.asCharacters().getData());
-                                                    }
+                                                if (event.isCharacters() && !event.asCharacters().getData().equals("\n")) {
+                                                    pRemark.append(event.asCharacters().getData());
                                                 }
 
                                                 if (event.isEndElement() && pRemark.length() > 0) {
@@ -643,7 +620,6 @@ public final class StAXPaco implements Cdf {
 
                                         }
                                     }
-
                                 }
 
                                 if (nbEntry > 0) {
@@ -668,43 +644,43 @@ public final class StAXPaco implements Cdf {
                     // On cree la variable
                     switch (category) {
                     case Cdf.VALUE:
-                        this.listLabel.add(new Scalaire(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Scalaire(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.VALUE);
                         break;
                     case Cdf.ASCII:
-                        this.listLabel.add(new Scalaire(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Scalaire(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.ASCII);
                         break;
                     case Cdf.VALUE_BLOCK:
-                        this.listLabel.add(new ValueBlock(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new ValueBlock(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.VALUE_BLOCK);
                         break;
                     case Cdf.AXIS_VALUES:
-                        this.listLabel.add(new Axis(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Axis(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.AXIS_VALUES);
                         break;
                     case Cdf.CURVE_INDIVIDUAL:
-                        this.listLabel.add(new Curve(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Curve(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.CURVE_INDIVIDUAL);
                         break;
                     case Cdf.CURVE_FIXED:
-                        this.listLabel.add(new Curve(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Curve(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.CURVE_FIXED);
                         break;
                     case Cdf.CURVE_GROUPED:
-                        this.listLabel.add(new Curve(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Curve(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.CURVE_GROUPED);
                         break;
                     case Cdf.MAP_INDIVIDUAL:
-                        this.listLabel.add(new Map(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Map(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.MAP_INDIVIDUAL);
                         break;
                     case Cdf.MAP_FIXED:
-                        this.listLabel.add(new Map(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Map(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.MAP_FIXED);
                         break;
                     case Cdf.MAP_GROUPED:
-                        this.listLabel.add(new Map(shortName.toString(), longName, category, swFeatureRef, unite, history, valeur));
+                        this.listLabel.add(new Map(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
                         listCategory.add(Cdf.MAP_GROUPED);
                         break;
                     }
@@ -736,6 +712,7 @@ public final class StAXPaco implements Cdf {
             }
 
             shortName.setLength(0);
+            longName.setLength(0);
             shortNameUnit.setLength(0);
             swUnitDisplay.setLength(0);
             pRemark.setLength(0);
@@ -743,13 +720,16 @@ public final class StAXPaco implements Cdf {
             tmpAxeX.clear();
             tmpAxeY.clear();
             tmpValues.clear();
+            tmpStringVal.setLength(0);
 
             tmpDate.clear();
             tmpAuteur.clear();
             tmpScore.clear();
             tmpRemark.clear();
 
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             e.printStackTrace();
             SWToolsMain.getLogger().severe("Erreur sur l'ouverture de : " + this.name);
         } finally {
