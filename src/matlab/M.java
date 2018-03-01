@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,7 +26,6 @@ public final class M implements Cdf {
 
     private static BufferedReader buf = null;
     private static String line;
-    private static final NumberFormat nbf = NumberFormat.getInstance();
 
     private static final History[] EMPTY_COMMENT = new History[0];
 
@@ -41,8 +39,6 @@ public final class M implements Cdf {
     private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1);
 
     public M(final File file) {
-
-        nbf.setMaximumFractionDigits(1);
 
         this.name = file.getName().substring(0, file.getName().length() - 2);
 

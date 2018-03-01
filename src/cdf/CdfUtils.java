@@ -116,7 +116,7 @@ public abstract class CdfUtils {
                                 if (!var.getValues().getValue(y, x).equals(varCompar.getValues().getValue(y, x))) {
                                     if (modeValeur) {
                                         varBase.getValues().setValue(y, x,
-                                        		var.getValues().getValue(y, x) + " | " + varCompar.getValues().getValue(y, x));
+                                                var.getValues().getValue(y, x) + " | " + varCompar.getValues().getValue(y, x));
                                     } else {
                                         if (Utilitaire.isNumber(var.getValues().getValue(y, x))
                                                 && Utilitaire.isNumber(varCompar.getValues().getValue(y, x))) {
@@ -508,6 +508,77 @@ public abstract class CdfUtils {
                 printWriter.close();
         }
         return true;
+    }
+
+    public static final boolean toHtml(Cdf cdf, final File file) {
+
+        PrintWriter printWriter = null;
+
+        try {
+            printWriter = new PrintWriter(file);
+
+            printWriter.println("<!DOCTYPE html>");
+            printWriter.println("<html>");
+            printWriter.println("<head>");
+            printWriter.println("<title>SWTools - Export Html</title>");
+            printWriter.println("<meta charset=utf-8/>");
+            printWriter.println("</head>");
+            printWriter.println("<body>");
+
+            printWriter.println("<h1 align=center>" + cdf.getName() + "</h1>");
+
+            for (Variable var : cdf.getListLabel()) {
+
+                printWriter.println("<hr align=center size=1 width=50%>");
+                printWriter.println("<h2>" + var.getShortName() + "</h2>");
+                printWriter.println("<blockquote>");
+                printWriter.println("<p>Description : " + var.getLongName() + "</p>");
+                printWriter.println("<p>Fonction : " + var.getSwFeatureRef() + "</p>");
+
+                final StringBuilder unite = new StringBuilder();
+                for (String s : var.getSwUnitRef()) {
+                    unite.append("[" + s + "] ");
+                }
+
+                printWriter.println("<p>Unite(s) : " + unite + "</p>");
+                printWriter.println("<p>Maturite : " + var.getLastScore() + "%" + "</p>");
+                printWriter.println("<p>Valeur(s) :</p>");
+                printWriter.println("<table border cellpadding=5>");
+
+                for (int y = 0; y < var.getValues().getDimY(); y++) {
+
+                    printWriter.println("<tr>"); // Debut d'une ligne
+
+                    for (int x = 0; x < var.getValues().getDimX(); x++) {
+
+                        if (y * x == 0) {
+                            printWriter.println("<th align=center>" + var.getValues().getValue(y, x) + "</th>");
+                        } else {
+                            printWriter.println("<td align=center>" + var.getValues().getValue(y, x) + "</td>");
+                        }
+
+                    }
+
+                    printWriter.println("</tr>"); // Fin d'une ligne
+
+                }
+
+                printWriter.println("</table>");
+                printWriter.println("</blockquote>");
+            }
+
+            printWriter.println("</body>");
+            printWriter.println("</html>");
+
+        } catch (FileNotFoundException e) {
+            SWToolsMain.getLogger().severe(e.getMessage());
+            return false;
+        } finally {
+            if (printWriter != null)
+                printWriter.close();
+        }
+        return true;
+
     }
 
 }

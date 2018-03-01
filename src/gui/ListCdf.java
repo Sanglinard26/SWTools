@@ -46,6 +46,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     private static final String ICON_EXCEL = "/excel_icon_24.png";
     private static final String ICON_TEXT = "/text_icon_24.png";
     private static final String ICON_MATLAB = "/matlab_icon_24.png";
+    private static final String ICON_HTML = "/html_icon_24.png";
     private static final String ICON_TRASH = "/corbeille_icon_24.png";
     private static final String ICON_COMPARAISON = "/comparaison_icon_24.png";
     private static final String ICON_UP = "/up_icon_24.png";
@@ -340,6 +341,71 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                                                 JOptionPane.INFORMATION_MESSAGE)) {
                                         case JOptionPane.OK_OPTION:
                                             result = CdfUtils.toM(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile(), transpose);
+                                            break;
+                                        case JOptionPane.NO_OPTION:
+                                            this.actionPerformed(e);
+                                            return;
+                                        default:
+                                            break;
+                                        }
+                                    }
+
+                                    if (result) {
+
+                                        final int reponse = JOptionPane.showConfirmDialog(null,
+                                                "Export termine !\n" + fileChooser.getSelectedFile() + "\nVoulez-vous ouvrir le fichier?", null,
+                                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                                        switch (reponse) {
+                                        case JOptionPane.OK_OPTION:
+                                            try {
+                                                if (Desktop.isDesktopSupported()) {
+                                                    Desktop.getDesktop().open(fileChooser.getSelectedFile());
+                                                }
+                                            } catch (IOException e1) {
+                                                e1.printStackTrace();
+                                            }
+                                            break;
+                                        case JOptionPane.NO_OPTION:
+                                            break;
+                                        }
+                                    } else {
+                                        JOptionPane.showMessageDialog(null, "Export abandonne !");
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    menuExport.add(menuItem);
+
+                    menuExport.addSeparator();
+                    menuItem = new JMenuItem("Exporter le fichier en html", new ImageIcon(getClass().getResource(ICON_HTML)));
+                    menuItem.addActionListener(new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+
+                            if (true) {
+                                final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_CDF));
+                                fileChooser.setDialogTitle("Enregistement du fichier");
+                                fileChooser.setFileFilter(new FileNameExtensionFilter("Fichier html (*.html)", "html"));
+                                fileChooser.setSelectedFile(new File(ListCdf.this.getSelectedValue() + ".html"));
+                                final int rep = fileChooser.showSaveDialog(null);
+
+                                if (rep == JFileChooser.APPROVE_OPTION) {
+
+                                    boolean result = false;
+
+                                    if (!fileChooser.getSelectedFile().exists()) {
+
+                                        result = CdfUtils.toHtml(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile());
+
+                                    } else {
+
+                                        switch (JOptionPane.showConfirmDialog(null, "Le fichier existe deja, ecraser?", null,
+                                                JOptionPane.INFORMATION_MESSAGE)) {
+                                        case JOptionPane.OK_OPTION:
+                                            result = CdfUtils.toHtml(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile());
                                             break;
                                         case JOptionPane.NO_OPTION:
                                             this.actionPerformed(e);

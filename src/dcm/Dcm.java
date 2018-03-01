@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,13 +48,7 @@ public final class Dcm implements Cdf {
         }
     };
 
-    private static final NumberFormat nbf = NumberFormat.getInstance();
-
     private final HashSet<String> listCategory = new HashSet<String>();
-
-    static {
-        nbf.setMaximumFractionDigits(1);
-    }
 
     public Dcm(final File file) {
 
