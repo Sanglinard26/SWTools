@@ -281,13 +281,6 @@ public final class PanelCDF extends JComponent {
             final int reponse = jFileChooser.showOpenDialog(PanelCDF.this);
             if (reponse == JFileChooser.APPROVE_OPTION) {
 
-                for (File f : jFileChooser.getSelectedFiles()) {
-                    if (Utilitaire.getExtension(f).equals("xml")) {
-                        Utilitaire.createDtd(jFileChooser.getSelectedFile().getParent());
-                        break;
-                    }
-                }
-
                 new TaskCharging(jFileChooser.getSelectedFiles()).execute();
 
             }
@@ -297,7 +290,7 @@ public final class PanelCDF extends JComponent {
 
     private final class TaskCharging extends SwingWorker<Integer, Integer> {
 
-    	private static final int MAXSIZE = 10000;
+        private static final int MAXSIZE = 10000;
         private File[] filesCDF;
         private Cdf cdf;
         private final StringBuilder cdfName = new StringBuilder();

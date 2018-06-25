@@ -92,6 +92,11 @@ public abstract class Variable {
         sb.append("Nom : " + this.shortName + "\n");
         sb.append("Description : " + this.longName + "\n");
         sb.append("Fonction : " + this.swFeatureRef + "\n");
+        sb.append("Unite : ");
+        for (String unit : this.swUnitRef) {
+            sb.append("[" + unit + "]");
+        }
+        sb.append("\n");
         return sb.toString();
     }
 

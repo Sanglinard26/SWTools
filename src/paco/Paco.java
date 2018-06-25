@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,6 +23,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import cdf.Axis;
@@ -54,6 +57,7 @@ public final class Paco implements Cdf {
     static {
         factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringElementContentWhitespace(true);
+        factory.setValidating(false);
     }
 
     public Paco(final File file) {
@@ -65,6 +69,18 @@ public final class Paco implements Cdf {
             long start = System.currentTimeMillis();
 
             builder = factory.newDocumentBuilder();
+
+            builder.setEntityResolver(new EntityResolver() {
+
+                @Override
+                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+
+                    final String dtdName = systemId.substring(systemId.lastIndexOf("/") + 1, systemId.length());
+                    final InputStream dtdStream = Paco.class.getResourceAsStream("/" + dtdName);
+
+                    return new InputSource(dtdStream);
+                }
+            });
 
             document = builder.parse(new File(file.toURI())); // Permet de virer l'exception <java.net.malformedurlexception unknown protocol c>
 
