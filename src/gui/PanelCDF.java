@@ -379,13 +379,6 @@ public final class PanelCDF extends JComponent {
             try {
                 dropFiles = (List<File>) objetTransfer.getTransferData(DataFlavor.javaFileListFlavor);
 
-                for (int nFile = 0; nFile < dropFiles.size(); nFile++) {
-                    if (Utilitaire.getExtension(dropFiles.get(nFile)).equals("xml")) {
-                        Utilitaire.createDtd(dropFiles.get(0).getParent());
-                        break;
-                    }
-                }
-
                 new TaskCharging(dropFiles.toArray(new File[dropFiles.size()])).execute();
 
             } catch (UnsupportedFlavorException e) {
@@ -420,6 +413,10 @@ public final class PanelCDF extends JComponent {
 
         }
 
+    }
+
+    public static Variable getSelVariable() {
+        return selVariable;
     }
 
     public final static JRadioButton getRadiobtval() {

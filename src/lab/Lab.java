@@ -62,7 +62,7 @@ public final class Lab {
             String line;
 
             while ((line = buf.readLine()) != null) {
-                if (!line.equals("[Label]")) {
+                if (!line.equals("[Label]") && !line.isEmpty()) {
                     listVariable.add(new Variable(line.toString(), this.name));
                 }
             }

@@ -36,4 +36,43 @@ public final class Values {
         this.values[idx] = Utilitaire.cutNumber(value);
     }
 
+    public final double[] toDouble1D() {
+
+        double[] doubleValues = new double[values.length];
+
+        for (int i = 0; i < this.values.length; i++) {
+            if (Utilitaire.isNumber(this.values[i])) {
+                doubleValues[i] = Double.parseDouble(this.values[i]);
+            } else {
+                doubleValues = new double[0];
+                break;
+            }
+        }
+
+        return doubleValues;
+    }
+
+    public final double[][] toDouble2D() {
+
+        double[][] doubleValues = new double[dimY][dimX];
+
+        for (short y = 0; y < dimY; y++) {
+            for (short x = 0; x < dimX; x++) {
+
+                if (Utilitaire.isNumber(getValue(y, x))) {
+                    doubleValues[y][x] = Double.parseDouble(getValue(y, x));
+                } else {
+                    if (x * y != 0) {
+                        doubleValues = new double[0][0];
+                        break;
+                    }
+
+                }
+            }
+        }
+
+        return doubleValues;
+
+    }
+
 }

@@ -77,39 +77,32 @@ public final class PanelLab extends JComponent implements ListDataListener {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                if (listLabRef.getModel().getSize() == listLabWk.getModel().getSize()) {
+                final Thread thread = new Thread(new Runnable() {
 
-                    final Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
 
-                        @Override
-                        public void run() {
+                        final Lab multiLabRef = Lab.compilLab(listLabRef.getModel().getList());
+                        final Lab multiLabWk = Lab.compilLab(listLabWk.getModel().getList());
 
-                            final Lab multiLabRef = Lab.compilLab(listLabRef.getModel().getList());
-                            final Lab multiLabWk = Lab.compilLab(listLabWk.getModel().getList());
+                        final Set<Variable> listSup = new HashSet<Variable>(
+                                Math.max(multiLabRef.getListVariable().size(), multiLabWk.getListVariable().size()));
+                        final Set<Variable> listInf = new HashSet<Variable>(
+                                Math.max(multiLabRef.getListVariable().size(), multiLabWk.getListVariable().size()));
 
-                            final Set<Variable> listSup = new HashSet<Variable>(
-                                    Math.max(multiLabRef.getListVariable().size(), multiLabWk.getListVariable().size()));
-                            final Set<Variable> listInf = new HashSet<Variable>(
-                                    Math.max(multiLabRef.getListVariable().size(), multiLabWk.getListVariable().size()));
+                        listSup.addAll(multiLabWk.getDiffLab(multiLabRef));
+                        listInf.addAll(multiLabRef.getDiffLab(multiLabWk));
 
-                            listSup.addAll(multiLabWk.getDiffLab(multiLabRef));
-                            listInf.addAll(multiLabRef.getDiffLab(multiLabWk));
-
-                            if (listInf.size() != 0 | listSup.size() != 0) {
-                                listVarMoins.getModel().setList(new Lab(listInf));
-                                listVarPlus.getModel().setList(new Lab(listSup));
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Les fichiers Lab sont identiques !", "RESULTAT",
-                                        JOptionPane.INFORMATION_MESSAGE);
-                            }
+                        if (listInf.size() != 0 | listSup.size() != 0) {
+                            listVarMoins.getModel().setList(new Lab(listInf));
+                            listVarPlus.getModel().setList(new Lab(listSup));
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Les fichiers Lab sont identiques !", "RESULTAT", JOptionPane.INFORMATION_MESSAGE);
                         }
-                    });
+                    }
+                });
 
-                    thread.start();
-
-                } else {
-                    JOptionPane.showMessageDialog(null, "Le nombre de fichier a comparer est different !");
-                }
+                thread.start();
             }
         });
         setGbc(GridBagConstraints.HORIZONTAL, 2, 0, 1, 1, 0, 0, new Insets(0, 20, 0, 0), GridBagConstraints.CENTER);
@@ -275,13 +268,6 @@ public final class PanelLab extends JComponent implements ListDataListener {
 
             final int reponse = jFileChooser.showOpenDialog(PanelLab.this);
             if (reponse == JFileChooser.APPROVE_OPTION) {
-
-                for (File f : jFileChooser.getSelectedFiles()) {
-                    if (Utilitaire.getExtension(f).equals("xml")) {
-                        Utilitaire.createDtd(jFileChooser.getSelectedFile().getParent());
-                        break;
-                    }
-                }
 
                 for (File file : jFileChooser.getSelectedFiles()) {
                     if (e.getActionCommand().equals(BT_ADD_LAB_REF)) {

@@ -192,9 +192,14 @@ public final class Paco implements Cdf {
         String fullAttributAxe;
         String attributAxe;
         String[] splitAttributAxe;
+        String[] sharedAxis;
 
         for (int i = 0; i < nbLabel; i++) {
             label = (Element) listSwInstance.item(i);
+
+            longName = label.getElementsByTagName(LONG_NAME).item(0).getTextContent();
+            shortName = label.getElementsByTagName(SHORT_NAME).item(0).getTextContent();
+            category = label.getElementsByTagName(CATEGORY).item(0).getTextContent().intern(); // Test String.intern()
 
             if (label.getElementsByTagName(SW_FEATURE_REF).item(0) != null) {
                 swFeatureRef = label.getElementsByTagName(SW_FEATURE_REF).item(0).getTextContent().intern();
@@ -204,7 +209,8 @@ public final class Paco implements Cdf {
 
             swAxisCont = label.getElementsByTagName(SW_AXIS_CONT);
             nbAxe = swAxisCont.getLength();
-            swUnitRef = new String[swAxisCont.getLength()];
+            swUnitRef = new String[nbAxe];
+            sharedAxis = new String[nbAxe - 1];
 
             // A finir d'implementer pour les ValueBlock
             splitAttributAxe = null; // Le tableau est cense avoir trois elements
@@ -213,22 +219,25 @@ public final class Paco implements Cdf {
                     fullAttributAxe = swAxisCont.item(n).getAttributes().getNamedItem("SI").getTextContent();
                     if (fullAttributAxe.indexOf(";") > -1) {
                         attributAxe = fullAttributAxe.substring(fullAttributAxe.indexOf(";") + 1);
-                        if (attributAxe.indexOf("@") > -1) {
+                        if (attributAxe.indexOf("@") > -1) { // C'est une matrice
                             splitAttributAxe = attributAxe.split("@"); // nbColonne@nbLigne@nb?
+                        } else {
+                            sharedAxis[n] = attributAxe;
                         }
                     }
                 }
 
                 // Test String.intern()
-                swUnitRef[n] = unit.get(swAxisCont.item(n).getFirstChild().getTextContent().intern());
+                if (n < nbAxe - 1) {
+                    swUnitRef[n] = sharedAxis[n] + " ; " + unit.get(swAxisCont.item(n).getFirstChild().getTextContent().intern());
+                } else {
+                    swUnitRef[n] = unit.get(swAxisCont.item(n).getFirstChild().getTextContent().intern());
+                }
+
             }
             // _________________________________________
 
             swCsEntry = label.getElementsByTagName(SW_CS_ENTRY);
-
-            shortName = label.getElementsByTagName(SHORT_NAME).item(0).getTextContent();
-            longName = label.getElementsByTagName(LONG_NAME).item(0).getTextContent();
-            category = label.getElementsByTagName(CATEGORY).item(0).getTextContent().intern(); // Test String.intern()
 
             // System.out.println(shortName);
 
