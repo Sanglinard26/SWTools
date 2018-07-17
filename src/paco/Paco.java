@@ -227,8 +227,7 @@ public final class Paco implements Cdf {
                     }
                 }
 
-                // Test String.intern()
-                if (n < nbAxe - 1) {
+                if (category.contains("GROUPED") && n < nbAxe - 1) {
                     swUnitRef[n] = sharedAxis[n] + " ; " + unit.get(swAxisCont.item(n).getFirstChild().getTextContent().intern());
                 } else {
                     swUnitRef[n] = unit.get(swAxisCont.item(n).getFirstChild().getTextContent().intern());

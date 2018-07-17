@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -65,6 +66,7 @@ public final class StAXPaco implements Cdf {
         final String LONG_NAME = "LONG-NAME";
         final String CATEGORY = "CATEGORY";
         final String SW_CS_HISTORY = "SW-CS-HISTORY";
+        final String SW_AXIS_CONT = "SW-AXIS-CONT";
         //
 
         try {
@@ -89,6 +91,7 @@ public final class StAXPaco implements Cdf {
             final List<String> tmpAxeY = new ArrayList<String>();
             final List<String> tmpValues = new ArrayList<String>();
             final StringBuilder tmpStringVal = new StringBuilder();
+            final List<String> tmpSharedAxis = new ArrayList<String>();
             //
             // Pour les commentaires
             final List<String> tmpDate = new ArrayList<String>();
@@ -147,6 +150,7 @@ public final class StAXPaco implements Cdf {
                         numUnit = 0;
                         nbEntry = 0;
 
+                        tmpSharedAxis.clear();
                         tmpAxeX.clear();
                         tmpAxeY.clear();
                         tmpValues.clear();
@@ -175,6 +179,8 @@ public final class StAXPaco implements Cdf {
                                         }
 
                                     } while (!event.toString().equals("</SHORT-NAME>"));
+
+                                    // System.out.println(shortName);
 
                                     break;
                                 case LONG_NAME:
@@ -210,6 +216,21 @@ public final class StAXPaco implements Cdf {
                                         }
 
                                     } while (!event.isCharacters());
+
+                                    break;
+
+                                case SW_AXIS_CONT:
+
+                                    if (category.contains("GROUPED")) {
+                                        if (event.asStartElement().getAttributeByName(new QName("SI")) != null) {
+                                            tmpSharedAxis.add(event.asStartElement().getAttributeByName(new QName("SI")).getValue());
+                                            if (tmpSharedAxis.get(tmpSharedAxis.size() - 1).indexOf(";") > -1) {
+                                                tmpSharedAxis.set(tmpSharedAxis.size() - 1, tmpSharedAxis.get(tmpSharedAxis.size() - 1)
+                                                        .substring(tmpSharedAxis.get(tmpSharedAxis.size() - 1).indexOf(";") + 1));
+                                            }
+                                        }
+
+                                    }
 
                                     break;
 
@@ -253,7 +274,11 @@ public final class StAXPaco implements Cdf {
                                     do {
                                         event = xmler.nextEvent();
                                         if (event.isCharacters()) {
-                                            unite[numUnit] = unit.get(event.asCharacters().getData());
+                                            if (category.contains("GROUPED") && numUnit < unite.length - 1) {
+                                                unite[numUnit] = tmpSharedAxis.get(numUnit) + " ; " + unit.get(event.asCharacters().getData());
+                                            } else {
+                                                unite[numUnit] = unit.get(event.asCharacters().getData());
+                                            }
                                         }
 
                                     } while (!event.isCharacters());
@@ -645,8 +670,6 @@ public final class StAXPaco implements Cdf {
                             event = xmler.nextEvent();
                         }
 
-                        // System.out.println(shortName);
-
                         if (history == null) {
                             history = new History[0];
                         }
@@ -733,6 +756,7 @@ public final class StAXPaco implements Cdf {
             swUnitDisplay.setLength(0);
             pRemark.setLength(0);
 
+            tmpSharedAxis.clear();
             tmpAxeX.clear();
             tmpAxeY.clear();
             tmpValues.clear();
