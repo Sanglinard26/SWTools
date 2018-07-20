@@ -2,12 +2,17 @@ package cdf;
 
 public final class Curve extends Variable {
 
+	private String[] sharedAxis;
     private final Values values;
 
     public Curve(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;
-
+    }
+    
+    public Curve(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values, String[] sharedAxis) {
+        this(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory, values);
+        this.sharedAxis = sharedAxis;
     }
 
     @Override
@@ -30,6 +35,10 @@ public final class Curve extends Variable {
     public final String getUnitZ() {
         return super.getSwUnitRef()[1];
     }
+    
+    public String[] getSharedAxis() {
+		return sharedAxis;
+	}
 
     @Override
     public final Values getValues() {

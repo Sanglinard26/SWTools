@@ -78,7 +78,7 @@ public abstract class CdfUtils {
 							break;
 						case Cdf.CURVE_GROUPED:
 							varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-									new History[0], copyValues);
+									new History[0], copyValues, ((Curve) var).getSharedAxis());
 							break;
 						case Cdf.CURVE_INDIVIDUAL:
 							varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
@@ -90,7 +90,7 @@ public abstract class CdfUtils {
 							break;
 						case Cdf.MAP_GROUPED:
 							varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-									new History[0], copyValues);
+									new History[0], copyValues, ((Map) var).getSharedAxis());
 							break;
 						case Cdf.MAP_INDIVIDUAL:
 							varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),

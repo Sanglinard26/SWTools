@@ -39,286 +39,333 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.LayerUI;
 
+import cdf.Cdf;
+import cdf.Curve;
 import cdf.ListModelLabel;
+import cdf.Map;
 import cdf.Variable;
 
 public final class ListLabel extends JList<Variable> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private static final String ICON_TEXT = "/text_icon_24.png";
-    private static final String ICON_IMAGE = "/image_icon_24.png";
-    private static final String ICON_OLD_SEARCH = "/oldsearch_24.png";
-    private static final String ICON_CLEAR = "/clear_icon_24.png";
+	private static final String ICON_TEXT = "/text_icon_24.png";
+	private static final String ICON_IMAGE = "/image_icon_24.png";
+	private static final String ICON_OLD_SEARCH = "/oldsearch_24.png";
+	private static final String ICON_CLEAR = "/clear_icon_24.png";
 
-    private final FilterField filterField;
+	private final FilterField filterField;
 
-    public ListLabel(ListModelLabel dataModel) {
-        super(dataModel);
-        setCellRenderer(new ListLabelRenderer());
-        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        filterField = new FilterField();
-        addMouseListener(new ListMouseListener());
-    }
+	public ListLabel(ListModelLabel dataModel) {
+		super(dataModel);
+		setCellRenderer(new ListLabelRenderer());
+		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		filterField = new FilterField();
+		addMouseListener(new ListMouseListener());
+	}
 
-    @Override
-    public ListModelLabel getModel() {
-        return (ListModelLabel) super.getModel();
-    }
+	@Override
+	public ListModelLabel getModel() {
+		return (ListModelLabel) super.getModel();
+	}
 
-    private final class ListMouseListener extends MouseAdapter {
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger() && ListLabel.this.getSelectedValue() != null
-                    && ListLabel.this.locationToIndex(e.getPoint()) == ListLabel.this.getSelectedIndex()) {
-                final JPopupMenu menu = new JPopupMenu();
-                final JMenu menuCopy = new JMenu("Copier dans le presse-papier");
-                JMenuItem subMenu = new JMenuItem("Format image", new ImageIcon(getClass().getResource(ICON_IMAGE)));
-                subMenu.addActionListener(new ActionListener() {
+	private final class ListMouseListener extends MouseAdapter {
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (e.isPopupTrigger() && ListLabel.this.getSelectedValue() != null
+					&& ListLabel.this.locationToIndex(e.getPoint()) == ListLabel.this.getSelectedIndex()) {
+				final JPopupMenu menu = new JPopupMenu();
+				final JMenu menuCopy = new JMenu("Copier dans le presse-papier");
+				JMenuItem subMenu = new JMenuItem("Format image", new ImageIcon(getClass().getResource(ICON_IMAGE)));
+				subMenu.addActionListener(new ActionListener() {
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        ListLabel.this.getSelectedValue().copyImgToClipboard();
-                    }
-                });
-                menuCopy.add(subMenu);
-                menuCopy.addSeparator();
-                subMenu = new JMenuItem("Format texte", new ImageIcon(getClass().getResource(ICON_TEXT)));
-                subMenu.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						ListLabel.this.getSelectedValue().copyImgToClipboard();
+					}
+				});
+				menuCopy.add(subMenu);
+				menuCopy.addSeparator();
+				subMenu = new JMenuItem("Format texte", new ImageIcon(getClass().getResource(ICON_TEXT)));
+				subMenu.addActionListener(new ActionListener() {
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        ListLabel.this.getSelectedValue().copyTxtToClipboard();
-                    }
-                });
-                menuCopy.add(subMenu);
-                menu.add(menuCopy);
-                menu.show(e.getComponent(), e.getX(), e.getY());
-            }
-        }
-    }
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						ListLabel.this.getSelectedValue().copyTxtToClipboard();
+					}
+				});
+				menuCopy.add(subMenu);
+				menu.add(menuCopy);
 
-    protected class FilterField extends JComponent implements DocumentListener, ActionListener {
+				if(ListLabel.this.getSelectedValue().getCategory() == Cdf.AXIS_VALUES)
+				{
+					final JMenuItem menuShowDependency = new JMenuItem("Montrer les variables dependantes");
+					menuShowDependency.addActionListener(new ActionListener() {
 
-        private static final long serialVersionUID = 1L;
+						@Override
+						public void actionPerformed(ActionEvent e) {
 
-        private final JComboBox<String> typeFilter;
-        private final JTextField txtFiltre;
-        private final JPanel panelBt;
-        private final JButton oldSearchBt;
-        private final JButton delSearchBt;
-        private JPopupMenu oldSearchMenu;
-        private LinkedList<String> oldSearchItem;
+							final String axisShortName = ListLabel.this.getSelectedValue().getShortName();
+							final StringBuilder dependencyVariable = new StringBuilder();
+							String[] sharedAxis = null;
 
-        public FilterField() {
-            super();
-            setLayout(new BorderLayout());
+							for(Variable var : ListLabel.this.getModel().getList())
+							{
+								sharedAxis = null;
+								
+								if(var instanceof Curve)
+								{	
+									sharedAxis = ((Curve) var).getSharedAxis();
+								}else if(var instanceof Map)
+								{
+									sharedAxis = ((Map) var).getSharedAxis();
+								}
 
-            panelBt = new JPanel(new GridLayout(1, 2));
+								if(sharedAxis != null)
+								{
+									for(String axis : sharedAxis)
+									{
+										if(axisShortName.equals(axis))
+										{
+											dependencyVariable.append(var.getShortName() + "\n");
+										}
+									}
+								}
 
-            typeFilter = new JComboBox<String>();
-            populateFilter(null);
-            ((JLabel) typeFilter.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-            typeFilter.addActionListener(this);
+							}
 
-            txtFiltre = new JTextField(20);
-            txtFiltre.setToolTipText("Clicker 'Entrer' pour enregistrer le filtre dans l'historique");
-            txtFiltre.getDocument().addDocumentListener(this);
-            txtFiltre.addActionListener(this);
+							System.out.println("Variables dependantes : " + dependencyVariable.toString());
+						}
+					});
+					menu.add(menuShowDependency);
+				}
 
-            delSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_CLEAR)));
-            delSearchBt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            delSearchBt.setToolTipText("Suppression du filtre");
-            delSearchBt.addActionListener(new ActionListener() {
+				menu.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
+	}
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    txtFiltre.setText("");
-                }
-            });
-            panelBt.add(delSearchBt);
+	protected class FilterField extends JComponent implements DocumentListener, ActionListener {
 
-            oldSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_OLD_SEARCH)));
-            oldSearchBt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            oldSearchBt.setToolTipText("Historique de filtre");
-            oldSearchBt.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    popMenu(e.getX(), e.getY());
-                }
-            });
-            panelBt.add(oldSearchBt);
+		private static final long serialVersionUID = 1L;
 
-            add(typeFilter, BorderLayout.WEST);
-            add(new JLayer<JTextField>(txtFiltre, new ValidationLayerUI()), BorderLayout.CENTER);
-            add(panelBt, BorderLayout.EAST);
+		private final JComboBox<String> typeFilter;
+		private final JTextField txtFiltre;
+		private final JPanel panelBt;
+		private final JButton oldSearchBt;
+		private final JButton delSearchBt;
+		private JPopupMenu oldSearchMenu;
+		private LinkedList<String> oldSearchItem;
 
-            oldSearchItem = new LinkedList<String>();
-        }
+		public FilterField() {
+			super();
+			setLayout(new BorderLayout());
 
-        public final void populateFilter(Set<String> list) {
+			panelBt = new JPanel(new GridLayout(1, 2));
 
-            final DefaultComboBoxModel<String> cbModel = (DefaultComboBoxModel<String>) typeFilter.getModel();
+			typeFilter = new JComboBox<String>();
+			populateFilter(null);
+			((JLabel) typeFilter.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+			typeFilter.addActionListener(this);
 
-            if (typeFilter.getModel().getSize() > 0)
-                cbModel.removeAllElements();
+			txtFiltre = new JTextField(20);
+			txtFiltre.setToolTipText("Clicker 'Entrer' pour enregistrer le filtre dans l'historique");
+			txtFiltre.getDocument().addDocumentListener(this);
+			txtFiltre.addActionListener(this);
 
-            cbModel.addElement("ALL");
+			delSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_CLEAR)));
+			delSearchBt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			delSearchBt.setToolTipText("Suppression du filtre");
+			delSearchBt.addActionListener(new ActionListener() {
 
-            if (list != null)
-                for (String s : list) {
-                    cbModel.addElement(s);
-                }
-        }
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					txtFiltre.setText("");
+				}
+			});
+			panelBt.add(delSearchBt);
 
-        public final void popMenu(int x, int y) {
-            oldSearchMenu = new JPopupMenu();
-            Iterator<String> it = oldSearchItem.iterator();
-            while (it.hasNext()) {
-                oldSearchMenu.add(new OldSearchAct(it.next().toString()));
-            }
-            oldSearchMenu.show(oldSearchBt, x, y);
-        }
+			oldSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_OLD_SEARCH)));
+			oldSearchBt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			oldSearchBt.setToolTipText("Historique de filtre");
+			oldSearchBt.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					popMenu(e.getX(), e.getY());
+				}
+			});
+			panelBt.add(oldSearchBt);
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == txtFiltre) {
-                oldSearchItem.addFirst(txtFiltre.getText());
-                if (oldSearchItem.size() > 10) {
-                    oldSearchItem.removeLast();
-                }
-            }
-            if (e.getSource() == typeFilter) {
-                clearSelection();
-                if (typeFilter.getSelectedItem() != null)
-                    getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-            }
-        }
+			add(typeFilter, BorderLayout.WEST);
+			add(new JLayer<JTextField>(txtFiltre, new ValidationLayerUI()), BorderLayout.CENTER);
+			add(panelBt, BorderLayout.EAST);
 
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            Variable selectedVar = null;
-            if (getSelectedIndex() > -1) {
-                selectedVar = getModel().getElementAt(getSelectedIndex());
-            }
-            if (selectedVar != null) {
-                clearSelection();
-                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-                setSelectedIndex(0);
-                if (getModel().getSize() > 0) {
-                    setSelectedValue(selectedVar, true);
-                } else {
-                    setSelectedIndex(-1);
-                }
+			oldSearchItem = new LinkedList<String>();
+		}
 
-            } else {
-                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-            }
-        }
+		public final void populateFilter(Set<String> list) {
 
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            Variable selectedVar = null;
-            if (getSelectedIndex() > -1) {
-                selectedVar = getModel().getElementAt(getSelectedIndex());
-            }
-            if (selectedVar != null) {
-                clearSelection();
-                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-                setSelectedIndex(0);
-                if (getModel().getSize() > 0) {
-                    setSelectedValue(selectedVar, true);
-                } else {
-                    setSelectedIndex(-1);
-                }
-            } else {
-                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-            }
-        }
+			final DefaultComboBoxModel<String> cbModel = (DefaultComboBoxModel<String>) typeFilter.getModel();
 
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            Variable selectedVar = null;
-            if (getSelectedIndex() > -1) {
-                selectedVar = getModel().getElementAt(getSelectedIndex());
-            }
-            if (selectedVar != null) {
-                clearSelection();
-                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-                setSelectedIndex(0);
-                if (getModel().getSize() > 0) {
-                    setSelectedValue(selectedVar, true);
-                } else {
-                    setSelectedIndex(-1);
-                }
-            } else {
-                getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-            }
-        }
+			if (typeFilter.getModel().getSize() > 0)
+				cbModel.removeAllElements();
 
-    }
+			cbModel.addElement("ALL");
 
-    private final class OldSearchAct extends AbstractAction {
+			if (list != null)
+				for (String s : list) {
+					cbModel.addElement(s);
+				}
+		}
 
-        private static final long serialVersionUID = 1L;
+		public final void popMenu(int x, int y) {
+			oldSearchMenu = new JPopupMenu();
+			Iterator<String> it = oldSearchItem.iterator();
+			while (it.hasNext()) {
+				oldSearchMenu.add(new OldSearchAct(it.next().toString()));
+			}
+			oldSearchMenu.show(oldSearchBt, x, y);
+		}
 
-        private String terme;
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() == txtFiltre) {
+				oldSearchItem.addFirst(txtFiltre.getText());
+				if (oldSearchItem.size() > 10) {
+					oldSearchItem.removeLast();
+				}
+			}
+			if (e.getSource() == typeFilter) {
+				clearSelection();
+				if (typeFilter.getSelectedItem() != null)
+					getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+			}
+		}
 
-        public OldSearchAct(String terme) {
-            this.terme = terme;
-            putValue(javax.swing.Action.NAME, terme);
-        }
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			Variable selectedVar = null;
+			if (getSelectedIndex() > -1) {
+				selectedVar = getModel().getElementAt(getSelectedIndex());
+			}
+			if (selectedVar != null) {
+				clearSelection();
+				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+				setSelectedIndex(0);
+				if (getModel().getSize() > 0) {
+					setSelectedValue(selectedVar, true);
+				} else {
+					setSelectedIndex(-1);
+				}
 
-        @Override
-        public String toString() {
-            return terme;
-        }
+			} else {
+				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+			}
+		}
 
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            getFilterField().txtFiltre.setText(terme);
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			Variable selectedVar = null;
+			if (getSelectedIndex() > -1) {
+				selectedVar = getModel().getElementAt(getSelectedIndex());
+			}
+			if (selectedVar != null) {
+				clearSelection();
+				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+				setSelectedIndex(0);
+				if (getModel().getSize() > 0) {
+					setSelectedValue(selectedVar, true);
+				} else {
+					setSelectedIndex(-1);
+				}
+			} else {
+				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+			}
+		}
 
-        }
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			Variable selectedVar = null;
+			if (getSelectedIndex() > -1) {
+				selectedVar = getModel().getElementAt(getSelectedIndex());
+			}
+			if (selectedVar != null) {
+				clearSelection();
+				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+				setSelectedIndex(0);
+				if (getModel().getSize() > 0) {
+					setSelectedValue(selectedVar, true);
+				} else {
+					setSelectedIndex(-1);
+				}
+			} else {
+				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+			}
+		}
 
-    }
+	}
 
-    public final FilterField getFilterField() {
-        return filterField;
-    }
+	private final class OldSearchAct extends AbstractAction {
 
-    public final void clearFilter() {
-        getFilterField().txtFiltre.setText("");
-        getFilterField().typeFilter.getModel().setSelectedItem("ALL");
-    }
+		private static final long serialVersionUID = 1L;
 
-    final class ValidationLayerUI extends LayerUI<JTextField> {
+		private String terme;
 
-        private static final long serialVersionUID = 1L;
+		public OldSearchAct(String terme) {
+			this.terme = terme;
+			putValue(javax.swing.Action.NAME, terme);
+		}
 
-        @Override
-        public void paint(Graphics g, JComponent c) {
-            super.paint(g, c);
+		@Override
+		public String toString() {
+			return terme;
+		}
 
-            if (ListLabel.this.getFilterField().txtFiltre.getText().length() > 0 && ListLabel.this.getModel().getSize() < 1) {
-                Graphics2D g2 = (Graphics2D) g.create();
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			getFilterField().txtFiltre.setText(terme);
 
-                // Paint the red X.
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                int w = c.getWidth();
-                int h = c.getHeight();
-                int s = 16;
-                int pad = 4;
-                int x = w - pad - s;
-                int y = (h - s) / 2;
-                g2.setPaint(Color.RED);
-                g2.fillRect(x, y, s + 1, s + 1);
-                g2.setPaint(Color.WHITE);
-                g2.setStroke(new BasicStroke(2f));
-                g2.drawLine(x, y, x + s, y + s);
-                g2.drawLine(x, y + s, x + s, y);
+		}
 
-                g2.dispose();
-            }
-        }
-    }
+	}
+
+	public final FilterField getFilterField() {
+		return filterField;
+	}
+
+	public final void clearFilter() {
+		getFilterField().txtFiltre.setText("");
+		getFilterField().typeFilter.getModel().setSelectedItem("ALL");
+	}
+
+	final class ValidationLayerUI extends LayerUI<JTextField> {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void paint(Graphics g, JComponent c) {
+			super.paint(g, c);
+
+			if (ListLabel.this.getFilterField().txtFiltre.getText().length() > 0 && ListLabel.this.getModel().getSize() < 1) {
+				Graphics2D g2 = (Graphics2D) g.create();
+
+				// Paint the red X.
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				int w = c.getWidth();
+				int h = c.getHeight();
+				int s = 16;
+				int pad = 4;
+				int x = w - pad - s;
+				int y = (h - s) / 2;
+				g2.setPaint(Color.RED);
+				g2.fillRect(x, y, s + 1, s + 1);
+				g2.setPaint(Color.WHITE);
+				g2.setStroke(new BasicStroke(2f));
+				g2.drawLine(x, y, x + s, y + s);
+				g2.drawLine(x, y + s, x + s, y);
+
+				g2.dispose();
+			}
+		}
+	}
 }
