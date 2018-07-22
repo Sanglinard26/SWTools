@@ -139,6 +139,40 @@ public abstract class CdfUtils {
 		}
 		return null;
 	}
+	
+	public static final String showAxisDependency(List<Variable> listLabel, Variable axis)
+	{
+		
+		final String axisShortName = axis.getShortName();
+		final StringBuilder dependencyVariable = new StringBuilder();
+		String[] sharedAxis = null;
+
+		for(Variable var : listLabel)
+		{
+			sharedAxis = null;
+			
+			if(var instanceof Curve)
+			{	
+				sharedAxis = ((Curve) var).getSharedAxis();
+			}else if(var instanceof Map)
+			{
+				sharedAxis = ((Map) var).getSharedAxis();
+			}
+
+			if(sharedAxis != null)
+			{
+				for(String axisName : sharedAxis)
+				{
+					if(axisShortName.equals(axisName))
+					{
+						dependencyVariable.append(var.getShortName() + "\n");
+					}
+				}
+			}
+		}
+		
+		return dependencyVariable.toString();
+	}
 
 	public static final boolean toExcel(Cdf cdf, final File file) {
 

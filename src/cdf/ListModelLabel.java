@@ -64,8 +64,12 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
         return listLabelFiltre.get(index);
     }
 
-    public List<Variable> getList() {
+    public List<Variable> getFilteredList() {
         return Collections.unmodifiableList(listLabelFiltre);
+    }
+    
+    public List<Variable> getList() {
+        return Collections.unmodifiableList(listLabel);
     }
 
 }

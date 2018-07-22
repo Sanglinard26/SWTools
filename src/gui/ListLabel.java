@@ -6,6 +6,7 @@ package gui;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -25,6 +26,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JLayer;
 import javax.swing.JList;
@@ -32,17 +34,18 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.LayerUI;
 
-import cdf.Cdf;
-import cdf.Curve;
+import cdf.Axis;
+import cdf.CdfUtils;
 import cdf.ListModelLabel;
-import cdf.Map;
 import cdf.Variable;
 
 public final class ListLabel extends JList<Variable> {
@@ -71,9 +74,12 @@ public final class ListLabel extends JList<Variable> {
 
 	private final class ListMouseListener extends MouseAdapter {
 		@Override
-		public void mouseReleased(MouseEvent e) {
+		public void mouseReleased(final MouseEvent e) {
 			if (e.isPopupTrigger() && ListLabel.this.getSelectedValue() != null
 					&& ListLabel.this.locationToIndex(e.getPoint()) == ListLabel.this.getSelectedIndex()) {
+				
+				final Variable selectedVariable = ListLabel.this.getSelectedValue();
+				
 				final JPopupMenu menu = new JPopupMenu();
 				final JMenu menuCopy = new JMenu("Copier dans le presse-papier");
 				JMenuItem subMenu = new JMenuItem("Format image", new ImageIcon(getClass().getResource(ICON_IMAGE)));
@@ -81,7 +87,7 @@ public final class ListLabel extends JList<Variable> {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						ListLabel.this.getSelectedValue().copyImgToClipboard();
+						selectedVariable.copyImgToClipboard();
 					}
 				});
 				menuCopy.add(subMenu);
@@ -91,50 +97,26 @@ public final class ListLabel extends JList<Variable> {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						ListLabel.this.getSelectedValue().copyTxtToClipboard();
+						selectedVariable.copyTxtToClipboard();
 					}
 				});
 				menuCopy.add(subMenu);
 				menu.add(menuCopy);
 
-				if(ListLabel.this.getSelectedValue().getCategory() == Cdf.AXIS_VALUES)
+				if(selectedVariable instanceof Axis)
 				{
 					final JMenuItem menuShowDependency = new JMenuItem("Montrer les variables dependantes");
 					menuShowDependency.addActionListener(new ActionListener() {
 
 						@Override
-						public void actionPerformed(ActionEvent e) {
+						public void actionPerformed(ActionEvent ae) {
 
-							final String axisShortName = ListLabel.this.getSelectedValue().getShortName();
-							final StringBuilder dependencyVariable = new StringBuilder();
-							String[] sharedAxis = null;
-
-							for(Variable var : ListLabel.this.getModel().getList())
-							{
-								sharedAxis = null;
-								
-								if(var instanceof Curve)
-								{	
-									sharedAxis = ((Curve) var).getSharedAxis();
-								}else if(var instanceof Map)
-								{
-									sharedAxis = ((Map) var).getSharedAxis();
-								}
-
-								if(sharedAxis != null)
-								{
-									for(String axis : sharedAxis)
-									{
-										if(axisShortName.equals(axis))
-										{
-											dependencyVariable.append(var.getShortName() + "\n");
-										}
-									}
-								}
-
-							}
-
-							System.out.println("Variables dependantes : " + dependencyVariable.toString());
+							final String res = CdfUtils.showAxisDependency(ListLabel.this.getModel().getList(), selectedVariable);
+							
+							final AxisDialog dial =  new AxisDialog(res);
+							dial.setLocationRelativeTo(e.getComponent());
+							dial.setLocation(e.getXOnScreen(), e.getYOnScreen());
+							dial.setVisible(true);
 						}
 					});
 					menu.add(menuShowDependency);
@@ -327,6 +309,26 @@ public final class ListLabel extends JList<Variable> {
 
 		}
 
+	}
+	
+	private final class AxisDialog extends JDialog
+	{
+		private static final long serialVersionUID = 1L;
+
+        private final JTextPane txtPane = new JTextPane();
+
+        public AxisDialog(String txt) {
+
+            setTitle("VARIABLE(S) DEPENDANTE(S)");
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            setModal(true);
+
+            txtPane.setEditable(false);
+            txtPane.setText(txt);
+            add(new JScrollPane(txtPane));
+            setMinimumSize(new Dimension(250, 10));
+            this.pack();
+        }
 	}
 
 	public final FilterField getFilterField() {

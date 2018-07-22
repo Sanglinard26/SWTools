@@ -137,7 +137,7 @@ public final class PanelCDF extends JComponent {
                     listLabel.ensureIndexIsVisible(0);
                     listLabel.getFilterField().populateFilter(listCDF.getSelectedValue().getCategoryList());
 
-                    if (oldVar != null && listLabel.getModel().getList().contains(oldVar)) {
+                    if (oldVar != null && listLabel.getModel().getFilteredList().contains(oldVar)) {
                         listLabel.setSelectedIndex(0);
                         listLabel.setSelectedValue(oldVar, true);
                     }
