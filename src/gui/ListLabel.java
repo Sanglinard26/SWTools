@@ -77,9 +77,9 @@ public final class ListLabel extends JList<Variable> {
 		public void mouseReleased(final MouseEvent e) {
 			if (e.isPopupTrigger() && ListLabel.this.getSelectedValue() != null
 					&& ListLabel.this.locationToIndex(e.getPoint()) == ListLabel.this.getSelectedIndex()) {
-				
+
 				final Variable selectedVariable = ListLabel.this.getSelectedValue();
-				
+
 				final JPopupMenu menu = new JPopupMenu();
 				final JMenu menuCopy = new JMenu("Copier dans le presse-papier");
 				JMenuItem subMenu = new JMenuItem("Format image", new ImageIcon(getClass().getResource(ICON_IMAGE)));
@@ -112,7 +112,7 @@ public final class ListLabel extends JList<Variable> {
 						public void actionPerformed(ActionEvent ae) {
 
 							final String res = CdfUtils.showAxisDependency(ListLabel.this.getModel().getList(), selectedVariable);
-							
+
 							final AxisDialog dial =  new AxisDialog(res);
 							dial.setLocationRelativeTo(e.getComponent());
 							dial.setLocation(e.getXOnScreen(), e.getYOnScreen());
@@ -224,15 +224,25 @@ public final class ListLabel extends JList<Variable> {
 			}
 		}
 
-		@Override
-		public void changedUpdate(DocumentEvent e) {
+		private final void doFilter()
+		{
 			Variable selectedVar = null;
 			if (getSelectedIndex() > -1) {
 				selectedVar = getModel().getElementAt(getSelectedIndex());
 			}
 			if (selectedVar != null) {
 				clearSelection();
-				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+
+				final String filter = txtFiltre.getText().toLowerCase();
+
+				if(filter.indexOf(",") > -1)
+				{
+					String[] filters = filter.trim().split(",");
+					getModel().setFilter(typeFilter.getSelectedItem().toString(), filters);
+				}else{
+					getModel().setFilter(typeFilter.getSelectedItem().toString(), filter);
+				}
+
 				setSelectedIndex(0);
 				if (getModel().getSize() > 0) {
 					setSelectedValue(selectedVar, true);
@@ -241,48 +251,33 @@ public final class ListLabel extends JList<Variable> {
 				}
 
 			} else {
-				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+				
+				final String filter = txtFiltre.getText().toLowerCase();
+
+				if(filter.indexOf(",") > -1)
+				{
+					String[] filters = filter.trim().split(",");
+					getModel().setFilter(typeFilter.getSelectedItem().toString(), filters);
+				}else{
+					getModel().setFilter(typeFilter.getSelectedItem().toString(), filter);
+				}
+
 			}
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			doFilter();
 		}
 
 		@Override
 		public void insertUpdate(DocumentEvent e) {
-			Variable selectedVar = null;
-			if (getSelectedIndex() > -1) {
-				selectedVar = getModel().getElementAt(getSelectedIndex());
-			}
-			if (selectedVar != null) {
-				clearSelection();
-				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-				setSelectedIndex(0);
-				if (getModel().getSize() > 0) {
-					setSelectedValue(selectedVar, true);
-				} else {
-					setSelectedIndex(-1);
-				}
-			} else {
-				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-			}
+			doFilter();
 		}
 
 		@Override
 		public void removeUpdate(DocumentEvent e) {
-			Variable selectedVar = null;
-			if (getSelectedIndex() > -1) {
-				selectedVar = getModel().getElementAt(getSelectedIndex());
-			}
-			if (selectedVar != null) {
-				clearSelection();
-				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-				setSelectedIndex(0);
-				if (getModel().getSize() > 0) {
-					setSelectedValue(selectedVar, true);
-				} else {
-					setSelectedIndex(-1);
-				}
-			} else {
-				getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
-			}
+			doFilter();
 		}
 
 	}
@@ -310,25 +305,25 @@ public final class ListLabel extends JList<Variable> {
 		}
 
 	}
-	
+
 	private final class AxisDialog extends JDialog
 	{
 		private static final long serialVersionUID = 1L;
 
-        private final JTextPane txtPane = new JTextPane();
+		private final JTextPane txtPane = new JTextPane();
 
-        public AxisDialog(String txt) {
+		public AxisDialog(String txt) {
 
-            setTitle("VARIABLE(S) DEPENDANTE(S)");
-            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-            setModal(true);
+			setTitle("VARIABLE(S) DEPENDANTE(S)");
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			setModal(true);
 
-            txtPane.setEditable(false);
-            txtPane.setText(txt);
-            add(new JScrollPane(txtPane));
-            setMinimumSize(new Dimension(250, 10));
-            this.pack();
-        }
+			txtPane.setEditable(false);
+			txtPane.setText(txt);
+			add(new JScrollPane(txtPane));
+			setMinimumSize(new Dimension(250, 10));
+			this.pack();
+		}
 	}
 
 	public final FilterField getFilterField() {

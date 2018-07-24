@@ -11,65 +11,90 @@ import javax.swing.AbstractListModel;
 
 public final class ListModelLabel extends AbstractListModel<Variable> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private static final List<Variable> listLabel = new ArrayList<Variable>();
-    private static final List<Variable> listLabelFiltre = new ArrayList<Variable>();
+	private static final List<Variable> listLabel = new ArrayList<Variable>();
+	private static final List<Variable> listLabelFiltre = new ArrayList<Variable>();
 
-    public ListModelLabel() {
-    }
+	public ListModelLabel() {
+	}
 
-    @Override
-    public int getSize() {
-        return listLabelFiltre.size();
-    }
+	@Override
+	public int getSize() {
+		return listLabelFiltre.size();
+	}
 
-    public void setList(List<Variable> list) {
-        if (!listLabel.isEmpty()) {
-            listLabel.clear();
-        }
-        listLabel.addAll(list);
-        setFilter("", "");
-    }
+	public void setList(List<Variable> list) {
+		if (!listLabel.isEmpty()) {
+			listLabel.clear();
+		}
+		listLabel.addAll(list);
+		setFilter("", "");
+	}
 
-    public void setFilter(String type, String filter) {
-        listLabelFiltre.clear();
+	public void setFilter(String type, String filter) {
+		listLabelFiltre.clear();
 
-        final int nbLabel = listLabel.size();
-        Variable var;
+		final int nbLabel = listLabel.size();
+		Variable var;
 
-        for (int i = 0; i < nbLabel; i++) {
-            var = listLabel.get(i);
+		for (int i = 0; i < nbLabel; i++) {
+			var = listLabel.get(i);
 
-            if (var.getShortName().toLowerCase().indexOf(filter) > -1) {
-                if (type.equals("ALL") | type.isEmpty()) {
-                    listLabelFiltre.add(var);
-                }
-                if (var.getCategory().equals(type)) {
-                    listLabelFiltre.add(var);
-                }
-            }
-        }
+			if (var.getShortName().toLowerCase().indexOf(filter) > -1) {
+				if (type.equals("ALL") || type.isEmpty()) {
+					listLabelFiltre.add(var);
+				}
+				if (var.getCategory().equals(type)) {
+					listLabelFiltre.add(var);
+				}
+			}
+		}
 
-        this.fireContentsChanged(this, 0, getSize());
-    }
+		this.fireContentsChanged(this, 0, getSize());
+	}
 
-    public void clearList() {
-        listLabel.clear();
-        setFilter("", "");
-    }
+	public void setFilter(String type, String[] filters) {
+		listLabelFiltre.clear();
 
-    @Override
-    public Variable getElementAt(int index) {
-        return listLabelFiltre.get(index);
-    }
+		final int nbLabel = listLabel.size();
+		Variable var;
 
-    public List<Variable> getFilteredList() {
-        return Collections.unmodifiableList(listLabelFiltre);
-    }
-    
-    public List<Variable> getList() {
-        return Collections.unmodifiableList(listLabel);
-    }
+		for (int i = 0; i < nbLabel; i++) {
+			var = listLabel.get(i);
+
+			for(String filter : filters)
+			{
+				if (var.getShortName().toLowerCase().indexOf(filter) > -1) {
+					if (type.equals("ALL") || type.isEmpty()) {
+						listLabelFiltre.add(var);
+					}
+					if (var.getCategory().equals(type)) {
+						listLabelFiltre.add(var);
+					}
+				}
+			} 
+		}
+
+		this.fireContentsChanged(this, 0, getSize());
+	}
+
+	public void clearList() {
+		listLabel.clear();
+		setFilter("", "");
+	}
+
+	@Override
+	public Variable getElementAt(int index) {
+		return listLabelFiltre.get(index);
+	}
+
+	public List<Variable> getFilteredList() {
+		return Collections.unmodifiableList(listLabelFiltre);
+	}
+
+	public List<Variable> getList() {
+		return Collections.unmodifiableList(listLabel);
+	}
 
 }
