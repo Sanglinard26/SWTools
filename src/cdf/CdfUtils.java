@@ -135,7 +135,10 @@ public abstract class CdfUtils {
                     }
                 }
             }
-            return new Paco(cdfRef.getName() + "_vs_" + cdfWork.getName(), listCompa);
+            if(listCompa.size()>0)
+            {
+            	return new Paco(cdfRef.getName() + "_vs_" + cdfWork.getName(), listCompa);
+            }  
         }
         return null;
     }
@@ -435,7 +438,7 @@ public abstract class CdfUtils {
         } catch (WriteException e) {
             SWToolsMain.getLogger().severe(e.getMessage());
             if (e instanceof RowsExceededException) {
-                JOptionPane.showMessageDialog(null, "Trop de variables Ã  exporter !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Trop de variables a  exporter !", "ERREUR", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         } finally {

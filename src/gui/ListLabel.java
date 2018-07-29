@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -127,7 +128,7 @@ public final class ListLabel extends JList<Variable> {
 		}
 	}
 
-	protected class FilterField extends JComponent implements DocumentListener, ActionListener {
+	protected final class FilterField extends JComponent implements DocumentListener, ActionListener {
 
 		private static final long serialVersionUID = 1L;
 
@@ -146,7 +147,7 @@ public final class ListLabel extends JList<Variable> {
 			panelBt = new JPanel(new GridLayout(1, 2));
 
 			typeFilter = new JComboBox<String>();
-			populateFilter(null);
+			populateFilter(Collections.<String> emptySet());
 			((JLabel) typeFilter.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 			typeFilter.addActionListener(this);
 
@@ -190,14 +191,15 @@ public final class ListLabel extends JList<Variable> {
 			final DefaultComboBoxModel<String> cbModel = (DefaultComboBoxModel<String>) typeFilter.getModel();
 
 			if (typeFilter.getModel().getSize() > 0)
+			{
 				cbModel.removeAllElements();
+			}
 
 			cbModel.addElement("ALL");
 
-			if (list != null)
-				for (String s : list) {
-					cbModel.addElement(s);
-				}
+			for (String s : list) {
+				cbModel.addElement(s);
+			}
 		}
 
 		public final void popMenu(int x, int y) {
@@ -220,7 +222,7 @@ public final class ListLabel extends JList<Variable> {
 			if (e.getSource() == typeFilter) {
 				clearSelection();
 				if (typeFilter.getSelectedItem() != null)
-					getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase());
+					getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase().split(","));
 			}
 		}
 
@@ -240,7 +242,7 @@ public final class ListLabel extends JList<Variable> {
 					String[] filters = filter.trim().split(",");
 					getModel().setFilter(typeFilter.getSelectedItem().toString(), filters);
 				}else{
-					getModel().setFilter(typeFilter.getSelectedItem().toString(), filter);
+					getModel().setFilter(typeFilter.getSelectedItem().toString(), new String[]{filter});
 				}
 
 				setSelectedIndex(0);
@@ -251,7 +253,7 @@ public final class ListLabel extends JList<Variable> {
 				}
 
 			} else {
-				
+
 				final String filter = txtFiltre.getText().toLowerCase();
 
 				if(filter.indexOf(",") > -1)
@@ -259,7 +261,7 @@ public final class ListLabel extends JList<Variable> {
 					String[] filters = filter.trim().split(",");
 					getModel().setFilter(typeFilter.getSelectedItem().toString(), filters);
 				}else{
-					getModel().setFilter(typeFilter.getSelectedItem().toString(), filter);
+					getModel().setFilter(typeFilter.getSelectedItem().toString(), new String[]{filter});
 				}
 
 			}
@@ -342,6 +344,22 @@ public final class ListLabel extends JList<Variable> {
 		@Override
 		public void paint(Graphics g, JComponent c) {
 			super.paint(g, c);
+
+			if(ListLabel.this.getFilterField().txtFiltre.getText().length() == 0)
+			{
+				Graphics2D g2 = (Graphics2D) g.create();
+
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				int h = c.getHeight();
+				int pad = 4;
+
+				g2.setPaint(Color.GRAY);
+				g2.drawString("Taper une partie du nom (ex : trb,air...)", pad, h/2+pad);
+
+				g2.dispose();
+
+				return;
+			}
 
 			if (ListLabel.this.getFilterField().txtFiltre.getText().length() > 0 && ListLabel.this.getModel().getSize() < 1) {
 				Graphics2D g2 = (Graphics2D) g.create();

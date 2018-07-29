@@ -10,6 +10,7 @@ public final class Variable implements Comparable<Variable> {
     private static final HashMap<String, String> mapTypeVar = new HashMap<String, String>(7) {
         private static final long serialVersionUID = 1L;
         {
+        	put("A", "AXIS");
             put("C", "SCALAIRE");
             put("T", "CURVE");
             put("CUR", "CURVE");
@@ -72,7 +73,7 @@ public final class Variable implements Comparable<Variable> {
 
 	@Override
 	public int compareTo(Variable var) {
-		return this.nom.compareTo(var.getNom());
+		return this.nom.compareToIgnoreCase(var.getNom());
 	}
 
 }

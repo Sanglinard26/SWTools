@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -52,6 +53,7 @@ public final class PanelCDF extends JComponent {
     private static final long serialVersionUID = 1L;
 
     // Constante
+    private static final String ICON_ADD = "/add_icon_32.png";
     private static final String ICON_HISTORY = "/historique_32.png";
     private static final String ICON_CHART = "/graph_32.png";
 
@@ -60,21 +62,21 @@ public final class PanelCDF extends JComponent {
     private static Variable selVariable;
 
     // GUI
-    private static final JButton btOpen = new JButton("Ajouter fichier(s) de donnees de calibration");
-    private static final JPanel panComparaison = new JPanel();
-    private static final ButtonGroup btGroup = new ButtonGroup();
+    private final JButton btOpen = new JButton(new ImageIcon(getClass().getResource(ICON_ADD)));
+    private final JPanel panComparaison = new JPanel();
+    private final ButtonGroup btGroup = new ButtonGroup();
     private static final JRadioButton radioBtVal = new JRadioButton("Affichage des valeurs", true);
-    private static final JRadioButton radioBtDiff = new JRadioButton("Affichage des differences (Work-Ref)");
-    private static final ListCdf listCDF = new ListCdf(new ListModelCdf());
+    private final JRadioButton radioBtDiff = new JRadioButton("Affichage des differences (Work-Ref)");
+    private final ListCdf listCDF = new ListCdf(new ListModelCdf());
     private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
     private static final JPanel panVisu = new JPanel(new GridBagLayout());
     private static final PanelGraph panGraph = new PanelGraph();
-    private static final JTabbedPane tabPan = new JTabbedPane();
-    private static final JPanel panCDF = new JPanel(new GridBagLayout());
-    private static final JPanel panLabel = new JPanel(new GridBagLayout());
-    private static final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panCDF, panLabel);
-    private static final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, new JScrollPane(panVisu), tabPan);
-    private static final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneLeft, splitPaneRight);
+    private final JTabbedPane tabPan = new JTabbedPane();
+    private final JPanel panCDF = new JPanel(new GridBagLayout());
+    private final JPanel panLabel = new JPanel(new GridBagLayout());
+    private final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panCDF, panLabel);
+    private final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, new JScrollPane(panVisu), tabPan);
+    private final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneLeft, splitPaneRight);
     private static final PanelHistory panelHistory = new PanelHistory();
 
     public PanelCDF() {
@@ -89,22 +91,23 @@ public final class PanelCDF extends JComponent {
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.weightx = 1;
+        gbc.weightx = 0;
         gbc.weighty = 0;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
+        btOpen.setToolTipText("Ajouter fichier(s)");
         btOpen.addActionListener(new OpenCDF());
         panCDF.add(btOpen, gbc);
 
         btGroup.add(radioBtVal);
         btGroup.add(radioBtDiff);
-        panComparaison.setBorder(new TitledBorder(new LineBorder(Color.GRAY, 1), "Comparaison :", TitledBorder.LEADING, TitledBorder.BELOW_TOP));
+        panComparaison.setBorder(new TitledBorder(new LineBorder(Color.GRAY, 0), "Comparaison :", TitledBorder.LEADING, TitledBorder.BELOW_TOP));
         panComparaison.add(radioBtVal);
         panComparaison.add(radioBtDiff);
 
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 1;
@@ -116,7 +119,7 @@ public final class PanelCDF extends JComponent {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 1;
+        gbc.gridwidth = 2;
         gbc.gridheight = 1;
         gbc.weightx = 1;
         gbc.weighty = 1;
@@ -137,7 +140,6 @@ public final class PanelCDF extends JComponent {
                     listLabel.ensureIndexIsVisible(0);
                     listLabel.getFilterField().populateFilter(listCDF.getSelectedValue().getCategoryList());
 
-                    // Bug sur le filtrage multiple
                     if (oldVar != null && listLabel.getModel().getFilteredList().contains(oldVar)) {
                         listLabel.setSelectedIndex(0);
                         listLabel.setSelectedValue(oldVar, true);
@@ -218,9 +220,11 @@ public final class PanelCDF extends JComponent {
 
         splitPaneLeft.setOneTouchExpandable(true);
         splitPaneLeft.setDividerLocation(200);
+        splitPaneLeft.setBorder(null);
 
         splitPaneRight.setOneTouchExpandable(true);
         splitPaneRight.setDividerLocation(400);
+        splitPaneRight.setBorder(null);
 
         panVisu.setBackground(Color.WHITE);
 
@@ -246,8 +250,9 @@ public final class PanelCDF extends JComponent {
             }
         });
 
-        splitPaneGlobal.setDividerSize(10);
+        splitPaneGlobal.setDividerSize(5);
         splitPaneGlobal.setDividerLocation(500);
+        splitPaneGlobal.setBorder(null);
         add(splitPaneGlobal, BorderLayout.CENTER);
     }
 
@@ -400,7 +405,7 @@ public final class PanelCDF extends JComponent {
 
             listLabel.clearSelection();
             listLabel.getModel().clearList();
-            listLabel.getFilterField().populateFilter(null);
+            listLabel.getFilterField().populateFilter(Collections.<String> emptySet());
 
             panelHistory.removeDatas();
 
@@ -420,7 +425,7 @@ public final class PanelCDF extends JComponent {
         return selVariable;
     }
 
-    public final static JRadioButton getRadiobtval() {
+    public static final JRadioButton getRadiobtval() {
         return radioBtVal;
     }
 
