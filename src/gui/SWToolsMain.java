@@ -10,75 +10,77 @@ import java.util.logging.SimpleFormatter;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import utils.Preference;
 
-import javax.swing.UnsupportedLookAndFeelException;
-
 public class SWToolsMain {
 
-	private static File logFile = null;
-	private static Logger logger = Logger.getLogger("MyLogger");
-	private static Handler fileHandler;
+    private static File logFile = null;
+    private static Logger logger = Logger.getLogger("SWToolsLogger");
+    private static Handler fileHandler;
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		try {
-			
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if (Preference.getPreference(Preference.KEY_NOM_LF).equals(info.getName())) {
-					try {
-						UIManager.setLookAndFeel(info.getClassName());
-					} catch (ClassNotFoundException e1) {
-						e1.printStackTrace();
-					} catch (InstantiationException e1) {
-						e1.printStackTrace();
-					} catch (IllegalAccessException e1) {
-						e1.printStackTrace();
-					} catch (UnsupportedLookAndFeelException e1) {
-						e1.printStackTrace();
-					}
-					break;
-				}
-			}
+        try {
 
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if (Preference.getPreference(Preference.KEY_NOM_LF).equals(info.getName())) {
+                    try {
+                        UIManager.setLookAndFeel(info.getClassName());
+                    } catch (ClassNotFoundException e1) {
+                        e1.printStackTrace();
+                    } catch (InstantiationException e1) {
+                        e1.printStackTrace();
+                    } catch (IllegalAccessException e1) {
+                        e1.printStackTrace();
+                    } catch (UnsupportedLookAndFeelException e1) {
+                        e1.printStackTrace();
+                    }
+                    break;
+                }
+            }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        SwingUtilities.invokeLater(new Runnable() {
 
-		SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                final Ihm ihm = new Ihm();
+                ihm.setVisible(true);
+            }
+        });
 
-			@Override
-			public void run() {
-				final Ihm ihm = new Ihm();
-				ihm.setVisible(true);
-			}
-		});
+        try {
+            // logFile = File.createTempFile("SwTools_", ".log", new File("C:\\TEMP\\"));
+            logFile = new File("C:\\TEMP\\SwTools.log");
+            // Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rwxrwxrwx");
+            // FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions
+            // .asFileAttribute(permissions);
+            // logFile = Files.createTempFile("SwTools_", ".log", fileAttributes).toFile();
+            logFile.deleteOnExit();
+            fileHandler = new FileHandler(logFile.getPath(), false);
+            fileHandler.setFormatter(new SimpleFormatter());
+            logger.addHandler(fileHandler);
 
-		try {
-			logFile = File.createTempFile("SwTools_", ".log");
-			logFile.deleteOnExit();
-			fileHandler = new FileHandler(logFile.getPath(), false);
-			fileHandler.setFormatter(new SimpleFormatter());
-			logger.addHandler(fileHandler);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-		logger.info("Demarrage de l'application");
+        logger.info("Demarrage de l'application");
+    }
 
-	}
+    public static Logger getLogger() {
+        return logger;
+    }
 
-	public static Logger getLogger() {
-		return logger;
-	}
-
-	public static File getLogFile() {
-		return logFile;
-	}
+    public static File getLogFile() {
+        return logFile;
+    }
 
 }

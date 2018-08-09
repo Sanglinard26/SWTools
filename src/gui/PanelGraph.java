@@ -9,7 +9,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.border.LineBorder;
 
 import cdf.Variable;
 import chart.SurfaceChart;
@@ -27,10 +26,6 @@ public final class PanelGraph extends JComponent {
     private static final JRadioButton radioBt3D = new JRadioButton("3D", true);
 
     private static Variable selectedVar;
-
-    static {
-        panBtRadio.setBorder(LineBorder.createBlackLineBorder());
-    }
 
     public PanelGraph() {
 

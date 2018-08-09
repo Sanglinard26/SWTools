@@ -88,6 +88,10 @@ public final class Ihm extends JFrame {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 Preference.setPreference(Preference.KEY_ETAT_COLOR_MAP, Boolean.toString(cbMenuItem.isSelected()));
+                if (PanelCDF.getSelVariable() != null) {
+                    PanelCDF.getSelVariable().showValues(); // Permet de prendre en compte la coloration directement, a voir pour trouver une solution
+                    // plus propre
+                }
 
             }
         });

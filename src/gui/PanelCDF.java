@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -84,7 +85,9 @@ public final class PanelCDF extends JComponent {
         setLayout(new BorderLayout());
 
         panCDF.setMinimumSize(new Dimension(500, 300));
+        panCDF.setBorder(BorderFactory.createEmptyBorder());
         panLabel.setMinimumSize(new Dimension(500, 300));
+        panLabel.setBorder(BorderFactory.createEmptyBorder());
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
@@ -220,16 +223,20 @@ public final class PanelCDF extends JComponent {
 
         splitPaneLeft.setOneTouchExpandable(true);
         splitPaneLeft.setDividerLocation(200);
-        splitPaneLeft.setBorder(null);
+        splitPaneLeft.setBorder(BorderFactory.createEmptyBorder());
 
         splitPaneRight.setOneTouchExpandable(true);
         splitPaneRight.setDividerLocation(400);
-        splitPaneRight.setBorder(null);
+        splitPaneRight.setBorder(BorderFactory.createEmptyBorder());
 
         panVisu.setBackground(Color.WHITE);
+        panVisu.setBorder(BorderFactory.createEmptyBorder());
+
+        panGraph.setBorder(BorderFactory.createEmptyBorder());
+
+        panelHistory.setBorder(BorderFactory.createEmptyBorder());
 
         tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(panelHistory));
-
         tabPan.addTab("Graphique", new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
 
         tabPan.addChangeListener(new ChangeListener() {
@@ -238,6 +245,7 @@ public final class PanelCDF extends JComponent {
             public void stateChanged(ChangeEvent e) {
 
                 if (selVariable != null) {
+
                     if (((JTabbedPane) e.getSource()).getSelectedIndex() == 0) {
                         panelHistory.setDatas(selVariable.getSwCsHistory());
                     } else {
@@ -252,7 +260,7 @@ public final class PanelCDF extends JComponent {
 
         splitPaneGlobal.setDividerSize(5);
         splitPaneGlobal.setDividerLocation(500);
-        splitPaneGlobal.setBorder(null);
+        splitPaneGlobal.setBorder(BorderFactory.createEmptyBorder());
         add(splitPaneGlobal, BorderLayout.CENTER);
     }
 

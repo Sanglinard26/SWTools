@@ -8,13 +8,13 @@ public final class SeriesCollection {
     private List<Serie> series;
 
     public SeriesCollection() {
-        this(null);
+        this(new Serie(""));
     }
 
     public SeriesCollection(Serie serie) {
         series = new ArrayList<>();
 
-        if (serie != null) {
+        if (serie.getPointsCount() > 0) {
             series.add(serie);
         }
     }

@@ -13,11 +13,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.SwingWorker;
 
 public final class FrameLog extends JFrame {
 
@@ -28,13 +35,14 @@ public final class FrameLog extends JFrame {
     private final JTextPane txtLog = new JTextPane();
     private final JButton btSendMail = new JButton("Envoyer le log");
 
+    private Thread logThread;
+
     public FrameLog() {
+
         this.setTitle("Log");
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(FENETRE_ICON)));
-
-        loadLog();
 
         add(new JScrollPane(txtLog), BorderLayout.CENTER);
         add(btSendMail, BorderLayout.SOUTH);
@@ -46,8 +54,13 @@ public final class FrameLog extends JFrame {
             }
         });
 
+        loadLog();
+
+        watchLog();
+
         this.setSize(400, 300);
         this.setVisible(true);
+
     }
 
     public final void loadLog() {
@@ -68,6 +81,43 @@ public final class FrameLog extends JFrame {
         }
     }
 
+    private final void watchLog() {
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+            @Override
+            protected Void doInBackground() throws Exception {
+
+                final Path path = SWToolsMain.getLogFile().getParentFile().toPath();
+                try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
+                    final WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_CREATE);
+                    while (true) {
+
+                        final WatchKey wk = watchService.take();
+                        for (WatchEvent<?> event : wk.pollEvents()) {
+                            // we only register "ENTRY_MODIFY" so the context is always a Path.
+
+                            final Path changed = (Path) event.context();
+
+                            System.out.println(changed.toFile().exists());
+
+                            if (changed.endsWith(SWToolsMain.getLogFile().getName())) {
+                                loadLog();
+                            }
+                        }
+                        // reset the key
+                        boolean valid = wk.reset();
+                    }
+                } catch (IOException | InterruptedException e1) {
+                    System.out.println(e1);
+                    e1.printStackTrace();
+                }
+
+                return null;
+            }
+        };
+        worker.execute();
+    }
+
     // Nombre de caractere limite avec l'URI, à voir pour remplacer l'envoi de mail par l'API JavaMail.
     private static void sendMail(String texteLog) {
         if (Desktop.isDesktopSupported()) {
@@ -83,4 +133,5 @@ public final class FrameLog extends JFrame {
             }
         }
     }
+
 }

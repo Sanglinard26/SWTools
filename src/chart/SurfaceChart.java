@@ -1,10 +1,12 @@
 package chart;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 
 import com.orsoncharts.Chart3D;
 import com.orsoncharts.Chart3DFactory;
@@ -35,6 +37,8 @@ public final class SurfaceChart extends JComponent {
     }
 
     public SurfaceChart(final Variable variable) {
+
+        setBorder(new LineBorder(Color.BLACK));
 
         this.setLayout(new BorderLayout());
 

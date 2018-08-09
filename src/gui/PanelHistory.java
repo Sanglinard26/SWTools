@@ -15,7 +15,7 @@ import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -31,7 +31,6 @@ public final class PanelHistory extends JComponent {
     private static final long serialVersionUID = 1L;
     private static final JComponent header = new Header();
     private static final JPanel panData = new JPanel();
-    private static FrameComment fc = null;
 
     private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6) {
 
@@ -121,24 +120,21 @@ public final class PanelHistory extends JComponent {
         panData.repaint();
     }
 
-    private static final class FrameComment extends JFrame {
-
+    private final class CommentDialog extends JDialog {
         private static final long serialVersionUID = 1L;
 
         private final JTextPane txtPane = new JTextPane();
 
-        public FrameComment(String txt) {
+        public CommentDialog(String txt) {
 
             setTitle("COMMENTAIRES");
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            setModal(true);
 
             txtPane.setEditable(false);
             txtPane.setText(txt);
             add(new JScrollPane(txtPane));
-            this.pack();
-        }
-
-        public final void setComment(String txt) {
-            txtPane.setText(txt);
+            setMinimumSize(new Dimension(250, 10));
             this.pack();
         }
     }
@@ -187,15 +183,11 @@ public final class PanelHistory extends JComponent {
                 public void mouseClicked(MouseEvent paramMouseEvent) {
                     if (paramMouseEvent.getClickCount() == 2 && scrollPane.getVerticalScrollBar().isShowing()) {
 
-                        if (fc == null) {
-                            fc = new FrameComment(textPane.getText());
-                        } else {
-                            fc.setComment(textPane.getText());
-                        }
+                        final CommentDialog dial = new CommentDialog(textPane.getText());
 
-                        fc.setLocationRelativeTo(paramMouseEvent.getComponent());
-                        fc.setLocation(paramMouseEvent.getXOnScreen() - fc.getWidth(), paramMouseEvent.getYOnScreen() - fc.getHeight());
-                        fc.setVisible(true);
+                        dial.setLocationRelativeTo(paramMouseEvent.getComponent());
+                        dial.setLocation(paramMouseEvent.getXOnScreen() - dial.getWidth(), paramMouseEvent.getYOnScreen() - dial.getHeight());
+                        dial.setVisible(true);
                     }
                 }
             });
