@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.im.InputContext;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -52,6 +53,7 @@ import javax.swing.TransferHandler;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.LayerUI;
+import javax.swing.text.JTextComponent;
 
 import cdf.Axis;
 import cdf.CdfUtils;
@@ -293,68 +295,85 @@ public final class ListLabel extends JList<Variable> {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public boolean canImport(TransferSupport info) {
-
-                if (!info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+            public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
+                JTextComponent c = (JTextComponent) comp;
+                if (!(c.isEditable() && c.isEnabled())) {
                     return false;
                 }
-                return true;
+                return (getFlavor(transferFlavors) != null);
             }
 
-            @SuppressWarnings("unchecked")
             @Override
-            public boolean importData(TransferSupport info) {
+            public boolean importData(JComponent comp, Transferable t) {
+                if (comp instanceof JTextComponent) {
+                    DataFlavor flavor = getFlavor(t.getTransferDataFlavors());
 
-                if (!info.isDrop()) {
-                    return false;
-                }
-
-                final Transferable objetTransfer = info.getTransferable();
-
-                List<File> dropFiles;
-                try {
-                    dropFiles = (List<File>) objetTransfer.getTransferData(DataFlavor.javaFileListFlavor);
-
-                    File fLab = dropFiles.get(0);
-
-                    if (fLab.exists() && Utilitaire.getExtension(fLab).equals(Utilitaire.LAB)) {
+                    if (flavor != null) {
+                        InputContext ic = comp.getInputContext();
+                        if (ic != null) {
+                            ic.endComposition();
+                        }
 
                         BufferedReader buf = null;
-                        StringBuilder sb = new StringBuilder();
 
                         try {
-                            buf = new BufferedReader(new FileReader(fLab));
-                            String line;
 
-                            while ((line = buf.readLine()) != null) {
-                                if (!line.equals("[Label]") && !line.isEmpty()) {
-                                    sb.append(line + ",");
+                            if (flavor.equals(DataFlavor.stringFlavor)) {
+                                String data = (String) t.getTransferData(flavor);
+
+                                ((JTextComponent) comp).replaceSelection(data);
+
+                            } else {
+
+                                List<?> dropFiles = (List<?>) t.getTransferData(DataFlavor.javaFileListFlavor);
+                                File fLab = (File) dropFiles.get(0);
+
+                                if (fLab.exists() && Utilitaire.getExtension(fLab).equals(Utilitaire.LAB)) {
+
+                                    buf = new BufferedReader(new FileReader(fLab));
+                                    final StringBuilder sb = new StringBuilder();
+                                    String line;
+
+                                    while ((line = buf.readLine()) != null) {
+                                        if (!line.equals("[Label]") && !line.isEmpty()) {
+                                            sb.append(line + ",");
+                                        }
+                                    }
+
+                                    txtFiltre.setText(sb.toString());
                                 }
+
                             }
 
+                            return true;
+
+                        } catch (UnsupportedFlavorException ufe) {
+
                         } catch (IOException ioe) {
-                            System.err.println(ioe.getMessage());
+
                         } finally {
                             if (buf != null) {
                                 try {
                                     buf.close();
-                                } catch (IOException e1) {
-                                    e1.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
                             }
                         }
-
-                        txtFiltre.setText(sb.toString());
-
                     }
-
-                } catch (UnsupportedFlavorException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+                return false;
+            }
 
-                return true;
+            private DataFlavor getFlavor(DataFlavor[] flavors) {
+                if (flavors != null) {
+                    for (DataFlavor flavor : flavors) {
+                        if (flavor.equals(DataFlavor.stringFlavor) || flavor.equals(DataFlavor.javaFileListFlavor)) {
+                            return flavor;
+                        }
+                    }
+                }
+                return null;
             }
         }
 

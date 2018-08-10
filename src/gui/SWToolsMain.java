@@ -55,14 +55,9 @@ public class SWToolsMain {
         });
 
         try {
-            // logFile = File.createTempFile("SwTools_", ".log", new File("C:\\TEMP\\"));
-            logFile = new File("C:\\TEMP\\SwTools.log");
-            // Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rwxrwxrwx");
-            // FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions
-            // .asFileAttribute(permissions);
-            // logFile = Files.createTempFile("SwTools_", ".log", fileAttributes).toFile();
+            logFile = File.createTempFile("SwTools_", ".log");
             logFile.deleteOnExit();
-            fileHandler = new FileHandler(logFile.getPath(), false);
+            fileHandler = new FileHandler(logFile.getPath(), true);
             fileHandler.setFormatter(new SimpleFormatter());
             logger.addHandler(fileHandler);
 
@@ -82,5 +77,4 @@ public class SWToolsMain {
     public static File getLogFile() {
         return logFile;
     }
-
 }

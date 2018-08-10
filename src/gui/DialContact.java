@@ -7,13 +7,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-public final class FrameContact extends JFrame {
+public final class DialContact extends JDialog {
 
     private static final long serialVersionUID = 1L;
     private static final String FENETRE_ICON = "/contact_icon_16.png";
@@ -21,11 +22,13 @@ public final class FrameContact extends JFrame {
 
     private final JTextPane txtContact = new JTextPane();
 
-    public FrameContact() {
+    public DialContact(JFrame ihm) {
+        super(ihm, true);
         this.setTitle("Contact");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(FENETRE_ICON)));
         this.setLayout(new BorderLayout());
+        this.setResizable(false);
 
         txtContact.setEditable(false);
         txtContact.setContentType("text/html");
@@ -36,7 +39,7 @@ public final class FrameContact extends JFrame {
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     sendMail();
-                    FrameContact.this.dispose();
+                    DialContact.this.dispose();
                 }
             }
         });
@@ -46,6 +49,7 @@ public final class FrameContact extends JFrame {
         add(txtContact);
 
         this.pack();
+        this.setLocationRelativeTo(ihm);
         this.setVisible(true);
     }
 

@@ -13,18 +13,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.swing.SwingWorker;
 
 public final class FrameLog extends JFrame {
 
@@ -35,9 +30,28 @@ public final class FrameLog extends JFrame {
     private final JTextPane txtLog = new JTextPane();
     private final JButton btSendMail = new JButton("Envoyer le log");
 
-    private Thread logThread;
+    private WatchLog watchLog;
+    private Timer timer;
 
-    public FrameLog() {
+    /** L'instance statique */
+    private static FrameLog instance;
+
+    /**
+     * Récupère l'instance unique de la class Singleton.
+     * <p>
+     * Remarque : le constructeur est rendu inaccessible
+     */
+    public static FrameLog getInstance() {
+        if (null == instance || !instance.isVisible()) { // Premier appel
+            instance = new FrameLog();
+        }
+        return instance;
+    }
+
+    /**
+     * Constructeur redéfini comme étant privé pour interdire son appel et forcer à passer par la méthode <link
+     */
+    private FrameLog() {
 
         this.setTitle("Log");
         this.setLayout(new BorderLayout());
@@ -56,11 +70,29 @@ public final class FrameLog extends JFrame {
 
         loadLog();
 
-        watchLog();
+        this.watchLog = new WatchLog();
+        this.timer = new Timer();
+        this.timer.scheduleAtFixedRate(watchLog, 1000, 1000);
 
         this.setSize(400, 300);
         this.setVisible(true);
+    }
 
+    private final class WatchLog extends TimerTask {
+
+        @Override
+        public void run() {
+            if (FrameLog.this.isVisible()) {
+                loadLog();
+            } else {
+                if (timer != null) {
+                    timer.cancel();
+                    timer = null;
+                    watchLog = null;
+                }
+            }
+
+        }
     }
 
     public final void loadLog() {
@@ -79,43 +111,6 @@ public final class FrameLog extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private final void watchLog() {
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
-            @Override
-            protected Void doInBackground() throws Exception {
-
-                final Path path = SWToolsMain.getLogFile().getParentFile().toPath();
-                try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
-                    final WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_CREATE);
-                    while (true) {
-
-                        final WatchKey wk = watchService.take();
-                        for (WatchEvent<?> event : wk.pollEvents()) {
-                            // we only register "ENTRY_MODIFY" so the context is always a Path.
-
-                            final Path changed = (Path) event.context();
-
-                            System.out.println(changed.toFile().exists());
-
-                            if (changed.endsWith(SWToolsMain.getLogFile().getName())) {
-                                loadLog();
-                            }
-                        }
-                        // reset the key
-                        boolean valid = wk.reset();
-                    }
-                } catch (IOException | InterruptedException e1) {
-                    System.out.println(e1);
-                    e1.printStackTrace();
-                }
-
-                return null;
-            }
-        };
-        worker.execute();
     }
 
     // Nombre de caractere limite avec l'URI, à voir pour remplacer l'envoi de mail par l'API JavaMail.

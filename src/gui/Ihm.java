@@ -61,10 +61,6 @@ public final class Ihm extends JFrame {
     private static PanelLab panelLab = null;
     private static PanelBdd panelBdd = null;
 
-    private static FrameContact fi = null;
-    private static FrameLog fl = null;
-    private static FrameAide fa = null;
-    private static FrameNews fn = null;
     private static FrameInterpol finterp = null;
 
     public static final boolean testMode = false;
@@ -214,12 +210,8 @@ public final class Ihm extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent paramActionEvent) {
-                if (fl == null) {
-                    fl = new FrameLog();
-                } else {
-                    fl.loadLog();
-                    fl.setVisible(true);
-                }
+
+                FrameLog.getInstance();
             }
         });
         menu.add(menuItem);
@@ -231,11 +223,8 @@ public final class Ihm extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent paramActionEvent) {
-                if (fi == null) {
-                    fi = new FrameContact();
-                } else {
-                    fi.setVisible(true);
-                }
+                new DialContact(Ihm.this);
+
             }
         });
         menu.add(menuItem);
@@ -247,11 +236,8 @@ public final class Ihm extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent paramActionEvent) {
-                if (fa == null) {
-                    fa = new FrameAide();
-                } else {
-                    fa.setVisible(true);
-                }
+                new FrameAide();
+
             }
         });
         menu.add(menuItem);
@@ -264,11 +250,8 @@ public final class Ihm extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent paramActionEvent) {
-                if (fn == null) {
-                    fn = new FrameNews();
-                } else {
-                    fn.setVisible(true);
-                }
+                new DialNews(Ihm.this);
+
             }
         });
         menu.add(menuItem);
