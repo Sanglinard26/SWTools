@@ -559,12 +559,28 @@ public abstract class CdfUtils {
             printWriter.println("</head>");
             printWriter.println("<body>");
 
-            printWriter.println("<h1 align=center>" + cdf.getName() + "</h1>");
+            if(cdf.getName().indexOf("_vs_") > -1)
+            {
+            	String[] splitCdfName = cdf.getName().split("_vs_");
+            	printWriter.println("<h2 align=center>" + splitCdfName[0] + "</h2>");
+            	printWriter.println("<h2 align=center><font color=red>" + splitCdfName[1] + "</font></h2>");
+            }else{
+            	printWriter.println("<h2 align=center>" + cdf.getName() + "</h2>");
+            }
+            
+            //Sommaire
+            printWriter.println("<h2 align=center><u>" + "Sommaire" + "</u></h2>");
+            
+            for (Variable var : cdf.getListLabel()) {
+            	printWriter.println("<p align=center><a href=#" + var.getShortName() + ">" + var.getShortName() + "</a></p>");
+            }
+            //
+            
 
             for (Variable var : cdf.getListLabel()) {
 
                 printWriter.println("<hr align=center size=1 width=50%>");
-                printWriter.println("<h2><font color=blue>" + var.getShortName() + "</font></h2>");
+                printWriter.println("<h2><font color=blue id=" + var.getShortName() + ">" + var.getShortName() + "</font></h2>");
                 printWriter.println("<blockquote>");
                 printWriter.println("<p>Description : " + var.getLongName() + "</p>");
                 printWriter.println("<p>Fonction : " + var.getSwFeatureRef() + "</p>");
@@ -585,7 +601,7 @@ public abstract class CdfUtils {
 
                     for (int x = 0; x < var.getValues().getDimX(); x++) {
 
-                        int idx = var.getValues().getValue(y, x).indexOf("|");
+                        int idx = var.getValues().getValue(y, x).indexOf("|"); // Cas d'une comparaison
 
                         if (idx < 0) {
                             if (y * x == 0) {

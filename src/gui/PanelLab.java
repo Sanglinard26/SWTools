@@ -114,7 +114,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
         btExport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Lab.ecrireRapport(Lab.compilLab(listLabRef.getModel().getList()), Lab.compilLab(listLabWk.getModel().getList()));
+                Lab.rapportToHtml(Lab.compilLab(listLabRef.getModel().getList()), Lab.compilLab(listLabWk.getModel().getList()));
             }
         });
         setGbc(GridBagConstraints.HORIZONTAL, 3, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
