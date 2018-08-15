@@ -22,6 +22,8 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 
+import utils.Utilitaire;
+
 public final class PanelXYPlot extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -229,13 +231,10 @@ public final class PanelXYPlot extends JPanel {
                 g2.setColor(GRID_COLOR);
                 g2.drawLine(PADDING + LABEL_PADDING + 1 + POINT_WIDTH, y0, width - PADDING, y1); // Dessin de la grille
                 g2.setColor(Color.BLACK);
-                yLabel = nbf.format((minYvalue + (diffYvalue) * ((i * 1.0) / NB_Y_DIV)));
-                // DecimalFormat df = new DecimalFormat("0.00E00");
-                // yLabel = df.format((minYvalue + (diffYvalue) * ((i * 1.0) / NB_Y_DIV)));
+                yLabel = Utilitaire.formatStringNumber((minYvalue + (diffYvalue) * ((i * 1.0d) / NB_Y_DIV)));
                 metrics = g2.getFontMetrics();
                 labelWidth = metrics.stringWidth(yLabel);
-                // g2.drawString(df.format(Double.parseDouble(yLabel)).toLowerCase(), x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
-                g2.drawString(yLabel.toLowerCase(), x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
+                g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
             }
             g2.drawLine(x0, y0, x1, y1);
         }
@@ -251,14 +250,10 @@ public final class PanelXYPlot extends JPanel {
                 g2.setColor(GRID_COLOR);
                 g2.drawLine(x0, height - PADDING - LABEL_PADDING - 1 - POINT_WIDTH, x1, PADDING); // Dessin de la grille
                 g2.setColor(Color.BLACK);
-                xLabel = nbf.format((minXvalue + (diffXvalue) * ((i * 1.0) / NB_X_DIV)));
+                xLabel = Utilitaire.formatStringNumber((minXvalue + (diffXvalue) * ((i * 1.0) / NB_X_DIV)));
                 metrics = g2.getFontMetrics();
                 labelWidth = metrics.stringWidth(xLabel);
                 g2.rotate(-Math.PI / 2);
-                // g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
-                // DecimalFormat df = new DecimalFormat("0.000E00");
-                // g2.drawString(df.format(Double.parseDouble(xLabel.trim())).toLowerCase(), -height + (PADDING + LABEL_PADDING) - labelWidth - 5,
-                // x0 + metrics.getHeight() / 2);
                 g2.drawString(xLabel, -height + (PADDING + LABEL_PADDING) - labelWidth - 5, x0 + metrics.getHeight() / 2);
                 g2.setTransform(orig);
             }

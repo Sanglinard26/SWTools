@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 
 import javax.swing.JFileChooser;
 
@@ -47,6 +48,31 @@ public abstract class Utilitaire {
         // final String REGEX_NUMBER = "[+-]?\\d+(\\.\\d+)?";
 
         return s.matches(REGEX_NUMBER_SI);
+    }
+
+    public static final String formatStringNumber(double number) {
+
+        final DecimalFormat format = new DecimalFormat();
+
+        if (Math.floor(number) == number) {
+
+            format.setMaximumFractionDigits(0);
+
+        } else {
+
+            String text = Double.toString(number);
+            int integerPlaces = text.indexOf('.');
+            int decimalPlaces = text.length() - integerPlaces - 1;
+
+            if (decimalPlaces > 3) {
+
+                return String.format("%1.3g", number).toLowerCase();
+            }
+
+            format.setMaximumFractionDigits(3);
+        }
+
+        return format.format(number);
     }
 
     public static final void createDtd(String pathFolder) {
