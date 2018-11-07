@@ -2,6 +2,7 @@ package lab;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -244,6 +245,20 @@ public final class Lab {
         return new ArrayList<>(diffLab);
     }
     
+    public final void write(File file)
+    {
+    	try(PrintWriter pw = new PrintWriter(file))
+    	{
+    		pw.println("[Label]");
+    		for(Variable var : this.listVariable)
+    		{
+    			pw.println(var.getNom());
+    		}
+    	} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+    }
+    
     public static final boolean rapportToHtml(Lab ref, Lab work) {
     	
     	try {
@@ -375,73 +390,5 @@ public final class Lab {
     	
     	return false;
     	
-    }
-
-    public static final void ecrireRapport(Lab ref, Lab work) {
-        try {
-            final List<Variable> labelSup = work.getDiffLab(ref);
-            final List<Variable> labelDisp = ref.getDiffLab(work);
-
-            Collections.sort(labelSup);
-            Collections.sort(labelDisp);
-
-            final Date date = new Date();
-            final SimpleDateFormat formater = new SimpleDateFormat("yyMMdd");
-
-            final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_RESULT_LAB));
-            fileChooser.setDialogTitle("Enregistement du rapport");
-            fileChooser.setFileFilter(new FileFilter() {
-
-                @Override
-                public String getDescription() {
-                    return "Fichier texte (*.txt)";
-                }
-
-                @Override
-                public boolean accept(File f) {
-                    return Utilitaire.getExtension(f).equals("txt");
-                }
-            });
-            fileChooser.setSelectedFile(new File(formater.format(date) + "_SWTools_ComparaisonLab.txt"));
-            final int rep = fileChooser.showSaveDialog(null);
-
-            if (rep == JFileChooser.APPROVE_OPTION) {
-                final File rapport = fileChooser.getSelectedFile();
-
-                final PrintWriter printWriter = new PrintWriter(rapport);
-
-                printWriter.println(" -------------------------------");
-                printWriter.println("| RAPPORT DE COMPARAISON DE LAB |");
-                printWriter.println(" -------------------------------");
-
-                printWriter.println("\n" + "Lab de reference : " + ref.getName());
-                printWriter.println("Lab de travail : " + work.getName());
-                printWriter.println("\n" + "Label(s) disparu(s) (" + labelDisp.size() + ") : ");
-
-                for (Variable label : labelDisp) {
-                    printWriter.println("\t -" + label.getNom() + " =======> " + "<< " + label.getNomLab() + " >>");
-                }
-
-                printWriter.println("\n----------");
-                printWriter.println("\n" + "Label(s) supplementaire(s) (" + labelSup.size() + ") : ");
-
-                for (Variable label : labelSup) {
-                    printWriter.println("\t -" + label.getNom() + " =======> " + "<< " + label.getNomLab() + " >>");
-                }
-
-                printWriter.println("\n" + " -----");
-                printWriter.println("| FIN |");
-                printWriter.println(" -----");
-                printWriter.println("\n" + "\n" + "Fichier cree par SWTools, " + date.toString());
-
-                printWriter.close();
-
-                JOptionPane.showMessageDialog(null, "Export termine !", null, JOptionPane.INFORMATION_MESSAGE);
-            }
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
     }
 }

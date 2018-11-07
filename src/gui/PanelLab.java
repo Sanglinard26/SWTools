@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -12,14 +13,17 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
@@ -45,29 +49,57 @@ public final class PanelLab extends JComponent implements ListDataListener {
     private static final String BT_ADD_LAB_WK = "Ajout fichier(s) de travail";
 
     // GUI
-    private final JButton btAddLabRef, btAddLabWk, btCompar, btExport;
+    private final JPanel panelCompil, panelCompar;
+    private final JButton btAddLab, btCompil, btAddLabRef, btAddLabWk, btCompar, btExport;
     private static final GridBagConstraints gbc = new GridBagConstraints();
-    private final ListLab listLabRef;
-    private final ListLab listLabWk;
-    private final ListVar listVarRef;
-    private final ListVar listVarWk, listVarPlus, listVarMoins;
+    private final ListLab listLabCompar, listLabRef, listLabWk;
+    private final ListVar listVarRef,listVarWk, listVarPlus, listVarMoins;
     private final JTextField filterVarRef, filterVarWk;
 
     public PanelLab() {
 
-        this.setLayout(new GridBagLayout());
+    	this.setLayout(new BorderLayout());
+    	
+    	panelCompil = new JPanel(new GridBagLayout());
+    	panelCompil.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Compilation"));
+    	
+    	setGbc(GridBagConstraints.NONE, 0, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.WEST);
+    	btAddLab = new JButton("Ajouter fichiers Lab");
+        btAddLab.addActionListener(new addLab());
+        panelCompil.add(btAddLab, gbc);
+        
+        setGbc(GridBagConstraints.NONE, 1, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.WEST);
+        btCompil = new JButton("Compiler");
+        btCompil.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				final Lab compilLab = Lab.compilLab(listLabCompar.getModel().getList());
+				compilLab.write(new File("D:\\CompilationLab.lab"));
+			}
+		});
+        panelCompil.add(btCompil, gbc);
+        
+        setGbc(GridBagConstraints.VERTICAL, 0, 1, 2, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.WEST);
+        listLabCompar = new ListLab(new ListModelLab());
+        panelCompil.add(new JScrollPane(listLabCompar), gbc);
+        
+        //***************************
+    	
+    	panelCompar = new JPanel(new GridBagLayout());
+    	panelCompar.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Comparaison"));
 
         setGbc(GridBagConstraints.HORIZONTAL, 0, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
         btAddLabRef = new JButton(BT_ADD_LAB_REF);
         btAddLabRef.setOpaque(false);
         btAddLabRef.addActionListener(new addLab());
-        this.add(btAddLabRef, gbc);
+        panelCompar.add(btAddLabRef, gbc);
 
         setGbc(GridBagConstraints.HORIZONTAL, 1, 0, 1, 1, 0, 0, new Insets(0, 5, 0, 20), GridBagConstraints.CENTER);
         btAddLabWk = new JButton(BT_ADD_LAB_WK);
         btAddLabWk.setOpaque(false);
         btAddLabWk.addActionListener(new addLab());
-        this.add(btAddLabWk, gbc);
+        panelCompar.add(btAddLabWk, gbc);
 
         btCompar = new JButton(BT_COMPAR_LAB);
         btCompar.setOpaque(false);
@@ -106,7 +138,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
             }
         });
         setGbc(GridBagConstraints.HORIZONTAL, 2, 0, 1, 1, 0, 0, new Insets(0, 20, 0, 0), GridBagConstraints.CENTER);
-        this.add(btCompar, gbc);
+        panelCompar.add(btCompar, gbc);
 
         btExport = new JButton(BT_EXPORT);
         btExport.setOpaque(false);
@@ -118,7 +150,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
             }
         });
         setGbc(GridBagConstraints.HORIZONTAL, 3, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
-        this.add(btExport, gbc);
+        panelCompar.add(btExport, gbc);
 
         // Liste des lab ref
         setGbc(GridBagConstraints.BOTH, 0, 1, 1, 2, 1, 0.3, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
@@ -134,7 +166,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
                 }
             }
         });
-        this.add(new JScrollPane(listLabRef), gbc);
+        panelCompar.add(new JScrollPane(listLabRef), gbc);
 
         // Liste des lab travail
         setGbc(GridBagConstraints.BOTH, 1, 1, 1, 2, 1, 0.3, new Insets(0, 5, 0, 20), GridBagConstraints.CENTER);
@@ -150,13 +182,13 @@ public final class PanelLab extends JComponent implements ListDataListener {
                 }
             }
         });
-        this.add(new JScrollPane(listLabWk), gbc);
+        panelCompar.add(new JScrollPane(listLabWk), gbc);
 
         setGbc(GridBagConstraints.NONE, 2, 1, 1, 1, 0, 0, new Insets(10, 20, 0, 0), GridBagConstraints.CENTER);
-        this.add(new JLabel("Label(s) disparu(s)"), gbc);
+        panelCompar.add(new JLabel("Label(s) disparu(s)"), gbc);
 
         setGbc(GridBagConstraints.NONE, 3, 1, 1, 1, 0, 0, new Insets(10, 0, 0, 0), GridBagConstraints.CENTER);
-        this.add(new JLabel("Label(s) supplementaire(s)"), gbc);
+        panelCompar.add(new JLabel("Label(s) supplementaire(s)"), gbc);
 
         filterVarRef = new JTextField(20);
         filterVarRef.setEditable(false);
@@ -182,7 +214,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
             }
         });
         setGbc(GridBagConstraints.HORIZONTAL, 0, 3, 1, 1, 0, 0, new Insets(10, 0, 0, 5), GridBagConstraints.CENTER);
-        this.add(filterVarRef, gbc);
+        panelCompar.add(filterVarRef, gbc);
 
         filterVarWk = new JTextField(20);
         filterVarWk.setEditable(false);
@@ -208,27 +240,30 @@ public final class PanelLab extends JComponent implements ListDataListener {
             }
         });
         setGbc(GridBagConstraints.HORIZONTAL, 1, 3, 1, 1, 0, 0, new Insets(10, 5, 0, 20), GridBagConstraints.CENTER);
-        this.add(filterVarWk, gbc);
+        panelCompar.add(filterVarWk, gbc);
 
         // Liste du lab ref
         setGbc(GridBagConstraints.BOTH, 0, 4, 1, 1, 1, 1, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
         listVarRef = new ListVar(new ListModelVar());
-        this.add(new JScrollPane(listVarRef), gbc);
+        panelCompar.add(new JScrollPane(listVarRef), gbc);
 
         // Liste du lab de travail
         setGbc(GridBagConstraints.BOTH, 1, 4, 1, 1, 1, 1, new Insets(0, 5, 0, 20), GridBagConstraints.CENTER);
         listVarWk = new ListVar(new ListModelVar());
-        this.add(new JScrollPane(listVarWk), gbc);
+        panelCompar.add(new JScrollPane(listVarWk), gbc);
 
         setGbc(GridBagConstraints.BOTH, 2, 2, 1, 3, 1, 1, new Insets(0, 20, 0, 0), GridBagConstraints.CENTER);
         listVarMoins = new ListVar(new ListModelVar());
         listVarMoins.getModel().addListDataListener(this);
-        this.add(new JScrollPane(listVarMoins), gbc);
+        panelCompar.add(new JScrollPane(listVarMoins), gbc);
 
         setGbc(GridBagConstraints.BOTH, 3, 2, 1, 3, 1, 1, new Insets(0, 0, 0, 0), GridBagConstraints.CENTER);
         listVarPlus = new ListVar(new ListModelVar());
         listVarPlus.getModel().addListDataListener(this);
-        this.add(new JScrollPane(listVarPlus), gbc);
+        panelCompar.add(new JScrollPane(listVarPlus), gbc);
+        
+        this.add(panelCompil, BorderLayout.NORTH);
+        this.add(panelCompar, BorderLayout.CENTER);
 
     }
 
@@ -273,8 +308,10 @@ public final class PanelLab extends JComponent implements ListDataListener {
                     if (e.getActionCommand().equals(BT_ADD_LAB_REF)) {
                         listLabRef.getModel().addLab(new Lab(file));
 
-                    } else {
+                    } else if(e.getActionCommand().equals(BT_ADD_LAB_WK)) {
                         listLabWk.getModel().addLab(new Lab(file));
+                    }else{
+                    	listLabCompar.getModel().addLab(new Lab(file));
                     }
                 }
             }
