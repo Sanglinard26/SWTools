@@ -53,41 +53,68 @@ public final class PanelLab extends JComponent implements ListDataListener {
     private final JButton btAddLab, btCompil, btAddLabRef, btAddLabWk, btCompar, btExport;
     private static final GridBagConstraints gbc = new GridBagConstraints();
     private final ListLab listLabCompar, listLabRef, listLabWk;
-    private final ListVar listVarRef,listVarWk, listVarPlus, listVarMoins;
+    private final ListVar listVarRef, listVarWk, listVarPlus, listVarMoins;
     private final JTextField filterVarRef, filterVarWk;
 
     public PanelLab() {
 
-    	this.setLayout(new BorderLayout());
-    	
-    	panelCompil = new JPanel(new GridBagLayout());
-    	panelCompil.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Compilation"));
-    	
-    	setGbc(GridBagConstraints.NONE, 0, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.WEST);
-    	btAddLab = new JButton("Ajouter fichiers Lab");
+        this.setLayout(new BorderLayout(10, 0));
+
+        panelCompil = new JPanel(new GridBagLayout());
+        panelCompil.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.BLACK), "<html><font size = 4><b>Compilation</b></font></html>"));
+
+        setGbc(GridBagConstraints.HORIZONTAL, 0, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
+        btAddLab = new JButton("Ajouter fichiers Lab");
         btAddLab.addActionListener(new addLab());
         panelCompil.add(btAddLab, gbc);
-        
-        setGbc(GridBagConstraints.NONE, 1, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.WEST);
+
+        setGbc(GridBagConstraints.HORIZONTAL, 1, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
         btCompil = new JButton("Compiler");
         btCompil.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent paramActionEvent) {
-				final Lab compilLab = Lab.compilLab(listLabCompar.getModel().getList());
-				compilLab.write(new File("D:\\CompilationLab.lab"));
-			}
-		});
+
+            @Override
+            public void actionPerformed(ActionEvent paramActionEvent) {
+
+                final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_RESULT_LAB));
+                fileChooser.setFileFilter(new FileFilter() {
+
+                    @Override
+                    public String getDescription() {
+                        return "Fichier Lab (*.lab)";
+                    }
+
+                    @Override
+                    public boolean accept(File f) {
+                        return Utilitaire.getExtension(f).equals("lab");
+                    }
+                });
+                fileChooser.setSelectedFile(new File("CompilationLab.lab"));
+                final int rep = fileChooser.showSaveDialog(null);
+
+                if (rep == JFileChooser.APPROVE_OPTION) {
+                    Thread thread = new Thread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            final Lab compilLab = Lab.compilLab(listLabCompar.getModel().getList());
+                            compilLab.write(fileChooser.getSelectedFile());
+                            JOptionPane.showMessageDialog(null, "Compilation terminee !");
+                        }
+                    });
+                    thread.start();
+                }
+            }
+        });
         panelCompil.add(btCompil, gbc);
-        
-        setGbc(GridBagConstraints.VERTICAL, 0, 1, 2, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.WEST);
+
+        setGbc(GridBagConstraints.BOTH, 0, 1, 2, 1, 1, 1, new Insets(0, 0, 0, 5), GridBagConstraints.WEST);
         listLabCompar = new ListLab(new ListModelLab());
         panelCompil.add(new JScrollPane(listLabCompar), gbc);
-        
-        //***************************
-    	
-    	panelCompar = new JPanel(new GridBagLayout());
-    	panelCompar.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Comparaison"));
+
+        // ***************************
+
+        panelCompar = new JPanel(new GridBagLayout());
+        panelCompar.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.BLACK), "<html><font size = 4><b>Comparaison</b></font></html>"));
 
         setGbc(GridBagConstraints.HORIZONTAL, 0, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
         btAddLabRef = new JButton(BT_ADD_LAB_REF);
@@ -261,8 +288,8 @@ public final class PanelLab extends JComponent implements ListDataListener {
         listVarPlus = new ListVar(new ListModelVar());
         listVarPlus.getModel().addListDataListener(this);
         panelCompar.add(new JScrollPane(listVarPlus), gbc);
-        
-        this.add(panelCompil, BorderLayout.NORTH);
+
+        this.add(panelCompil, BorderLayout.WEST);
         this.add(panelCompar, BorderLayout.CENTER);
 
     }
@@ -308,10 +335,10 @@ public final class PanelLab extends JComponent implements ListDataListener {
                     if (e.getActionCommand().equals(BT_ADD_LAB_REF)) {
                         listLabRef.getModel().addLab(new Lab(file));
 
-                    } else if(e.getActionCommand().equals(BT_ADD_LAB_WK)) {
+                    } else if (e.getActionCommand().equals(BT_ADD_LAB_WK)) {
                         listLabWk.getModel().addLab(new Lab(file));
-                    }else{
-                    	listLabCompar.getModel().addLab(new Lab(file));
+                    } else {
+                        listLabCompar.getModel().addLab(new Lab(file));
                     }
                 }
             }
