@@ -79,6 +79,7 @@ public final class PanelCDF extends JComponent {
     private final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, new JScrollPane(panVisu), tabPan);
     private final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneLeft, splitPaneRight);
     private static final PanelHistory panelHistory = new PanelHistory();
+    private static final PanelInterpolation panelInterpolation = new PanelInterpolation();
 
     public PanelCDF() {
 
@@ -238,6 +239,7 @@ public final class PanelCDF extends JComponent {
 
         tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(panelHistory));
         tabPan.addTab("Graphique", new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
+        tabPan.addTab("<html><b>Interpolation</b></html>", panelInterpolation);
 
         tabPan.addChangeListener(new ChangeListener() {
 

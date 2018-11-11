@@ -44,7 +44,6 @@ public final class Ihm extends JFrame {
     private static final String ICON_CONTACT = "/contact_icon_16.png";
     private static final String ICON_AIDE = "/manuel_icon_16.png";
     private static final String ICON_NEWS = "/new_icon_16.png";
-    private static final String ICON_PI = "/pi_icon_16.png";
 
     private final JMenuBar menuBar = new JMenuBar();
     private JMenu menu, subMenu;
@@ -60,8 +59,6 @@ public final class Ihm extends JFrame {
 
     private static PanelLab panelLab = null;
     private static PanelBdd panelBdd = null;
-
-    private static FrameInterpol finterp = null;
 
     public static final boolean testMode = false;
 
@@ -252,24 +249,6 @@ public final class Ihm extends JFrame {
             public void actionPerformed(ActionEvent paramActionEvent) {
                 new DialNews(Ihm.this);
 
-            }
-        });
-        menu.add(menuItem);
-
-        menuBar.add(menu);
-
-        menu = new JMenu("Outils");
-        menuItem = new JMenuItem(new AbstractAction("Interpolation valeur Z", new ImageIcon(getClass().getResource(ICON_PI))) {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent paramActionEvent) {
-                if (finterp == null) {
-                    finterp = new FrameInterpol();
-                } else {
-                    finterp.setVisible(true);
-                }
             }
         });
         menu.add(menuItem);

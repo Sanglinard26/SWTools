@@ -22,7 +22,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import cdf.Cdf;
 import gui.SWToolsMain;
 import utils.Preference;
 import utils.Utilitaire;
@@ -85,7 +84,7 @@ public final class Lab {
             xmler = xmlif.createXMLEventReader(new FileReader(file));
             XMLEvent event;
             StringBuilder shortName = new StringBuilder();
-            String category = null;
+            //String category = null;
 
             while (xmler.hasNext()) {
 
@@ -113,7 +112,7 @@ public final class Lab {
 
                                 break;
 
-                            case "CATEGORY":
+                            /*case "CATEGORY":
 
                                 do {
                                     event = xmler.nextEvent();
@@ -123,14 +122,14 @@ public final class Lab {
 
                                 } while (!event.isCharacters());
 
-                                break;
+                                break;*/
                             }
                         }
                         event = xmler.nextEvent();
                     }
-                    if (!category.equals(Cdf.AXIS_VALUES)) {
+                    //if (!category.equals(Cdf.AXIS_VALUES)) {
                         listVariable.add(new Variable(shortName.toString(), this.name));
-                    }
+                    //}
                 }
 
             }
@@ -157,6 +156,7 @@ public final class Lab {
         final String FIXED_MAP = "FESTKENNFELD";
         final String GROUP_LINE = "GRUPPENKENNLINIE";
         final String GROUP_MAP = "GRUPPENKENNFELD";
+        final String DISTRIBUTION = "STUETZSTELLENVERTEILUNG";
         final String TEXTSTRING = "TEXTSTRING";
 
         this.name = Utilitaire.getFileNameWithoutExtension(file);
@@ -195,6 +195,9 @@ public final class Lab {
                 case GROUP_MAP:
                     listVariable.add(new Variable(spaceSplitLine[1], this.name));
                     break;
+                case DISTRIBUTION:
+                    listVariable.add(new Variable(spaceSplitLine[1], this.name));
+                    break;
                 case TEXTSTRING:
                     listVariable.add(new Variable(spaceSplitLine[1], this.name));
                     break;
@@ -207,13 +210,12 @@ public final class Lab {
     }
 
     @Override
-    public String toString() {
-        return this.name;
-    }
-
-    @Override
     public boolean equals(Object obj) {
-        return this.name.equals(obj.toString());
+    	if(obj instanceof Lab)
+    	{
+    		return this.name.equals(((Lab)obj).getName());
+    	}
+        return false;
     }
 
     public final String getName() {
@@ -249,11 +251,16 @@ public final class Lab {
     {
     	try(PrintWriter pw = new PrintWriter(file))
     	{
+    		final List<Variable> listVariable = new ArrayList<>(this.listVariable);
+    		
+    		Collections.sort(listVariable);
+    		
     		pw.println("[Label]");
-    		for(Variable var : this.listVariable)
+    		for(Variable var : listVariable)
     		{
     			pw.println(var.getNom());
     		}
+    		
     	} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

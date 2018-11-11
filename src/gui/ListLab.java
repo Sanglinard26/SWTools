@@ -90,5 +90,5 @@ public final class ListLab extends JList<Lab> implements KeyListener {
             }
         }
     }
-
+    
 }

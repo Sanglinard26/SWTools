@@ -1,6 +1,3 @@
-/*
- * Creation : 26 juin 2018
- */
 package gui;
 
 import java.awt.BorderLayout;
@@ -14,7 +11,7 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.Vector;
 
-import javax.swing.JFrame;
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
@@ -24,17 +21,15 @@ import javax.swing.table.DefaultTableModel;
 import cdf.Variable;
 import utils.Interpolation;
 
-public final class FrameInterpol extends JFrame {
+public final class PanelInterpolation extends JComponent {
 
-    private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 1L;
+	
     private final JTable tableData;
     private static final String[] ENTETE = new String[] { "X", "Y", "Z" };
+	
+	public PanelInterpolation() {
 
-    public FrameInterpol() {
-
-        this.setTitle("Interpolation valeur Z");
-        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setLayout(new BorderLayout());
 
         tableData = new JTable(new DefaultTableModel());
@@ -128,12 +123,10 @@ public final class FrameInterpol extends JFrame {
         });
 
         this.add(new JScrollPane(tableData), BorderLayout.CENTER);
-
-        this.pack();
-        this.setVisible(true);
-    }
-
-    public final double calcZ(Variable var, String x, String y) {
+		
+	}
+	
+	public final double calcZ(Variable var, String x, String y) {
         if (x != null && y != null) {
             return Interpolation.interpLinear2D(var.getValues().toDouble2D(), Double.parseDouble(x), Double.parseDouble(y));
         }

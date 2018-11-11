@@ -52,7 +52,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
     private final JPanel panelCompil, panelCompar;
     private final JButton btAddLab, btCompil, btAddLabRef, btAddLabWk, btCompar, btExport;
     private static final GridBagConstraints gbc = new GridBagConstraints();
-    private final ListLab listLabCompar, listLabRef, listLabWk;
+    private final ListLab listLabCompil, listLabRef, listLabWk;
     private final ListVar listVarRef, listVarWk, listVarPlus, listVarMoins;
     private final JTextField filterVarRef, filterVarWk;
 
@@ -96,7 +96,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
 
                         @Override
                         public void run() {
-                            final Lab compilLab = Lab.compilLab(listLabCompar.getModel().getList());
+                            final Lab compilLab = Lab.compilLab(listLabCompil.getModel().getList());
                             compilLab.write(fileChooser.getSelectedFile());
                             JOptionPane.showMessageDialog(null, "Compilation terminee !");
                         }
@@ -108,8 +108,8 @@ public final class PanelLab extends JComponent implements ListDataListener {
         panelCompil.add(btCompil, gbc);
 
         setGbc(GridBagConstraints.BOTH, 0, 1, 2, 1, 1, 1, new Insets(0, 0, 0, 5), GridBagConstraints.WEST);
-        listLabCompar = new ListLab(new ListModelLab());
-        panelCompil.add(new JScrollPane(listLabCompar), gbc);
+        listLabCompil = new ListLab(new ListModelLab());
+        panelCompil.add(new JScrollPane(listLabCompil), gbc);
 
         // ***************************
 
@@ -338,7 +338,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
                     } else if (e.getActionCommand().equals(BT_ADD_LAB_WK)) {
                         listLabWk.getModel().addLab(new Lab(file));
                     } else {
-                        listLabCompar.getModel().addLab(new Lab(file));
+                        listLabCompil.getModel().addLab(new Lab(file));
                     }
                 }
             }
