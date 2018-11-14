@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -9,51 +10,44 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.util.Vector;
 
-import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.AbstractTableModel;
 
+import cdf.Map;
 import cdf.Variable;
 import utils.Interpolation;
 
-public final class PanelInterpolation extends JComponent {
+public final class PanelInterpolation extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
+	private final MyTableModel modelDatas;
     private final JTable tableData;
-    private static final String[] ENTETE = new String[] { "X", "Y", "Z" };
 	
 	public PanelInterpolation() {
 
-        this.setLayout(new BorderLayout());
+        this.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        tableData = new JTable(new DefaultTableModel());
-        ((DefaultTableModel) (tableData.getModel())).setDataVector(new String[100][3], ENTETE);
+        modelDatas = new MyTableModel();
+        tableData = new JTable(modelDatas);
         tableData.setCellSelectionEnabled(true);
+        
 
-        ((DefaultTableModel) (tableData.getModel())).addTableModelListener(new TableModelListener() {
+        modelDatas.addTableModelListener(new TableModelListener() {
 
             @Override
             public void tableChanged(TableModelEvent e) {
-                // System.out.println("table changed");
-                Variable var = PanelCDF.getSelVariable();
-                if (var != null) {
-                    Vector<?> table = (((DefaultTableModel) tableData.getModel()).getDataVector());
-                    for (int row = 0; row < table.size(); row++) {
-                        if (((Vector<?>) table.get(row)).get(0) != null && ((Vector<?>) table.get(row)).get(1) != null) {
-                            double z = calcZ(var, ((Vector<?>) table.get(row)).get(0).toString(), ((Vector<?>) table.get(row)).get(1).toString());
-                            ((Vector<String>) table.get(row)).set(2, String.valueOf(z));
-                        } else {
-                            break;
-                        }
 
-                    }
-                    tableData.updateUI();
+                final Variable var = PanelCDF.getSelVariable();
+                
+                if (var != null && e.getColumn()<2) {
+                	
+                	calcZvalue(var);
                 }
             }
         });
@@ -72,7 +66,7 @@ public final class PanelInterpolation extends JComponent {
             public void keyPressed(KeyEvent e) {
 
                 if (e.getKeyCode() == 10) {
-                    ((DefaultTableModel) tableData.getModel()).fireTableDataChanged();
+                	modelDatas.fireTableDataChanged();
                 }
 
                 if (e.getKeyCode() == 127) {
@@ -80,10 +74,10 @@ public final class PanelInterpolation extends JComponent {
                     int[] idxRow = tableData.getSelectedRows();
                     for (int c : idxCol) {
                         for (int r : idxRow) {
-                            ((Vector<String>) ((DefaultTableModel) tableData.getModel()).getDataVector().get(r)).set(c, "");
+                        	modelDatas.setValueAt(null, r, c);
                         }
                     }
-                    ((DefaultTableModel) tableData.getModel()).fireTableDataChanged();
+                    modelDatas.fireTableDataChanged();
                 }
 
                 if ((e.getModifiers() == KeyEvent.CTRL_MASK) && (e.getKeyCode() == KeyEvent.VK_V)) {
@@ -105,7 +99,7 @@ public final class PanelInterpolation extends JComponent {
                                 col = intCol;
                                 for (String sTab : splitTab) {
                                     if (!sTab.isEmpty()) {
-                                        tableData.getModel().setValueAt(sTab, row, col);
+                                    	modelDatas.setValueAt(Double.parseDouble(sTab), row, col);
 
                                     }
                                     col++;
@@ -126,11 +120,84 @@ public final class PanelInterpolation extends JComponent {
 		
 	}
 	
-	public final double calcZ(Variable var, String x, String y) {
-        if (x != null && y != null) {
-            return Interpolation.interpLinear2D(var.getValues().toDouble2D(), Double.parseDouble(x), Double.parseDouble(y));
-        }
-        return Double.NaN;
+	public final void calcZvalue(Variable var) {
+
+		if(var instanceof Map)
+		{
+			
+			final Double[][] datas = modelDatas.getDatas();
+            for (int row = 0; row < tableData.getRowCount(); row++) {
+
+                if (datas[row][0] != null && datas[row][1] != null) {
+                	modelDatas.setValueAt(Interpolation.interpLinear2D(var.getValues().toDouble2D(), datas[row][0], datas[row][1]), row, 2);
+                } else {
+                    break;
+                }
+            }
+		}
+        	
     }
+	
+	private final class MyTableModel extends AbstractTableModel
+	{
+
+		private static final long serialVersionUID = 1L;
+		
+		private final String[] ENTETE = {"X", "Y", "Z"};
+		private final Double[][] datas;
+
+		public MyTableModel() {
+			datas = new Double[100][3];
+		}
+		
+		@Override
+		public Class<?> getColumnClass(int paramInt) {
+			return Double.class;
+		}
+		
+		@Override
+		public String getColumnName(int col) {
+			return ENTETE[col];
+		}
+		
+		@Override
+		public int getColumnCount() {
+			return ENTETE.length;
+		}
+
+		@Override
+		public int getRowCount() {
+			return datas.length;
+		}
+
+		@Override
+		public Object getValueAt(int row, int col) {
+			return datas[row][col];
+		}
+		
+		public final Double[][] getDatas()
+		{
+			return datas;
+		}
+		
+		@Override
+		public boolean isCellEditable(int row, int col) {
+			return col<2;
+		}
+		
+		@Override
+		public void setValueAt(Object value, int row, int col) {
+			
+			if(value != null)
+			{
+				datas[row][col] = (double) value;
+			}else{
+				datas[row][col] = null;
+			}
+			
+			fireTableCellUpdated(row, col);
+		}
+		
+	}
 
 }
