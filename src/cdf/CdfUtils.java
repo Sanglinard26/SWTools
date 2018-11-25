@@ -31,7 +31,7 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 import paco.Paco;
-import utils.Utilitaire;
+import utils.NumeralString;
 
 public abstract class CdfUtils {
 
@@ -118,8 +118,8 @@ public abstract class CdfUtils {
                                         varBase.getValues().setValue(y, x,
                                                 var.getValues().getValue(y, x) + " | " + varCompar.getValues().getValue(y, x));
                                     } else {
-                                        if (Utilitaire.isNumber(var.getValues().getValue(y, x))
-                                                && Utilitaire.isNumber(varCompar.getValues().getValue(y, x))) {
+                                        if (NumeralString.isNumber(var.getValues().getValue(y, x))
+                                                && NumeralString.isNumber(varCompar.getValues().getValue(y, x))) {
                                             varBase.getValues().setValue(y, x, Float.toString(Float.parseFloat(varCompar.getValues().getValue(y, x))
                                                     - Float.parseFloat(var.getValues().getValue(y, x))));
                                         } else {
@@ -135,10 +135,9 @@ public abstract class CdfUtils {
                     }
                 }
             }
-            if(listCompa.size()>0)
-            {
-            	return new Paco(cdfRef.getName() + "_vs_" + cdfWork.getName(), listCompa);
-            }  
+            if (listCompa.size() > 0) {
+                return new Paco(cdfRef.getName() + "_vs_" + cdfWork.getName(), listCompa);
+            }
         }
         return null;
     }
@@ -438,7 +437,7 @@ public abstract class CdfUtils {
         } catch (WriteException e) {
             SWToolsMain.getLogger().severe(e.getMessage());
             if (e instanceof RowsExceededException) {
-                JOptionPane.showMessageDialog(null, "Trop de variables a  exporter !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Trop de variables aï¿½ exporter !", "ERREUR", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         } finally {
@@ -458,7 +457,7 @@ public abstract class CdfUtils {
     static final void writeCell(WritableSheet sht, int col, int row, String txtValue, WritableCellFormat format)
             throws RowsExceededException, WriteException {
 
-        if (Utilitaire.isNumber(txtValue)) {
+        if (NumeralString.isNumber(txtValue)) {
             sht.addCell(new Number(col, row, Double.parseDouble(txtValue), format));
         } else {
             sht.addCell(new Label(col, row, txtValue, format));
@@ -559,23 +558,21 @@ public abstract class CdfUtils {
             printWriter.println("</head>");
             printWriter.println("<body>");
 
-            if(cdf.getName().indexOf("_vs_") > -1)
-            {
-            	String[] splitCdfName = cdf.getName().split("_vs_");
-            	printWriter.println("<h2 align=center>" + splitCdfName[0] + "</h2>");
-            	printWriter.println("<h2 align=center><font color=red>" + splitCdfName[1] + "</font></h2>");
-            }else{
-            	printWriter.println("<h2 align=center>" + cdf.getName() + "</h2>");
+            if (cdf.getName().indexOf("_vs_") > -1) {
+                String[] splitCdfName = cdf.getName().split("_vs_");
+                printWriter.println("<h2 align=center>" + splitCdfName[0] + "</h2>");
+                printWriter.println("<h2 align=center><font color=red>" + splitCdfName[1] + "</font></h2>");
+            } else {
+                printWriter.println("<h2 align=center>" + cdf.getName() + "</h2>");
             }
-            
-            //Sommaire
+
+            // Sommaire
             printWriter.println("<h2 align=center><u>" + "Sommaire" + "</u></h2>");
-            
+
             for (Variable var : cdf.getListLabel()) {
-            	printWriter.println("<p align=center><a href=#" + var.getShortName() + ">" + var.getShortName() + "</a></p>");
+                printWriter.println("<p align=center><a href=#" + var.getShortName() + ">" + var.getShortName() + "</a></p>");
             }
             //
-            
 
             for (Variable var : cdf.getListLabel()) {
 

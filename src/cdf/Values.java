@@ -3,7 +3,7 @@
  */
 package cdf;
 
-import utils.Utilitaire;
+import utils.NumeralString;
 
 public final class Values {
 
@@ -33,23 +33,7 @@ public final class Values {
 
     public final void setValue(int axeX, int axeY, String value) {
         idx = axeY + dimX * axeX;
-        this.values[idx] = Utilitaire.cutNumber(value);
-    }
-
-    public final double[] toDouble1D() {
-
-        double[] doubleValues = new double[values.length];
-
-        for (int i = 0; i < this.values.length; i++) {
-            if (Utilitaire.isNumber(this.values[i])) {
-                doubleValues[i] = Double.parseDouble(this.values[i]);
-            } else {
-                doubleValues = new double[0];
-                break;
-            }
-        }
-
-        return doubleValues;
+        this.values[idx] = NumeralString.cutNumber(value);
     }
 
     public final double[][] toDouble2D() {
@@ -59,7 +43,7 @@ public final class Values {
         for (short y = 0; y < dimY; y++) {
             for (short x = 0; x < dimX; x++) {
 
-                if (Utilitaire.isNumber(getValue(y, x))) {
+                if (NumeralString.isNumber(getValue(y, x))) {
                     doubleValues[y][x] = Double.parseDouble(getValue(y, x));
                 } else {
                     if (x * y != 0) {

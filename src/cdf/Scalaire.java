@@ -1,6 +1,6 @@
 package cdf;
 
-import utils.Utilitaire;
+import utils.NumeralString;
 
 public final class Scalaire extends Variable {
 
@@ -23,7 +23,7 @@ public final class Scalaire extends Variable {
         StringBuilder sb = new StringBuilder();
         sb.append(getShortName() + " = ");
 
-        if (Utilitaire.isNumber(getValue())) {
+        if (NumeralString.isNumber(getValue())) {
             sb.append(getValue() + ";");
         } else {
             if (Boolean.parseBoolean(getValue().toString())) {

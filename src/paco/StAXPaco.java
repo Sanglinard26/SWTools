@@ -106,6 +106,8 @@ public final class StAXPaco implements Cdf {
 
             int cntLabel = 0;
 
+            String data = null;
+
             while (xmler.hasNext()) {
 
                 event = xmler.nextEvent();
@@ -124,11 +126,14 @@ public final class StAXPaco implements Cdf {
                         while (!event.toString().equals("</SW-UNIT>")) {
 
                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
+
+                                data = event.asCharacters().getData();
+
                                 if (shortNameUnit.length() == 0) {
-                                    shortNameUnit.append(event.asCharacters().getData());
+                                    shortNameUnit.append(data);
                                 } else {
-                                    if (!event.asCharacters().getData().equals("tbd")) {
-                                        swUnitDisplay.append(event.asCharacters().getData());
+                                    if (!data.equals("tbd")) {
+                                        swUnitDisplay.append(data);
                                     }
                                     break;
                                 }
@@ -285,6 +290,8 @@ public final class StAXPaco implements Cdf {
 
                                 case SW_VALUES_PHYS:
 
+                                    int tmpValuesSize = 0;
+
                                     switch (category) {
                                     case VALUE:
 
@@ -340,23 +347,27 @@ public final class StAXPaco implements Cdf {
                                             }
                                         }
 
+                                        tmpValuesSize = tmpValues.size();
+
                                         if (nbDim == 0) {
                                             nbDim = 2;
-                                            valeur = new Values(tmpValues.size() + 1, nbDim);
+                                            valeur = new Values(tmpValuesSize + 1, nbDim);
                                         } else {
-                                            valeur = new Values((tmpValues.size() / nbDim) + 0, nbDim + 1);
+                                            valeur = new Values((tmpValuesSize / nbDim) + 0, nbDim + 1);
                                         }
 
                                         if (nbDim == 2) {
                                             valeur.setValue(0, 0, "X");
                                             valeur.setValue(1, 0, "Z");
-                                            for (int i = 0; i < tmpValues.size(); i++) {
+
+                                            for (int i = 0; i < tmpValuesSize; i++) {
                                                 valeur.setValue(0, i + 1, Integer.toString(i));
                                                 valeur.setValue(1, i + 1, tmpValues.get(i));
                                             }
                                         } else {
+
                                             valeur.setValue(0, 0, "Y \\ X");
-                                            for (int i = 0; i < tmpValues.size(); i++) {
+                                            for (int i = 0; i < tmpValuesSize; i++) {
                                                 if (i < valeur.getDimX() - 1) {
                                                     valeur.setValue(0, i + 1, Integer.toString(i));
                                                 }
@@ -379,13 +390,15 @@ public final class StAXPaco implements Cdf {
                                             }
                                         }
 
+                                        tmpValuesSize = tmpValues.size();
+
                                         if (numAxe == 1) {
-                                            valeur = new Values(tmpValues.size() / 2, 2);
-                                            for (int i = 0; i < tmpValues.size(); i++) {
-                                                if (i < tmpValues.size() / 2) {
+                                            valeur = new Values(tmpValuesSize / 2, 2);
+                                            for (int i = 0; i < tmpValuesSize; i++) {
+                                                if (i < tmpValuesSize / 2) {
                                                     valeur.setValue(0, i, tmpValues.get(i));
                                                 } else {
-                                                    valeur.setValue(1, i % (tmpValues.size() / 2), tmpValues.get(i));
+                                                    valeur.setValue(1, i % (tmpValuesSize / 2), tmpValues.get(i));
                                                 }
                                             }
                                         }
@@ -406,9 +419,11 @@ public final class StAXPaco implements Cdf {
                                             }
                                         }
 
+                                        tmpValuesSize = tmpValues.size();
+
                                         if (!tmpValues.isEmpty()) {
-                                            valeur = new Values(tmpValues.size(), 1);
-                                            for (int i = 0; i < tmpValues.size(); i++) {
+                                            valeur = new Values(tmpValuesSize, 1);
+                                            for (int i = 0; i < tmpValuesSize; i++) {
                                                 valeur.setValue(0, i, tmpValues.get(i));
                                             }
                                         }
@@ -429,13 +444,15 @@ public final class StAXPaco implements Cdf {
                                             }
                                         }
 
+                                        tmpValuesSize = tmpValues.size();
+
                                         if (numAxe == 1) {
-                                            valeur = new Values(tmpValues.size() / 2, 2);
-                                            for (int i = 0; i < tmpValues.size(); i++) {
-                                                if (i < tmpValues.size() / 2) {
+                                            valeur = new Values(tmpValuesSize / 2, 2);
+                                            for (int i = 0; i < tmpValuesSize; i++) {
+                                                if (i < tmpValuesSize / 2) {
                                                     valeur.setValue(0, i, tmpValues.get(i));
                                                 } else {
-                                                    valeur.setValue(1, i % (tmpValues.size() / 2), tmpValues.get(i));
+                                                    valeur.setValue(1, i % (tmpValuesSize / 2), tmpValues.get(i));
                                                 }
                                             }
                                         }
@@ -456,13 +473,15 @@ public final class StAXPaco implements Cdf {
                                             }
                                         }
 
+                                        tmpValuesSize = tmpValues.size();
+
                                         if (numAxe == 1) {
-                                            valeur = new Values(tmpValues.size() / 2, 2);
-                                            for (int i = 0; i < tmpValues.size(); i++) {
-                                                if (i < tmpValues.size() / 2) {
+                                            valeur = new Values(tmpValuesSize / 2, 2);
+                                            for (int i = 0; i < tmpValuesSize; i++) {
+                                                if (i < tmpValuesSize / 2) {
                                                     valeur.setValue(0, i, tmpValues.get(i));
                                                 } else {
-                                                    valeur.setValue(1, i % (tmpValues.size() / 2), tmpValues.get(i));
+                                                    valeur.setValue(1, i % (tmpValuesSize / 2), tmpValues.get(i));
                                                 }
                                             }
                                         }
@@ -478,15 +497,17 @@ public final class StAXPaco implements Cdf {
                                             event = xmler.nextEvent();
                                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
 
+                                                data = event.asCharacters().getData();
+
                                                 switch (numAxe) {
                                                 case 0:
-                                                    tmpAxeX.add(event.asCharacters().getData());
+                                                    tmpAxeX.add(data);
                                                     break;
                                                 case 1:
-                                                    tmpAxeY.add(event.asCharacters().getData());
+                                                    tmpAxeY.add(data);
                                                     break;
                                                 case 2:
-                                                    tmpValues.add(event.asCharacters().getData());
+                                                    tmpValues.add(data);
                                                     break;
                                                 }
 
@@ -494,6 +515,8 @@ public final class StAXPaco implements Cdf {
                                                 event = xmler.peek();
                                             }
                                         }
+
+                                        tmpValuesSize = tmpValues.size();
 
                                         if (numAxe == 2) {
                                             valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
@@ -503,7 +526,7 @@ public final class StAXPaco implements Cdf {
                                                 valeur.setValue(0, i + 1, tmpAxeX.get(i));
                                             }
 
-                                            for (int i = 0; i < tmpValues.size(); i++) {
+                                            for (int i = 0; i < tmpValuesSize; i++) {
                                                 valeur.setValue((int) ((double) i / (double) (tmpAxeX.size() + 1)) + 1, i % (tmpAxeX.size() + 1),
                                                         tmpValues.get(i));
                                             }
@@ -520,15 +543,17 @@ public final class StAXPaco implements Cdf {
                                             event = xmler.nextEvent();
                                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
 
+                                                data = event.asCharacters().getData();
+
                                                 switch (numAxe) {
                                                 case 0:
-                                                    tmpAxeX.add(event.asCharacters().getData());
+                                                    tmpAxeX.add(data);
                                                     break;
                                                 case 1:
-                                                    tmpAxeY.add(event.asCharacters().getData());
+                                                    tmpAxeY.add(data);
                                                     break;
                                                 case 2:
-                                                    tmpValues.add(event.asCharacters().getData());
+                                                    tmpValues.add(data);
                                                     break;
                                                 }
 
@@ -536,6 +561,8 @@ public final class StAXPaco implements Cdf {
                                                 event = xmler.peek();
                                             }
                                         }
+
+                                        tmpValuesSize = tmpValues.size();
 
                                         if (numAxe == 2) {
                                             valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
@@ -545,7 +572,7 @@ public final class StAXPaco implements Cdf {
                                                 valeur.setValue(0, i + 1, tmpAxeX.get(i));
                                             }
 
-                                            for (int i = 0; i < tmpValues.size(); i++) {
+                                            for (int i = 0; i < tmpValuesSize; i++) {
                                                 valeur.setValue((int) ((double) i / (double) (tmpAxeX.size() + 1)) + 1, i % (tmpAxeX.size() + 1),
                                                         tmpValues.get(i));
                                             }
@@ -562,15 +589,17 @@ public final class StAXPaco implements Cdf {
                                             event = xmler.nextEvent();
                                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
 
+                                                data = event.asCharacters().getData();
+
                                                 switch (numAxe) {
                                                 case 0:
-                                                    tmpAxeX.add(event.asCharacters().getData());
+                                                    tmpAxeX.add(data);
                                                     break;
                                                 case 1:
-                                                    tmpAxeY.add(event.asCharacters().getData());
+                                                    tmpAxeY.add(data);
                                                     break;
                                                 case 2:
-                                                    tmpValues.add(event.asCharacters().getData());
+                                                    tmpValues.add(data);
                                                     break;
                                                 }
 
@@ -578,6 +607,8 @@ public final class StAXPaco implements Cdf {
                                                 event = xmler.peek();
                                             }
                                         }
+
+                                        tmpValuesSize = tmpValues.size();
 
                                         if (numAxe == 2) {
                                             valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
@@ -587,7 +618,7 @@ public final class StAXPaco implements Cdf {
                                                 valeur.setValue(0, i + 1, tmpAxeX.get(i));
                                             }
 
-                                            for (int i = 0; i < tmpValues.size(); i++) {
+                                            for (int i = 0; i < tmpValuesSize; i++) {
                                                 valeur.setValue((int) ((double) i / (double) (tmpAxeX.size() + 1)) + 1, i % (tmpAxeX.size() + 1),
                                                         tmpValues.get(i));
                                             }
@@ -764,6 +795,8 @@ public final class StAXPaco implements Cdf {
             tmpAuteur.clear();
             tmpScore.clear();
             tmpRemark.clear();
+
+            data = null;
 
         } catch (
 

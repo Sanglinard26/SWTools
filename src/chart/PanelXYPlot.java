@@ -22,7 +22,7 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 
-import utils.Utilitaire;
+import utils.NumeralString;
 
 public final class PanelXYPlot extends JPanel {
 
@@ -33,8 +33,6 @@ public final class PanelXYPlot extends JPanel {
     private static final Color GRID_COLOR = new Color(200, 200, 200, 200);
     private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
     private static final int POINT_WIDTH = 4;
-    // private static final int NB_X_DIV = 9;
-    // private static final int NB_Y_DIV = 9;
     private int NB_X_DIV;
     private int NB_Y_DIV;
 
@@ -116,7 +114,7 @@ public final class PanelXYPlot extends JPanel {
 
         int nbSerie = seriesCollection.getSeriesCount();
 
-        this.mapColor = new HashMap<>(nbSerie);
+        this.mapColor = new HashMap<String, Color>(nbSerie);
 
         for (int i = 0; i < nbSerie; i++) {
             mapColor.put(seriesCollection.getSerie(i).getName(), Color.getHSBColor((float) (i) / (float) (nbSerie), 1, 1));
@@ -231,7 +229,7 @@ public final class PanelXYPlot extends JPanel {
                 g2.setColor(GRID_COLOR);
                 g2.drawLine(PADDING + LABEL_PADDING + 1 + POINT_WIDTH, y0, width - PADDING, y1); // Dessin de la grille
                 g2.setColor(Color.BLACK);
-                yLabel = Utilitaire.formatStringNumber((minYvalue + (diffYvalue) * ((i * 1.0d) / NB_Y_DIV)));
+                yLabel = NumeralString.formatStringNumber((minYvalue + (diffYvalue) * ((i * 1.0d) / NB_Y_DIV)));
                 metrics = g2.getFontMetrics();
                 labelWidth = metrics.stringWidth(yLabel);
                 g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
@@ -250,7 +248,7 @@ public final class PanelXYPlot extends JPanel {
                 g2.setColor(GRID_COLOR);
                 g2.drawLine(x0, height - PADDING - LABEL_PADDING - 1 - POINT_WIDTH, x1, PADDING); // Dessin de la grille
                 g2.setColor(Color.BLACK);
-                xLabel = Utilitaire.formatStringNumber((minXvalue + (diffXvalue) * ((i * 1.0) / NB_X_DIV)));
+                xLabel = NumeralString.formatStringNumber((minXvalue + (diffXvalue) * ((i * 1.0) / NB_X_DIV)));
                 metrics = g2.getFontMetrics();
                 labelWidth = metrics.stringWidth(xLabel);
                 g2.rotate(-Math.PI / 2);

@@ -24,7 +24,7 @@ import com.orsoncharts.util.Orientation;
 
 import cdf.Map;
 import cdf.Variable;
-import utils.Utilitaire;
+import utils.NumeralString;
 
 public final class SurfaceChart extends JComponent {
 
@@ -57,7 +57,7 @@ public final class SurfaceChart extends JComponent {
 
                         value = map.getValue((int) y, (int) x);
 
-                        return Utilitaire.isNumber(value) ? Double.parseDouble(value) : Double.NaN;
+                        return NumeralString.isNumber(value) ? Double.parseDouble(value) : Double.NaN;
                     }
                     return 0;
                 }

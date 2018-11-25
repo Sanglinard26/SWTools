@@ -18,25 +18,25 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
+import cdf.Curve;
 import cdf.Map;
 import cdf.Variable;
 import utils.Interpolation;
 
 public final class PanelInterpolation extends JPanel {
 
-	private static final long serialVersionUID = 1L;
-	
-	private final MyTableModel modelDatas;
+    private static final long serialVersionUID = 1L;
+
+    private final MyTableModel modelDatas;
     private final JTable tableData;
-	
-	public PanelInterpolation() {
+
+    public PanelInterpolation() {
 
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         modelDatas = new MyTableModel();
         tableData = new JTable(modelDatas);
         tableData.setCellSelectionEnabled(true);
-        
 
         modelDatas.addTableModelListener(new TableModelListener() {
 
@@ -44,10 +44,10 @@ public final class PanelInterpolation extends JPanel {
             public void tableChanged(TableModelEvent e) {
 
                 final Variable var = PanelCDF.getSelVariable();
-                
-                if (var != null && e.getColumn()<2) {
-                	
-                	calcZvalue(var);
+
+                if (var != null && e.getColumn() < 2) {
+
+                    calcZvalue(var);
                 }
             }
         });
@@ -66,7 +66,7 @@ public final class PanelInterpolation extends JPanel {
             public void keyPressed(KeyEvent e) {
 
                 if (e.getKeyCode() == 10) {
-                	modelDatas.fireTableDataChanged();
+                    modelDatas.fireTableDataChanged();
                 }
 
                 if (e.getKeyCode() == 127) {
@@ -74,7 +74,7 @@ public final class PanelInterpolation extends JPanel {
                     int[] idxRow = tableData.getSelectedRows();
                     for (int c : idxCol) {
                         for (int r : idxRow) {
-                        	modelDatas.setValueAt(null, r, c);
+                            modelDatas.setValueAt(null, r, c);
                         }
                     }
                     modelDatas.fireTableDataChanged();
@@ -99,7 +99,7 @@ public final class PanelInterpolation extends JPanel {
                                 col = intCol;
                                 for (String sTab : splitTab) {
                                     if (!sTab.isEmpty()) {
-                                    	modelDatas.setValueAt(Double.parseDouble(sTab), row, col);
+                                        modelDatas.setValueAt(Double.parseDouble(sTab), row, col);
 
                                     }
                                     col++;
@@ -117,87 +117,87 @@ public final class PanelInterpolation extends JPanel {
         });
 
         this.add(new JScrollPane(tableData), BorderLayout.CENTER);
-		
-	}
-	
-	public final void calcZvalue(Variable var) {
 
-		if(var instanceof Map)
-		{
-			
-			final Double[][] datas = modelDatas.getDatas();
-            for (int row = 0; row < tableData.getRowCount(); row++) {
-
-                if (datas[row][0] != null && datas[row][1] != null) {
-                	modelDatas.setValueAt(Interpolation.interpLinear2D(var.getValues().toDouble2D(), datas[row][0], datas[row][1]), row, 2);
-                } else {
-                    break;
-                }
-            }
-		}
-        	
     }
-	
-	private final class MyTableModel extends AbstractTableModel
-	{
 
-		private static final long serialVersionUID = 1L;
-		
-		private final String[] ENTETE = {"X", "Y", "Z"};
-		private final Double[][] datas;
+    public final void calcZvalue(Variable var) {
 
-		public MyTableModel() {
-			datas = new Double[100][3];
-		}
-		
-		@Override
-		public Class<?> getColumnClass(int paramInt) {
-			return Double.class;
-		}
-		
-		@Override
-		public String getColumnName(int col) {
-			return ENTETE[col];
-		}
-		
-		@Override
-		public int getColumnCount() {
-			return ENTETE.length;
-		}
+        final Double[][] datas = modelDatas.getDatas();
+        double result = Double.NaN;
 
-		@Override
-		public int getRowCount() {
-			return datas.length;
-		}
+        for (int row = 0; row < tableData.getRowCount(); row++) {
 
-		@Override
-		public Object getValueAt(int row, int col) {
-			return datas[row][col];
-		}
-		
-		public final Double[][] getDatas()
-		{
-			return datas;
-		}
-		
-		@Override
-		public boolean isCellEditable(int row, int col) {
-			return col<2;
-		}
-		
-		@Override
-		public void setValueAt(Object value, int row, int col) {
-			
-			if(value != null)
-			{
-				datas[row][col] = (double) value;
-			}else{
-				datas[row][col] = null;
-			}
-			
-			fireTableCellUpdated(row, col);
-		}
-		
-	}
+            if (var instanceof Map && datas[row][0] != null && datas[row][1] != null) {
+                result = Interpolation.interpLinear2D(var.getValues().toDouble2D(), datas[row][0], datas[row][1]);
+            } else if (var instanceof Curve && datas[row][0] != null) {
+                result = Interpolation.interpLinear1D(var.getValues().toDouble2D(), datas[row][0]);
+            } else {
+                break;
+            }
+
+            modelDatas.setValueAt(result, row, 2);
+
+        }
+
+    }
+
+    private final class MyTableModel extends AbstractTableModel {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String[] ENTETE = { "X", "Y", "Z" };
+        private final Double[][] datas;
+
+        public MyTableModel() {
+            datas = new Double[100][3];
+        }
+
+        @Override
+        public Class<?> getColumnClass(int paramInt) {
+            return Double.class;
+        }
+
+        @Override
+        public String getColumnName(int col) {
+            return ENTETE[col];
+        }
+
+        @Override
+        public int getColumnCount() {
+            return ENTETE.length;
+        }
+
+        @Override
+        public int getRowCount() {
+            return datas.length;
+        }
+
+        @Override
+        public Object getValueAt(int row, int col) {
+            return datas[row][col];
+        }
+
+        public final Double[][] getDatas() {
+            return datas;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            return col < 2;
+        }
+
+        @Override
+        public void setValueAt(Object value, int row, int col) {
+
+            if (value != null) {
+                datas[row][col] = (double) value;
+            } else {
+                datas[row][col] = null;
+            }
+
+            fireTableCellUpdated(row, col);
+        }
+
+    }
 
 }

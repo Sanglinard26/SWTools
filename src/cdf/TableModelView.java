@@ -8,7 +8,7 @@ public final class TableModelView extends AbstractTableModel {
 
     private static final String EMPTY = "";
     private int nbCol = 0;
-    private Values values;;
+    private Values values;
 
     @Override
     public String getColumnName(int column) {

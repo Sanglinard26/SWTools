@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.DecimalFormat;
 
 import javax.swing.JFileChooser;
 
@@ -38,43 +37,6 @@ public abstract class Utilitaire {
         return (i > 0 && i < fileNameWithExtension.length() - 1) ? fileNameWithExtension.substring(0, i) : "";
     }
 
-    public static final String cutNumber(String number) {
-        return number.indexOf(".") < 0 ? number : number.replaceAll("0*$", "").replaceAll("\\.$", "");
-    }
-
-    public static final boolean isNumber(String s) {
-
-        final String REGEX_NUMBER_SI = "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?";
-        // final String REGEX_NUMBER = "[+-]?\\d+(\\.\\d+)?";
-
-        return s.matches(REGEX_NUMBER_SI);
-    }
-
-    public static final String formatStringNumber(double number) {
-
-        final DecimalFormat format = new DecimalFormat();
-
-        if (Math.floor(number) == number) {
-
-            format.setMaximumFractionDigits(0);
-
-        } else {
-
-            String text = Double.toString(number);
-            int integerPlaces = text.indexOf('.');
-            int decimalPlaces = text.length() - integerPlaces - 1;
-
-            if (decimalPlaces > 3) {
-
-                return String.format("%1.3g", number).toLowerCase();
-            }
-
-            format.setMaximumFractionDigits(3);
-        }
-
-        return format.format(number);
-    }
-
     public static final void createDtd(String pathFolder) {
 
         final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
@@ -83,8 +45,8 @@ public abstract class Utilitaire {
         dtd.deleteOnExit();
         if (!dtd.exists()) {
             final InputStream myDtd = Utilitaire.class.getResourceAsStream("/" + DTD);
-            try {
-                final OutputStream out = new FileOutputStream(pathFolder + "/" + DTD);
+            try (final OutputStream out = new FileOutputStream(pathFolder + "/" + DTD)) {
+
                 final byte[] buffer = new byte[1024];
                 int len = myDtd.read(buffer);
                 while (len != -1) {
@@ -92,8 +54,6 @@ public abstract class Utilitaire {
                     len = myDtd.read(buffer);
                 }
                 myDtd.close();
-                out.close();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }

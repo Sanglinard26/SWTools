@@ -53,6 +53,50 @@ public final class Interpolation {
         return yi;
     }
 
+    public static final double interpLinear1D(double[][] curve, double xi) throws IllegalArgumentException {
+
+        int nbInterval = curve[0].length - 1;
+
+        double xMin = curve[0][0];
+        double xMax = curve[0][curve[0].length - 1];
+
+        double[] x = new double[curve[0].length];
+
+        double[] dx = new double[nbInterval];
+        double[] dy = new double[nbInterval];
+        double[] slope = new double[nbInterval];
+        double[] intercept = new double[nbInterval];
+
+        for (int i = 0; i < nbInterval + 1; i++) {
+            x[i] = curve[0][i];
+        }
+
+        // Calculate the line equation (i.e. slope and intercept) between each point
+        for (int i = 0; i < nbInterval; i++) {
+            x[i] = curve[0][i];
+            dx[i] = curve[0][i + 1] - curve[0][i];
+            dy[i] = curve[1][i + 1] - curve[1][i];
+            slope[i] = dy[i] / dx[i];
+            intercept[i] = curve[1][i] - curve[0][i] * slope[i];
+        }
+
+        // Perform the interpolation here
+        double yi = Double.NaN;
+
+        xi = xi < xMin ? xMin : xi;
+        xi = xi > xMax ? xMax : xi;
+
+        int loc = Arrays.binarySearch(x, xi);
+        if (loc < -1) {
+            loc = -loc - 2;
+            yi = slope[loc] * xi + intercept[loc];
+        } else {
+            yi = curve[1][loc];
+        }
+
+        return yi;
+    }
+
     public static final double interpLinear2D(double[][] map, double xDes, double yDes) {
 
         double xMin = map[0][1];

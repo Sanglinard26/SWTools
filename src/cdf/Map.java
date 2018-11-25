@@ -1,10 +1,10 @@
 package cdf;
 
-import utils.Utilitaire;
+import utils.NumeralString;
 
 public final class Map extends Variable {
 
-	private String[] sharedAxis;
+    private String[] sharedAxis;
     private final Values values;
 
     private float minZValue = Float.POSITIVE_INFINITY;
@@ -20,7 +20,7 @@ public final class Map extends Variable {
         for (short y = 1; y < values.getDimY(); y++) {
             for (short x = 1; x < values.getDimX(); x++) {
 
-                if (Utilitaire.isNumber(values.getValue(y, x))) {
+                if (NumeralString.isNumber(values.getValue(y, x))) {
                     value = Float.parseFloat(values.getValue(y, x));
 
                     if (value < minZValue)
@@ -36,11 +36,12 @@ public final class Map extends Variable {
             }
         }
     }
-    
-    public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values, String[] sharedAxis) {
-    	
-    	this(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory, values);
-    	this.sharedAxis = sharedAxis;
+
+    public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values,
+            String[] sharedAxis) {
+
+        this(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory, values);
+        this.sharedAxis = sharedAxis;
     }
 
     @Override
@@ -76,10 +77,10 @@ public final class Map extends Variable {
     public final float getMinZValue() {
         return minZValue;
     }
-    
+
     public String[] getSharedAxis() {
-		return sharedAxis;
-	}
+        return sharedAxis;
+    }
 
     @Override
     public final Values getValues() {

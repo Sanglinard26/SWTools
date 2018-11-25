@@ -12,7 +12,7 @@ import javax.swing.border.LineBorder;
 import cdf.Curve;
 import cdf.Map;
 import cdf.Variable;
-import utils.Utilitaire;
+import utils.NumeralString;
 
 public final class XYChart extends JComponent {
 
@@ -56,10 +56,10 @@ public final class XYChart extends JComponent {
             xValue = curve.getValue(0, x);
             zValue = curve.getValue(1, x);
 
-            if (Utilitaire.isNumber(xValue) && Utilitaire.isNumber(zValue)) {
+            if (NumeralString.isNumber(xValue) && NumeralString.isNumber(zValue)) {
                 serie.addPoint(Double.parseDouble(xValue), Double.parseDouble(zValue));
             } else {
-                if (Utilitaire.isNumber(zValue)) {
+                if (NumeralString.isNumber(zValue)) {
                     serie.addPoint(x, Double.parseDouble(zValue));
                 } else {
                     serie.addPoint(x, Float.NaN);
@@ -91,10 +91,10 @@ public final class XYChart extends JComponent {
                 xValue = map.getValue(y, 0);
                 zValue = map.getValue(y, x);
 
-                if (Utilitaire.isNumber(xValue) && Utilitaire.isNumber(zValue)) {
+                if (NumeralString.isNumber(xValue) && NumeralString.isNumber(zValue)) {
                     serie.addPoint(Double.parseDouble(xValue), Double.parseDouble(zValue));
                 } else {
-                    if (Utilitaire.isNumber(zValue)) {
+                    if (NumeralString.isNumber(zValue)) {
                         serie.addPoint(y, Double.parseDouble(zValue));
                     } else {
                         serie.addPoint(y, Float.NaN);
@@ -126,10 +126,10 @@ public final class XYChart extends JComponent {
                 xValue = map.getValue(0, x);
                 zValue = map.getValue(y, x);
 
-                if (Utilitaire.isNumber(xValue) && Utilitaire.isNumber(zValue)) {
+                if (NumeralString.isNumber(xValue) && NumeralString.isNumber(zValue)) {
                     serie.addPoint(Double.parseDouble(xValue), Double.parseDouble(zValue));
                 } else {
-                    if (Utilitaire.isNumber(zValue)) {
+                    if (NumeralString.isNumber(zValue)) {
                         serie.addPoint(x, Double.parseDouble(zValue));
                     } else {
                         serie.addPoint(x, Float.NaN);
