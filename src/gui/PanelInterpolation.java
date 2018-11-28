@@ -27,14 +27,14 @@ public final class PanelInterpolation extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final MyTableModel modelDatas;
-    private final JTable tableData;
+    private final MyLinearTableModel modelDatas;
+    private static JTable tableData;
 
     public PanelInterpolation() {
 
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        modelDatas = new MyTableModel();
+        modelDatas = new MyLinearTableModel();
         tableData = new JTable(modelDatas);
         tableData.setCellSelectionEnabled(true);
 
@@ -119,6 +119,11 @@ public final class PanelInterpolation extends JPanel {
         this.add(new JScrollPane(tableData), BorderLayout.CENTER);
 
     }
+    
+    public static final void setModel(Variable var)
+    {
+    	tableData.setModel(new MyMapTableModel(var.getValues().valuesToDouble2D()));
+    }
 
     public final void calcZvalue(Variable var) {
 
@@ -141,14 +146,14 @@ public final class PanelInterpolation extends JPanel {
 
     }
 
-    private final class MyTableModel extends AbstractTableModel {
+    private static final class MyLinearTableModel extends AbstractTableModel {
 
         private static final long serialVersionUID = 1L;
 
         private final String[] ENTETE = { "X", "Y", "Z" };
         private final Double[][] datas;
 
-        public MyTableModel() {
+        public MyLinearTableModel() {
             datas = new Double[100][3];
         }
 
@@ -179,6 +184,63 @@ public final class PanelInterpolation extends JPanel {
 
         public final Double[][] getDatas() {
             return datas;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            return col < 2;
+        }
+
+        @Override
+        public void setValueAt(Object value, int row, int col) {
+
+            if (value != null) {
+                datas[row][col] = (double) value;
+            } else {
+                datas[row][col] = null;
+            }
+
+            fireTableCellUpdated(row, col);
+        }
+
+    }
+    
+    private static final class MyMapTableModel extends AbstractTableModel {
+
+        private static final long serialVersionUID = 1L;
+
+        private static final String EMPTY = "";
+        private int nbCol = 0;
+        private final Double[][] datas;
+
+        public MyMapTableModel(Double[][] datas) {
+            this.datas = datas;
+            nbCol = this.datas[0].length;
+        }
+
+        @Override
+        public Class<?> getColumnClass(int paramInt) {
+            return Double.class;
+        }
+
+        @Override
+        public String getColumnName(int col) {
+        	return EMPTY;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return nbCol;
+        }
+
+        @Override
+        public int getRowCount() {
+            return datas.length;
+        }
+
+        @Override
+        public Object getValueAt(int row, int col) {
+            return datas[row][col];
         }
 
         @Override

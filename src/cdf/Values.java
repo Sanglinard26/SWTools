@@ -47,8 +47,7 @@ public final class Values {
                     doubleValues[y][x] = Double.parseDouble(getValue(y, x));
                 } else {
                     if (x * y != 0) {
-                        doubleValues = new double[0][0];
-                        break;
+                    	doubleValues[y][x] = Double.NaN;
                     }
 
                 }
@@ -56,7 +55,26 @@ public final class Values {
         }
 
         return doubleValues;
+    }
+    
+    public final Double[][] valuesToDouble2D() {
 
+        Double[][] doubleValues = new Double[dimY][dimX];
+
+        for (short y = 0; y < dimY; y++) {
+            for (short x = 0; x < dimX; x++) {
+
+                if (NumeralString.isNumber(getValue(y, x))) {
+                    doubleValues[y][x] = Double.parseDouble(getValue(y, x));
+                } else {
+                    if (x * y != 0) {
+                    	doubleValues[y][x] = Double.NaN;
+                    }
+                }
+            }
+        }
+
+        return doubleValues;
     }
 
 }
