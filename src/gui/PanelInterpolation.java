@@ -27,14 +27,14 @@ public final class PanelInterpolation extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final MyLinearTableModel modelDatas;
+    private static MyTableModel modelDatas;
     private static JTable tableData;
 
     public PanelInterpolation() {
 
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        modelDatas = new MyLinearTableModel();
+        modelDatas = new MyTableModel();
         tableData = new JTable(modelDatas);
         tableData.setCellSelectionEnabled(true);
 
@@ -45,9 +45,17 @@ public final class PanelInterpolation extends JPanel {
 
                 final Variable var = PanelCDF.getSelVariable();
 
-                if (var != null && e.getColumn() < 2) {
+                if (modelDatas.isModeMap()) {
+                    if (var != null && e.getColumn() == 0 && e.getFirstRow() == 0) {
+                        System.out.println("Column = " + e.getColumn());
+                        System.out.println("First row = " + e.getFirstRow() + " ; " + "Last row = " + e.getLastRow());
+                        calcZvalue(var);
+                    }
+                } else {
+                    if (var != null && e.getColumn() < 2) {
 
-                    calcZvalue(var);
+                        calcZvalue(var);
+                    }
                 }
             }
         });
@@ -119,10 +127,9 @@ public final class PanelInterpolation extends JPanel {
         this.add(new JScrollPane(tableData), BorderLayout.CENTER);
 
     }
-    
-    public static final void setModel(Variable var)
-    {
-    	tableData.setModel(new MyMapTableModel(var.getValues().valuesToDouble2D()));
+
+    public static final void setModel(Variable var) {
+        modelDatas.setDatas(var.getValues().valuesToDouble2D());
     }
 
     public final void calcZvalue(Variable var) {
@@ -146,76 +153,20 @@ public final class PanelInterpolation extends JPanel {
 
     }
 
-    private static final class MyLinearTableModel extends AbstractTableModel {
+    private static final class MyTableModel extends AbstractTableModel {
 
         private static final long serialVersionUID = 1L;
 
-        private final String[] ENTETE = { "X", "Y", "Z" };
-        private final Double[][] datas;
-
-        public MyLinearTableModel() {
-            datas = new Double[100][3];
-        }
-
-        @Override
-        public Class<?> getColumnClass(int paramInt) {
-            return Double.class;
-        }
-
-        @Override
-        public String getColumnName(int col) {
-            return ENTETE[col];
-        }
-
-        @Override
-        public int getColumnCount() {
-            return ENTETE.length;
-        }
-
-        @Override
-        public int getRowCount() {
-            return datas.length;
-        }
-
-        @Override
-        public Object getValueAt(int row, int col) {
-            return datas[row][col];
-        }
-
-        public final Double[][] getDatas() {
-            return datas;
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int col) {
-            return col < 2;
-        }
-
-        @Override
-        public void setValueAt(Object value, int row, int col) {
-
-            if (value != null) {
-                datas[row][col] = (double) value;
-            } else {
-                datas[row][col] = null;
-            }
-
-            fireTableCellUpdated(row, col);
-        }
-
-    }
-    
-    private static final class MyMapTableModel extends AbstractTableModel {
-
-        private static final long serialVersionUID = 1L;
-
+        private boolean modeMap = false;
+        private static final String[] ENTETE = { "X", "Y", "Z" };
         private static final String EMPTY = "";
         private int nbCol = 0;
-        private final Double[][] datas;
+        private Double[][] datas;
 
-        public MyMapTableModel(Double[][] datas) {
-            this.datas = datas;
-            nbCol = this.datas[0].length;
+        public MyTableModel() {
+            this.datas = new Double[100][3];
+            this.nbCol = this.datas[0].length;
+            this.modeMap = false;
         }
 
         @Override
@@ -225,7 +176,10 @@ public final class PanelInterpolation extends JPanel {
 
         @Override
         public String getColumnName(int col) {
-        	return EMPTY;
+            if (modeMap) {
+                return EMPTY;
+            }
+            return ENTETE[col];
         }
 
         @Override
@@ -238,13 +192,38 @@ public final class PanelInterpolation extends JPanel {
             return datas.length;
         }
 
+        public final boolean isModeMap() {
+            return this.modeMap;
+        }
+
         @Override
         public Object getValueAt(int row, int col) {
             return datas[row][col];
         }
 
+        public final void setDatas(Double[][] datas) {
+            this.datas = datas;
+            this.nbCol = this.datas[0].length;
+            this.modeMap = true;
+            fireTableStructureChanged();
+        }
+
+        public final void setDatas() {
+            this.datas = new Double[100][3];
+            this.nbCol = this.datas[0].length;
+            this.modeMap = false;
+            fireTableStructureChanged();
+        }
+
+        public final Double[][] getDatas() {
+            return datas;
+        }
+
         @Override
         public boolean isCellEditable(int row, int col) {
+            if (modeMap) {
+                return row * col == 0;
+            }
             return col < 2;
         }
 

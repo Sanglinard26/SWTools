@@ -134,10 +134,10 @@ public final class ListLabel extends JList<Variable> {
                     });
                     menu.add(menuShowDependency);
                 }
-                
+
                 if (selectedVariable instanceof Map) {
                     final JMenuItem menuInterpolation = new JMenuItem("Interpolation");
-                    menuInterpolation.setEnabled(false);
+                    menuInterpolation.setEnabled(true);
                     menuInterpolation.addActionListener(new ActionListener() {
 
                         @Override
