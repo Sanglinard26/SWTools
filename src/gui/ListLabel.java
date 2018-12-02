@@ -57,6 +57,7 @@ import javax.swing.text.JTextComponent;
 
 import cdf.Axis;
 import cdf.CdfUtils;
+import cdf.Curve;
 import cdf.ListModelLabel;
 import cdf.Map;
 import cdf.Variable;
@@ -133,20 +134,6 @@ public final class ListLabel extends JList<Variable> {
                         }
                     });
                     menu.add(menuShowDependency);
-                }
-
-                if (selectedVariable instanceof Map) {
-                    final JMenuItem menuInterpolation = new JMenuItem("Interpolation");
-                    menuInterpolation.setEnabled(true);
-                    menuInterpolation.addActionListener(new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent ae) {
-
-                            PanelInterpolation.setModel(selectedVariable);
-                        }
-                    });
-                    menu.add(menuInterpolation);
                 }
 
                 menu.show(e.getComponent(), e.getX(), e.getY());
