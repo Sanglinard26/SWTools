@@ -1,6 +1,9 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -12,7 +15,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 
+import javax.swing.AbstractAction;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,16 +36,18 @@ public final class PanelInterpolation extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private PanelCmd panelCmd;
+    private static final GridBagConstraints gbc = new GridBagConstraints();
 
     private Variable selectedVariable = null;
 
-    private MyTableModel modelDatas;
-    private JTable tableData;
+    private final JToggleButton switchMode;
+	private final JButton btReset;
+    private final MyTableModel modelDatas;
+    private final JTable tableData;
 
     public PanelInterpolation() {
 
-        this.setLayout(new BorderLayout());
+        this.setLayout(new GridBagLayout());
 
         modelDatas = new MyTableModel();
         tableData = new JTable(modelDatas);
@@ -125,22 +133,82 @@ public final class PanelInterpolation extends JPanel {
                 }
             }
         });
+        
+        switchMode = new JToggleButton("Mode carto", modelDatas.isModeMap());
+        switchMode.setEnabled(false);
+        switchMode.addActionListener(new ActionListener() {
 
-        this.add(new JScrollPane(tableData), BorderLayout.CENTER);
+            @Override
+            public void actionPerformed(ActionEvent paramActionEvent) {
+                if (selectedVariable != null) {
+                    JToggleButton bt = (JToggleButton) paramActionEvent.getSource();
+                    if (bt.isSelected()) {
+                        bt.setText("Mode libre");
+                        modelDatas.setDatas(selectedVariable.getValues().valuesToDouble2D());
+                    } else {
+                        bt.setText("Mode carto");
+                        modelDatas.setDatas();
+                    }
+                }
+            }
+        });
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridwidth = 1;
+		gbc.gridheight = 1;
+		gbc.weightx = 0;
+		gbc.weighty = 0;
+		gbc.insets = new Insets(0, 0, 0, 0);
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		this.add(switchMode, gbc);
+        
+        btReset = new JButton(new AbstractAction("Reset") {
+			
+			private static final long serialVersionUID = 1L;
 
-        panelCmd = new PanelCmd();
-        this.add(panelCmd, BorderLayout.WEST);
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(selectedVariable != null && modelDatas.isModeMap())
+				{
+					modelDatas.setDatas(selectedVariable.getValues().valuesToDouble2D());
+				}else{
+					modelDatas.setDatas();
+				}
+				
+			}
+		});
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.gridwidth = 1;
+		gbc.gridheight = 1;
+		gbc.weightx = 0;
+		gbc.weighty = 0;
+		gbc.insets = new Insets(0, 0, 0, 0);
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		this.add(btReset, gbc);
+
+        gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		gbc.gridwidth = 1;
+		gbc.gridheight = 2;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.insets = new Insets(0, 0, 0, 0);
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		this.add(new JScrollPane(tableData), gbc);
 
     }
 
     public final void setVariable(Variable var) {
 
-        panelCmd.switchMode.setEnabled(true);
+        this.switchMode.setEnabled(true);
         this.selectedVariable = var;
-        if (panelCmd.switchMode.isSelected()) {
+        if (this.switchMode.isSelected()) {
             setModel(this.selectedVariable);
         }
-
     }
 
     public final boolean isModeMap() {
@@ -149,7 +217,7 @@ public final class PanelInterpolation extends JPanel {
 
     private final void setModel(Variable var) {
         modelDatas.setDatas(var.getValues().valuesToDouble2D());
-        panelCmd.switchMode.setSelected(modelDatas.isModeMap());
+        this.switchMode.setSelected(modelDatas.isModeMap());
     }
 
     public final void calcZvalue() {
@@ -185,35 +253,6 @@ public final class PanelInterpolation extends JPanel {
             modelDatas.setDatas(results);
         }
 
-    }
-
-    private final class PanelCmd extends JPanel {
-        private final JToggleButton switchMode;
-
-        public PanelCmd() {
-
-            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-            switchMode = new JToggleButton("Mode carto", modelDatas.isModeMap());
-            switchMode.setEnabled(false);
-            switchMode.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent paramActionEvent) {
-                    if (selectedVariable != null) {
-                        JToggleButton bt = (JToggleButton) paramActionEvent.getSource();
-                        if (bt.isSelected()) {
-                            bt.setText("Mode libre");
-                            modelDatas.setDatas(PanelCDF.getSelVariable().getValues().valuesToDouble2D());
-                        } else {
-                            bt.setText("Mode carto");
-                            modelDatas.setDatas();
-                        }
-                    }
-                }
-            });
-            this.add(switchMode);
-        }
     }
 
     private static final class MyTableModel extends AbstractTableModel {
