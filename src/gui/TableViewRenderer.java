@@ -56,13 +56,15 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
 
         setForeground(Color.BLACK);
 
-        if (NumeralString.isNumber(value.toString()) && row > 0 && column > 0 && map != null && setMapColor == true) {
-            setBackground(rainbowScale.valueToColor(Double.parseDouble(value.toString())));
+        final String stringValue = value.toString();
+
+        if (NumeralString.isNumber(stringValue) && row > 0 && column > 0 && map != null && setMapColor == true) {
+            setBackground(rainbowScale.valueToColor(Double.parseDouble(stringValue)));
         } else {
             setBackground(Color.WHITE);
         }
 
-        if (value.toString().indexOf(" | ") > -1) // Comparaison
+        if (stringValue.indexOf(" | ") > -1) // Comparaison
         {
             setBorder(new LineBorder(Color.BLACK, 1));
             setBackground(Color.WHITE);

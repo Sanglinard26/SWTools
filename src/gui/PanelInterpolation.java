@@ -1,6 +1,7 @@
 package gui;
 
-import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -16,8 +17,6 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 
 import javax.swing.AbstractAction;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -26,6 +25,7 @@ import javax.swing.JToggleButton;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import cdf.Curve;
 import cdf.Map;
@@ -41,7 +41,7 @@ public final class PanelInterpolation extends JPanel {
     private Variable selectedVariable = null;
 
     private final JToggleButton switchMode;
-	private final JButton btReset;
+    private final JButton btReset;
     private final MyTableModel modelDatas;
     private final JTable tableData;
 
@@ -51,6 +51,7 @@ public final class PanelInterpolation extends JPanel {
 
         modelDatas = new MyTableModel();
         tableData = new JTable(modelDatas);
+        tableData.setDefaultRenderer(Double.class, new TableDataRenderer());
         tableData.setCellSelectionEnabled(true);
 
         modelDatas.addTableModelListener(new TableModelListener() {
@@ -133,7 +134,7 @@ public final class PanelInterpolation extends JPanel {
                 }
             }
         });
-        
+
         switchMode = new JToggleButton("Mode carto", modelDatas.isModeMap());
         switchMode.setEnabled(false);
         switchMode.addActionListener(new ActionListener() {
@@ -153,52 +154,51 @@ public final class PanelInterpolation extends JPanel {
             }
         });
         gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.gridwidth = 1;
-		gbc.gridheight = 1;
-		gbc.weightx = 0;
-		gbc.weighty = 0;
-		gbc.insets = new Insets(0, 0, 0, 0);
-		gbc.anchor = GridBagConstraints.NORTHWEST;
-		this.add(switchMode, gbc);
-        
-        btReset = new JButton(new AbstractAction("Reset") {
-			
-			private static final long serialVersionUID = 1L;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        this.add(switchMode, gbc);
 
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if(selectedVariable != null && modelDatas.isModeMap())
-				{
-					modelDatas.setDatas(selectedVariable.getValues().valuesToDouble2D());
-				}else{
-					modelDatas.setDatas();
-				}
-				
-			}
-		});
+        btReset = new JButton(new AbstractAction("Reset") {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if (selectedVariable != null && modelDatas.isModeMap()) {
+                    modelDatas.setDatas(selectedVariable.getValues().valuesToDouble2D());
+                } else {
+                    modelDatas.setDatas();
+                }
+
+            }
+        });
         gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.gridwidth = 1;
-		gbc.gridheight = 1;
-		gbc.weightx = 0;
-		gbc.weighty = 0;
-		gbc.insets = new Insets(0, 0, 0, 0);
-		gbc.anchor = GridBagConstraints.NORTHWEST;
-		this.add(btReset, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        this.add(btReset, gbc);
 
         gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridx = 1;
-		gbc.gridy = 0;
-		gbc.gridwidth = 1;
-		gbc.gridheight = 2;
-		gbc.weightx = 1;
-		gbc.weighty = 1;
-		gbc.insets = new Insets(0, 0, 0, 0);
-		gbc.anchor = GridBagConstraints.NORTHWEST;
-		this.add(new JScrollPane(tableData), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 2;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        this.add(new JScrollPane(tableData), gbc);
 
     }
 
@@ -229,13 +229,21 @@ public final class PanelInterpolation extends JPanel {
         for (int row = 0; row < tableData.getRowCount(); row++) {
 
             if (modelDatas.isModeMap()) {
-                if (row > 0) {
+                if (selectedVariable instanceof Map && row > 0) {
                     for (int x = 1; x < this.selectedVariable.getValues().getDimX(); x++) {
                         results[0][x] = datas[0][x];
                         results[row][0] = datas[row][0];
                         results[row][x] = Interpolation.interpLinear2D(this.selectedVariable.getValues().toDouble2D(), datas[0][x], datas[row][0]);
                     }
                 }
+
+                if (selectedVariable instanceof Curve) {
+                    for (int x = 0; x < this.selectedVariable.getValues().getDimX(); x++) {
+                        results[0][x] = datas[0][x];
+                        results[1][x] = Interpolation.interpLinear1D(this.selectedVariable.getValues().toDouble2D(), datas[0][x]);
+                    }
+                }
+
             } else {
                 if (this.selectedVariable instanceof Map && datas[row][0] != null && datas[row][1] != null) {
                     result = Interpolation.interpLinear2D(this.selectedVariable.getValues().toDouble2D(), datas[row][0], datas[row][1]);
@@ -341,6 +349,35 @@ public final class PanelInterpolation extends JPanel {
             fireTableCellUpdated(row, col);
         }
 
+    }
+
+    private final class TableDataRenderer extends DefaultTableCellRenderer {
+
+        private static final long serialVersionUID = 1L;
+
+        public TableDataRenderer() {
+
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            if (value instanceof Double) {
+                Double doubleValue = (Double) value;
+                Double origineValue = selectedVariable.getValues().valuesToDouble2D()[row][column];
+                if (doubleValue > origineValue) {
+                    setForeground(Color.RED);
+                } else if (doubleValue < origineValue) {
+                    setForeground(Color.BLUE);
+                } else {
+                    setForeground(Color.BLACK);
+                }
+            }
+
+            return this;
+        }
     }
 
 }

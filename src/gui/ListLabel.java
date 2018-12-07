@@ -57,9 +57,7 @@ import javax.swing.text.JTextComponent;
 
 import cdf.Axis;
 import cdf.CdfUtils;
-import cdf.Curve;
 import cdf.ListModelLabel;
-import cdf.Map;
 import cdf.Variable;
 import utils.Utilitaire;
 
@@ -77,6 +75,10 @@ public final class ListLabel extends JList<Variable> {
     public ListLabel(ListModelLabel dataModel) {
         super(dataModel);
         setCellRenderer(new ListLabelRenderer());
+        // Permet de ne pas calculer la taille de chaque item ==> Gain de temps au chargement de la liste
+        setFixedCellHeight(38);
+        setFixedCellWidth(200);
+        // ...
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         filterField = new FilterField();
         addMouseListener(new ListMouseListener());
