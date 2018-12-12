@@ -1,10 +1,6 @@
 package utils;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import javax.swing.JFileChooser;
 
@@ -35,30 +31,6 @@ public abstract class Utilitaire {
         final int i = fileNameWithExtension.lastIndexOf('.');
 
         return (i > 0 && i < fileNameWithExtension.length() - 1) ? fileNameWithExtension.substring(0, i) : "";
-    }
-
-    public static final void createDtd(String pathFolder) {
-
-        final String DTD = "msrsw_v222_lai_iai_normalized.xml.dtd";
-        final File dtd = new File(pathFolder + "/" + DTD);
-
-        dtd.deleteOnExit();
-        if (!dtd.exists()) {
-            final InputStream myDtd = Utilitaire.class.getResourceAsStream("/" + DTD);
-            try (final OutputStream out = new FileOutputStream(pathFolder + "/" + DTD)) {
-
-                final byte[] buffer = new byte[1024];
-                int len = myDtd.read(buffer);
-                while (len != -1) {
-                    out.write(buffer, 0, len);
-                    len = myDtd.read(buffer);
-                }
-                myDtd.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
     }
 
     public static final String getFolder(String title, String defautPath) {

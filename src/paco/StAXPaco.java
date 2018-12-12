@@ -1,6 +1,5 @@
 package paco;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -57,20 +56,26 @@ public final class StAXPaco implements Cdf {
 
         // PaCo Keywords
         final String SW_INSTANCE = "SW-INSTANCE";
+        final String END_SW_INSTANCE = "</SW-INSTANCE>";
         final String SW_UNIT = "SW-UNIT";
+        final String END_SW_UNIT = "</SW-UNIT>";
         final String SW_UNIT_REF = "SW-UNIT-REF";
         final String SW_VALUES_PHYS = "SW-VALUES-PHYS";
+        final String END_SW_VALUES_PHYS = "</SW-VALUES-PHYS>";
         final String SHORT_NAME = "SHORT-NAME";
+        final String END_SHORT_NAME = "</SHORT-NAME>";
         final String SW_FEATURE_REF = "SW-FEATURE-REF";
         final String SW_CS_ENTRY = "SW-CS-ENTRY";
         final String LONG_NAME = "LONG-NAME";
+        final String END_LONG_NAME = "</LONG-NAME>";
         final String CATEGORY = "CATEGORY";
         final String SW_CS_HISTORY = "SW-CS-HISTORY";
+        final String END_SW_CS_HISTORY = "</SW-CS-HISTORY>";
         final String SW_AXIS_CONT = "SW-AXIS-CONT";
         //
 
         try {
-        	
+
             xmler = xmlif.createXMLEventReader(new FileReader(xml));
             XMLEvent event;
 
@@ -124,7 +129,7 @@ public final class StAXPaco implements Cdf {
                         swUnitDisplay.setLength(0);
                         //
 
-                        while (!event.toString().equals("</SW-UNIT>")) {
+                        while (!END_SW_UNIT.equals(event.toString())) {
 
                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
 
@@ -168,7 +173,7 @@ public final class StAXPaco implements Cdf {
                         pRemark.setLength(0);
                         //
 
-                        while (!event.toString().equals("</SW-INSTANCE>")) {
+                        while (!END_SW_INSTANCE.equals(event.toString())) {
 
                             if (event.isStartElement()) {
 
@@ -183,7 +188,7 @@ public final class StAXPaco implements Cdf {
                                             shortName.append(event.asCharacters().getData());
                                         }
 
-                                    } while (!event.toString().equals("</SHORT-NAME>"));
+                                    } while (!END_SHORT_NAME.equals(event.toString()));
 
                                     // System.out.println(shortName);
 
@@ -198,7 +203,7 @@ public final class StAXPaco implements Cdf {
                                             longName.append(event.asCharacters().getData());
                                         }
 
-                                    } while (!event.toString().equals("</LONG-NAME>"));
+                                    } while (!END_LONG_NAME.equals(event.toString()));
 
                                     break;
                                 case CATEGORY:
@@ -330,7 +335,7 @@ public final class StAXPaco implements Cdf {
 
                                     case VALUE_BLOCK:
 
-                                        while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+                                        while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
                                             event = xmler.nextEvent();
 
@@ -381,7 +386,7 @@ public final class StAXPaco implements Cdf {
 
                                     case CURVE_INDIVIDUAL:
 
-                                        while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+                                        while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
                                             event = xmler.nextEvent();
                                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
@@ -410,7 +415,7 @@ public final class StAXPaco implements Cdf {
 
                                     case AXIS_VALUES:
 
-                                        while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+                                        while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
                                             event = xmler.nextEvent();
                                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
@@ -435,7 +440,7 @@ public final class StAXPaco implements Cdf {
 
                                     case CURVE_FIXED:
 
-                                        while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+                                        while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
                                             event = xmler.nextEvent();
                                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
@@ -464,7 +469,7 @@ public final class StAXPaco implements Cdf {
 
                                     case CURVE_GROUPED:
 
-                                        while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+                                        while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
                                             event = xmler.nextEvent();
                                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
@@ -493,7 +498,7 @@ public final class StAXPaco implements Cdf {
 
                                     case MAP_INDIVIDUAL:
 
-                                        while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+                                        while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
                                             event = xmler.nextEvent();
                                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
@@ -539,7 +544,7 @@ public final class StAXPaco implements Cdf {
 
                                     case MAP_FIXED:
 
-                                        while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+                                        while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
                                             event = xmler.nextEvent();
                                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
@@ -585,7 +590,7 @@ public final class StAXPaco implements Cdf {
 
                                     case MAP_GROUPED:
 
-                                        while (!event.toString().equals("</SW-VALUES-PHYS>")) {
+                                        while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
                                             event = xmler.nextEvent();
                                             if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
@@ -633,7 +638,7 @@ public final class StAXPaco implements Cdf {
 
                                 case SW_CS_HISTORY:
 
-                                    while (!event.toString().equals("</SW-CS-HISTORY>")) {
+                                    while (!END_SW_CS_HISTORY.equals(event.toString())) {
 
                                         event = xmler.nextEvent();
 
