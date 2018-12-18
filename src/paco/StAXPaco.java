@@ -1,5 +1,6 @@
 package paco;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public final class StAXPaco implements Cdf {
 
         try {
 
-            xmler = xmlif.createXMLEventReader(new FileReader(xml));
+            xmler = xmlif.createXMLEventReader(new BufferedReader(new FileReader(xml)));
             XMLEvent event;
 
             listLabel = new ArrayList<Variable>();

@@ -57,8 +57,8 @@ public final class Lab {
 
         this.name = Utilitaire.getFileNameWithoutExtension(file);
 
-        try {
-            final BufferedReader buf = new BufferedReader(new FileReader(file));
+        try (final BufferedReader buf = new BufferedReader(new FileReader(file))) {
+
             String line;
 
             while ((line = buf.readLine()) != null) {
@@ -66,7 +66,6 @@ public final class Lab {
                     listVariable.add(new Variable(line, this.name));
                 }
             }
-            buf.close();
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
@@ -84,7 +83,7 @@ public final class Lab {
             xmler = xmlif.createXMLEventReader(new FileReader(file));
             XMLEvent event;
             StringBuilder shortName = new StringBuilder();
-            //String category = null;
+            // String category = null;
 
             while (xmler.hasNext()) {
 
@@ -112,24 +111,12 @@ public final class Lab {
 
                                 break;
 
-                            /*case "CATEGORY":
-
-                                do {
-                                    event = xmler.nextEvent();
-                                    if (event.isCharacters()) {
-                                        category = event.asCharacters().getData();
-                                    }
-
-                                } while (!event.isCharacters());
-
-                                break;*/
                             }
                         }
                         event = xmler.nextEvent();
                     }
-                    //if (!category.equals(Cdf.AXIS_VALUES)) {
-                        listVariable.add(new Variable(shortName.toString(), this.name));
-                    //}
+
+                    listVariable.add(new Variable(shortName.toString(), this.name));
                 }
 
             }
@@ -211,10 +198,9 @@ public final class Lab {
 
     @Override
     public boolean equals(Object obj) {
-    	if(obj instanceof Lab)
-    	{
-    		return this.name.equals(((Lab)obj).getName());
-    	}
+        if (obj instanceof Lab) {
+            return this.name.equals(((Lab) obj).getName());
+        }
         return false;
     }
 
@@ -246,29 +232,26 @@ public final class Lab {
 
         return new ArrayList<>(diffLab);
     }
-    
-    public final void write(File file)
-    {
-    	try(PrintWriter pw = new PrintWriter(file))
-    	{
-    		final List<Variable> listVariable = new ArrayList<>(this.listVariable);
-    		
-    		Collections.sort(listVariable);
-    		
-    		pw.println("[Label]");
-    		for(Variable var : listVariable)
-    		{
-    			pw.println(var.getNom());
-    		}
-    		
-    	} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+
+    public final void write(File file) {
+        try (PrintWriter pw = new PrintWriter(file)) {
+            final List<Variable> listVariable = new ArrayList<>(this.listVariable);
+
+            Collections.sort(listVariable);
+
+            pw.println("[Label]");
+            for (Variable var : listVariable) {
+                pw.println(var.getNom());
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
-    
+
     public static final boolean rapportToHtml(Lab ref, Lab work) {
-    	
-    	try {
+
+        try {
             final List<Variable> labelSup = work.getDiffLab(ref);
             final List<Variable> labelDisp = ref.getDiffLab(work);
 
@@ -309,93 +292,93 @@ public final class Lab {
                 printWriter.println("<body>");
 
                 printWriter.println("<h1 align=center>" + "RAPPORT DE COMPARAISON DE LAB" + "</h1>");
-                
+
                 String[] splitRef = ref.getName().split(";");
                 String[] splitWork = work.getName().split(";");
-                
+
                 int nbRef = splitRef.length;
                 int nbWork = splitWork.length;
                 int nbMaxLab = Math.max(nbRef, nbWork);
-                
+
                 printWriter.println("<table align=center border cellpadding=5>");
-                
+
                 printWriter.println("<tr>"); // Debut d'une ligne
                 printWriter.println("<th align=center>" + "Lab de reference" + "</th>");
                 printWriter.println("<th align=center>" + "Lab de travail" + "</th>");
                 printWriter.println("</tr>"); // Fin d'une ligne
-                
-                for(int i = 0; i < nbMaxLab; i++)
-                {
-                	printWriter.println("<tr>"); // Debut d'une ligne
-                	
-                	if(i < nbRef){
-                		printWriter.println("<td align=center>" + splitRef[i] + "</td>");
-                	}else{
-                		printWriter.println("<td align=center>" + "" + "</td>");
-                	}
-                	
-                	if(i < nbWork){
-                		printWriter.println("<td align=center>" + splitWork[i] + "</td>");
-                	}else{
-                		printWriter.println("<td align=center>" + "" + "</td>");
-                	}
-                	
-                	printWriter.println("</tr>"); // Fin d'une ligne
+
+                for (int i = 0; i < nbMaxLab; i++) {
+                    printWriter.println("<tr>"); // Debut d'une ligne
+
+                    if (i < nbRef) {
+                        printWriter.println("<td align=center>" + splitRef[i] + "</td>");
+                    } else {
+                        printWriter.println("<td align=center>" + "" + "</td>");
+                    }
+
+                    if (i < nbWork) {
+                        printWriter.println("<td align=center>" + splitWork[i] + "</td>");
+                    } else {
+                        printWriter.println("<td align=center>" + "" + "</td>");
+                    }
+
+                    printWriter.println("</tr>"); // Fin d'une ligne
                 }
-                
+
                 printWriter.println("</table><br>");
-                
+
                 printWriter.println("<hr align=center size=1 width=50%><br>");
-                
+
                 printWriter.println("<table align=center border cellpadding=5>");
-                
+
                 printWriter.println("<tr>"); // Debut d'une ligne
                 printWriter.println("<th align=center>" + "Label(s) disparu(s) (" + labelDisp.size() + ")" + "</th>");
                 printWriter.println("<th align=center>" + "Label(s) supplementaire(s) (" + labelSup.size() + ")" + "</th>");
                 printWriter.println("</tr>"); // Fin d'une ligne
-                
+
                 int nbLabelDisp = labelDisp.size();
                 int nbLabelSup = labelSup.size();
                 int nbMaxLabel = Math.max(nbLabelDisp, nbLabelSup);
-                
-                for(int i = 0; i < nbMaxLabel; i++)
-                {
-                	printWriter.println("<tr>"); // Debut d'une ligne
-                	
-                	if(i < nbLabelDisp){
-                		printWriter.println("<td align=center>" + labelDisp.get(i).getNom() + " dans " + "'" + labelDisp.get(i).getNomLab() + "'" + "</td>");
-                	}else{
-                		printWriter.println("<td align=center>" + "" + "</td>");
-                	}
-                	
-                	if(i < nbLabelSup){
-                		printWriter.println("<td align=center>" + labelSup.get(i).getNom() + " dans " + "'" + labelSup.get(i).getNomLab() + "'" + "</td>");
-                	}else{
-                		printWriter.println("<td align=center>" + "" + "</td>");
-                	}
-                	
-                	printWriter.println("</tr>"); // Fin d'une ligne
+
+                for (int i = 0; i < nbMaxLabel; i++) {
+                    printWriter.println("<tr>"); // Debut d'une ligne
+
+                    if (i < nbLabelDisp) {
+                        printWriter.println(
+                                "<td align=center>" + labelDisp.get(i).getNom() + " dans " + "'" + labelDisp.get(i).getNomLab() + "'" + "</td>");
+                    } else {
+                        printWriter.println("<td align=center>" + "" + "</td>");
+                    }
+
+                    if (i < nbLabelSup) {
+                        printWriter.println(
+                                "<td align=center>" + labelSup.get(i).getNom() + " dans " + "'" + labelSup.get(i).getNomLab() + "'" + "</td>");
+                    } else {
+                        printWriter.println("<td align=center>" + "" + "</td>");
+                    }
+
+                    printWriter.println("</tr>"); // Fin d'une ligne
                 }
-                
+
                 printWriter.println("</table>");
-                
+
                 printWriter.println("<p align=center><font color=black>" + "Fichier cree par SWTools, " + date.toString() + "</font></p>");
-                
+
                 printWriter.println("</body>");
                 printWriter.println("</html>");
 
                 printWriter.close();
 
                 JOptionPane.showMessageDialog(null, "Export termine !", null, JOptionPane.INFORMATION_MESSAGE);
-                
+
                 return true;
             }
 
         } catch (Exception e) {
             System.out.println(e);
         }
-    	
-    	return false;
-    	
+
+        return false;
+
     }
 }
