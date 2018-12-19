@@ -6,7 +6,6 @@ package dcm;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,9 +32,6 @@ public final class Dcm implements Cdf {
 	private static final String TAB = "\t";
 
 	private static final History[] EMPTY_COMMENT = new History[0];
-
-	private static BufferedReader buf = null;
-	private static String line;
 
 	private double checkSum = 0;
 
@@ -101,9 +97,7 @@ public final class Dcm implements Cdf {
 		String[] sharedAxis;
 		Values valeur;
 
-		try {
-
-			buf = new BufferedReader(new FileReader(file));
+		try(BufferedReader buf = new BufferedReader(new FileReader(file))) {
 
 			// String line;
 			String[] spaceSplitLine;
@@ -117,8 +111,10 @@ public final class Dcm implements Cdf {
 			int cntZ;
 			int nbSplit;
 			String tmpValue;
+			
+			String line = null;
 
-			while (readLineDcm() != null) {
+			while ((line = buf.readLine()) != null) {
 
 				spaceSplitLine = line.split(SPACE);
 
@@ -131,7 +127,7 @@ public final class Dcm implements Cdf {
 						unite = new String[1];
 						valeur = new Values(1, 1);
 
-						while (!readLineDcm().equals(END)) {
+						while (!(line = buf.readLine()).equals(END)) {
 
 							spaceSplitLine2 = line.split(SPACE);
 							quotesSplitLine = line.split(QUOTE);
@@ -179,7 +175,7 @@ public final class Dcm implements Cdf {
 						unite = new String[] { SPACE.intern() };
 						valeur = new Values(1, 1);
 
-						while (!readLineDcm().equals(END)) {
+						while (!(line = buf.readLine()).equals(END)) {
 
 							spaceSplitLine2 = line.split(SPACE);
 							quotesSplitLine = line.split(QUOTE);
@@ -219,7 +215,7 @@ public final class Dcm implements Cdf {
 						cntX = 0;
 						cntZ = 0;
 
-						while (!readLineDcm().equals(END)) {
+						while (!(line = buf.readLine()).equals(END)) {
 
 							spaceSplitLine2 = line.split(SPACE);
 							quotesSplitLine = line.split(QUOTE);
@@ -306,7 +302,7 @@ public final class Dcm implements Cdf {
 						cntX = 0;
 						cntZ = 0;
 
-						while (!readLineDcm().equals(END)) {
+						while (!(line = buf.readLine()).equals(END)) {
 
 							spaceSplitLine2 = line.split(SPACE);
 							quotesSplitLine = line.split(QUOTE);
@@ -394,7 +390,7 @@ public final class Dcm implements Cdf {
 						cntX = 0;
 						cntZ = 0;
 
-						while (!readLineDcm().equals(END)) {
+						while (!(line = buf.readLine()).equals(END)) {
 
 							spaceSplitLine2 = line.split(SPACE);
 							quotesSplitLine = line.split(QUOTE);
@@ -494,7 +490,7 @@ public final class Dcm implements Cdf {
 
 						valeur.setValue(0, 0, "Y \\ X");
 
-						while (!readLineDcm().equals(END)) {
+						while (!(line = buf.readLine()).equals(END)) {
 
 							spaceSplitLine2 = line.split(SPACE);
 							quotesSplitLine = line.split(QUOTE);
@@ -601,7 +597,7 @@ public final class Dcm implements Cdf {
 
 						valeur.setValue(0, 0, "Y \\ X");
 
-						while (!readLineDcm().equals(END)) {
+						while (!(line = buf.readLine()).equals(END)) {
 
 							spaceSplitLine2 = line.split(SPACE);
 							quotesSplitLine = line.split(QUOTE);
@@ -722,7 +718,7 @@ public final class Dcm implements Cdf {
 
 						valeur.setValue(0, 0, "Y \\ X");
 
-						while (!readLineDcm().equals(END)) {
+						while (!(line = buf.readLine()).equals(END)) {
 
 							spaceSplitLine2 = line.split(SPACE);
 							quotesSplitLine = line.split(QUOTE);
@@ -824,7 +820,7 @@ public final class Dcm implements Cdf {
 
 						cnt = 0;
 
-						while (!readLineDcm().equals(END)) {
+						while (!(line = buf.readLine()).equals(END)) {
 
 							spaceSplitLine2 = line.split(SPACE);
 							quotesSplitLine = line.split(QUOTE);
@@ -893,7 +889,7 @@ public final class Dcm implements Cdf {
 								valeur.setValue(0, x, Integer.toString(x - 1));
 							}
 
-							while (!readLineDcm().equals(END)) {
+							while (!(line = buf.readLine()).equals(END)) {
 
 								spaceSplitLine2 = line.split(SPACE);
 								quotesSplitLine = line.split(QUOTE);
@@ -954,7 +950,7 @@ public final class Dcm implements Cdf {
 
 							valeur.setValue(1, 0, "Z");
 
-							while (!readLineDcm().equals(END)) {
+							while (!(line = buf.readLine()).equals(END)) {
 
 								spaceSplitLine2 = line.split(SPACE);
 								quotesSplitLine = line.split(QUOTE);
@@ -1021,23 +1017,7 @@ public final class Dcm implements Cdf {
 
 			SWToolsMain.getLogger().severe("Erreur sur l'ouverture de : " + this.name);
 
-		} finally {
-			try {
-				buf.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
-	}
-
-	private final String readLineDcm() {
-		try {
-			return line = buf.readLine();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	@Override
