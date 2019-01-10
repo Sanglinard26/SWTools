@@ -121,7 +121,7 @@ public final class StAXPaco implements Cdf {
 
                 if (event.isStartElement()) {
 
-                    switch (event.asStartElement().getName().toString()) { // Pour test
+                    switch (event.asStartElement().getName().getLocalPart()) { // Pour test
 
                     case SW_UNIT:
 
@@ -178,7 +178,7 @@ public final class StAXPaco implements Cdf {
 
                             if (event.isStartElement()) {
 
-                                switch (event.asStartElement().getName().toString()) {
+                                switch (event.asStartElement().getName().getLocalPart()) {
                                 case SHORT_NAME:
 
                                     shortName.setLength(0);
@@ -643,7 +643,7 @@ public final class StAXPaco implements Cdf {
 
                                         event = xmler.nextEvent();
 
-                                        if (event.isStartElement() && event.asStartElement().getName().toString().equals(SW_CS_ENTRY)) {
+                                        if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals(SW_CS_ENTRY)) {
                                             tmpDate.add("");
                                             tmpAuteur.add("");
                                             tmpScore.add("");
@@ -653,7 +653,7 @@ public final class StAXPaco implements Cdf {
 
                                         if (event.isStartElement()) {
 
-                                            switch (event.asStartElement().getName().toString()) {
+                                            switch (event.asStartElement().getName().getLocalPart()) {
                                             case "DATE":
                                                 event = xmler.nextEvent();
                                                 tmpDate.set(nbEntry - 1, event.asCharacters().getData().replace("T", " @ "));

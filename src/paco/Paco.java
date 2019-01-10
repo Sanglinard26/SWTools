@@ -234,7 +234,7 @@ public final class Paco implements Cdf {
 
             swCsEntry = label.getElementsByTagName(SW_CS_ENTRY);
 
-            // System.out.println(shortName);
+            //System.out.println(shortName);
 
             switch (category) {
             case ASCII:

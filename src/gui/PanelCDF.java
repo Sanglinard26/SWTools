@@ -368,6 +368,14 @@ public final class PanelCDF extends JComponent {
                             cdf = new StAXPaco(file);
                         }
                         break;
+                    case "cdfx":
+
+                        if (Preference.getPreference(Preference.KEY_XML_PARSEUR).equals("DOM") && (file.length() / 1024) + 1 < MAXSIZE) {
+                            cdf = new Paco(file);
+                        } else {
+                            cdf = new StAXPaco(file);
+                        }
+                        break;
                     case "dcm":
                         cdf = new Dcm(file);
                         break;
