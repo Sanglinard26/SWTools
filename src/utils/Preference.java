@@ -14,6 +14,7 @@ public abstract class Preference {
     private static final String DEF_PATH_FOLDER_DB = "C:/User/SWTools/Database";
     private static final String DEF_LF = "Windows";
     private static final String DEF_XML_PARSEUR = "DOM";
+    private static final String DEF_LANGUAGE = "en";
 
     public static final String KEY_ADD_LAB = "pathLab";
     public static final String KEY_RESULT_LAB = "pathExportLabResult";
@@ -22,6 +23,7 @@ public abstract class Preference {
     public static final String KEY_PATH_FOLDER_DB = "pathFolderDb";
     public static final String KEY_NOM_LF = "nomLF";
     public static final String KEY_XML_PARSEUR = "xmlParseur";
+    public static final String KEY_LANGUAGE = "language";
 
     private static final Preferences preferences = Preferences.userRoot().node("swtools");
 
@@ -48,6 +50,9 @@ public abstract class Preference {
             break;
         case KEY_XML_PARSEUR:
             defValue = DEF_XML_PARSEUR;
+            break;
+        case KEY_LANGUAGE:
+            defValue = DEF_LANGUAGE;
             break;
         default:
             defValue = "";

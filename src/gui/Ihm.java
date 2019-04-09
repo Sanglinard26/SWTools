@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Enumeration;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -73,8 +75,37 @@ public final class Ihm extends JFrame {
         // test glasspane
         setGlassPane(progressPanel);
 
-        menu = new JMenu("Preferences");
-        cbMenuItem = new JCheckBoxMenuItem("Coloration des cartographies",
+        Locale lang = Preference.getPreference(Preference.KEY_LANGUAGE).equals("en") ? Locale.ENGLISH : Locale.FRENCH;
+
+        ResourceBundle bundle = ResourceBundle.getBundle("properties.langue", lang);
+
+        menu = new JMenu(bundle.getString("settings"));
+
+        subMenu = new JMenu(bundle.getString("lang"));
+        ButtonGroup group = new ButtonGroup();
+        radioMenuItem = new JRadioButtonMenuItem(bundle.getString("en"));
+        radioMenuItem.addActionListener(new ClickLanguage());
+        group.add(radioMenuItem);
+        subMenu.add(radioMenuItem);
+        radioMenuItem = new JRadioButtonMenuItem(bundle.getString("fr"));
+        radioMenuItem.addActionListener(new ClickLanguage());
+        group.add(radioMenuItem);
+        subMenu.add(radioMenuItem);
+
+        final Enumeration<AbstractButton> enumAb = group.getElements();
+        AbstractButton ab;
+        while (enumAb.hasMoreElements()) {
+            ab = enumAb.nextElement();
+            if (ab.getActionCommand().equals(bundle.getString(Preference.getPreference(Preference.KEY_LANGUAGE)))) {
+                ab.setSelected(true);
+                break;
+            }
+        }
+
+        menu.add(subMenu);
+        menu.addSeparator();
+
+        cbMenuItem = new JCheckBoxMenuItem(bundle.getString("colorMap"),
                 Boolean.parseBoolean(Preference.getPreference(Preference.KEY_ETAT_COLOR_MAP)));
         cbMenuItem.addItemListener(new ItemListener() {
 
@@ -91,27 +122,27 @@ public final class Ihm extends JFrame {
         menu.add(cbMenuItem);
         menu.addSeparator();
 
-        subMenu = new JMenu("Theme d'apparence");
-        ButtonGroup group = new ButtonGroup();
+        subMenu = new JMenu(bundle.getString("theme"));
+        ButtonGroup groupBis = new ButtonGroup();
         radioMenuItem = new JRadioButtonMenuItem("Windows");
         radioMenuItem.addActionListener(new ClickRadio());
-        group.add(radioMenuItem);
+        groupBis.add(radioMenuItem);
         subMenu.add(radioMenuItem);
         radioMenuItem = new JRadioButtonMenuItem("Metal");
         radioMenuItem.addActionListener(new ClickRadio());
-        group.add(radioMenuItem);
+        groupBis.add(radioMenuItem);
         subMenu.add(radioMenuItem);
         radioMenuItem = new JRadioButtonMenuItem("Nimbus");
         radioMenuItem.addActionListener(new ClickRadio());
-        group.add(radioMenuItem);
+        groupBis.add(radioMenuItem);
         subMenu.add(radioMenuItem);
 
-        final Enumeration<AbstractButton> enumAb = group.getElements();
-        AbstractButton ab;
-        while (enumAb.hasMoreElements()) {
-            ab = enumAb.nextElement();
-            if (ab.getActionCommand().equals(Preference.getPreference(Preference.KEY_NOM_LF))) {
-                ab.setSelected(true);
+        final Enumeration<AbstractButton> enumAbBis = groupBis.getElements();
+        AbstractButton abBis;
+        while (enumAbBis.hasMoreElements()) {
+            abBis = enumAbBis.nextElement();
+            if (abBis.getActionCommand().equals(Preference.getPreference(Preference.KEY_NOM_LF))) {
+                abBis.setSelected(true);
                 break;
             }
         }
@@ -119,7 +150,7 @@ public final class Ihm extends JFrame {
         menu.add(subMenu);
         menu.addSeparator();
 
-        subMenu = new JMenu("Chemin d'acces");
+        subMenu = new JMenu(bundle.getString("filePath"));
         menuItem = new JMenuItem(new AbstractAction("Import fichier d'echange de donnees") {
 
             private static final long serialVersionUID = 1L;
@@ -174,7 +205,7 @@ public final class Ihm extends JFrame {
 
         menu.addSeparator();
 
-        subMenu = new JMenu("Parseur XML");
+        subMenu = new JMenu(bundle.getString("xmlParser"));
         ButtonGroup btGroup = new ButtonGroup();
         radioMenuItem = new JRadioButtonMenuItem("DOM");
         radioMenuItem.setToolTipText("A utiliser pour les XML de moins de 20000 variables car gourmand en memoire");
@@ -192,7 +223,7 @@ public final class Ihm extends JFrame {
 
         final Enumeration<AbstractButton> enumAbParseur = btGroup.getElements();
         AbstractButton abParseur;
-        while (enumAb.hasMoreElements()) {
+        while (enumAbBis.hasMoreElements()) {
             abParseur = enumAbParseur.nextElement();
             if (abParseur.getActionCommand().equals(Preference.getPreference(Preference.KEY_XML_PARSEUR))) {
                 abParseur.setSelected(true);
@@ -200,8 +231,8 @@ public final class Ihm extends JFrame {
             }
         }
 
-        menu = new JMenu("Infos");
-        menuItem = new JMenuItem(new AbstractAction("Log", new ImageIcon(getClass().getResource(ICON_LOG))) {
+        menu = new JMenu(bundle.getString("info"));
+        menuItem = new JMenuItem(new AbstractAction(bundle.getString("log"), new ImageIcon(getClass().getResource(ICON_LOG))) {
 
             private static final long serialVersionUID = 1L;
 
@@ -214,7 +245,7 @@ public final class Ihm extends JFrame {
         menu.add(menuItem);
         menu.addSeparator();
 
-        menuItem = new JMenuItem(new AbstractAction("Contact", new ImageIcon(getClass().getResource(ICON_CONTACT))) {
+        menuItem = new JMenuItem(new AbstractAction(bundle.getString("contact"), new ImageIcon(getClass().getResource(ICON_CONTACT))) {
 
             private static final long serialVersionUID = 1L;
 
@@ -227,7 +258,7 @@ public final class Ihm extends JFrame {
         menu.add(menuItem);
         menu.addSeparator();
 
-        menuItem = new JMenuItem(new AbstractAction("Aide", new ImageIcon(getClass().getResource(ICON_AIDE))) {
+        menuItem = new JMenuItem(new AbstractAction(bundle.getString("help"), new ImageIcon(getClass().getResource(ICON_AIDE))) {
 
             private static final long serialVersionUID = 1L;
 
@@ -241,7 +272,7 @@ public final class Ihm extends JFrame {
 
         menu.addSeparator();
 
-        menuItem = new JMenuItem(new AbstractAction("Nouveautes", new ImageIcon(getClass().getResource(ICON_NEWS))) {
+        menuItem = new JMenuItem(new AbstractAction(bundle.getString("news"), new ImageIcon(getClass().getResource(ICON_NEWS))) {
 
             private static final long serialVersionUID = 1L;
 
@@ -324,6 +355,27 @@ public final class Ihm extends JFrame {
         @Override
         public void actionPerformed(ActionEvent action) {
             Preference.setPreference(Preference.KEY_XML_PARSEUR, action.getActionCommand());
+        }
+    }
+
+    private final class ClickLanguage implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent action) {
+
+            String res;
+
+            switch (action.getActionCommand()) {
+            case "English":
+                res = "en";
+                break;
+            case "French":
+                res = "fr";
+                break;
+            default:
+                res = "en";
+                break;
+            }
+            Preference.setPreference(Preference.KEY_LANGUAGE, res);
         }
     }
 
