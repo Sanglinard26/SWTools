@@ -440,12 +440,13 @@ public abstract class CdfUtils {
 
 		} catch (IOException e) {
 			SWToolsMain.getLogger().severe(e.getMessage());
-		} catch (WriteException e) {
+		} catch (RowsExceededException rowException){
+			JOptionPane.showMessageDialog(null, "Trop de variables a� exporter !", "ERREUR", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		catch (WriteException e) {
 			SWToolsMain.getLogger().severe(e.getMessage());
-			if (e instanceof RowsExceededException) {
-				JOptionPane.showMessageDialog(null, "Trop de variables a� exporter !", "ERREUR", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
+
 		} finally {
 			if (workbook != null) {
 				try {

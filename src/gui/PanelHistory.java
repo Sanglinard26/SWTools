@@ -32,20 +32,11 @@ public final class PanelHistory extends JComponent {
     private static final JComponent header = new Header();
     private static final JPanel panData = new JPanel();
 
-    private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6) {
-
-        private static final long serialVersionUID = 1L;
-        {
-            put("---", 0);
-            put("changed", 0);
-            put("prelimcalibrated", 25);
-            put("calibrated", 50);
-            put("checked", 75);
-            put("completed", 100);
-        }
-    };
+    private static HashMap<String, Integer> scores;
 
     public PanelHistory() {
+    	
+    	initScores();
 
         setLayout(new BorderLayout());
         add(header, BorderLayout.NORTH);
@@ -54,6 +45,17 @@ public final class PanelHistory extends JComponent {
 
         add(panData, BorderLayout.CENTER);
 
+    }
+    
+    private final static void initScores()
+    {
+    	scores = new HashMap<String, Integer>(6);
+    	scores.put("---", 0);
+    	scores.put("changed", 0);
+    	scores.put("prelimcalibrated", 25);
+    	scores.put("calibrated", 50);
+    	scores.put("checked", 75);
+    	scores.put("completed", 100);
     }
 
     private static final class Header extends JComponent {
@@ -198,8 +200,8 @@ public final class PanelHistory extends JComponent {
             textAuteur.setText(data.getAuteur());
             add(textAuteur);
 
-            bar.setValue(maturite.get(data.getScore().toLowerCase()));
-            bar.setString(String.valueOf(maturite.get(data.getScore().toLowerCase())) + "%");
+            bar.setValue(scores.get(data.getScore().toLowerCase()));
+            bar.setString(String.valueOf(scores.get(data.getScore().toLowerCase())) + "%");
             add(bar);
 
             textPane.setText(data.getCommentaire());

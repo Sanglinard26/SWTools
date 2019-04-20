@@ -339,7 +339,7 @@ public final class ListLabel extends JList<Variable> {
                                     String line;
 
                                     while ((line = buf.readLine()) != null) {
-                                        if (!line.equals("[Label]") && !line.isEmpty()) {
+                                        if (!"[Label]".equals(line) && !line.isEmpty()) {
                                             sb.append(line + ",");
                                         }
                                     }

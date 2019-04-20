@@ -104,7 +104,16 @@ public final class Interpolation {
         double yMin = map[1][0];
         double yMax = map[map.length - 1][0];
 
-        double x0, x1, y0, y1, z00, z01, z10, z11, z_y0, z_y1;
+        double x0;
+        double x1;
+        double y0;
+        double y1;
+        double z00;
+        double z01;
+        double z10;
+        double z11;
+        double z_y0;
+        double z_y1;
 
         xDes = xDes < xMin ? xMin : xDes;
         xDes = xDes > xMax ? xMax : xDes;

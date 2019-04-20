@@ -169,10 +169,13 @@ public final class Paco implements Cdf {
 		Element eUnit;
 		String swFeatureRef;
 		String[] swUnitRef = null;
-		NodeList swCsEntry, swAxisCont;
+		NodeList swCsEntry;
+		NodeList swAxisCont;
 		nbLabel = listSwInstance.getLength();
 		Element label;
-		String shortName, longName, category;
+		String shortName;
+		String longName;
+		String category;
 
 		listLabel = new ArrayList<Variable>(nbLabel);
 		listCategory = new HashSet<String>();
@@ -271,6 +274,8 @@ public final class Paco implements Cdf {
 				break;
 			case "SW_COMPONENT": // Rustine vite fait pour poursuivre la lecture du fichier
 				listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), new Values(1, 1)));
+				break;
+			default:
 				break;
 			}
 
@@ -432,6 +437,8 @@ public final class Paco implements Cdf {
 				values.setValue(0, i + 1, Integer.toString(i));
 				values.setValue(1, i + 1, value.item(i).getFirstChild().getTextContent());
 				break;
+			default:
+				break;
 			}
 		}
 		return values;
@@ -558,6 +565,8 @@ public final class Paco implements Cdf {
 						}
 					}
 				}
+				break;
+			default:
 				break;
 			}
 		}

@@ -18,9 +18,6 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
     private static final List<Variable> listLabel = new ArrayList<Variable>();
     private static final List<Variable> listLabelFiltre = new ArrayList<Variable>();
 
-    public ListModelLabel() {
-    }
-
     @Override
     public int getSize() {
         return listLabelFiltre.size();

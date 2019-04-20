@@ -31,26 +31,29 @@ public abstract class Variable {
     private static TableView tableView;
     private static JPanel panel;
 
-    private static final HashMap<String, Integer> maturite = new HashMap<String, Integer>(6) {
-
-        private static final long serialVersionUID = 1L;
-        {
-            put("---", 0);
-            put("changed", 0);
-            put("prelimcalibrated", 25);
-            put("calibrated", 50);
-            put("checked", 75);
-            put("completed", 100);
-        }
-    };
+    private static HashMap<String, Integer> scores;
 
     public Variable(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory) {
+    	
+    	initScores();
+    	
         this.shortName = shortName;
         this.longName = longName;
         this.category = category;
         this.swFeatureRef = swFeatureRef;
         this.swUnitRef = swUnitRef;
         this.swCsHistory = swCsHistory;
+    }
+    
+    private final static void initScores()
+    {
+    	scores = new HashMap<String, Integer>(6);
+    	scores.put("---", 0);
+    	scores.put("changed", 0);
+    	scores.put("prelimcalibrated", 25);
+    	scores.put("calibrated", 50);
+    	scores.put("checked", 75);
+    	scores.put("completed", 100);
     }
 
     public final String getShortName() {
@@ -78,7 +81,7 @@ public abstract class Variable {
     }
 
     public final int getLastScore() {
-        return swCsHistory.length > 0 ? maturite.get(swCsHistory[swCsHistory.length - 1].getScore().toLowerCase()) : 0;
+        return swCsHistory.length > 0 ? scores.get(swCsHistory[swCsHistory.length - 1].getScore().toLowerCase()) : 0;
     }
 
     @Override

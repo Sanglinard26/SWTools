@@ -71,6 +71,8 @@ public final class PanelXYChart extends JComponent {
             case RIGHT_POSITION:
                 add(new JScrollPane(legendList), BorderLayout.WEST);
                 break;
+            default:
+            	break;
             }
         }
 
@@ -191,7 +193,7 @@ public final class PanelXYChart extends JComponent {
                 try {
                     ImageIO.write(image, "jpeg", new File(filename));
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                	
                 }
             }
         }

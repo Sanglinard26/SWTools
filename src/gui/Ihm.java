@@ -47,10 +47,7 @@ public final class Ihm extends JFrame {
 	private static final String ICON_NEWS = "/new_icon_16.png";
 
 	private final JMenuBar menuBar = new JMenuBar();
-	private JMenu menu, subMenu;
-	private JMenuItem menuItem;
-	private final JCheckBoxMenuItem cbMenuItem;
-	private JRadioButtonMenuItem radioMenuItem;
+	
 	private static final SingleComponentInfiniteProgress progressPanel = new SingleComponentInfiniteProgress(false);
 
 	private static final JTabbedPane onglets = new JTabbedPane(SwingConstants.TOP);
@@ -58,8 +55,6 @@ public final class Ihm extends JFrame {
 	private static final JPanel ongletLab = new JPanel(new GridLayout(1, 1));
 
 	private static PanelLab panelLab = null;
-
-	public static final boolean testMode = false;
 
 	public Ihm() {
 
@@ -72,15 +67,15 @@ public final class Ihm extends JFrame {
 		// test glasspane
 		setGlassPane(progressPanel);
 
-		Locale lang = Preference.getPreference(Preference.KEY_LANGUAGE).equals("en") ? Locale.ENGLISH : Locale.FRENCH;
+		final Locale lang = Preference.getPreference(Preference.KEY_LANGUAGE).equals("en") ? Locale.ENGLISH : Locale.FRENCH;
 
-		ResourceBundle bundle = ResourceBundle.getBundle("properties.langue", lang);
+		final ResourceBundle bundle = ResourceBundle.getBundle("properties.langue", lang);
 
-		menu = new JMenu(bundle.getString("settings"));
+		JMenu menu = new JMenu(bundle.getString("settings"));
 
-		subMenu = new JMenu(bundle.getString("lang"));
+		JMenu subMenu = new JMenu(bundle.getString("lang"));
 		ButtonGroup group = new ButtonGroup();
-		radioMenuItem = new JRadioButtonMenuItem(bundle.getString("en"));
+		JRadioButtonMenuItem radioMenuItem = new JRadioButtonMenuItem(bundle.getString("en"));
 		radioMenuItem.addActionListener(new ClickLanguage());
 		group.add(radioMenuItem);
 		subMenu.add(radioMenuItem);
@@ -102,7 +97,7 @@ public final class Ihm extends JFrame {
 		menu.add(subMenu);
 		menu.addSeparator();
 
-		cbMenuItem = new JCheckBoxMenuItem(bundle.getString("colorMap"),
+		final JCheckBoxMenuItem cbMenuItem = new JCheckBoxMenuItem(bundle.getString("colorMap"),
 				Boolean.parseBoolean(Preference.getPreference(Preference.KEY_ETAT_COLOR_MAP)));
 		cbMenuItem.addItemListener(new ItemListener() {
 
@@ -148,7 +143,7 @@ public final class Ihm extends JFrame {
 		menu.addSeparator();
 
 		subMenu = new JMenu(bundle.getString("filePath"));
-		menuItem = new JMenuItem(new AbstractAction("Import fichier d'echange de donnees") {
+		JMenuItem menuItem = new JMenuItem(new AbstractAction("Import fichier d'echange de donnees") {
 
 			private static final long serialVersionUID = 1L;
 

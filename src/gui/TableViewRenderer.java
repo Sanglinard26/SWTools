@@ -28,10 +28,6 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
 	private Map map = null;
 	private boolean setMapColor;
 
-	public TableViewRenderer() {
-
-	}
-
 	public final void colorMap(Variable var) {
 
 		setMapColor = false;
@@ -56,7 +52,7 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
 
 		final String stringValue = value.toString();
 
-		if (NumeralString.isNumber(stringValue) && row > 0 && column > 0 && map != null && setMapColor == true) {
+		if (NumeralString.isNumber(stringValue) && row > 0 && column > 0 && map != null && setMapColor) {
 			setBackground(rainbowScale.valueToColor(Double.parseDouble(stringValue)));
 		} else {
 			setBackground(Color.WHITE);

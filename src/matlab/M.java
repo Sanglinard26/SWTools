@@ -60,9 +60,7 @@ public final class M implements Cdf {
 
             while (readLineM() != null) {
 
-                if (!line.startsWith("%")) {
-                    if (line.indexOf("=") > 0) {
-
+                if (!line.startsWith("%") && line.indexOf("=") > 0) {
                         shortName = line.substring(0, line.indexOf("=")).trim();
 
                         if (shortName.lastIndexOf("_") + 1 < line.indexOf("=")) {
@@ -171,9 +169,6 @@ public final class M implements Cdf {
 
                             checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
                         }
-
-                    }
-
                 }
 
             }

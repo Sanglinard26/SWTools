@@ -80,7 +80,8 @@ public final class XYChart extends JComponent {
         final SeriesCollection seriesCollection = new SeriesCollection();
         Serie serie;
 
-        String xValue, zValue;
+        String xValue;
+        String zValue;
 
         for (short x = 1; x < map.getValues().getDimX(); x++) {
 
@@ -115,7 +116,8 @@ public final class XYChart extends JComponent {
         final SeriesCollection seriesCollection = new SeriesCollection();
         Serie serie;
 
-        String xValue, zValue;
+        String xValue;
+        String zValue;
 
         for (short y = 1; y < map.getValues().getDimY(); y++) {
 

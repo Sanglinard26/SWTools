@@ -278,6 +278,8 @@ public final class StAXPaco implements Cdf {
 										case MAP_GROUPED:
 											unite = new String[3];
 											break;
+										default:
+											break;
 										}
 									}
 
@@ -700,6 +702,8 @@ public final class StAXPaco implements Cdf {
 									}
 
 									break;
+								default:
+									break;
 								}
 							}
 							event = xmler.nextEvent();
@@ -764,6 +768,9 @@ public final class StAXPaco implements Cdf {
 
 						cntLabel++;
 
+						break;
+
+					default:
 						break;
 					}
 

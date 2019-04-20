@@ -101,7 +101,7 @@ public final class SingleComponentInfiniteProgress extends JComponent {
     };
     private ComponentAdapter componentAdapter = new ComponentAdapter() {
         public void componentResized(final ComponentEvent e) {
-            if (useBackBuffer == true) {
+            if (useBackBuffer) {
                 setOpaque(false);
                 imageBuf = null;
                 timerTask.iterate = 3;
@@ -286,7 +286,8 @@ public final class SingleComponentInfiniteProgress extends JComponent {
     }
 
     private class RedrawTask extends TimerTask {
-        int iterate;
+        
+    	private int iterate;
 
         public void run() {
             SwingUtilities.invokeLater(new Runnable() {

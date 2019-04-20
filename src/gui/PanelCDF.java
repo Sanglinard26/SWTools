@@ -135,7 +135,7 @@ public final class PanelCDF extends JComponent {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting() == false && !listCDF.isSelectionEmpty()) {
+                if (!e.getValueIsAdjusting() && !listCDF.isSelectionEmpty()) {
 
                     final Variable oldVar = listLabel.getSelectedValue();
 
@@ -382,6 +382,8 @@ public final class PanelCDF extends JComponent {
                     case "m":
                         cdf = new M(file);
                         break;
+                    default:
+                    	break;
                     }
 
                     if (cdf != null && cdf.isValid()) {
@@ -410,12 +412,7 @@ public final class PanelCDF extends JComponent {
 
         @Override
         public boolean canImport(TransferSupport info) {
-
-            if (!info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                return false;
-            }
-
-            return true;
+            return info.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
         }
 
         @SuppressWarnings("unchecked")
