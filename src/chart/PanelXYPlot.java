@@ -146,7 +146,12 @@ public final class PanelXYPlot extends JPanel {
         final int nbSerie = seriesCollection.getSeriesCount();
         listSeries = new ArrayList<SerieScale>(nbSerie);
 
-        int x0, y0, x1, y1, x2, y2; // Point de coordonnees
+        int x0;
+        int y0;
+        int x1;
+        int y1;
+        int x2;
+        int y2;
 
         Serie serie;
         SerieScale serieScale;
@@ -172,7 +177,8 @@ public final class PanelXYPlot extends JPanel {
 
         }
 
-        String xLabel, yLabel;
+        String xLabel;
+        String yLabel;
         FontMetrics metrics;
         int labelWidth;
 
@@ -262,8 +268,10 @@ public final class PanelXYPlot extends JPanel {
         g2.drawLine(PADDING + LABEL_PADDING, height - PADDING - LABEL_PADDING, PADDING + LABEL_PADDING, PADDING);
         g2.drawLine(PADDING + LABEL_PADDING, height - PADDING - LABEL_PADDING, width - PADDING, height - PADDING - LABEL_PADDING);
 
-        int xMark, yMark;
-        int ovalW, ovalH;
+        int xMark;
+        int yMark;
+        int ovalW;
+        int ovalH;
 
         if (!listSeries.isEmpty()) {
             for (short nSerie = 0; nSerie < nbSerie; nSerie++) {

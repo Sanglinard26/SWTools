@@ -187,7 +187,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting() == false && !listLabRef.isSelectionEmpty()) {
+                if (!e.getValueIsAdjusting() && !listLabRef.isSelectionEmpty()) {
                     filterVarRef.setText("");
                     listVarRef.getModel().setList(listLabRef.getSelectedValue());
                 }
@@ -203,7 +203,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting() == false && !listLabWk.isSelectionEmpty()) {
+                if (!e.getValueIsAdjusting() && !listLabWk.isSelectionEmpty()) {
                     filterVarWk.setText("");
                     listVarWk.getModel().setList(listLabWk.getSelectedValue());
                 }
