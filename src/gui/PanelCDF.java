@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -63,12 +65,15 @@ public final class PanelCDF extends JComponent {
 
     private static Variable selVariable;
 
+    private final static Locale lang = Preference.getPreference(Preference.KEY_LANGUAGE).equals("en") ? Locale.ENGLISH : Locale.FRENCH;
+    private final static ResourceBundle bundle = ResourceBundle.getBundle("properties.langue", lang);
+
     // GUI
     private final JButton btOpen = new JButton(new ImageIcon(getClass().getResource(ICON_ADD)));
     private final JPanel panComparaison = new JPanel();
     private final ButtonGroup btGroup = new ButtonGroup();
-    private static final JRadioButton radioBtVal = new JRadioButton("Affichage des valeurs", true);
-    private final JRadioButton radioBtDiff = new JRadioButton("Affichage des differences (Work-Ref)");
+    private static final JRadioButton radioBtVal = new JRadioButton(bundle.getString("showValues"), true);
+    private final JRadioButton radioBtDiff = new JRadioButton(bundle.getString("showDiff"));
     private final ListCdf listCDF = new ListCdf(new ListModelCdf());
     private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
     private static final JPanel panVisu = new JPanel(new GridBagLayout());
@@ -100,13 +105,14 @@ public final class PanelCDF extends JComponent {
         gbc.weighty = 0;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.anchor = GridBagConstraints.CENTER;
-        btOpen.setToolTipText("Ajouter fichier(s)");
+        btOpen.setToolTipText(bundle.getString("addFiles"));
         btOpen.addActionListener(new OpenCDF());
         panCDF.add(btOpen, gbc);
 
         btGroup.add(radioBtVal);
         btGroup.add(radioBtDiff);
-        panComparaison.setBorder(new TitledBorder(new LineBorder(Color.GRAY, 0), "Comparaison :", TitledBorder.LEADING, TitledBorder.BELOW_TOP));
+        panComparaison
+                .setBorder(new TitledBorder(new LineBorder(Color.GRAY, 0), bundle.getString("compar"), TitledBorder.LEADING, TitledBorder.BELOW_TOP));
         panComparaison.add(radioBtVal);
         panComparaison.add(radioBtDiff);
 
@@ -252,9 +258,9 @@ public final class PanelCDF extends JComponent {
 
         panelHistory.setBorder(BorderFactory.createEmptyBorder());
 
-        tabPan.addTab("Historique", new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(panelHistory));
-        tabPan.addTab("Graphique", new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
-        tabPan.addTab("Interpolation", new ImageIcon(getClass().getResource(ICON_MATH)), panelInterpolation);
+        tabPan.addTab(bundle.getString("remark"), new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(panelHistory));
+        tabPan.addTab(bundle.getString("chart"), new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
+        tabPan.addTab(bundle.getString("interpolation"), new ImageIcon(getClass().getResource(ICON_MATH)), panelInterpolation);
 
         tabPan.addChangeListener(new ChangeListener() {
 
@@ -355,7 +361,7 @@ public final class PanelCDF extends JComponent {
                 cdfName.setLength(0);
                 cdfName.append(file.getName().substring(0, file.getName().length() - 4));
 
-                Ihm.getProgressPanel().setText("Ouverture de : " + cdfName.toString());
+                Ihm.getProgressPanel().setText(cdfName.toString());
 
                 if (!(ListModelCdf.getListcdfname().contains(cdfName.toString()))) {
 
@@ -383,7 +389,7 @@ public final class PanelCDF extends JComponent {
                         cdf = new M(file);
                         break;
                     default:
-                    	break;
+                        break;
                     }
 
                     if (cdf != null && cdf.isValid()) {
@@ -391,8 +397,7 @@ public final class PanelCDF extends JComponent {
                     }
 
                 } else {
-                    JOptionPane.showMessageDialog(null, "Fichier deja present dans la liste !" + "\nNom : " + cdfName, "INFO",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, bundle.getString("cdfAlreadyExist") + cdfName, "INFO", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
 
