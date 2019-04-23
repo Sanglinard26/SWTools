@@ -18,9 +18,7 @@ public final class NumeralString {
     }
 
     public static final String cutNumber(String number) {
-
-        return number.indexOf(".") < 0 ? number : OTHER_REPLACEMENT.matcher(ZERO_REPLACEMENT.matcher(number).replaceAll("")).replaceAll("");
-
+        return (number.indexOf("e") > -1 || number.indexOf(".") < 0) ? number : OTHER_REPLACEMENT.matcher(ZERO_REPLACEMENT.matcher(number).replaceAll("")).replaceAll("");
     }
 
     public static final String formatStringNumber(double number) {
