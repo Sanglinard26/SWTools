@@ -47,7 +47,7 @@ public final class Values {
                     doubleValues[y][x] = Double.parseDouble(getValue(y, x));
                 } else {
                     if (x * y != 0) {
-                    	doubleValues[y][x] = Double.NaN;
+                        doubleValues[y][x] = Double.NaN;
                     }
 
                 }
@@ -56,7 +56,7 @@ public final class Values {
 
         return doubleValues;
     }
-    
+
     public final Double[][] valuesToDouble2D() {
 
         Double[][] doubleValues = new Double[dimY][dimX];
@@ -68,13 +68,56 @@ public final class Values {
                     doubleValues[y][x] = Double.parseDouble(getValue(y, x));
                 } else {
                     if (x * y != 0) {
-                    	doubleValues[y][x] = Double.NaN;
+                        doubleValues[y][x] = Double.NaN;
                     }
                 }
             }
         }
 
         return doubleValues;
+    }
+
+    public final float[] getXAxis() {
+        float[] xAxis = new float[dimX - 1];
+
+        for (int x = 1; x < dimX; x++) {
+            if (NumeralString.isNumber(getValue(0, x))) {
+                xAxis[x - 1] = Float.parseFloat(getValue(0, x));
+            } else {
+                xAxis[x - 1] = x;
+            }
+        }
+        return xAxis;
+    }
+
+    public final float[] getYAxis() {
+        float[] yAxis = new float[dimY - 1];
+
+        for (int y = 1; y < dimY; y++) {
+            if (NumeralString.isNumber(getValue(y, 0))) {
+                yAxis[y - 1] = Float.parseFloat(getValue(y, 0));
+            } else {
+                yAxis[y - 1] = y;
+            }
+        }
+        return yAxis;
+    }
+
+    public final float[][] getZvalues() {
+
+        float[][] floatValues = new float[dimY - 1][dimX - 1];
+
+        for (short y = 1; y < dimY; y++) {
+            for (short x = 1; x < dimX; x++) {
+
+                if (NumeralString.isNumber(getValue(y, x))) {
+                    floatValues[y - 1][x - 1] = Float.parseFloat(getValue(y, x));
+                } else {
+                    floatValues[y - 1][x - 1] = Float.NaN;
+                }
+            }
+        }
+        return floatValues;
     }
 
 }

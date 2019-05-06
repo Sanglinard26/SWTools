@@ -29,8 +29,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.orsoncharts.Resources;
-
 public final class PanelXYChart extends JComponent {
 
     private static final long serialVersionUID = 1L;
@@ -72,7 +70,7 @@ public final class PanelXYChart extends JComponent {
                 add(new JScrollPane(legendList), BorderLayout.WEST);
                 break;
             default:
-            	break;
+                break;
             }
         }
 
@@ -172,8 +170,7 @@ public final class PanelXYChart extends JComponent {
         public void actionPerformed(ActionEvent e) {
             JFileChooser fileChooser = new JFileChooser();
 
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(Resources.localString("JPG_FILE_FILTER_DESCRIPTION"),
-                    new String[] { "jpg" });
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG_FILE_FILTER_DESCRIPTION", new String[] { "jpg" });
             fileChooser.addChoosableFileFilter(filter);
             fileChooser.setFileFilter(filter);
 
@@ -193,7 +190,7 @@ public final class PanelXYChart extends JComponent {
                 try {
                     ImageIO.write(image, "jpeg", new File(filename));
                 } catch (IOException ex) {
-                	
+
                 }
             }
         }
