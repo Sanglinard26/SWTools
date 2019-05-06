@@ -12,7 +12,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import cdf.Map;
 import cdf.Variable;
-import net.ericaro.surfaceplotter.surface.ColorModelSet;
+import net.ericaro.surfaceplotter.surface.ColorModel;
 import utils.NumeralString;
 import utils.Preference;
 
@@ -22,7 +22,7 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
 
     private static final Color backgroundCell = UIManager.getLookAndFeel().getDefaults().getColor("Tree.selectionBackground");
 
-    private ColorModelSet colorMap = new ColorModelSet();
+    private ColorMap colorMap;
     private Map map = null;
     private boolean setMapColor;
 
@@ -33,8 +33,8 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
         if (Preference.getPreference(Preference.KEY_ETAT_COLOR_MAP).equals("true") && var instanceof Map) {
             map = (Map) var;
             if (map.getMinZValue() - map.getMaxZValue() != 0) {
-                // colorMap = new RainbowScale(new Range(map.getMinZValue(), map.getMaxZValue()),
-                // (map.getValues().getDimX() - 1) * (map.getValues().getDimY() - 1), RainbowScale.BLUE_TO_RED_RANGE);
+            	colorMap = new ColorMap((byte) 1, 0.0F, 1.0F, 1.0F, 0.0F, 0.6666F);
+                colorMap.setRange(map.getMinZValue(), map.getMaxZValue());
                 setMapColor = true;
             }
         }
@@ -51,8 +51,7 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
         final String stringValue = value.toString();
 
         if (NumeralString.isNumber(stringValue) && row > 0 && column > 0 && map != null && setMapColor) {
-            // setBackground(colorMap.valueToColor(Double.parseDouble(stringValue)));
-            setBackground(colorMap.getPolygonColor(1, Float.parseFloat(stringValue)));
+            setBackground(colorMap.getPolygonColor(colorMap.getColorFraction(Float.parseFloat(stringValue))));
         } else {
             setBackground(Color.WHITE);
         }
@@ -84,5 +83,27 @@ public final class TableViewRenderer extends DefaultTableCellRenderer {
         }
 
         return this;
+    }
+    
+    private final class ColorMap extends ColorModel
+    {
+    	
+    	private float minValue = 0;
+    	private float maxValue = 0;
+
+		public ColorMap(byte mode, float hue, float sat, float bright, float min, float max) {
+			super(mode, hue, sat, bright, min, max);
+		}
+		
+		public final void setRange(float min, float max)
+		{
+			this.minValue = min;
+			this.maxValue = max;
+		}
+
+		public final float getColorFraction(float value) {
+	        return (value - this.minValue) / (this.maxValue-this.minValue);
+	    }
+    	
     }
 }
