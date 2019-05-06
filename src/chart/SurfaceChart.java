@@ -8,26 +8,12 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
-import com.orsoncharts.Chart3D;
-import com.orsoncharts.Chart3DFactory;
-import com.orsoncharts.Chart3DPanel;
-import com.orsoncharts.Range;
-import com.orsoncharts.axis.ValueAxis3D;
-import com.orsoncharts.data.function.Function3D;
-import com.orsoncharts.graphics3d.Dimension3D;
-import com.orsoncharts.graphics3d.swing.DisplayPanel3D;
-import com.orsoncharts.legend.LegendAnchor;
-import com.orsoncharts.plot.XYZPlot;
-import com.orsoncharts.renderer.RainbowScale;
-import com.orsoncharts.renderer.xyz.SurfaceRenderer;
-import com.orsoncharts.util.Orientation;
-
 import cdf.Map;
 import cdf.Variable;
-import net.ericaro.surfaceplotter.DefaultSurfaceModel;
-import net.ericaro.surfaceplotter.Mapper;
+import net.ericaro.surfaceplotter.surface.AbstractSurfaceModel;
+import net.ericaro.surfaceplotter.surface.JSurface;
 import net.ericaro.surfaceplotter.surface.SurfaceModel;
-import utils.NumeralString;
+import net.ericaro.surfaceplotter.surface.SurfaceVertex;
 
 public final class SurfaceChart extends JComponent {
 
@@ -49,102 +35,90 @@ public final class SurfaceChart extends JComponent {
 
             final Map map = (Map) variable;
 
-            final Function3D function = new Function3D() {
+            MapSurfaceModel arraySurfaceModel = new MapSurfaceModel();
+            arraySurfaceModel.setValues(map.getValues().getXAxis(), map.getValues().getYAxis(), map.getValues().getZvalues());
 
-                private static final long serialVersionUID = 1L;
-                private String value;
-
-                @Override
-                public double getValue(double x, double y) {
-                    if (x * y > 0) {
-
-                        value = map.getValue((int) y, (int) x);
-
-                        return NumeralString.isNumber(value) ? Double.parseDouble(value) : Double.NaN;
-                    }
-                    return 0;
-                }
-            };
-
-            // Erreur sur les axes (nom)
-            final Chart3D chart = Chart3DFactory.createSurfaceChart("", "", function, ("X [" + map.getUnitX() + "]").intern(),
-                    ("Z [" + map.getUnitZ() + "]").intern(), ("Y [" + map.getUnitY() + "]").intern()); // Test String.intern()
-            final XYZPlot plot = (XYZPlot) chart.getPlot();
-            plot.setDimensions(new Dimension3D(20, 10, 20));
-
-            final ValueAxis3D xAxis = plot.getXAxis();
-            xAxis.setRange(1, map.getValues().getDimX() - 1);
-            final ValueAxis3D zAxis = plot.getZAxis();
-            zAxis.setRange(1, map.getValues().getDimY() - 1);
-
-            final SurfaceRenderer renderer = (SurfaceRenderer) plot.getRenderer();
-            if (map.getMaxZValue() - map.getMinZValue() != 0)
-                renderer.setColorScale(new RainbowScale(new Range(map.getMinZValue(), map.getMaxZValue())));
-            renderer.setDrawFaceOutlines(false);
-            renderer.setXSamples(map.getValues().getDimX() - 1);
-            renderer.setZSamples(map.getValues().getDimY() - 1);
-            chart.setLegendPosition(LegendAnchor.BOTTOM_CENTER, Orientation.HORIZONTAL);
-
-            final Chart3DPanel chartPanel = new Chart3DPanel(chart);
-
-            this.add(new DisplayPanel3D(chartPanel));
-
-            // this.add(new JSurface(createSurfaceModel(map)));
+            this.add(new JSurface(arraySurfaceModel));
         } else {
             this.add(labelNoGraph, BorderLayout.CENTER);
         }
 
     }
 
-    @SuppressWarnings("unused")
-    private static SurfaceModel createSurfaceModel(final Map map) {
-        DefaultSurfaceModel sm = new DefaultSurfaceModel();
+    public class MapSurfaceModel extends AbstractSurfaceModel {
+        SurfaceVertex[][] surfaceVertex;
 
-        sm.setPlotFunction2(false);
-        sm.setCalcDivisions(Math.max(map.getValues().getDimX() - 1, map.getValues().getDimY() - 1));
-        sm.setDispDivisions(sm.getCalcDivisions());
+        public MapSurfaceModel() {
+            setPlotFunction2(false);
+            setBoxed(true);
+            setDisplayXY(true);
+            setExpectDelay(false);
+            setAutoScaleZ(true);
+            setDisplayZ(true);
+            setMesh(true);
+            setPlotType(SurfaceModel.PlotType.SURFACE);
+            setDisplayGrids(true);
+            setPlotColor(SurfaceModel.PlotColor.SPECTRUM);
+            setFirstFunctionOnly(true);
+            setZMin(Float.MAX_VALUE);
+            setZMax(Float.MIN_VALUE);
+        }
 
-        sm.setBoxed(true);
-        sm.setDisplayXY(true);
-        sm.setExpectDelay(false);
-        sm.setAutoScaleZ(true);
-        sm.setDisplayZ(true);
-        sm.setMesh(true);
-        sm.setPlotType(SurfaceModel.PlotType.SURFACE);
-        sm.setDisplayGrids(true);
-        sm.setFirstFunctionOnly(true);
+        public void setValues(float[] xBreakPoint, float[] yBreakPoint, float[][] z1) {
+            setDataAvailable(false);
 
-        sm.setXMin(1);
-        sm.setXMax(map.getValues().getDimX() - 1);
-        sm.setYMin(1);
-        sm.setYMax(map.getValues().getDimY() - 1);
+            int xLength = xBreakPoint.length;
+            int yLength = yBreakPoint.length;
 
-        sm.setPlotColor(SurfaceModel.PlotColor.SPECTRUM);
+            float xmin = xBreakPoint[0] - (xBreakPoint[1] - xBreakPoint[0]) / 2.0F;
+            float xmax = xBreakPoint[(xLength - 1)] + (xBreakPoint[(xLength - 1)] - xBreakPoint[(xLength - 2)]) / 2.0F;
+            float ymin = yBreakPoint[0] - (yBreakPoint[1] - yBreakPoint[0]) / 2.0F;
+            float ymax = yBreakPoint[(yLength - 1)] + (yBreakPoint[(yLength - 1)] - yBreakPoint[(yLength - 2)]) / 2.0F;
+            setXMin(xmin);
+            setXMax(xmax);
+            setYMin(ymin);
+            setYMax(ymax);
+            setCalcDivisions(Math.max(xLength - 1, yLength - 1));
 
-        sm.setMapper(new Mapper() {
+            float xfactor = 20.0F / (xMax - xMin);
+            float yfactor = 20.0F / (yMax - yMin);
 
-            private String value;
+            int total = (calcDivisions + 1) * (calcDivisions + 1);
+            surfaceVertex = new SurfaceVertex[1][total];
 
-            @Override
-            public float f2(float paramFloat1, float paramFloat2) {
-                // TODO Auto-generated method stub
-                return 0;
-            }
-
-            @Override
-            public float f1(float x, float y) {
-                if (x * y > 0) {
-
-                    value = map.getValue((int) y, (int) x);
-
-                    return (float) (NumeralString.isNumber(value) ? Double.parseDouble(value) : Double.NaN);
+            for (int i = 0; i <= xBreakPoint.length - 1; i++) {
+                for (int j = 0; j <= yBreakPoint.length - 1; j++) {
+                    int k = i * (calcDivisions + 1) + j;
+                    float xv = xBreakPoint[i];
+                    float yv = yBreakPoint[j];
+                    float v1 = z1 != null ? z1[j][i] : Float.NaN;
+                    if (Float.isInfinite(v1))
+                        v1 = Float.NaN;
+                    if (!Float.isNaN(v1)) {
+                        if ((Float.isNaN(z1Max)) || (v1 > z1Max)) {
+                            z1Max = v1;
+                        } else if ((Float.isNaN(z1Min)) || (v1 < z1Min))
+                            z1Min = v1;
+                    }
+                    surfaceVertex[0][k] = new SurfaceVertex((xv - xMin) * xfactor - 10.0F, (yv - yMin) * yfactor - 10.0F, v1);
                 }
-                return 0;
             }
-        });
-        sm.plot().execute();
 
-        return sm;
+            for (int s = 0; s < surfaceVertex[0].length; s++) {
+                if (surfaceVertex[0][s] == null) {
+                    surfaceVertex[0][s] = new SurfaceVertex(Float.NaN, Float.NaN, Float.NaN);
+                }
+            }
+
+            autoScale();
+            setDataAvailable(true);
+            fireStateChanged();
+        }
+
+        @Override
+        public SurfaceVertex[][] getSurfaceVertex() {
+            return this.surfaceVertex;
+        }
     }
 
 }
