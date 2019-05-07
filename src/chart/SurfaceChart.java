@@ -38,7 +38,11 @@ public final class SurfaceChart extends JComponent {
             MapSurfaceModel arraySurfaceModel = new MapSurfaceModel();
             arraySurfaceModel.setValues(map.getValues().getXAxis(), map.getValues().getYAxis(), map.getValues().getZvalues());
 
-            this.add(new JSurface(arraySurfaceModel));
+            JSurface surface = new JSurface(arraySurfaceModel);
+            surface.setXLabel("X [" + map.getUnitX() + "]");
+            surface.setYLabel("Y [" + map.getUnitY() + "]");
+
+            this.add(surface);
         } else {
             this.add(labelNoGraph, BorderLayout.CENTER);
         }
@@ -53,7 +57,6 @@ public final class SurfaceChart extends JComponent {
             setBoxed(true);
             setDisplayXY(true);
             setExpectDelay(false);
-            setAutoScaleZ(true);
             setDisplayZ(true);
             setMesh(true);
             setPlotType(SurfaceModel.PlotType.SURFACE);
@@ -64,16 +67,16 @@ public final class SurfaceChart extends JComponent {
             setZMax(Float.MIN_VALUE);
         }
 
-        public void setValues(float[] xBreakPoint, float[] yBreakPoint, float[][] z1) {
+        public void setValues(float[] xAxis, float[] yAxis, float[][] zValues) {
             setDataAvailable(false);
 
-            int xLength = xBreakPoint.length;
-            int yLength = yBreakPoint.length;
+            int xLength = xAxis.length;
+            int yLength = yAxis.length;
 
-            float xmin = xBreakPoint[0] - (xBreakPoint[1] - xBreakPoint[0]) / 2.0F;
-            float xmax = xBreakPoint[(xLength - 1)] + (xBreakPoint[(xLength - 1)] - xBreakPoint[(xLength - 2)]) / 2.0F;
-            float ymin = yBreakPoint[0] - (yBreakPoint[1] - yBreakPoint[0]) / 2.0F;
-            float ymax = yBreakPoint[(yLength - 1)] + (yBreakPoint[(yLength - 1)] - yBreakPoint[(yLength - 2)]) / 2.0F;
+            float xmin = xAxis[0];
+            float xmax = xAxis[(xLength - 1)];
+            float ymin = yAxis[0];
+            float ymax = yAxis[(yLength - 1)];
             setXMin(xmin);
             setXMax(xmax);
             setYMin(ymin);
@@ -86,12 +89,12 @@ public final class SurfaceChart extends JComponent {
             int total = (calcDivisions + 1) * (calcDivisions + 1);
             surfaceVertex = new SurfaceVertex[1][total];
 
-            for (int i = 0; i <= xBreakPoint.length - 1; i++) {
-                for (int j = 0; j <= yBreakPoint.length - 1; j++) {
+            for (int i = 0; i <= xAxis.length - 1; i++) {
+                for (int j = 0; j <= yAxis.length - 1; j++) {
                     int k = i * (calcDivisions + 1) + j;
-                    float xv = xBreakPoint[i];
-                    float yv = yBreakPoint[j];
-                    float v1 = z1 != null ? z1[j][i] : Float.NaN;
+                    float xv = xAxis[i];
+                    float yv = yAxis[j];
+                    float v1 = zValues != null ? zValues[j][i] : Float.NaN;
                     if (Float.isInfinite(v1))
                         v1 = Float.NaN;
                     if (!Float.isNaN(v1)) {
@@ -108,6 +111,16 @@ public final class SurfaceChart extends JComponent {
                 if (surfaceVertex[0][s] == null) {
                     surfaceVertex[0][s] = new SurfaceVertex(Float.NaN, Float.NaN, Float.NaN);
                 }
+            }
+
+            float diffMaxMin = z1Max - z1Min;
+
+            if (diffMaxMin == 0) {
+                z1Max += 0.1;
+                z1Max -= 0.1;
+            } else {
+                float marge = diffMaxMin * 0.1f;
+                z1Max += marge;
             }
 
             autoScale();

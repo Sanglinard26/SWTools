@@ -57,6 +57,27 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
     private static final Locale lang = Preference.getPreference(Preference.KEY_LANGUAGE).equals("en") ? Locale.ENGLISH : Locale.FRENCH;
     private static final ResourceBundle bundle = ResourceBundle.getBundle("properties.langue", lang);
 
+    private enum FileFormat {
+        TXT("txt", "Fichier texte (*.txt)"), XLS("xls", "Fichier Excel (*.xls)"), M("m", "Fichier Matlab (*.m)"), HTML("html",
+                "Fichier html (*.html)");
+
+        private String extension;
+        private String extensionDesc;
+
+        private FileFormat(String extension, String extensionDesc) {
+            this.extension = extension;
+            this.extensionDesc = extensionDesc;
+        }
+
+        public String getExtension() {
+            return extension;
+        }
+
+        public String getExtensionDesc() {
+            return extensionDesc;
+        }
+    }
+
     public ListCdf(ListModelCdf dataModel) {
         super(dataModel);
         setCellRenderer(new ListCdfRenderer());
@@ -147,12 +168,12 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
         public void mouseReleased(MouseEvent e) {
             if (e.isPopupTrigger() && ListCdf.this.getModel().getSize() > 0 && ListCdf.this.getSelectedIndices().length <= 1) {
                 final JPopupMenu menu = new JPopupMenu();
-                final JMenu menuMove = new JMenu("Deplacer");
-                final JMenu menuExport = new JMenu("Export");
+                final JMenu menuMove = new JMenu(bundle.getString("ListCdf.move"));
+                final JMenu menuExport = new JMenu(bundle.getString("ListCdf.export"));
                 JMenuItem menuItem;
                 if (ListCdf.this.locationToIndex(e.getPoint()) == ListCdf.this.getSelectedIndex()) {
 
-                    menuItem = new JMenuItem("Supprimer ce fichier", new ImageIcon(getClass().getResource(ICON_TRASH)));
+                    menuItem = new JMenuItem(bundle.getString("ListCdf.deleteFile"), new ImageIcon(getClass().getResource(ICON_TRASH)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -165,19 +186,19 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     menu.add(menuItem);
                     menu.addSeparator();
 
-                    menuItem = new JMenuItem("Monter", new ImageIcon(getClass().getResource(ICON_UP)));
+                    menuItem = new JMenuItem(bundle.getString("ListCdf.up"), new ImageIcon(getClass().getResource(ICON_UP)));
                     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK));
                     menuItem.addActionListener(new UpDownListener());
                     menuMove.add(menuItem);
 
                     menuMove.addSeparator();
 
-                    menuItem = new JMenuItem("Descendre", new ImageIcon(getClass().getResource(ICON_DOWN)));
+                    menuItem = new JMenuItem(bundle.getString("ListCdf.down"), new ImageIcon(getClass().getResource(ICON_DOWN)));
                     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK));
                     menuItem.addActionListener(new UpDownListener());
                     menuMove.add(menuItem);
 
-                    menuItem = new JMenuItem("Exporter le fichier en txt", new ImageIcon(getClass().getResource(ICON_TEXT)));
+                    menuItem = new JMenuItem(bundle.getString("ListCdf.exportToTxt"), new ImageIcon(getClass().getResource(ICON_TEXT)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -240,7 +261,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     menuExport.add(menuItem);
 
                     menuExport.addSeparator();
-                    menuItem = new JMenuItem("Exporter le fichier en xls", new ImageIcon(getClass().getResource(ICON_EXCEL)));
+                    menuItem = new JMenuItem(bundle.getString("ListCdf.exportToXls"), new ImageIcon(getClass().getResource(ICON_EXCEL)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -305,7 +326,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     menuExport.add(menuItem);
 
                     menuExport.addSeparator();
-                    menuItem = new JMenuItem("Exporter le fichier en m", new ImageIcon(getClass().getResource(ICON_MATLAB)));
+                    menuItem = new JMenuItem(bundle.getString("ListCdf.exportToM"), new ImageIcon(getClass().getResource(ICON_MATLAB)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -375,7 +396,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     menuExport.add(menuItem);
 
                     menuExport.addSeparator();
-                    menuItem = new JMenuItem("Exporter le fichier en html", new ImageIcon(getClass().getResource(ICON_HTML)));
+                    menuItem = new JMenuItem(bundle.getString("ListCdf.exportToHtml"), new ImageIcon(getClass().getResource(ICON_HTML)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -444,7 +465,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     menu.add(menuExport);
                     menu.addSeparator();
 
-                    menuItem = new JMenuItem("Repartition des scores");
+                    menuItem = new JMenuItem(bundle.getString("ListCdf.score"));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -455,7 +476,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                     menu.add(menuItem);
 
                 } else {
-                    menuItem = new JMenuItem("Supprimer tous les fichiers", new ImageIcon(getClass().getResource(ICON_TRASH)));
+                    menuItem = new JMenuItem(bundle.getString("ListCdf.deleteAll"), new ImageIcon(getClass().getResource(ICON_TRASH)));
                     menuItem.addActionListener(new ActionListener() {
 
                         @Override
@@ -473,7 +494,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
                 final JPopupMenu menu = new JPopupMenu();
                 JMenuItem menuItem;
 
-                menuItem = new JMenuItem("Comparer les deux fichiers", new ImageIcon(getClass().getResource(ICON_COMPARAISON)));
+                menuItem = new JMenuItem(bundle.getString("ListCdf.comparFile"), new ImageIcon(getClass().getResource(ICON_COMPARAISON)));
                 menuItem.addActionListener(new ActionListener() {
 
                     @Override
@@ -519,7 +540,7 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
 
             final int moveMe = ListCdf.this.getSelectedIndex();
 
-            if (e.getActionCommand().equals("Monter")) {
+            if (bundle.getString("ListCdf.up").equals(e.getActionCommand())) {
                 if (moveMe != 0) {
                     swap(moveMe, moveMe - 1);
                     ListCdf.this.setSelectedIndex(moveMe - 1);
@@ -540,6 +561,95 @@ public final class ListCdf extends JList<Cdf> implements KeyListener {
         final Cdf bObject = getModel().getElementAt(b);
         getModel().set(a, bObject);
         getModel().set(b, aObject);
+    }
+
+    private final class ExportListener implements ActionListener {
+
+        private final FileFormat fileFormat;
+
+        public ExportListener(FileFormat fileFormat) {
+            this.fileFormat = fileFormat;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            if (true) {
+                final JFileChooser fileChooser = new JFileChooser(Preference.getPreference(Preference.KEY_OPEN_CDF));
+                fileChooser.setDialogTitle("Enregistement du fichier");
+                fileChooser.setFileFilter(new FileNameExtensionFilter(fileFormat.getExtensionDesc(), fileFormat.getExtension()));
+                fileChooser.setSelectedFile(new File(ListCdf.this.getSelectedValue() + "." + fileFormat.getExtension()));
+                final int rep = fileChooser.showSaveDialog(null);
+
+                if (rep == JFileChooser.APPROVE_OPTION) {
+
+                    boolean result = false;
+
+                    if (!fileChooser.getSelectedFile().exists()) {
+
+                        switch (fileFormat) {
+                        case TXT:
+                            result = CdfUtils.toText(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile());
+                            break;
+                        case XLS:
+                            result = CdfUtils.toExcel(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile());
+                            break;
+                        case M:
+                            boolean transpose = false;
+                            if (JOptionPane.showConfirmDialog(null, "Transposer pour Matlab?", null,
+                                    JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+                                transpose = true;
+                            }
+                            result = CdfUtils.toM(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile(), transpose);
+                            break;
+                        case HTML:
+                            result = CdfUtils.toHtml(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile());
+                            break;
+                        default:
+                            break;
+                        }
+
+                    } else {
+
+                        switch (JOptionPane.showConfirmDialog(null, "Le fichier existe deja, ecraser?", null, JOptionPane.INFORMATION_MESSAGE)) {
+                        case JOptionPane.OK_OPTION:
+                            result = CdfUtils.toExcel(ListCdf.this.getSelectedValue(), fileChooser.getSelectedFile());
+                            break;
+                        case JOptionPane.NO_OPTION:
+                            this.actionPerformed(e);
+                            return;
+                        default:
+                            break;
+                        }
+                    }
+
+                    if (result) {
+
+                        final int reponse = JOptionPane.showConfirmDialog(null,
+                                "Export termine !\n" + fileChooser.getSelectedFile() + "\nVoulez-vous ouvrir le fichier?", null,
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                        switch (reponse) {
+                        case JOptionPane.OK_OPTION:
+                            try {
+                                if (Desktop.isDesktopSupported()) {
+                                    Desktop.getDesktop().open(fileChooser.getSelectedFile());
+                                }
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                            break;
+                        case JOptionPane.NO_OPTION:
+                            break;
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Export abandonne !");
+                    }
+                }
+            }
+
+        }
+
     }
 
 }
