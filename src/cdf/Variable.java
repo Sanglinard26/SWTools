@@ -27,6 +27,8 @@ public abstract class Variable {
     private final String swFeatureRef;
     private final String[] swUnitRef;
     private final History[] swCsHistory;
+    
+    protected Values values;
 
     private static TableView tableView;
     private static JPanel panel;
@@ -90,7 +92,7 @@ public abstract class Variable {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("Nom : " + this.shortName + "\n");
         sb.append("Description : " + this.longName + "\n");
@@ -99,15 +101,45 @@ public abstract class Variable {
         for (String unit : this.swUnitRef) {
             sb.append("[" + unit + "]");
         }
-        sb.append("\n");
+        sb.append("\nValeurs:\n");
+        
+        for (short y = 0; y < values.getDimY(); y++) {
+            for (short x = 0; x < values.getDimX(); x++) {
+                sb.append(this.getValue(y, x) + "\t");
+            }
+            sb.append("\n");
+        }
+        
         return sb.toString();
     }
 
-    public abstract double getChecksum();
+    public final double getChecksum()
+    {
+    	double valCheck = 0;
+        String value;
+
+        for (short y = 0; y < values.getDimY(); y++) {
+            for (short x = 0; x < values.getDimX(); x++) {
+                value = getValue(y, x);
+                if (value != null) {
+                    valCheck += value.hashCode();
+                }
+            }
+        }
+
+        return valCheck;
+    }
 
     public abstract String toMFormat(boolean transpose);
 
-    public abstract Values getValues();
+    public final Values getValues()
+    {
+    	return this.values;
+    }
+    
+    public final String getValue(int col, int row) {
+        return values.getValue(col, row);
+    }
 
     public final JComponent showValues() {
 

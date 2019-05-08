@@ -4,18 +4,11 @@ import utils.NumeralString;
 
 public final class Scalaire extends Variable {
 
-    private final Values value;
-
     public Scalaire(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
             Values value) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
 
-        this.value = value;
-    }
-
-    @Override
-    public final String toString() {
-        return super.toString() + "Valeur : " + getValue();
+        this.values = value;
     }
 
     @Override
@@ -38,21 +31,11 @@ public final class Scalaire extends Variable {
     }
 
     public final String getValue() {
-        return value.getValue(0, 0);
+        return values.getValue(0, 0);
     }
 
     public final String getUnit() {
         return super.getSwUnitRef()[0];
-    }
-
-    @Override
-    public Values getValues() {
-        return value;
-    }
-
-    @Override
-    public double getChecksum() {
-        return getValue() != null ? getValue().hashCode() : 0;
     }
 
 }

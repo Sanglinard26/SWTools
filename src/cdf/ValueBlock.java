@@ -2,26 +2,11 @@ package cdf;
 
 public final class ValueBlock extends Variable {
 
-    private final Values values;
-
     public ValueBlock(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
             Values values) {
         super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;
 
-    }
-
-    @Override
-    public final String toString() {
-
-        StringBuilder sb = new StringBuilder("\n");
-        for (short y = 0; y < values.getDimY(); y++) {
-            for (short x = 0; x < values.getDimX(); x++) {
-                sb.append(this.getValue(y, x) + "\t");
-            }
-            sb.append("\n");
-        }
-        return super.toString() + "Valeurs :" + sb.toString();
     }
 
     public final String getUnitX() {
@@ -30,15 +15,6 @@ public final class ValueBlock extends Variable {
 
     public final String getUnitZ() {
         return super.getSwUnitRef()[1];
-    }
-
-    @Override
-    public final Values getValues() {
-        return values;
-    }
-
-    public final String getValue(int col, int row) {
-        return values.getValue(col, row);
     }
 
     @Override
@@ -81,24 +57,6 @@ public final class ValueBlock extends Variable {
         sb.append("\t\t\t" + "%" + "(" + ")" + getLongName());
 
         return sb.toString();
-    }
-
-    @Override
-    public double getChecksum() {
-
-        double valCheck = 0;
-        String value;
-
-        for (short y = 0; y < values.getDimY(); y++) {
-            for (short x = 0; x < values.getDimX(); x++) {
-                value = getValue(y, x);
-                if (value != null) {
-                    valCheck += value.hashCode();
-                }
-            }
-        }
-
-        return valCheck;
     }
 
 }
