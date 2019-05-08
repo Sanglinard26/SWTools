@@ -1,6 +1,5 @@
 package cdf;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -13,7 +12,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
@@ -153,7 +151,6 @@ public abstract class Variable {
 
         if (panel == null) {
             panel = new JPanel(new GridLayout(1, 1));
-            panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             panel.add(tableView);
         }
 

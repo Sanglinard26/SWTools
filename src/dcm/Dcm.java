@@ -291,7 +291,7 @@ public final class Dcm implements Cdf {
 			listLabel.add(new Curve(spaceSplit[1], description, type.intern(), fonction.intern(),
 					unite, EMPTY_COMMENT, valeur));
 		}else{
-			listLabel.add(new Curve(spaceSplit[1], description.toString(), CURVE_GROUPED.intern(), fonction.toString().intern(),
+			listLabel.add(new Curve(spaceSplit[1], description, CURVE_GROUPED.intern(), fonction.toString().intern(),
 					unite, EMPTY_COMMENT, valeur, sharedAxis));
 		}
 		

@@ -53,7 +53,7 @@ public final class Interpolation {
         return yi;
     }
 
-    public static final double interpLinear1D(double[][] curve, double xi) throws IllegalArgumentException {
+    public static final double interpLinear1D(double[][] curve, double xDes) throws IllegalArgumentException {
 
         int nbInterval = curve[0].length - 1;
 
@@ -82,9 +82,7 @@ public final class Interpolation {
 
         // Perform the interpolation here
         double yi = Double.NaN;
-
-        xi = xi < xMin ? xMin : xi;
-        xi = xi > xMax ? xMax : xi;
+        double xi = Math.min(Math.max(xDes, xMin), xMax);
 
         int loc = Arrays.binarySearch(x, xi);
         if (loc < -1) {
@@ -114,12 +112,9 @@ public final class Interpolation {
         double z11;
         double z_y0;
         double z_y1;
-
-        xDes = xDes < xMin ? xMin : xDes;
-        xDes = xDes > xMax ? xMax : xDes;
-
-        yDes = yDes < yMin ? yMin : yDes;
-        yDes = yDes > yMax ? yMax : yDes;
+        
+        double xi = Math.min(Math.max(xDes, xMin), xMax);
+        double yi = Math.min(Math.max(yDes, yMin), yMax);
 
         int idxX = 0;
 
@@ -127,7 +122,7 @@ public final class Interpolation {
             idxX++;
             x0 = map[0][idxX];
             x1 = map[0][idxX + 1];
-        } while (!(xDes >= x0 && xDes <= x1));
+        } while (!(xi >= x0 && xi <= x1));
 
         int idxY = 0;
 
@@ -135,17 +130,17 @@ public final class Interpolation {
             idxY++;
             y0 = map[idxY][0];
             y1 = map[idxY + 1][0];
-        } while (!(yDes >= y0 && yDes <= y1));
+        } while (!(yi >= y0 && yi <= y1));
 
         z00 = map[idxY][idxX];
         z01 = map[idxY][idxX + 1];
         z10 = map[idxY + 1][idxX];
         z11 = map[idxY + 1][idxX + 1];
 
-        z_y0 = z00 + (z01 - z00) / (x1 - x0) * (xDes - x0);
-        z_y1 = z10 + (z11 - z10) / (x1 - x0) * (xDes - x0);
+        z_y0 = z00 + (z01 - z00) / (x1 - x0) * (xi - x0);
+        z_y1 = z10 + (z11 - z10) / (x1 - x0) * (xi - x0);
 
-        return z_y0 + (z_y1 - z_y0) / (y1 - y0) * (yDes - y0);
+        return z_y0 + (z_y1 - z_y0) / (y1 - y0) * (yi - y0);
 
     }
 

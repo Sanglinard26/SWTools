@@ -1,9 +1,11 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -23,6 +25,8 @@ public final class TableView extends JTable {
         this.setDefaultRenderer(Object.class, renderer);
         this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         this.setCellSelectionEnabled(true);
+        this.setGridColor(Color.GRAY);
+        this.setBorder(new LineBorder(Color.BLACK));
     }
 
     @Override
