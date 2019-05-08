@@ -50,7 +50,8 @@ public final class SurfaceChart extends JComponent {
     }
 
     public class MapSurfaceModel extends AbstractSurfaceModel {
-        SurfaceVertex[][] surfaceVertex;
+        
+    	private SurfaceVertex[][] surfaceVertex;
 
         public MapSurfaceModel() {
             setPlotFunction2(false);
@@ -70,57 +71,50 @@ public final class SurfaceChart extends JComponent {
         public void setValues(float[] xAxis, float[] yAxis, float[][] zValues) {
             setDataAvailable(false);
 
-            int xLength = xAxis.length;
-            int yLength = yAxis.length;
-
-            float xmin = xAxis[0];
-            float xmax = xAxis[(xLength - 1)];
-            float ymin = yAxis[0];
-            float ymax = yAxis[(yLength - 1)];
-            setXMin(xmin);
-            setXMax(xmax);
-            setYMin(ymin);
-            setYMax(ymax);
+            final int xLength = xAxis.length;
+            final int yLength = yAxis.length;
+            
+            setXMin(xAxis[0]);
+            setXMax(xAxis[(xLength - 1)]);
+            setYMin(yAxis[0]);
+            setYMax(yAxis[(yLength - 1)]);
             setCalcDivisions(Math.max(xLength - 1, yLength - 1));
 
-            float xfactor = 20.0F / (xMax - xMin);
-            float yfactor = 20.0F / (yMax - yMin);
+            final float xfactor = 20.0F / (xMax - xMin);
+            final float yfactor = 20.0F / (yMax - yMin);
 
-            int total = (calcDivisions + 1) * (calcDivisions + 1);
+            final int total = (calcDivisions + 1) * (calcDivisions + 1);
             surfaceVertex = new SurfaceVertex[1][total];
 
-            for (int i = 0; i <= xAxis.length - 1; i++) {
-                for (int j = 0; j <= yAxis.length - 1; j++) {
+            for (int i = 0; i < xLength; i++) {
+                for (int j = 0; j < yLength; j++) {
                     int k = i * (calcDivisions + 1) + j;
                     float xv = xAxis[i];
                     float yv = yAxis[j];
-                    float v1 = zValues != null ? zValues[j][i] : Float.NaN;
-                    if (Float.isInfinite(v1))
-                        v1 = Float.NaN;
-                    if (!Float.isNaN(v1)) {
-                        if ((Float.isNaN(z1Max)) || (v1 > z1Max)) {
-                            z1Max = v1;
-                        } else if ((Float.isNaN(z1Min)) || (v1 < z1Min))
-                            z1Min = v1;
+                    float v1 = 0;
+                    
+                    if(zValues != null)
+                    {
+                    	v1 = zValues[j][i];
+                    	z1Max = Math.max(z1Max, v1);
+                    	z1Min = Math.min(z1Min, v1);
+                    }else{
+                    	v1 = Float.NaN;
                     }
+                    
                     surfaceVertex[0][k] = new SurfaceVertex((xv - xMin) * xfactor - 10.0F, (yv - yMin) * yfactor - 10.0F, v1);
                 }
             }
 
-            for (int s = 0; s < surfaceVertex[0].length; s++) {
+            for (int s = 0; s < total; s++) { // avoid NPE in plotArea
                 if (surfaceVertex[0][s] == null) {
                     surfaceVertex[0][s] = new SurfaceVertex(Float.NaN, Float.NaN, Float.NaN);
                 }
             }
 
-            float diffMaxMin = z1Max - z1Min;
-
-            if (diffMaxMin == 0) {
+            if (z1Max - z1Min == 0) {
                 z1Max += 0.1;
-                z1Max -= 0.1;
-            } else {
-                float marge = diffMaxMin * 0.1f;
-                z1Max += marge;
+                z1Min -= 0.1;
             }
 
             autoScale();
