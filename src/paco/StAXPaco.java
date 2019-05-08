@@ -563,6 +563,8 @@ public final class StAXPaco implements Cdf {
 												case 2:
 													tmpValues.add(data);
 													break;
+												default:
+													break;
 												}
 
 											} else {
@@ -636,6 +638,8 @@ public final class StAXPaco implements Cdf {
 
 										numAxe++;
 
+										break;
+									default:
 										break;
 									}
 									break;
