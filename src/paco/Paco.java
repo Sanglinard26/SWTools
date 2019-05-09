@@ -155,7 +155,6 @@ public final class Paco implements Cdf {
 		final String SW_INSTANCE = "SW-INSTANCE";
 		final String SW_UNIT = "SW-UNIT";
 		final String SHORT_NAME = "SHORT-NAME";
-		final String SW_UNIT_DISPLAY = "SW-UNIT-DISPLAY";
 		final String SW_FEATURE_REF = "SW-FEATURE-REF";
 		final String SW_CS_ENTRY = "SW-CS-ENTRY";
 		final String LONG_NAME = "LONG-NAME";
@@ -165,8 +164,7 @@ public final class Paco implements Cdf {
 
 		final Element racine = document.getDocumentElement();
 		final NodeList listSwInstance = racine.getElementsByTagName(SW_INSTANCE);
-		final NodeList listSwUnit = racine.getElementsByTagName(SW_UNIT);
-		Element eUnit;
+		
 		String swFeatureRef;
 		String[] swUnitRef = null;
 		NodeList swCsEntry;
@@ -180,17 +178,8 @@ public final class Paco implements Cdf {
 		listLabel = new ArrayList<Variable>(nbLabel);
 		listCategory = new HashSet<String>();
 
-		final int nbUnit = listSwUnit.getLength();
-		final HashMap<String, String> unit = new HashMap<String, String>(nbUnit);
-		int nbAxe;
-
-		// Remplissage de la HashMap des unites
-		// Test String.intern()
-		for (short u = 0; u < nbUnit; u++) {
-			eUnit = (Element) listSwUnit.item(u);
-			unit.put(eUnit.getElementsByTagName(SHORT_NAME).item(0).getTextContent().intern(),
-					eUnit.getElementsByTagName(SW_UNIT_DISPLAY).item(0).getTextContent().intern());
-		}
+		
+		final HashMap<String, String> unit = MapUnits(racine.getElementsByTagName(SW_UNIT));
 
 		String fullAttributAxe;
 		String attributAxe;
@@ -211,7 +200,7 @@ public final class Paco implements Cdf {
 			}
 
 			swAxisCont = label.getElementsByTagName(SW_AXIS_CONT);
-			nbAxe = swAxisCont.getLength();
+			int nbAxe = swAxisCont.getLength();
 			swUnitRef = new String[nbAxe];
 			sharedAxis = new String[nbAxe - 1];
 
@@ -233,11 +222,8 @@ public final class Paco implements Cdf {
 				swUnitRef[n] = unit.get(swAxisCont.item(n).getFirstChild().getTextContent().intern());
 
 			}
-			// _________________________________________
 
 			swCsEntry = label.getElementsByTagName(SW_CS_ENTRY);
-
-			//System.out.println(shortName);
 
 			switch (category) {
 			case ASCII:
@@ -322,6 +308,25 @@ public final class Paco implements Cdf {
 	@Override
 	public boolean equals(Object obj) {
 		return this.name.equals(obj.toString());
+	}
+	
+	private final HashMap<String, String> MapUnits(NodeList listSwUnit)
+	{
+		final String SHORT_NAME = "SHORT-NAME";
+		final String SW_UNIT_DISPLAY = "SW-UNIT-DISPLAY";
+		
+		final int nbUnit = listSwUnit.getLength();
+		
+		final HashMap<String, String> mapUnit = new HashMap<String, String>(nbUnit);
+		
+		Element eUnit;
+		for (short u = 0; u < nbUnit; u++) {
+			eUnit = (Element) listSwUnit.item(u);
+			mapUnit.put(eUnit.getElementsByTagName(SHORT_NAME).item(0).getTextContent().intern(),
+					eUnit.getElementsByTagName(SW_UNIT_DISPLAY).item(0).getTextContent().intern());
+		}
+		
+		return mapUnit;
 	}
 
 	private final History[] readEntry(NodeList swCsEntry) {
@@ -477,6 +482,8 @@ public final class Paco implements Cdf {
 					values.setValue(1, x, value.item(x).getTextContent());
 				}
 				break;
+			default:
+				break;
 			}
 		}
 		return values;
@@ -600,10 +607,8 @@ public final class Paco implements Cdf {
 
 		if (!listLabel.isEmpty()) {
 
-			int lastScore;
-
 			for (int i = 0; i < this.nbLabel; i++) {
-				lastScore = this.listLabel.get(i).getLastScore();
+				int lastScore = this.listLabel.get(i).getLastScore();
 
 				if (repartitionScore.get(lastScore) != null)
 					repartitionScore.put(lastScore, repartitionScore.get(lastScore) + 1);

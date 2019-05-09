@@ -75,7 +75,7 @@ public final class Dcm implements Cdf {
 			String line = null;
 
 			while ((line = buf.readLine()) != null) {
-				
+
 				if(line.length() == 0 || line.charAt(0) == '*')
 				{
 					continue;
@@ -144,7 +144,7 @@ public final class Dcm implements Cdf {
 
 		}
 	}
-	
+
 	private final void readValue(BufferedReader buf, String name, String type) throws IOException
 	{
 		String[] unite = new String[]{ SPACE.intern() };
@@ -153,10 +153,10 @@ public final class Dcm implements Cdf {
 		String line;
 		String[] spaceSplitLine2;
 		String[] quotesSplitLine;
-		
+
 		String description = "";
 		String fonction = "";
-		
+
 		while (!(line = buf.readLine()).equals(END.name())) {
 
 			spaceSplitLine2 = line.split(SPACE);
@@ -189,12 +189,12 @@ public final class Dcm implements Cdf {
 
 		listLabel.add(new Scalaire(name, description, type.intern(), fonction.intern(), unite,
 				EMPTY_COMMENT, valeur));
-		
+
 		listCategory.add(type);
 
 		checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 	}
-	
+
 	private final void readCurve(BufferedReader buf, String[] spaceSplit, String type) throws IOException
 	{
 		String line;
@@ -202,16 +202,16 @@ public final class Dcm implements Cdf {
 		String[] quotesSplitLine;
 		String[] threeSpaceSplitLine;
 		String[] tabSplitLine;
-		
+
 		String[] unite = new String[2];
 		Values valeur = new Values(Integer.parseInt(spaceSplit[spaceSplit.length - 1]), 2);
-		
+
 		String description = "";
 		String fonction = "";
-		
+
 		short cntX = 0;
 		short cntZ = 0;
-		
+
 		String[] sharedAxis = new String[1];
 
 		while (!(line = buf.readLine()).equals(END.name())) {
@@ -245,14 +245,14 @@ public final class Dcm implements Cdf {
 					unite[1] = SPACE.intern();
 				}
 			}
-			
+
 			if (line.contains(SSTX.getName()) && tabSplitLine.length > 1) {
 				sharedAxis[0] = tabSplitLine[tabSplitLine.length - 1].intern();
-		}
-			
+			}
+
 			int nbSplit;
 			String tmpValue;
-			
+
 			if (line.contains(ST_X.getName()) || line.contains(ST_TX_X.getName())) {
 
 				threeSpaceSplitLine = PATTERN_THREE_SPACE.split(line);
@@ -291,15 +291,15 @@ public final class Dcm implements Cdf {
 			listLabel.add(new Curve(spaceSplit[1], description, type.intern(), fonction.intern(),
 					unite, EMPTY_COMMENT, valeur));
 		}else{
-			listLabel.add(new Curve(spaceSplit[1], description, CURVE_GROUPED.intern(), fonction.toString().intern(),
+			listLabel.add(new Curve(spaceSplit[1], description, CURVE_GROUPED.intern(), fonction.intern(),
 					unite, EMPTY_COMMENT, valeur, sharedAxis));
 		}
-		
+
 		listCategory.add(type);
 
 		checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 	}
-	
+
 	private final void readMap(BufferedReader buf, String[] spaceSplit, String type) throws IOException
 	{
 		String line;
@@ -307,7 +307,7 @@ public final class Dcm implements Cdf {
 		String[] quotesSplitLine;
 		String[] threeSpaceSplitLine;
 		String[] tabSplitLine;
-		
+
 		short cntX = 1;
 		short cntZ = 0;
 
@@ -315,7 +315,7 @@ public final class Dcm implements Cdf {
 		String[] sharedAxis = new String[2];
 		Values valeur = new Values(Integer.parseInt(spaceSplit[spaceSplit.length - 2]) + 1,
 				Integer.parseInt(spaceSplit[spaceSplit.length - 1]) + 1);
-		
+
 		String description = "";
 		String fonction = "";
 
@@ -372,10 +372,10 @@ public final class Dcm implements Cdf {
 				sharedAxis[1] = tabSplitLine[tabSplitLine.length - 1].intern();
 			}
 			//
-			
+
 			int nbSplit;
 			String tmpValue;
-			
+
 			if (line.contains(ST_X.getName()) || line.contains(ST_TX_X.getName())) {
 
 				threeSpaceSplitLine = PATTERN_THREE_SPACE.split(line);
@@ -405,11 +405,9 @@ public final class Dcm implements Cdf {
 				for (short i = 0; i < nbSplit; i++) {
 					tmpValue = threeSpaceSplitLine[i];
 					if (tmpValue.length() != 0 && !tmpValue.equals(ST_Y.getName()) && !tmpValue.equals(ST_TX_Y.getName())
-							&& !tmpValue.equals(WERT.getName()) && !tmpValue.equals(TEXT.getName())) {
-						if (cntX < valeur.getDimX()) {
-							valeur.setValue(cntZ, cntX, replaceQuote(tmpValue));
-							cntX++;
-						}
+							&& !tmpValue.equals(WERT.getName()) && !tmpValue.equals(TEXT.getName()) && cntX < valeur.getDimX()) {
+						valeur.setValue(cntZ, cntX, replaceQuote(tmpValue));
+						cntX++;
 					}
 				}
 			}
@@ -423,12 +421,12 @@ public final class Dcm implements Cdf {
 			listLabel.add(new Map(spaceSplit[1], description, type.intern(), fonction.intern(), unite,
 					EMPTY_COMMENT, valeur, sharedAxis));
 		}
-		
+
 		listCategory.add(type);
 
 		checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 	}
-	
+
 	private final void readAxis(BufferedReader buf, String[] spaceSplit, String type) throws IOException
 	{
 		String line;
@@ -488,19 +486,19 @@ public final class Dcm implements Cdf {
 
 		checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 	}
-	
+
 	private final void readValueBlock(BufferedReader buf, String[] spaceSplit, String type) throws IOException
 	{
 		String line;
 		String[] spaceSplitLine2;
 		String[] quotesSplitLine;
 		String[] threeSpaceSplitLine;
-		
+
 		String description = "";
 		String fonction = "";
 		String[] unite;
 		Values valeur;
-		
+
 		if (spaceSplit[spaceSplit.length - 2].equals("@")) {
 
 			short cntX = 1;

@@ -59,6 +59,8 @@ public final class PanelGraph extends JComponent {
             case "3D":
                 panCard.add(new SurfaceChart(selectedVar), "3D");
                 break;
+            default:
+            	break;
             }
 
             panCard.revalidate();

@@ -63,7 +63,7 @@ public final class PanelCDF extends JComponent {
 
     private static final GridBagConstraints gbc = new GridBagConstraints();
 
-    private static Variable selVariable;
+    private static Variable selVariable = null;
 
     private final static Locale lang = Preference.getPreference(Preference.KEY_LANGUAGE).equals("en") ? Locale.ENGLISH : Locale.FRENCH;
     private final static ResourceBundle bundle = ResourceBundle.getBundle("properties.langue", lang);

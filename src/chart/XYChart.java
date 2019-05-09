@@ -49,7 +49,8 @@ public final class XYChart extends JComponent {
         final SeriesCollection seriesCollection = new SeriesCollection();
         final Serie serie = new Serie("Serie");
 
-        String xValue, zValue;
+        String xValue;
+        String zValue;
 
         for (short x = 0; x < curve.getValues().getDimX(); x++) {
 
