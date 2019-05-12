@@ -11,6 +11,7 @@ public abstract class Utilitaire {
     public final static String A2L = "a2l";
     public final static String DCM = "dcm";
     public final static String M = "m";
+    public final static String CDFX = "cdfx";
 
     /*
      * Get the extension of a file.
