@@ -9,9 +9,9 @@ public final class Map extends Variable {
     private float minZValue = Float.POSITIVE_INFINITY;
     private float maxZValue = Float.NEGATIVE_INFINITY;
 
-    public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
+    public Map(String shortName, String longName, TypeVariable type, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
 
-        super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
+        super(shortName, longName, type, swFeatureRef, swUnitRef, swCsHistory);
 
         this.values = values;
         float value;
@@ -36,10 +36,10 @@ public final class Map extends Variable {
         }
     }
 
-    public Map(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values,
+    public Map(String shortName, String longName, TypeVariable type, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values,
             String[] sharedAxis) {
 
-        this(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory, values);
+        this(shortName, longName, type, swFeatureRef, swUnitRef, swCsHistory, values);
         this.sharedAxis = sharedAxis;
     }
 

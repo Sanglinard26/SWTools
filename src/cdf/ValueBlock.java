@@ -2,9 +2,9 @@ package cdf;
 
 public final class ValueBlock extends Variable {
 
-    public ValueBlock(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
+    public ValueBlock(String shortName, String longName, TypeVariable type, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
             Values values) {
-        super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
+        super(shortName, longName, type, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;
 
     }

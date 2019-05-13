@@ -37,25 +37,22 @@ public final class PanelInfoVariable extends JComponent {
 		}
 		infoVariable.append("Unite(s) : " + unite + "\n");
 
-		if(variable.getCategory().contains("GROUPED"))
+		final String[] axe = new String[]{"X", "Y"};
+		String[] sharedAxis = null;
+
+		if(variable instanceof Curve)
+		{	
+			sharedAxis = ((Curve) variable).getSharedAxis();
+		}else if(variable instanceof Map)
 		{
-			final String[] axe = new String[]{"X", "Y"};
-			String[] sharedAxis = null;
+			sharedAxis = ((Map) variable).getSharedAxis();
+		}
 
-			if(variable instanceof Curve)
-			{	
-				sharedAxis = ((Curve) variable).getSharedAxis();
-			}else if(variable instanceof Map)
+		if(sharedAxis != null)
+		{
+			for(int i = 0; i < sharedAxis.length; i++)
 			{
-				sharedAxis = ((Map) variable).getSharedAxis();
-			}
-
-			if(sharedAxis != null)
-			{
-				for(int i = 0; i < sharedAxis.length; i++)
-				{
-					infoVariable.append("Axe " + axe[i] + " : " + sharedAxis[i] + "\n");
-				}
+				infoVariable.append("Axe " + axe[i] + " : " + sharedAxis[i] + "\n");
 			}
 		}
 

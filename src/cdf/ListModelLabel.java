@@ -28,10 +28,10 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
             listLabel.clear();
         }
         listLabel.addAll(list);
-        setFilter("", new String[]{""});
+        setFilter(null, new String[]{""});
     }
 
-    public final void setFilter(String type, String[] filters) {
+    public final void setFilter(TypeVariable type, String[] filters) {
     	
     	final Set<Variable> tmpList = new LinkedHashSet<Variable>();
     	
@@ -45,7 +45,7 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
 
             for (String filter : filters) {
                 if (var.getShortName().toLowerCase().indexOf(filter) > -1) {
-                    if ("ALL".equals(type) || type.isEmpty()) {
+                    if (type == null) {
                         tmpList.add(var);
                     }
                     if (var.getCategory().equals(type)) {
@@ -62,7 +62,7 @@ public final class ListModelLabel extends AbstractListModel<Variable> {
 
     public final void clearList() {
         listLabel.clear();
-        setFilter("", new String[]{""});
+        setFilter(null, new String[]{""});
     }
 
     @Override

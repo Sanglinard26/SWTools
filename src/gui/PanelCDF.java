@@ -13,7 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -43,6 +43,7 @@ import javax.swing.filechooser.FileFilter;
 import cdf.Cdf;
 import cdf.ListModelCdf;
 import cdf.ListModelLabel;
+import cdf.TypeVariable;
 import cdf.Variable;
 import cdfx.Cdfx;
 import dcm.Dcm;
@@ -450,7 +451,7 @@ public final class PanelCDF extends JComponent {
 
 			listLabel.clearSelection();
 			listLabel.getModel().clearList();
-			listLabel.getFilterField().populateFilter(Collections.<String> emptySet());
+			listLabel.getFilterField().populateFilter(EnumSet.noneOf(TypeVariable.class));
 
 			panelHistory.removeDatas();
 

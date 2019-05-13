@@ -2,11 +2,11 @@ package cdf;
 
 import utils.NumeralString;
 
-public final class Scalaire extends Variable {
+public final class Value extends Variable {
 
-    public Scalaire(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
+    public Value(String shortName, String longName, TypeVariable type, String swFeatureRef, String[] swUnitRef, History[] swCsHistory,
             Values value) {
-        super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
+        super(shortName, longName, type, swFeatureRef, swUnitRef, swCsHistory);
 
         this.values = value;
     }

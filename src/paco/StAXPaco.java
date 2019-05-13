@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,12 +15,13 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import cdf.Axis;
+import cdf.ComAxis;
 import cdf.Cdf;
 import cdf.Curve;
 import cdf.History;
 import cdf.Map;
-import cdf.Scalaire;
+import cdf.TypeVariable;
+import cdf.Value;
 import cdf.ValueBlock;
 import cdf.Values;
 import cdf.Variable;
@@ -34,7 +35,7 @@ public final class StAXPaco implements Cdf {
 	private String name;
 	private boolean valid;
 	private List<Variable> listLabel;
-	private final Set<String> listCategory = new HashSet<String>();
+	private final EnumSet<TypeVariable> listCategory = EnumSet.noneOf(TypeVariable.class);
 	private int minScore = Byte.MAX_VALUE;
 	private int maxScore = Byte.MIN_VALUE;
 	private double checkSum = 0;
@@ -247,35 +248,23 @@ public final class StAXPaco implements Cdf {
 								case SW_UNIT_REF:
 
 									if (numUnit == 0) {
-										switch (category) {
+										switch (TypeVariable.getType(category)) {
 										case VALUE:
 											unite = new String[1];
 											break;
 										case ASCII:
 											unite = new String[1];
 											break;
-										case VALUE_BLOCK:
+										case VAL_BLK:
 											unite = new String[1];
 											break;
-										case AXIS_VALUES:
+										case COM_AXIS:
 											unite = new String[1];
 											break;
-										case CURVE_INDIVIDUAL:
+										case CURVE:
 											unite = new String[2];
 											break;
-										case CURVE_FIXED:
-											unite = new String[2];
-											break;
-										case CURVE_GROUPED:
-											unite = new String[2];
-											break;
-										case MAP_INDIVIDUAL:
-											unite = new String[3];
-											break;
-										case MAP_FIXED:
-											unite = new String[3];
-											break;
-										case MAP_GROUPED:
+										case MAP:
 											unite = new String[3];
 											break;
 										default:
@@ -300,7 +289,7 @@ public final class StAXPaco implements Cdf {
 
 									int tmpValuesSize = 0;
 
-									switch (category) {
+									switch (TypeVariable.getType(category)) {
 									case VALUE:
 
 										valeur = new Values(1, 1);
@@ -335,7 +324,7 @@ public final class StAXPaco implements Cdf {
 
 										break;
 
-									case VALUE_BLOCK:
+									case VAL_BLK:
 
 										while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
@@ -386,36 +375,7 @@ public final class StAXPaco implements Cdf {
 
 										break;
 
-									case CURVE_INDIVIDUAL:
-
-										while (!END_SW_VALUES_PHYS.equals(event.toString())) {
-
-											event = xmler.nextEvent();
-											if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
-												tmpValues.add(event.asCharacters().getData());
-											} else {
-												event = xmler.peek();
-											}
-										}
-
-										tmpValuesSize = tmpValues.size();
-
-										if (numAxe == 1) {
-											valeur = new Values(tmpValuesSize / 2, 2);
-											for (int i = 0; i < tmpValuesSize; i++) {
-												if (i < tmpValuesSize / 2) {
-													valeur.setValue(0, i, tmpValues.get(i));
-												} else {
-													valeur.setValue(1, i % (tmpValuesSize / 2), tmpValues.get(i));
-												}
-											}
-										}
-
-										numAxe++;
-
-										break;
-
-									case AXIS_VALUES:
+									case COM_AXIS:
 
 										while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
@@ -440,7 +400,7 @@ public final class StAXPaco implements Cdf {
 
 										break;
 
-									case CURVE_FIXED:
+									case CURVE:
 
 										while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
@@ -469,130 +429,7 @@ public final class StAXPaco implements Cdf {
 
 										break;
 
-									case CURVE_GROUPED:
-
-										while (!END_SW_VALUES_PHYS.equals(event.toString())) {
-
-											event = xmler.nextEvent();
-											if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
-												tmpValues.add(event.asCharacters().getData());
-											} else {
-												event = xmler.peek();
-											}
-										}
-
-										tmpValuesSize = tmpValues.size();
-
-										if (numAxe == 1) {
-											valeur = new Values(tmpValuesSize / 2, 2);
-											for (int i = 0; i < tmpValuesSize; i++) {
-												if (i < tmpValuesSize / 2) {
-													valeur.setValue(0, i, tmpValues.get(i));
-												} else {
-													valeur.setValue(1, i % (tmpValuesSize / 2), tmpValues.get(i));
-												}
-											}
-										}
-
-										numAxe++;
-
-										break;
-
-									case MAP_INDIVIDUAL:
-
-										while (!END_SW_VALUES_PHYS.equals(event.toString())) {
-
-											event = xmler.nextEvent();
-											if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
-
-												data = event.asCharacters().getData();
-
-												switch (numAxe) {
-												case 0:
-													tmpAxeX.add(data);
-													break;
-												case 1:
-													tmpAxeY.add(data);
-													break;
-												case 2:
-													tmpValues.add(data);
-													break;
-												}
-
-											} else {
-												event = xmler.peek();
-											}
-										}
-
-										tmpValuesSize = tmpValues.size();
-
-										if (numAxe == 2) {
-											valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
-											valeur.setValue(0, 0, "Y \\ X");
-
-											for (int i = 0; i < tmpAxeX.size(); i++) {
-												valeur.setValue(0, i + 1, tmpAxeX.get(i));
-											}
-
-											for (int i = 0; i < tmpValuesSize; i++) {
-												valeur.setValue((int) ((double) i / (double) (tmpAxeX.size() + 1)) + 1, i % (tmpAxeX.size() + 1),
-														tmpValues.get(i));
-											}
-										}
-
-										numAxe++;
-
-										break;
-
-									case MAP_FIXED:
-
-										while (!END_SW_VALUES_PHYS.equals(event.toString())) {
-
-											event = xmler.nextEvent();
-											if (event.isCharacters() && isValidString(event.asCharacters().getData())) {
-
-												data = event.asCharacters().getData();
-
-												switch (numAxe) {
-												case 0:
-													tmpAxeX.add(data);
-													break;
-												case 1:
-													tmpAxeY.add(data);
-													break;
-												case 2:
-													tmpValues.add(data);
-													break;
-												default:
-													break;
-												}
-
-											} else {
-												event = xmler.peek();
-											}
-										}
-
-										tmpValuesSize = tmpValues.size();
-
-										if (numAxe == 2) {
-											valeur = new Values(tmpAxeX.size() + 1, tmpAxeY.size() + 1);
-											valeur.setValue(0, 0, "Y \\ X");
-
-											for (int i = 0; i < tmpAxeX.size(); i++) {
-												valeur.setValue(0, i + 1, tmpAxeX.get(i));
-											}
-
-											for (int i = 0; i < tmpValuesSize; i++) {
-												valeur.setValue((int) ((double) i / (double) (tmpAxeX.size() + 1)) + 1, i % (tmpAxeX.size() + 1),
-														tmpValues.get(i));
-											}
-										}
-
-										numAxe++;
-
-										break;
-
-									case MAP_GROUPED:
+									case MAP:
 
 										while (!END_SW_VALUES_PHYS.equals(event.toString())) {
 
@@ -716,57 +553,39 @@ public final class StAXPaco implements Cdf {
 						if (history == null) {
 							history = new History[0];
 						}
+						
+						TypeVariable type = TypeVariable.getType(category);
 
 						// On cree la variable
-						switch (category) {
+						switch (type) {
 						case VALUE:
 							this.listLabel
-							.add(new Scalaire(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
-							listCategory.add(Cdf.VALUE);
+							.add(new Value(shortName.toString(), longName.toString(), type, swFeatureRef, unite, history, valeur));
 							break;
 						case ASCII:
 							this.listLabel
-							.add(new Scalaire(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
-							listCategory.add(Cdf.ASCII);
+							.add(new Value(shortName.toString(), longName.toString(), type, swFeatureRef, unite, history, valeur));
 							break;
-						case VALUE_BLOCK:
+						case VAL_BLK:
 							this.listLabel
-							.add(new ValueBlock(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
-							listCategory.add(Cdf.VALUE_BLOCK);
+							.add(new ValueBlock(shortName.toString(), longName.toString(), type, swFeatureRef, unite, history, valeur));
 							break;
-						case AXIS_VALUES:
-							this.listLabel.add(new Axis(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
-							listCategory.add(Cdf.AXIS_VALUES);
+						case COM_AXIS:
+							this.listLabel.add(new ComAxis(shortName.toString(), longName.toString(), type, swFeatureRef, unite, history, valeur));
 							break;
-						case CURVE_INDIVIDUAL:
-							this.listLabel.add(new Curve(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
-							listCategory.add(Cdf.CURVE_INDIVIDUAL);
-							break;
-						case CURVE_FIXED:
-							this.listLabel.add(new Curve(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
-							listCategory.add(Cdf.CURVE_FIXED);
-							break;
-						case CURVE_GROUPED:
-							this.listLabel.add(new Curve(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur,
+						case CURVE:
+							this.listLabel.add(new Curve(shortName.toString(), longName.toString(), type, swFeatureRef, unite, history, valeur,
 									tmpSharedAxis.toArray(new String[tmpSharedAxis.size()])));
-							listCategory.add(Cdf.CURVE_GROUPED);
 							break;
-						case MAP_INDIVIDUAL:
-							this.listLabel.add(new Map(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
-							listCategory.add(Cdf.MAP_INDIVIDUAL);
-							break;
-						case MAP_FIXED:
-							this.listLabel.add(new Map(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur));
-							listCategory.add(Cdf.MAP_FIXED);
-							break;
-						case MAP_GROUPED:
-							this.listLabel.add(new Map(shortName.toString(), longName.toString(), category, swFeatureRef, unite, history, valeur,
+						case MAP:
+							this.listLabel.add(new Map(shortName.toString(), longName.toString(), type, swFeatureRef, unite, history, valeur,
 									tmpSharedAxis.toArray(new String[tmpSharedAxis.size()])));
-							listCategory.add(Cdf.MAP_GROUPED);
 							break;
 						default:
 							break;
 						}
+						
+						listCategory.add(type);
 
 						checkSum += listLabel.get(cntLabel).getChecksum();
 
@@ -853,7 +672,7 @@ public final class StAXPaco implements Cdf {
 	}
 
 	@Override
-	public Set<String> getCategoryList() {
+	public Set<TypeVariable> getCategoryList() {
 		return this.listCategory;
 	}
 

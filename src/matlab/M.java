@@ -8,19 +8,23 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Set;
 
-import cdf.Axis;
+import cdf.ComAxis;
 import cdf.Cdf;
 import cdf.Curve;
 import cdf.History;
 import cdf.Map;
-import cdf.Scalaire;
+import cdf.TypeVariable;
+import cdf.Value;
 import cdf.ValueBlock;
 import cdf.Values;
 import cdf.Variable;
 import gui.SWToolsMain;
+
+import static cdf.TypeVariable.*;
 
 public final class M implements Cdf {
 
@@ -35,7 +39,7 @@ public final class M implements Cdf {
     private final String name;
     private boolean valid;
     private final ArrayList<Variable> listLabel = new ArrayList<Variable>();
-    private final HashSet<String> listCategory = new HashSet<String>();
+    private final EnumSet<TypeVariable> listCategory = EnumSet.noneOf(TypeVariable.class);
     private static final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(1);
 
     public M(final File file) {
@@ -53,7 +57,6 @@ public final class M implements Cdf {
             buf = new BufferedReader(new FileReader(file));
 
             String shortName = null;
-            String category = "";
             Values valeur;
 
             String subString;
@@ -73,9 +76,9 @@ public final class M implements Cdf {
                                 valeur = new Values(1, 1);
                                 valeur.setValue(0, 0, line.substring(line.indexOf("=") + 1, line.indexOf(";")).trim());
 
-                                listLabel.add(new Scalaire(shortName, "", VALUE, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
+                                listLabel.add(new Value(shortName, "", VALUE, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
 
-                                listCategory.add(Cdf.VALUE);
+                                listCategory.add(VALUE);
 
                                 break;
                             case "T":
@@ -95,9 +98,9 @@ public final class M implements Cdf {
                                 }
 
                                 listLabel
-                                        .add(new Curve(shortName, "", CURVE_INDIVIDUAL, NO_FUNCTION, new String[] { "", "" }, EMPTY_COMMENT, valeur));
+                                        .add(new Curve(shortName, "", CURVE, NO_FUNCTION, new String[] { "", "" }, EMPTY_COMMENT, valeur));
 
-                                listCategory.add(Cdf.CURVE_INDIVIDUAL);
+                                listCategory.add(CURVE);
 
                                 break;
                             case "CUR":
@@ -117,9 +120,9 @@ public final class M implements Cdf {
                                 }
 
                                 listLabel
-                                        .add(new Curve(shortName, "", CURVE_INDIVIDUAL, NO_FUNCTION, new String[] { "", "" }, EMPTY_COMMENT, valeur));
+                                        .add(new Curve(shortName, "", CURVE, NO_FUNCTION, new String[] { "", "" }, EMPTY_COMMENT, valeur));
 
-                                listCategory.add(Cdf.CURVE_INDIVIDUAL);
+                                listCategory.add(CURVE);
 
                                 break;
                             case "M":
@@ -128,9 +131,9 @@ public final class M implements Cdf {
                                 valeur.setValue(0, 0, "0");
 
                                 listLabel
-                                        .add(new Map(shortName, "", MAP_INDIVIDUAL, NO_FUNCTION, new String[] { "", "", "" }, EMPTY_COMMENT, valeur));
+                                        .add(new Map(shortName, "", MAP, NO_FUNCTION, new String[] { "", "", "" }, EMPTY_COMMENT, valeur));
 
-                                listCategory.add(Cdf.MAP_INDIVIDUAL);
+                                listCategory.add(MAP);
 
                                 break;
                             case "A":
@@ -143,9 +146,9 @@ public final class M implements Cdf {
                                     valeur.setValue(0, x, line.substring(line.indexOf("[") + 1, line.indexOf("]")).split("\\s")[x].trim());
                                 }
 
-                                listLabel.add(new Axis(shortName, "", AXIS_VALUES, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
+                                listLabel.add(new ComAxis(shortName, "", COM_AXIS, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
 
-                                listCategory.add(Cdf.AXIS_VALUES);
+                                listCategory.add(COM_AXIS);
 
                                 break;
                             case "CA":
@@ -153,9 +156,9 @@ public final class M implements Cdf {
                                 valeur = new Values(1, 1);
                                 valeur.setValue(0, 0, "0");
 
-                                listLabel.add(new ValueBlock(shortName, "", VALUE_BLOCK, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
+                                listLabel.add(new ValueBlock(shortName, "", VAL_BLK, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
 
-                                listCategory.add(Cdf.VALUE_BLOCK);
+                                listCategory.add(VAL_BLK);
 
                                 break;
                             default:
@@ -163,7 +166,7 @@ public final class M implements Cdf {
                                 valeur = new Values(1, 1);
                                 valeur.setValue(0, 0, "0");
 
-                                listLabel.add(new Scalaire(shortName, "", category, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
+                                listLabel.add(new Value(shortName, "", UNKNOWN, NO_FUNCTION, new String[] { "" }, EMPTY_COMMENT, valeur));
                                 break;
                             }
 
@@ -220,7 +223,7 @@ public final class M implements Cdf {
     }
 
     @Override
-    public HashSet<String> getCategoryList() {
+    public Set<TypeVariable> getCategoryList() {
         return listCategory;
     }
 

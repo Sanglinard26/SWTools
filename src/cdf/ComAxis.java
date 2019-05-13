@@ -1,9 +1,9 @@
 package cdf;
 
-public final class Axis extends Variable {
+public final class ComAxis extends Variable {
 
-    public Axis(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
-        super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
+    public ComAxis(String shortName, String longName, TypeVariable type, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
+        super(shortName, longName, type, swFeatureRef, swUnitRef, swCsHistory);
 
         this.values = values;
     }

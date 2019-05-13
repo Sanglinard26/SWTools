@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -28,12 +28,13 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import cdf.Axis;
+import cdf.ComAxis;
 import cdf.Cdf;
 import cdf.Curve;
 import cdf.History;
 import cdf.Map;
-import cdf.Scalaire;
+import cdf.Value;
+import cdf.TypeVariable;
 import cdf.ValueBlock;
 import cdf.Values;
 import cdf.Variable;
@@ -46,7 +47,8 @@ public final class Cdfx implements Cdf {
     private boolean valid;
     private int nbLabel = 0;
     private List<Variable> listLabel;
-    private Set<String> listCategory;
+    //private Set<String> listCategory;
+    private EnumSet<TypeVariable> listCategory;
     private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
     private int minScore = Byte.MAX_VALUE;
     private int maxScore = Byte.MIN_VALUE;
@@ -177,7 +179,8 @@ public final class Cdfx implements Cdf {
         String category;
 
         listLabel = new ArrayList<Variable>(nbLabel);
-        listCategory = new HashSet<String>();
+        //listCategory = new HashSet<String>();
+        listCategory = EnumSet.noneOf(TypeVariable.class);
 
         String[] sharedAxis = null;
 
@@ -187,8 +190,6 @@ public final class Cdfx implements Cdf {
             longName = label.getElementsByTagName(LONG_NAME).item(0) != null ? label.getElementsByTagName(LONG_NAME).item(0).getTextContent()
                     : "Not available";
             shortName = label.getElementsByTagName(SHORT_NAME).item(0).getTextContent();
-
-            System.out.println(shortName);
 
             category = label.getElementsByTagName(CATEGORY).item(0).getTextContent().intern(); // Test String.intern()
 
@@ -211,40 +212,44 @@ public final class Cdfx implements Cdf {
             swUnitRef.add(swValueCont.item(0).getFirstChild().getTextContent());
 
             swCsEntry = label.getElementsByTagName(CS_ENTRY);
+            
+            TypeVariable type = TypeVariable.getType(category);
 
-            switch (category) {
-            case "ASCII":
-                listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
+            switch (type) {
+            case ASCII:
+                listLabel.add(new Value(shortName, longName, type, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
                         readEntry(swCsEntry), readValue(swValueCont)));
                 break;
             case VALUE:
-                listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
+                listLabel.add(new Value(shortName, longName, type, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
                         readEntry(swCsEntry), readValue(swValueCont)));
                 break;
-            case "COM_AXIS":
-                listLabel.add(new Axis(shortName, longName, category, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
+            case COM_AXIS:
+                listLabel.add(new ComAxis(shortName, longName, type, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
                         readEntry(swCsEntry), readComAxis(swValueCont)));
                 break;
-            case "CURVE":
-                listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
+            case CURVE:
+                listLabel.add(new Curve(shortName, longName, type, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
                         readEntry(swCsEntry), readCurve(listSwInstance, swValueCont, swAxisCont), sharedAxis));
                 break;
-            case "VAL_BLK":
-                listLabel.add(new ValueBlock(shortName, longName, category, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
+            case VAL_BLK:
+                listLabel.add(new ValueBlock(shortName, longName, type, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
                         readEntry(swCsEntry), readValueBlock(swValueCont)));
                 break;
-            case "MAP":
-                listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
+            case MAP:
+                listLabel.add(new Map(shortName, longName, type, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
                         readEntry(swCsEntry), readMap(listSwInstance, swValueCont, swAxisCont), sharedAxis));
                 break;
             default:
                 break;
             }
 
-            listCategory.add(category);
+            listCategory.add(type);
 
             // checkSum += listLabel.get(i).getChecksum();
         }
+        
+        swUnitRef.clear();
 
         this.valid = true;
 
@@ -454,8 +459,6 @@ public final class Cdfx implements Cdf {
         final NodeList vgList = eValueCont.getElementsByTagName(VG);
         final String axisType = eAxisCont.getElementsByTagName(CATEGORY).item(0).getTextContent();
 
-        // Premiere dimension = Axe Y car nombre de ligne
-        // Deuxieme dimension = Axe X car nombre de colonne
         final Values values = new Values(((Element) vgList.item(0)).getChildNodes().getLength(), vgList.getLength() + 1);
 
         values.setValue(0, 0, "Y \\ X");
@@ -481,11 +484,14 @@ public final class Cdfx implements Cdf {
 
             zValues = vgList.item(n);
 
-            values.setValue(1, n, zValues.getFirstChild().getTextContent());
-            values.setValue(0, n + 1, axisValues.item(n).getTextContent());
+            values.setValue(1, n * (zValues.getChildNodes().getLength()), zValues.getFirstChild().getTextContent());
 
-            for (int o = 0; o < zValues.getChildNodes().getLength(); o++) {
-                values.setValue(n, o, zValues.getChildNodes().item(o).getTextContent());
+            for (int o = 1; o < zValues.getChildNodes().getLength(); o++) {
+            	if(n == 0)
+            	{
+            		values.setValue(0, o, axisValues.item(o-1).getTextContent());
+            	}
+                values.setValue(n+1, o, zValues.getChildNodes().item(o).getTextContent());
             }
         }
 
@@ -534,7 +540,7 @@ public final class Cdfx implements Cdf {
     }
 
     @Override
-    public Set<String> getCategoryList() {
+    public Set<TypeVariable> getCategoryList() {
         return listCategory;
     }
 
@@ -549,7 +555,7 @@ public final class Cdfx implements Cdf {
         this.listLabel = new ArrayList<Variable>(listComparaison.size());
         this.listLabel.addAll(listComparaison);
 
-        this.listCategory = new HashSet<String>();
+        this.listCategory = EnumSet.noneOf(TypeVariable.class);
 
         for (Variable var : listComparaison) {
             this.listCategory.add(var.getCategory());

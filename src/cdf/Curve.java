@@ -4,13 +4,13 @@ public final class Curve extends Variable {
 
 	private String[] sharedAxis;
 
-    public Curve(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
-        super(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory);
+    public Curve(String shortName, String longName, TypeVariable type, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values) {
+        super(shortName, longName, type, swFeatureRef, swUnitRef, swCsHistory);
         this.values = values;
     }
     
-    public Curve(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values, String[] sharedAxis) {
-        this(shortName, longName, category, swFeatureRef, swUnitRef, swCsHistory, values);
+    public Curve(String shortName, String longName, TypeVariable type, String swFeatureRef, String[] swUnitRef, History[] swCsHistory, Values values, String[] sharedAxis) {
+        this(shortName, longName, type, swFeatureRef, swUnitRef, swCsHistory, values);
         this.sharedAxis = sharedAxis;
     }
 

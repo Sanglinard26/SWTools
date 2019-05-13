@@ -23,7 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,9 +55,10 @@ import javax.swing.event.DocumentListener;
 import javax.swing.plaf.LayerUI;
 import javax.swing.text.JTextComponent;
 
-import cdf.Axis;
+import cdf.ComAxis;
 import cdf.CdfUtils;
 import cdf.ListModelLabel;
+import cdf.TypeVariable;
 import cdf.Variable;
 import utils.Utilitaire;
 
@@ -120,7 +121,7 @@ public final class ListLabel extends JList<Variable> {
                 menuCopy.add(subMenu);
                 menu.add(menuCopy);
 
-                if (selectedVariable instanceof Axis) {
+                if (selectedVariable instanceof ComAxis) {
                     final JMenuItem menuShowDependency = new JMenuItem("Montrer les variables dependantes");
                     menuShowDependency.addActionListener(new ActionListener() {
 
@@ -147,7 +148,7 @@ public final class ListLabel extends JList<Variable> {
 
         private static final long serialVersionUID = 1L;
 
-        private final JComboBox<String> typeFilter;
+        private final JComboBox<TypeVariable> typeFilter;
         private final JTextField txtFiltre;
         private final JPanel panelBt;
         private final JButton oldSearchBt;
@@ -161,8 +162,8 @@ public final class ListLabel extends JList<Variable> {
 
             panelBt = new JPanel(new GridLayout(1, 2));
 
-            typeFilter = new JComboBox<String>();
-            populateFilter(Collections.<String> emptySet());
+            typeFilter = new JComboBox<TypeVariable>();
+            populateFilter(EnumSet.noneOf(TypeVariable.class));
             ((JLabel) typeFilter.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
             typeFilter.addActionListener(this);
 
@@ -202,17 +203,17 @@ public final class ListLabel extends JList<Variable> {
             oldSearchItem = new LinkedList<String>();
         }
 
-        public final void populateFilter(Set<String> list) {
+        public final void populateFilter(Set<TypeVariable> list) {
 
-            final DefaultComboBoxModel<String> cbModel = (DefaultComboBoxModel<String>) typeFilter.getModel();
+            final DefaultComboBoxModel<TypeVariable> cbModel = (DefaultComboBoxModel<TypeVariable>) typeFilter.getModel();
 
             if (typeFilter.getModel().getSize() > 0) {
                 cbModel.removeAllElements();
             }
 
-            cbModel.addElement("ALL");
+            cbModel.addElement(null);
 
-            for (String s : list) {
+            for (TypeVariable s : list) {
                 cbModel.addElement(s);
             }
         }
@@ -236,8 +237,7 @@ public final class ListLabel extends JList<Variable> {
             }
             if (e.getSource() == typeFilter) {
                 clearSelection();
-                if (typeFilter.getSelectedItem() != null)
-                    getModel().setFilter(typeFilter.getSelectedItem().toString(), txtFiltre.getText().toLowerCase().split(","));
+                getModel().setFilter((TypeVariable) typeFilter.getSelectedItem(), txtFiltre.getText().toLowerCase().split(","));
             }
         }
 
@@ -253,9 +253,9 @@ public final class ListLabel extends JList<Variable> {
 
                 if (filter.indexOf(",") > -1) {
                     String[] filters = filter.trim().split(",");
-                    getModel().setFilter(typeFilter.getSelectedItem().toString(), filters);
+                    getModel().setFilter((TypeVariable) typeFilter.getSelectedItem(), filters);
                 } else {
-                    getModel().setFilter(typeFilter.getSelectedItem().toString(), new String[] { filter });
+                    getModel().setFilter((TypeVariable) typeFilter.getSelectedItem(), new String[] { filter });
                 }
 
                 setSelectedIndex(0);
@@ -271,9 +271,9 @@ public final class ListLabel extends JList<Variable> {
 
                 if (filter.indexOf(",") > -1) {
                     String[] filters = filter.trim().split(",");
-                    getModel().setFilter(typeFilter.getSelectedItem().toString(), filters);
+                    getModel().setFilter((TypeVariable) typeFilter.getSelectedItem(), filters);
                 } else {
-                    getModel().setFilter(typeFilter.getSelectedItem().toString(), new String[] { filter });
+                    getModel().setFilter((TypeVariable) typeFilter.getSelectedItem(), new String[] { filter });
                 }
 
             }

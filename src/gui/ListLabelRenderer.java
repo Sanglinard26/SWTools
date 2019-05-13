@@ -15,98 +15,84 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import cdf.Cdf;
 import cdf.Variable;
 import chart.PieChart;
 
 public final class ListLabelRenderer extends JComponent implements ListCellRenderer<Variable> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private static final String SCALAIRE = "/variable/SCALAIRE.png";
-    private static final String CURVE = "/variable/CURVE.png";
-    private static final String MAP = "/variable/MAP.png";
-    private static final String INCONNU = "/variable/INCONNU.png";
-    private static final String VALUEBLOCK = "/variable/VALUEBLOCK.png";
-    private static final String AXIS = "/variable/AXIS.png";
-    private static final String ASCII = "/variable/ASCII.png";
+	private static final String SCALAIRE = "/variable/SCALAIRE.png";
+	private static final String CURVE = "/variable/CURVE.png";
+	private static final String MAP = "/variable/MAP.png";
+	private static final String INCONNU = "/variable/INCONNU.png";
+	private static final String VALUEBLOCK = "/variable/VALUEBLOCK.png";
+	private static final String AXIS = "/variable/AXIS.png";
+	private static final String ASCII = "/variable/ASCII.png";
 
-    private static final JLabel variableName = new JLabel();
-    private static final PieChart score = new PieChart(new Dimension(30, 30));
+	private static final JLabel variableName = new JLabel();
+	private static final PieChart score = new PieChart(new Dimension(30, 30));
 
-    // En chargeant les icones dans un tableau le gain de temps pour afficher la liste est considerable
-    private final ImageIcon[] icons = new ImageIcon[] { new ImageIcon(getClass().getResource(SCALAIRE)), new ImageIcon(getClass().getResource(CURVE)),
-            new ImageIcon(getClass().getResource(MAP)), new ImageIcon(getClass().getResource(INCONNU)),
-            new ImageIcon(getClass().getResource(VALUEBLOCK)), new ImageIcon(getClass().getResource(AXIS)),
-            new ImageIcon(getClass().getResource(ASCII)) };
+	private final ImageIcon[] icons = new ImageIcon[] { new ImageIcon(getClass().getResource(SCALAIRE)), new ImageIcon(getClass().getResource(CURVE)),
+			new ImageIcon(getClass().getResource(MAP)), new ImageIcon(getClass().getResource(INCONNU)),
+			new ImageIcon(getClass().getResource(VALUEBLOCK)), new ImageIcon(getClass().getResource(AXIS)),
+			new ImageIcon(getClass().getResource(ASCII)) };
 
-    static {
-        variableName.setHorizontalAlignment(SwingConstants.LEFT);
-        variableName.setVerticalAlignment(SwingConstants.CENTER);
-    }
+	static {
+		variableName.setHorizontalAlignment(SwingConstants.LEFT);
+		variableName.setVerticalAlignment(SwingConstants.CENTER);
+	}
 
-    public ListLabelRenderer() {
+	public ListLabelRenderer() {
 
-        setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 
-        add(variableName, BorderLayout.CENTER);
-        add(score, BorderLayout.EAST);
-    }
+		add(variableName, BorderLayout.CENTER);
+		add(score, BorderLayout.EAST);
+	}
 
-    @Override
-    public Component getListCellRendererComponent(JList<? extends Variable> list, Variable value, int index, boolean isSelected,
-            boolean cellHasFocus) {
+	@Override
+	public Component getListCellRendererComponent(JList<? extends Variable> list, Variable value, int index, boolean isSelected,
+			boolean cellHasFocus) {
 
-        setBorder(new EmptyBorder(2, 0, 2, 0));
+		setBorder(new EmptyBorder(2, 0, 2, 0));
 
-        variableName.setText(value.getShortName());
-        score.setValue(value.getLastScore());
+		variableName.setText(value.getShortName());
+		score.setValue(value.getLastScore());
 
-        switch (value.getCategory()) {
-        case Cdf.VALUE:
-            variableName.setIcon(icons[0]);
-            break;
-        case Cdf.CURVE_INDIVIDUAL:
-            variableName.setIcon(icons[1]);
-            break;
-        case Cdf.CURVE_GROUPED:
-            variableName.setIcon(icons[1]);
-            break;
-        case Cdf.CURVE_FIXED:
-            variableName.setIcon(icons[1]);
-            break;
-        case Cdf.MAP_INDIVIDUAL:
-            variableName.setIcon(icons[2]);
-            break;
-        case Cdf.MAP_GROUPED:
-            variableName.setIcon(icons[2]);
-            break;
-        case Cdf.MAP_FIXED:
-            variableName.setIcon(icons[2]);
-            break;
-        case Cdf.VALUE_BLOCK:
-            variableName.setIcon(icons[4]);
-            break;
-        case Cdf.AXIS_VALUES:
-            variableName.setIcon(icons[5]);
-            break;
-        case Cdf.ASCII:
-            variableName.setIcon(icons[6]);
-            break;
-        default:
-            variableName.setIcon(icons[3]);
-            break;
-        }
+		switch (value.getCategory()) {
+		case VALUE:
+			variableName.setIcon(icons[0]);
+			break;
+		case CURVE:
+			variableName.setIcon(icons[1]);
+			break;
+		case MAP:
+			variableName.setIcon(icons[2]);
+			break;
+		case VAL_BLK:
+			variableName.setIcon(icons[4]);
+			break;
+		case COM_AXIS:
+			variableName.setIcon(icons[5]);
+			break;
+		case ASCII:
+			variableName.setIcon(icons[6]);
+			break;
+		default:
+			variableName.setIcon(icons[3]);
+			break;
+		}
 
-        if (isSelected) {
-            variableName.setFont(new Font(null, Font.BOLD, 14));
-            setBorder(new LineBorder(Color.BLACK, 1));
-        } else {
-            setBackground(Color.WHITE);
-            variableName.setFont(new Font(null, Font.PLAIN, 12));
-        }
+		if (isSelected) {
+			variableName.setFont(new Font(null, Font.BOLD, 14));
+			setBorder(new LineBorder(Color.BLACK, 1));
+		} else {
+			setBackground(Color.WHITE);
+			variableName.setFont(new Font(null, Font.PLAIN, 12));
+		}
 
-        return this;
-    }
+		return this;
+	}
 
 }

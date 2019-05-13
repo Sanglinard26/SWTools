@@ -8,18 +8,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import cdf.Axis;
+import cdf.ComAxis;
 import cdf.Cdf;
 import cdf.Curve;
 import cdf.History;
 import cdf.Map;
-import cdf.Scalaire;
+import cdf.TypeVariable;
+import cdf.Value;
 import cdf.ValueBlock;
 import cdf.Values;
 import cdf.Variable;
@@ -27,6 +28,7 @@ import gui.SWToolsMain;
 
 import static dcm.PrimaryKeyword.*;
 import static dcm.PropertieKeyword.*;
+import static cdf.TypeVariable.*;
 
 public final class Dcm implements Cdf {
 
@@ -53,7 +55,7 @@ public final class Dcm implements Cdf {
 		repartitionScore.put(0,0);
 	}
 
-	private final HashSet<String> listCategory = new HashSet<String>();
+	private final EnumSet<TypeVariable> listCategory = EnumSet.noneOf(TypeVariable.class);
 
 	public Dcm(final File file) {
 
@@ -96,35 +98,35 @@ public final class Dcm implements Cdf {
 						break;
 
 					case KENNLINIE:
-						readCurve(buf, spaceSplitLine, CURVE_INDIVIDUAL);
+						readCurve(buf, spaceSplitLine, CURVE);
 						break;
 
 					case FESTKENNLINIE:
-						readCurve(buf, spaceSplitLine, CURVE_FIXED);
+						readCurve(buf, spaceSplitLine, CURVE);
 						break;
 
 					case GRUPPENKENNLINIE:
-						readCurve(buf, spaceSplitLine, CURVE_GROUPED);
+						readCurve(buf, spaceSplitLine, CURVE);
 						break;
 
 					case KENNFELD:
-						readMap(buf, spaceSplitLine, MAP_INDIVIDUAL);
+						readMap(buf, spaceSplitLine, MAP);
 						break;
 
 					case GRUPPENKENNFELD:
-						readMap(buf, spaceSplitLine, MAP_GROUPED);
+						readMap(buf, spaceSplitLine, MAP);
 						break;
 
 					case FESTKENNFELD:
-						readMap(buf, spaceSplitLine, MAP_FIXED);
+						readMap(buf, spaceSplitLine, MAP);
 						break;
 
 					case STUETZSTELLENVERTEILUNG:
-						readAxis(buf, spaceSplitLine, AXIS_VALUES);
+						readAxis(buf, spaceSplitLine, COM_AXIS);
 						break;
 
 					case FESTWERTEBLOCK:
-						readValueBlock(buf, spaceSplitLine, VALUE_BLOCK);
+						readValueBlock(buf, spaceSplitLine, VAL_BLK);
 						break;
 					default:
 						break;
@@ -145,7 +147,7 @@ public final class Dcm implements Cdf {
 		}
 	}
 
-	private final void readValue(BufferedReader buf, String name, String type) throws IOException
+	private final void readValue(BufferedReader buf, String name, TypeVariable type) throws IOException
 	{
 		String[] unite = new String[]{ SPACE.intern() };
 		Values valeur = new Values(1, 1);
@@ -187,7 +189,7 @@ public final class Dcm implements Cdf {
 
 		// System.out.println(spaceSplitLine[1]);
 
-		listLabel.add(new Scalaire(name, description, type.intern(), fonction.intern(), unite,
+		listLabel.add(new Value(name, description, type, fonction.intern(), unite,
 				EMPTY_COMMENT, valeur));
 
 		listCategory.add(type);
@@ -195,7 +197,7 @@ public final class Dcm implements Cdf {
 		checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 	}
 
-	private final void readCurve(BufferedReader buf, String[] spaceSplit, String type) throws IOException
+	private final void readCurve(BufferedReader buf, String[] spaceSplit, TypeVariable type) throws IOException
 	{
 		String line;
 		String[] spaceSplitLine2;
@@ -286,21 +288,17 @@ public final class Dcm implements Cdf {
 
 		}
 
-		if(!CURVE_GROUPED.equals(type))
-		{
-			listLabel.add(new Curve(spaceSplit[1], description, type.intern(), fonction.intern(),
-					unite, EMPTY_COMMENT, valeur));
-		}else{
-			listLabel.add(new Curve(spaceSplit[1], description, CURVE_GROUPED.intern(), fonction.intern(),
-					unite, EMPTY_COMMENT, valeur, sharedAxis));
-		}
+
+		listLabel.add(new Curve(spaceSplit[1], description, type, fonction.intern(),
+				unite, EMPTY_COMMENT, valeur, sharedAxis));
+
 
 		listCategory.add(type);
 
 		checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 	}
 
-	private final void readMap(BufferedReader buf, String[] spaceSplit, String type) throws IOException
+	private final void readMap(BufferedReader buf, String[] spaceSplit, TypeVariable type) throws IOException
 	{
 		String line;
 		String[] spaceSplitLine2;
@@ -413,21 +411,16 @@ public final class Dcm implements Cdf {
 			}
 		}
 
-		if(!MAP_GROUPED.equals(type))
-		{
-			listLabel.add(new Map(spaceSplit[1], description, type.intern(), fonction.intern(), unite,
-					EMPTY_COMMENT, valeur));
-		}else{
-			listLabel.add(new Map(spaceSplit[1], description, type.intern(), fonction.intern(), unite,
-					EMPTY_COMMENT, valeur, sharedAxis));
-		}
+		listLabel.add(new Map(spaceSplit[1], description, type, fonction.intern(), unite,
+				EMPTY_COMMENT, valeur, sharedAxis));
+
 
 		listCategory.add(type);
 
 		checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 	}
 
-	private final void readAxis(BufferedReader buf, String[] spaceSplit, String type) throws IOException
+	private final void readAxis(BufferedReader buf, String[] spaceSplit, TypeVariable type) throws IOException
 	{
 		String line;
 		String[] spaceSplitLine2;
@@ -479,7 +472,7 @@ public final class Dcm implements Cdf {
 
 		}
 
-		listLabel.add(new Axis(spaceSplit[1], description, type.intern(), fonction.intern(), unite,
+		listLabel.add(new ComAxis(spaceSplit[1], description, type, fonction.intern(), unite,
 				EMPTY_COMMENT, valeur));
 
 		listCategory.add(type);
@@ -487,7 +480,7 @@ public final class Dcm implements Cdf {
 		checkSum += listLabel.get(listLabel.size() - 1).getChecksum();
 	}
 
-	private final void readValueBlock(BufferedReader buf, String[] spaceSplit, String type) throws IOException
+	private final void readValueBlock(BufferedReader buf, String[] spaceSplit, TypeVariable type) throws IOException
 	{
 		String line;
 		String[] spaceSplitLine2;
@@ -614,7 +607,7 @@ public final class Dcm implements Cdf {
 
 		}
 
-		listLabel.add(new ValueBlock(spaceSplit[1], description, type.intern(), fonction.intern(),
+		listLabel.add(new ValueBlock(spaceSplit[1], description, type, fonction.intern(),
 				unite, EMPTY_COMMENT, valeur));
 
 
@@ -671,7 +664,7 @@ public final class Dcm implements Cdf {
 	}
 
 	@Override
-	public Set<String> getCategoryList() {
+	public Set<TypeVariable> getCategoryList() {
 		return listCategory;
 	}
 

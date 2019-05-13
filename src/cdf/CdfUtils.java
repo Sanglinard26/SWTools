@@ -69,43 +69,27 @@ public abstract class CdfUtils {
 						}
 
 						switch (var.getCategory()) {
-						case Cdf.AXIS_VALUES:
-							varBase = new Axis(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
+						case COM_AXIS:
+							varBase = new ComAxis(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
 									new History[0], copyValues);
 							break;
-						case Cdf.CURVE_FIXED:
+						case CURVE:
 							varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
 									new History[0], copyValues);
 							break;
-						case Cdf.CURVE_GROUPED:
-							varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-									new History[0], copyValues, ((Curve) var).getSharedAxis());
-							break;
-						case Cdf.CURVE_INDIVIDUAL:
-							varBase = new Curve(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-									new History[0], copyValues);
-							break;
-						case Cdf.MAP_FIXED:
+						case MAP:
 							varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
 									new History[0], copyValues);
 							break;
-						case Cdf.MAP_GROUPED:
-							varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-									new History[0], copyValues, ((Map) var).getSharedAxis());
-							break;
-						case Cdf.MAP_INDIVIDUAL:
-							varBase = new Map(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(), var.getSwUnitRef(),
-									new History[0], copyValues);
-							break;
-						case Cdf.VALUE:
-							varBase = new Scalaire(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
+						case VALUE:
+							varBase = new Value(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
 									var.getSwUnitRef(), new History[0], copyValues);
 							break;
-						case Cdf.ASCII:
-							varBase = new Scalaire(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
+						case ASCII:
+							varBase = new Value(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
 									var.getSwUnitRef(), new History[0], copyValues);
 							break;
-						case Cdf.VALUE_BLOCK:
+						case VAL_BLK:
 							varBase = new ValueBlock(var.getShortName(), var.getLongName(), var.getCategory(), var.getSwFeatureRef(),
 									var.getSwUnitRef(), new History[0], copyValues);
 							break;
@@ -334,25 +318,25 @@ public abstract class CdfUtils {
 				writeCell(sheetValues, 0, row, variableName, arial10format);
 				writeCell(sheetValues, 0, ++row, variableDesc, new WritableCellFormat());
 
-				if (var instanceof Scalaire) {
+				if (var instanceof Value) {
 
 					sheetInfo.addHyperlink(new WritableHyperlink(COL_SCALAIRE, offsetEntete + cntScalaire, variableName, sheetValues, 0, row - 1));
 					sheetInfo.getWritableCell(COL_SCALAIRE, offsetEntete + cntScalaire).setCellFormat(centerAlignYellow);
 					cntScalaire++;
 
-					Scalaire variableType = (Scalaire) var;
+					Value variableType = (Value) var;
 
 					row += 1;
 					writeCell(sheetValues, 0, row, variableType.getValue(), borderFormat);
 					row += 2;
 				}
-				if (var instanceof Axis) {
+				if (var instanceof ComAxis) {
 
 					sheetInfo.addHyperlink(new WritableHyperlink(COL_AXE, offsetEntete + cntAxe, variableName, sheetValues, 0, row - 1));
 					sheetInfo.getWritableCell(COL_AXE, offsetEntete + cntAxe).setCellFormat(centerAlignYellow);
 					cntAxe++;
 
-					Axis variableType = (Axis) var;
+					ComAxis variableType = (ComAxis) var;
 
 					int col = 0;
 					row += 1;

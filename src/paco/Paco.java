@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -28,12 +28,13 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import cdf.Axis;
+import cdf.ComAxis;
 import cdf.Cdf;
 import cdf.Curve;
 import cdf.History;
 import cdf.Map;
-import cdf.Scalaire;
+import cdf.TypeVariable;
+import cdf.Value;
 import cdf.ValueBlock;
 import cdf.Values;
 import cdf.Variable;
@@ -46,7 +47,7 @@ public final class Paco implements Cdf {
 	private boolean valid;
 	private int nbLabel = 0;
 	private List<Variable> listLabel;
-	private Set<String> listCategory;
+	private EnumSet<TypeVariable> listCategory;
 	private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
 	private int minScore = Byte.MAX_VALUE;
 	private int maxScore = Byte.MIN_VALUE;
@@ -176,7 +177,7 @@ public final class Paco implements Cdf {
 		String category;
 
 		listLabel = new ArrayList<Variable>(nbLabel);
-		listCategory = new HashSet<String>();
+		listCategory = EnumSet.noneOf(TypeVariable.class);
 
 		
 		final HashMap<String, String> unit = mapUnits(racine.getElementsByTagName(SW_UNIT));
@@ -224,48 +225,38 @@ public final class Paco implements Cdf {
 			}
 
 			swCsEntry = label.getElementsByTagName(SW_CS_ENTRY);
+			
+			TypeVariable type = TypeVariable.getType(category);
 
-			switch (category) {
+			switch (type) {
 			case ASCII:
-				listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readValue(swAxisCont)));
+				listLabel.add(new Value(shortName, longName, type, swFeatureRef, swUnitRef, readEntry(swCsEntry), readValue(swAxisCont)));
 				break;
 			case VALUE:
-				listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readValue(swAxisCont)));
+				listLabel.add(new Value(shortName, longName, type, swFeatureRef, swUnitRef, readEntry(swCsEntry), readValue(swAxisCont)));
 				break;
-			case CURVE_INDIVIDUAL:
-				listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont)));
+			case COM_AXIS:
+				listLabel.add(new ComAxis(shortName, longName, type, swFeatureRef, swUnitRef, readEntry(swCsEntry), readAxis(swAxisCont)));
 				break;
-			case CURVE_FIXED: // Modif
-			listLabel.add(new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont)));
-			break;
-			case AXIS_VALUES:
-				listLabel.add(new Axis(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readAxis(swAxisCont)));
-				break;
-			case CURVE_GROUPED:
+			case CURVE:
 				listLabel.add(
-						new Curve(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont), sharedAxis));
+						new Curve(shortName, longName, type, swFeatureRef, swUnitRef, readEntry(swCsEntry), readCurve(swAxisCont), sharedAxis));
 				break;
-			case VALUE_BLOCK:
-				listLabel.add(new ValueBlock(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry),
+			case VAL_BLK:
+				listLabel.add(new ValueBlock(shortName, longName, type, swFeatureRef, swUnitRef, readEntry(swCsEntry),
 						readValueBlock(splitAttributAxe, swAxisCont)));
 				break;
-			case MAP_INDIVIDUAL:
-				listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
+			case MAP:
+				listLabel.add(new Map(shortName, longName, type, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont), sharedAxis));
 				break;
-			case MAP_GROUPED:
-				listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont), sharedAxis));
-				break;
-			case MAP_FIXED:
-				listLabel.add(new Map(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), readMap(swAxisCont)));
-				break;
-			case "SW_COMPONENT": // Rustine vite fait pour poursuivre la lecture du fichier
-				listLabel.add(new Scalaire(shortName, longName, category, swFeatureRef, swUnitRef, readEntry(swCsEntry), new Values(1, 1)));
+			case SW_COMPONENT: // Rustine vite fait pour poursuivre la lecture du fichier
+				listLabel.add(new Value(shortName, longName, type, swFeatureRef, swUnitRef, readEntry(swCsEntry), new Values(1, 1)));
 				break;
 			default:
 				break;
 			}
 
-			listCategory.add(category);
+			listCategory.add(type);
 
 			checkSum += listLabel.get(i).getChecksum();
 		}
@@ -622,7 +613,7 @@ public final class Paco implements Cdf {
 	}
 
 	@Override
-	public Set<String> getCategoryList() {
+	public Set<TypeVariable> getCategoryList() {
 		return listCategory;
 	}
 
@@ -637,7 +628,7 @@ public final class Paco implements Cdf {
 		this.listLabel = new ArrayList<Variable>(listComparaison.size());
 		this.listLabel.addAll(listComparaison);
 
-		this.listCategory = new HashSet<String>();
+		this.listCategory = EnumSet.noneOf(TypeVariable.class);
 
 		for (Variable var : listComparaison) {
 			this.listCategory.add(var.getCategory());

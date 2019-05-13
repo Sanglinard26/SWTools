@@ -21,7 +21,7 @@ public abstract class Variable {
 
     private final String longName;
     private final String shortName;
-    private final String category;
+    private final TypeVariable type;
     private final String swFeatureRef;
     private final String[] swUnitRef;
     private final History[] swCsHistory;
@@ -33,13 +33,13 @@ public abstract class Variable {
 
     private static HashMap<String, Integer> scores;
 
-    public Variable(String shortName, String longName, String category, String swFeatureRef, String[] swUnitRef, History[] swCsHistory) {
+    public Variable(String shortName, String longName, TypeVariable type, String swFeatureRef, String[] swUnitRef, History[] swCsHistory) {
     	
     	initScores();
     	
         this.shortName = shortName;
         this.longName = longName;
-        this.category = category;
+        this.type = type;
         this.swFeatureRef = swFeatureRef;
         this.swUnitRef = swUnitRef;
         this.swCsHistory = swCsHistory;
@@ -64,8 +64,8 @@ public abstract class Variable {
         return longName;
     }
 
-    public final String getCategory() {
-        return category;
+    public final TypeVariable getCategory() {
+        return type;
     }
 
     public final String getSwFeatureRef() {
