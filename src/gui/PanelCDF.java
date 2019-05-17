@@ -71,7 +71,7 @@ public final class PanelCDF extends JComponent {
 	private final static ResourceBundle bundle = ResourceBundle.getBundle("properties.langue", lang);
 
 	// GUI
-	private final JButton btOpen = new JButton(new ImageIcon(getClass().getResource(ICON_ADD)));
+	private final JButton btOpen;
 	private final JPanel panComparaison = new JPanel();
 	private final ButtonGroup btGroup = new ButtonGroup();
 	private static final JRadioButton radioBtVal = new JRadioButton(bundle.getString("showValues"), true);
@@ -83,9 +83,9 @@ public final class PanelCDF extends JComponent {
 	private final JTabbedPane tabPan = new JTabbedPane();
 	private final JPanel panCDF = new JPanel(new GridBagLayout());
 	private final JPanel panLabel = new JPanel(new GridBagLayout());
-	private final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panCDF, panLabel);
-	private final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, new JScrollPane(panVisu), tabPan);
-	private final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneLeft, splitPaneRight);
+	private final JSplitPane splitPaneLeft;
+	private final JSplitPane splitPaneRight;
+	private final JSplitPane splitPaneGlobal;
 	private static final PanelHistory panelHistory = new PanelHistory();
 	private static final PanelInterpolation panelInterpolation = new PanelInterpolation();
 
@@ -107,6 +107,7 @@ public final class PanelCDF extends JComponent {
 		gbc.weighty = 0;
 		gbc.insets = new Insets(0, 0, 0, 0);
 		gbc.anchor = GridBagConstraints.CENTER;
+		btOpen = new JButton(new ImageIcon(getClass().getResource(ICON_ADD)));
 		btOpen.setToolTipText(bundle.getString("addFiles"));
 		btOpen.addActionListener(new OpenCDF());
 		panCDF.add(btOpen, gbc);
@@ -160,7 +161,9 @@ public final class PanelCDF extends JComponent {
 				}
 			}
 		});
-		panCDF.add(new JScrollPane(listCDF), gbc);
+		JScrollPane spListCdf = new JScrollPane(listCDF);
+		spListCdf.setBorder(BorderFactory.createEtchedBorder());
+		panCDF.add(spListCdf, gbc);
 
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
@@ -243,12 +246,18 @@ public final class PanelCDF extends JComponent {
 				}
 			}
 		});
-		panLabel.add(new JScrollPane(listLabel), gbc);
+		JScrollPane spListLabel = new JScrollPane(listLabel);
+		spListLabel.setBorder(BorderFactory.createEtchedBorder());
+		panLabel.add(spListLabel, gbc);
 
+		splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panCDF, panLabel);
 		splitPaneLeft.setOneTouchExpandable(true);
 		splitPaneLeft.setDividerLocation(200);
 		splitPaneLeft.setBorder(BorderFactory.createEmptyBorder());
 
+		JScrollPane spVisu = new JScrollPane(panVisu);
+		spVisu.setBorder(BorderFactory.createEtchedBorder());
+		splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, spVisu, tabPan);
 		splitPaneRight.setOneTouchExpandable(true);
 		splitPaneRight.setDividerLocation(400);
 		splitPaneRight.setBorder(BorderFactory.createEmptyBorder());
@@ -297,6 +306,7 @@ public final class PanelCDF extends JComponent {
 			}
 		});
 
+		splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneLeft, splitPaneRight);
 		splitPaneGlobal.setDividerSize(5);
 		splitPaneGlobal.setDividerLocation(500);
 		splitPaneGlobal.setBorder(BorderFactory.createEmptyBorder());

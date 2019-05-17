@@ -22,7 +22,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
+import javax.swing.UIManager;
 
 import cdf.History;
 
@@ -62,48 +62,30 @@ public final class PanelHistory extends JComponent {
 
         private static final long serialVersionUID = 1L;
 
-        private static final JLabel date = new JLabel("DATE");
-        private static final JLabel auteur = new JLabel("AUTEUR");
-        private static final JLabel score = new JLabel("SCORE");
-        private static final JLabel comment = new JLabel("COMMENTAIRES");
-
         public Header() {
 
             this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-            date.setPreferredSize(new Dimension(200, 40));
-            date.setHorizontalAlignment(SwingConstants.CENTER);
-            date.setOpaque(true);
-            date.setBackground(Color.LIGHT_GRAY);
-            date.setBorder(new LineBorder(Color.BLACK, 1));
-            date.setFont(new Font(null, Font.BOLD, 14));
-
-            auteur.setPreferredSize(new Dimension(150, 40));
-            auteur.setHorizontalAlignment(SwingConstants.CENTER);
-            auteur.setOpaque(true);
-            auteur.setBackground(Color.LIGHT_GRAY);
-            auteur.setBorder(new LineBorder(Color.BLACK, 1));
-            auteur.setFont(new Font(null, Font.BOLD, 14));
-
-            score.setPreferredSize(new Dimension(200, 40));
-            score.setHorizontalAlignment(SwingConstants.CENTER);
-            score.setOpaque(true);
-            score.setBackground(Color.LIGHT_GRAY);
-            score.setBorder(new LineBorder(Color.BLACK, 1));
-            score.setFont(new Font(null, Font.BOLD, 14));
-
-            comment.setPreferredSize(new Dimension(820, 40));
-            comment.setHorizontalAlignment(SwingConstants.CENTER);
-            comment.setOpaque(true);
-            comment.setBackground(Color.LIGHT_GRAY);
-            comment.setBorder(new LineBorder(Color.BLACK, 1));
-            comment.setFont(new Font(null, Font.BOLD, 14));
-
-            add(date);
-            add(auteur);
-            add(score);
-            add(comment);
-
+            add(createColumnHeader("DATE", 200));
+            add(createColumnHeader("AUTEUR", 150));
+            add(createColumnHeader("SCORE", 200));
+            add(createColumnHeader("COMMENTAIRES", 820));
+        }
+        
+        private static final JLabel createColumnHeader(String title, int width)
+        {
+        	final Color headerBackground = UIManager.getLookAndFeel().getDefaults().getColor("Button.background").darker();
+        	
+        	final JLabel columHeader = new JLabel(title);
+        	
+        	columHeader.setPreferredSize(new Dimension(width, 40));
+        	columHeader.setHorizontalAlignment(SwingConstants.CENTER);
+        	columHeader.setOpaque(true);
+        	columHeader.setBackground(headerBackground);
+        	columHeader.setBorder(BorderFactory.createEtchedBorder());
+        	columHeader.setFont(new Font(null, Font.BOLD, 14));
+        	
+        	return columHeader;
         }
     }
 
@@ -161,22 +143,22 @@ public final class PanelHistory extends JComponent {
             // Configuration des differents composants
             textDate.setOpaque(true);
             textDate.setBackground(Color.WHITE);
-            textDate.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            textDate.setBorder(BorderFactory.createEtchedBorder());
             textDate.setHorizontalAlignment(SwingConstants.CENTER);
             textDate.setBounds(0, 0, 200, 50);
 
             textAuteur.setOpaque(true);
             textAuteur.setBackground(Color.WHITE);
-            textAuteur.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            textAuteur.setBorder(BorderFactory.createEtchedBorder());
             textAuteur.setHorizontalAlignment(SwingConstants.CENTER);
             textAuteur.setBounds(200, 0, 150, 50);
 
             bar.setStringPainted(true);
-            bar.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            bar.setBorder(BorderFactory.createEtchedBorder());
             bar.setBounds(350, 0, 200, 50);
 
             textPane.setEditable(false);
-            scrollPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            scrollPane.setBorder(BorderFactory.createEtchedBorder());
             scrollPane.setBounds(550, 0, 820, 50);
             //
 

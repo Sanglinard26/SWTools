@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -174,7 +173,6 @@ public final class ListLabel extends JList<Variable> {
             txtFiltre.setTransferHandler(new TransfertLab());
 
             delSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_CLEAR)));
-            delSearchBt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             delSearchBt.setToolTipText("Suppression du filtre");
             delSearchBt.addActionListener(new ActionListener() {
 
@@ -186,7 +184,6 @@ public final class ListLabel extends JList<Variable> {
             panelBt.add(delSearchBt);
 
             oldSearchBt = new JButton(new ImageIcon(getClass().getResource(ICON_OLD_SEARCH)));
-            oldSearchBt.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             oldSearchBt.setToolTipText("Historique de filtre");
             oldSearchBt.addMouseListener(new MouseAdapter() {
                 @Override
