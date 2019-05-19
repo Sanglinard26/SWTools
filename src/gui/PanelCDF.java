@@ -32,6 +32,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
 import javax.swing.TransferHandler;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -39,6 +40,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import cdf.Cdf;
 import cdf.ListModelCdf;
@@ -71,11 +74,7 @@ public final class PanelCDF extends JComponent {
 	private final static ResourceBundle bundle = ResourceBundle.getBundle("properties.langue", lang);
 
 	// GUI
-	private final JButton btOpen;
-	private final JPanel panComparaison = new JPanel();
-	private final ButtonGroup btGroup = new ButtonGroup();
 	private static final JRadioButton radioBtVal = new JRadioButton(bundle.getString("showValues"), true);
-	private final JRadioButton radioBtDiff = new JRadioButton(bundle.getString("showDiff"));
 	private final ListCdf listCDF = new ListCdf(new ListModelCdf());
 	private static final ListLabel listLabel = new ListLabel(new ListModelLabel());
 	private static final JPanel panVisu = new JPanel(new GridBagLayout());
@@ -83,9 +82,6 @@ public final class PanelCDF extends JComponent {
 	private final JTabbedPane tabPan = new JTabbedPane();
 	private final JPanel panCDF = new JPanel(new GridBagLayout());
 	private final JPanel panLabel = new JPanel(new GridBagLayout());
-	private final JSplitPane splitPaneLeft;
-	private final JSplitPane splitPaneRight;
-	private final JSplitPane splitPaneGlobal;
 	private static final PanelHistory panelHistory = new PanelHistory();
 	private static final PanelInterpolation panelInterpolation = new PanelInterpolation();
 
@@ -107,15 +103,19 @@ public final class PanelCDF extends JComponent {
 		gbc.weighty = 0;
 		gbc.insets = new Insets(0, 0, 0, 0);
 		gbc.anchor = GridBagConstraints.CENTER;
-		btOpen = new JButton(new ImageIcon(getClass().getResource(ICON_ADD)));
+		final JButton btOpen = new JButton(new ImageIcon(getClass().getResource(ICON_ADD)));
 		btOpen.setToolTipText(bundle.getString("addFiles"));
 		btOpen.addActionListener(new OpenCDF());
 		panCDF.add(btOpen, gbc);
 
+		final ButtonGroup btGroup = new ButtonGroup();
 		btGroup.add(radioBtVal);
+		
+		final JRadioButton radioBtDiff = new JRadioButton(bundle.getString("showDiff"));
 		btGroup.add(radioBtDiff);
-		panComparaison
-		.setBorder(new TitledBorder(new LineBorder(Color.GRAY, 0), bundle.getString("compar"), TitledBorder.LEADING, TitledBorder.BELOW_TOP));
+		
+		final JPanel panComparaison = new JPanel();
+		panComparaison.setBorder(new TitledBorder(new LineBorder(Color.GRAY, 0), bundle.getString("compar"), TitledBorder.LEADING, TitledBorder.BELOW_TOP));
 		panComparaison.add(radioBtVal);
 		panComparaison.add(radioBtDiff);
 
@@ -250,24 +250,19 @@ public final class PanelCDF extends JComponent {
 		spListLabel.setBorder(BorderFactory.createEtchedBorder());
 		panLabel.add(spListLabel, gbc);
 
-		splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panCDF, panLabel);
+		final JSplitPane splitPaneLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panCDF, panLabel);
 		splitPaneLeft.setOneTouchExpandable(true);
 		splitPaneLeft.setDividerLocation(200);
 		splitPaneLeft.setBorder(BorderFactory.createEmptyBorder());
 
 		JScrollPane spVisu = new JScrollPane(panVisu);
 		spVisu.setBorder(BorderFactory.createEtchedBorder());
-		splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, spVisu, tabPan);
+		final JSplitPane splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, spVisu, tabPan);
 		splitPaneRight.setOneTouchExpandable(true);
 		splitPaneRight.setDividerLocation(400);
 		splitPaneRight.setBorder(BorderFactory.createEmptyBorder());
 
 		panVisu.setBackground(Color.WHITE);
-		panVisu.setBorder(BorderFactory.createEmptyBorder());
-
-		panGraph.setBorder(BorderFactory.createEmptyBorder());
-
-		panelHistory.setBorder(BorderFactory.createEmptyBorder());
 
 		tabPan.addTab(bundle.getString("remark"), new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(panelHistory));
 		tabPan.addTab(bundle.getString("chart"), new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
@@ -306,10 +301,25 @@ public final class PanelCDF extends JComponent {
 			}
 		});
 
-		splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneLeft, splitPaneRight);
+		final JSplitPane splitPaneGlobal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneLeft, splitPaneRight);
 		splitPaneGlobal.setDividerSize(5);
 		splitPaneGlobal.setDividerLocation(500);
 		splitPaneGlobal.setBorder(BorderFactory.createEmptyBorder());
+		splitPaneGlobal.setUI(new BasicSplitPaneUI(){
+			@Override
+			public BasicSplitPaneDivider createDefaultDivider() {
+				return new BasicSplitPaneDivider(this){
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void setBorder(Border border) {
+						// TODO Auto-generated method stub
+						super.setBorder(null);
+					}
+				};
+			}
+		});
 		add(splitPaneGlobal, BorderLayout.CENTER);
 	}
 

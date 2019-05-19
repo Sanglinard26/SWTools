@@ -49,7 +49,7 @@ public final class PanelLab extends JComponent implements ListDataListener {
 	private static final String BT_ADD_LAB_WK = "Ajout fichier(s) de travail";
 
 	// GUI
-	private final JButton btAddLab, btCompil, btAddLabRef, btAddLabWk, btCompar, btExport;
+	private final JButton btCompar, btExport;
 	private static final GridBagConstraints gbc = new GridBagConstraints();
 	private final ListLab listLabCompil, listLabRef, listLabWk;
 	private final ListVar listVarRef, listVarWk, listVarPlus, listVarMoins;
@@ -63,12 +63,12 @@ public final class PanelLab extends JComponent implements ListDataListener {
 		panelCompil.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.BLACK), "<html><font size = 4><b>Compilation</b></font></html>"));
 
 		setGbc(GridBagConstraints.HORIZONTAL, 0, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
-		btAddLab = new JButton("Ajouter fichiers Lab");
+		final JButton btAddLab = new JButton("Ajouter fichiers Lab");
 		btAddLab.addActionListener(new addLab());
 		panelCompil.add(btAddLab, gbc);
 
 		setGbc(GridBagConstraints.HORIZONTAL, 1, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
-		btCompil = new JButton("Compiler");
+		final JButton btCompil = new JButton("Compiler");
 		btCompil.addActionListener(new ActionListener() {
 
 			@Override
@@ -116,19 +116,16 @@ public final class PanelLab extends JComponent implements ListDataListener {
 		panelCompar.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.BLACK), "<html><font size = 4><b>Comparaison</b></font></html>"));
 
 		setGbc(GridBagConstraints.HORIZONTAL, 0, 0, 1, 1, 0, 0, new Insets(0, 0, 0, 5), GridBagConstraints.CENTER);
-		btAddLabRef = new JButton(BT_ADD_LAB_REF);
-		btAddLabRef.setOpaque(false);
+		final JButton btAddLabRef = new JButton(BT_ADD_LAB_REF);
 		btAddLabRef.addActionListener(new addLab());
 		panelCompar.add(btAddLabRef, gbc);
 
 		setGbc(GridBagConstraints.HORIZONTAL, 1, 0, 1, 1, 0, 0, new Insets(0, 5, 0, 20), GridBagConstraints.CENTER);
-		btAddLabWk = new JButton(BT_ADD_LAB_WK);
-		btAddLabWk.setOpaque(false);
+		final JButton btAddLabWk = new JButton(BT_ADD_LAB_WK);
 		btAddLabWk.addActionListener(new addLab());
 		panelCompar.add(btAddLabWk, gbc);
 
 		btCompar = new JButton(BT_COMPAR_LAB);
-		btCompar.setOpaque(false);
 		btCompar.setEnabled(false);
 		btCompar.addActionListener(new ActionListener() {
 
@@ -167,7 +164,6 @@ public final class PanelLab extends JComponent implements ListDataListener {
 		panelCompar.add(btCompar, gbc);
 
 		btExport = new JButton(BT_EXPORT);
-		btExport.setOpaque(false);
 		btExport.setEnabled(false);
 		btExport.addActionListener(new ActionListener() {
 			@Override

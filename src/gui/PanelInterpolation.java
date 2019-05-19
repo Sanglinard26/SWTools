@@ -12,8 +12,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.IOException;
 
 import javax.swing.AbstractAction;
@@ -41,7 +41,6 @@ public final class PanelInterpolation extends JPanel {
     private Variable selectedVariable = null;
 
     private final JToggleButton switchMode;
-    private final JButton btReset;
     private final MyTableModel modelDatas;
     private final JTable tableData;
 
@@ -71,69 +70,7 @@ public final class PanelInterpolation extends JPanel {
             }
         });
 
-        tableData.addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-
-                if (e.getKeyCode() == 10) {
-                    modelDatas.fireTableCellUpdated(tableData.getSelectedRow(), tableData.getSelectedRow());
-                }
-
-                if (e.getKeyCode() == 127) {
-                    int[] idxCol = tableData.getSelectedColumns();
-                    int[] idxRow = tableData.getSelectedRows();
-                    for (int c : idxCol) {
-                        for (int r : idxRow) {
-                            modelDatas.setValueAt(null, r, c);
-                        }
-                    }
-                    modelDatas.fireTableDataChanged();
-                }
-
-                if ((e.getModifiers() == KeyEvent.CTRL_MASK) && (e.getKeyCode() == KeyEvent.VK_V)) {
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    Transferable transferable = clipboard.getContents(null);
-
-                    if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                        try {
-                            String dataClipboard = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                            String[] splitLine = dataClipboard.split("\n");
-                            String[] splitTab;
-
-                            int intCol = tableData.getSelectedColumn();
-                            int row = tableData.getSelectedRow();
-                            int col = intCol;
-
-                            for (String sLine : splitLine) {
-                                splitTab = sLine.split("\t");
-                                col = intCol;
-                                for (String sTab : splitTab) {
-                                    if (!sTab.isEmpty()) {
-                                        modelDatas.setValueAt(Double.parseDouble(sTab), row, col);
-
-                                    }
-                                    col++;
-                                }
-                                row++;
-                            }
-                        } catch (UnsupportedFlavorException e1) {
-                            e1.printStackTrace();
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
+        tableData.addKeyListener(new MyKeyListener());
 
         switchMode = new JToggleButton("Mode carto", modelDatas.isModeMap());
         switchMode.setEnabled(false);
@@ -164,7 +101,7 @@ public final class PanelInterpolation extends JPanel {
         gbc.anchor = GridBagConstraints.NORTHWEST;
         this.add(switchMode, gbc);
 
-        btReset = new JButton(new AbstractAction("Reset") {
+        final JButton btReset = new JButton(new AbstractAction("Reset") {
 
             private static final long serialVersionUID = 1L;
 
@@ -200,6 +137,63 @@ public final class PanelInterpolation extends JPanel {
         gbc.anchor = GridBagConstraints.NORTHWEST;
         this.add(new JScrollPane(tableData), gbc);
 
+    }
+    
+    private final class MyKeyListener extends KeyAdapter
+    {
+    	@Override
+    	public void keyPressed(KeyEvent e) {
+    		
+    		if (e.getKeyCode() == 10) {
+                modelDatas.fireTableCellUpdated(tableData.getSelectedRow(), tableData.getSelectedRow());
+            }
+
+            if (e.getKeyCode() == 127) {
+                int[] idxCol = tableData.getSelectedColumns();
+                int[] idxRow = tableData.getSelectedRows();
+                for (int c : idxCol) {
+                    for (int r : idxRow) {
+                        modelDatas.setValueAt(null, r, c);
+                    }
+                }
+                modelDatas.fireTableDataChanged();
+            }
+
+            if ((e.getModifiers() == KeyEvent.CTRL_MASK) && (e.getKeyCode() == KeyEvent.VK_V)) {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                Transferable transferable = clipboard.getContents(null);
+
+                if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    try {
+                        String dataClipboard = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                        String[] splitLine = dataClipboard.split("\n");
+                        String[] splitTab;
+
+                        int intCol = tableData.getSelectedColumn();
+                        int row = tableData.getSelectedRow();
+                        int col = intCol;
+
+                        for (String sLine : splitLine) {
+                            splitTab = sLine.split("\t");
+                            col = intCol;
+                            for (String sTab : splitTab) {
+                                if (!sTab.isEmpty()) {
+                                    modelDatas.setValueAt(Double.parseDouble(sTab), row, col);
+
+                                }
+                                col++;
+                            }
+                            row++;
+                        }
+                    } catch (UnsupportedFlavorException e1) {
+                        e1.printStackTrace();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+    		
+    	}
     }
 
     public final void setVariable(Variable var) {
@@ -360,7 +354,7 @@ public final class PanelInterpolation extends JPanel {
 
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-            if (value instanceof Double) {
+            if (isModeMap() && value instanceof Double) {
                 Double doubleValue = (Double) value;
                 Double origineValue = selectedVariable.getValues().valuesToDouble2D()[row][column];
                 if (doubleValue > origineValue) {

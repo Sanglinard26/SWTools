@@ -381,11 +381,9 @@ public final class Dcm implements Cdf {
 				nbSplit = threeSpaceSplitLine.length;
 				for (short i = 0; i < nbSplit; i++) {
 					tmpValue = threeSpaceSplitLine[i];
-					if (tmpValue.length() != 0 && !tmpValue.equals(ST_X.getName()) && !tmpValue.equals(ST_TX_X.getName())) {
-						if (cntX < valeur.getDimX()) {
-							valeur.setValue(0, cntX, replaceQuote(tmpValue));
-							cntX++;
-						}
+					if (tmpValue.length() != 0 && !tmpValue.equals(ST_X.getName()) && !tmpValue.equals(ST_TX_X.getName()) && cntX < valeur.getDimX()) {
+						valeur.setValue(0, cntX, replaceQuote(tmpValue));
+						cntX++;
 					}
 				}
 			}
