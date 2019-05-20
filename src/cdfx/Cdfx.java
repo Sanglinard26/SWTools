@@ -28,13 +28,13 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import cdf.ComAxis;
 import cdf.Cdf;
+import cdf.ComAxis;
 import cdf.Curve;
 import cdf.History;
 import cdf.Map;
-import cdf.Value;
 import cdf.TypeVariable;
+import cdf.Value;
 import cdf.ValueBlock;
 import cdf.Values;
 import cdf.Variable;
@@ -47,7 +47,7 @@ public final class Cdfx implements Cdf {
     private boolean valid;
     private int nbLabel = 0;
     private List<Variable> listLabel;
-    //private Set<String> listCategory;
+    // private Set<String> listCategory;
     private EnumSet<TypeVariable> listCategory;
     private final HashMap<Integer, Integer> repartitionScore = new HashMap<Integer, Integer>(5);
     private int minScore = Byte.MAX_VALUE;
@@ -179,7 +179,7 @@ public final class Cdfx implements Cdf {
         String category;
 
         listLabel = new ArrayList<Variable>(nbLabel);
-        //listCategory = new HashSet<String>();
+        // listCategory = new HashSet<String>();
         listCategory = EnumSet.noneOf(TypeVariable.class);
 
         String[] sharedAxis = null;
@@ -212,7 +212,7 @@ public final class Cdfx implements Cdf {
             swUnitRef.add(swValueCont.item(0).getFirstChild().getTextContent());
 
             swCsEntry = label.getElementsByTagName(CS_ENTRY);
-            
+
             TypeVariable type = TypeVariable.getType(category);
 
             switch (type) {
@@ -237,8 +237,8 @@ public final class Cdfx implements Cdf {
                         readEntry(swCsEntry), readValueBlock(swValueCont)));
                 break;
             case MAP:
-                listLabel.add(new Map(shortName, longName, type, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]),
-                        readEntry(swCsEntry), readMap(listSwInstance, swValueCont, swAxisCont), sharedAxis));
+                listLabel.add(new Map(shortName, longName, type, swFeatureRef, swUnitRef.toArray(new String[swUnitRef.size()]), readEntry(swCsEntry),
+                        readMap(listSwInstance, swValueCont, swAxisCont), sharedAxis));
                 break;
             default:
                 break;
@@ -248,7 +248,7 @@ public final class Cdfx implements Cdf {
 
             // checkSum += listLabel.get(i).getChecksum();
         }
-        
+
         swUnitRef.clear();
 
         this.valid = true;
@@ -487,11 +487,10 @@ public final class Cdfx implements Cdf {
             values.setValue(1, n * (zValues.getChildNodes().getLength()), zValues.getFirstChild().getTextContent());
 
             for (int o = 1; o < zValues.getChildNodes().getLength(); o++) {
-            	if(n == 0)
-            	{
-            		values.setValue(0, o, axisValues.item(o-1).getTextContent());
-            	}
-                values.setValue(n+1, o, zValues.getChildNodes().item(o).getTextContent());
+                if (n == 0) {
+                    values.setValue(0, o, axisValues.item(o - 1).getTextContent());
+                }
+                values.setValue(n + 1, o, zValues.getChildNodes().item(o).getTextContent());
             }
         }
 

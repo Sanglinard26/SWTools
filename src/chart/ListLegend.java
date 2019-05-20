@@ -12,7 +12,6 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
 
 public final class ListLegend extends JList<Serie> {
 
@@ -37,17 +36,15 @@ public final class ListLegend extends JList<Serie> {
 
             label.setHorizontalAlignment(SwingConstants.CENTER);
             label.setPreferredSize(new Dimension(60, 20));
-            label.setBackground(Color.WHITE);
-            label.setFont(new Font(null, Font.BOLD, 12));
+            label.setFont(new Font(null, Font.PLAIN, 12));
 
             hue = (float) (index) / (float) (list.getModel().getSize());
 
             label.setForeground(Color.getHSBColor(hue, 1, 1));
 
             if (isSelected) {
-                label.setBorder(new LineBorder(Color.BLACK, 1));
-            } else {
-                label.setBorder(new LineBorder(Color.BLACK, 0));
+                label.setFont(new Font(null, Font.BOLD, 12));
+                label.setForeground(Color.WHITE);
             }
 
             label.setText(((Serie) value).getName());

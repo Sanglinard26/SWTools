@@ -1,12 +1,11 @@
 package chart;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
 
 import cdf.Map;
 import cdf.Variable;
@@ -27,7 +26,7 @@ public final class SurfaceChart extends JComponent {
 
     public SurfaceChart(final Variable variable) {
 
-        setBorder(new LineBorder(Color.BLACK));
+        setBorder(BorderFactory.createEtchedBorder());
 
         this.setLayout(new BorderLayout());
 
@@ -50,8 +49,8 @@ public final class SurfaceChart extends JComponent {
     }
 
     public class MapSurfaceModel extends AbstractSurfaceModel {
-        
-    	private SurfaceVertex[][] surfaceVertex;
+
+        private SurfaceVertex[][] surfaceVertex;
 
         public MapSurfaceModel() {
             setPlotFunction2(false);
@@ -73,7 +72,7 @@ public final class SurfaceChart extends JComponent {
 
             final int xLength = xAxis.length;
             final int yLength = yAxis.length;
-            
+
             setXMin(xAxis[0]);
             setXMax(xAxis[(xLength - 1)]);
             setYMin(yAxis[0]);
@@ -92,16 +91,15 @@ public final class SurfaceChart extends JComponent {
                     float xv = xAxis[i];
                     float yv = yAxis[j];
                     float v1 = 0;
-                    
-                    if(zValues != null)
-                    {
-                    	v1 = zValues[j][i];
-                    	z1Max = Math.max(z1Max, v1);
-                    	z1Min = Math.min(z1Min, v1);
-                    }else{
-                    	v1 = Float.NaN;
+
+                    if (zValues != null) {
+                        v1 = zValues[j][i];
+                        z1Max = Math.max(z1Max, v1);
+                        z1Min = Math.min(z1Min, v1);
+                    } else {
+                        v1 = Float.NaN;
                     }
-                    
+
                     surfaceVertex[0][k] = new SurfaceVertex((xv - xMin) * xfactor - 10.0F, (yv - yMin) * yfactor - 10.0F, v1);
                 }
             }

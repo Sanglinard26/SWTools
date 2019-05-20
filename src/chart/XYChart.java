@@ -1,13 +1,12 @@
 package chart;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.GridLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
 
 import cdf.Curve;
 import cdf.Map;
@@ -26,7 +25,7 @@ public final class XYChart extends JComponent {
 
     public XYChart(Variable variable) {
 
-        setBorder(new LineBorder(Color.BLACK));
+        setBorder(BorderFactory.createEtchedBorder());
 
         if (variable instanceof Curve) {
             this.setLayout(new BorderLayout());
