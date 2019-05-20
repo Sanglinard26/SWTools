@@ -26,7 +26,7 @@ public final class SurfaceChart extends JComponent {
 
     public SurfaceChart(final Variable variable) {
 
-        setBorder(BorderFactory.createEtchedBorder());
+        setBorder(BorderFactory.createEmptyBorder());
 
         this.setLayout(new BorderLayout());
 

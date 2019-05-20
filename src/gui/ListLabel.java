@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -167,6 +168,7 @@ public final class ListLabel extends JList<Variable> {
             typeFilter.addActionListener(this);
 
             txtFiltre = new JTextField(20);
+            txtFiltre.setBorder(BorderFactory.createEmptyBorder());
             txtFiltre.setToolTipText("Clicker 'Entrer' pour enregistrer le filtre dans l'historique");
             txtFiltre.getDocument().addDocumentListener(this);
             txtFiltre.addActionListener(this);

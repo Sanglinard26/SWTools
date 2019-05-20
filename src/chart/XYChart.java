@@ -25,7 +25,7 @@ public final class XYChart extends JComponent {
 
     public XYChart(Variable variable) {
 
-        setBorder(BorderFactory.createEtchedBorder());
+        setBorder(BorderFactory.createEmptyBorder());
 
         if (variable instanceof Curve) {
             this.setLayout(new BorderLayout());

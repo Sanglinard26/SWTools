@@ -72,12 +72,11 @@ public final class PanelHistory extends JComponent {
             add(createColumnHeader("COMMENTAIRES", 820));
         }
         
-        private static final JLabel createColumnHeader(String title, int width)
+        private static final JComponent createColumnHeader(String title, int width)
         {
-        	final Color headerBackground = UIManager.getLookAndFeel().getDefaults().getColor("Button.background").darker();
+        	final Color headerBackground = UIManager.getLookAndFeel().getDefaults().getColor("control").darker();
         	
         	final JLabel columHeader = new JLabel(title);
-        	
         	columHeader.setPreferredSize(new Dimension(width, 40));
         	columHeader.setHorizontalAlignment(SwingConstants.CENTER);
         	columHeader.setOpaque(true);

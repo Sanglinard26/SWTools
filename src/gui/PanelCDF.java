@@ -264,7 +264,9 @@ public final class PanelCDF extends JComponent {
 
 		panVisu.setBackground(Color.WHITE);
 
-		tabPan.addTab(bundle.getString("remark"), new ImageIcon(getClass().getResource(ICON_HISTORY)), new JScrollPane(panelHistory));
+		JScrollPane spTabPan = new JScrollPane(panelHistory);
+		spTabPan.setBorder(BorderFactory.createEmptyBorder());
+		tabPan.addTab(bundle.getString("remark"), new ImageIcon(getClass().getResource(ICON_HISTORY)), spTabPan);
 		tabPan.addTab(bundle.getString("chart"), new ImageIcon(getClass().getResource(ICON_CHART)), panGraph);
 		tabPan.addTab(bundle.getString("interpolation"), new ImageIcon(getClass().getResource(ICON_MATH)), panelInterpolation);
 

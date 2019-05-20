@@ -5,6 +5,7 @@ import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -20,7 +21,6 @@ public final class PanelGraph extends JComponent {
 
     private static final CardLayout cardLayout = new CardLayout();
     private static final JPanel panCard = new JPanel(cardLayout);
-    private static final JPanel panBtRadio = new JPanel();
     private static final ButtonGroup buttonGroup = new ButtonGroup();
     private static final JRadioButton radioBt2D = new JRadioButton("2D");
     private static final JRadioButton radioBt3D = new JRadioButton("3D", true);
@@ -31,12 +31,16 @@ public final class PanelGraph extends JComponent {
 
         this.setLayout(new BorderLayout());
 
+        radioBt2D.setOpaque(false);
         radioBt2D.addActionListener(new SwitchGraph());
+        radioBt3D.setOpaque(false);
         radioBt3D.addActionListener(new SwitchGraph());
 
         buttonGroup.add(radioBt2D);
         buttonGroup.add(radioBt3D);
 
+        final JPanel panBtRadio = new JPanel();
+        panBtRadio.setBorder(BorderFactory.createLineBorder(panBtRadio.getBackground().darker()));
         panBtRadio.add(radioBt2D);
         panBtRadio.add(radioBt3D);
 
